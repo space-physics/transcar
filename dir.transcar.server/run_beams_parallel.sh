@@ -5,7 +5,7 @@
 # respective beam energies.
 # this program is meant to be run from dir.transcar.server directory- cd there first
 
-BeamEnergyTableFN=Prosp8Beam
+BeamEnergyTableFN=BT_E1E2prev.csv
 
 runBeams()
 {
@@ -16,11 +16,11 @@ E2=$2
 pr1=$3
 pr2=$4
 
-RODIR=../../prosp0
+RODIR=../../iter0
 
 CurrDir="$RODIR/beam$E1"
 # freshen simulation directory
-[[ -d $RODIR ]] && { rm -rv $CurrDir; mkdir -v $CurrDir; }
+[[ -d $RODIR ]] && { \rm -rv $CurrDir; mkdir -v $CurrDir; }
 
 BMlog=$RODIR/Beams.log
 TCconfig=dir.input/DATCAR

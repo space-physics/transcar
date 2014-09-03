@@ -1,7 +1,7 @@
 2					(kiappel, INTEGER)
 90kmmaxpt123.dat                                input file (initial ionospheric conditions)
 1.					time step (seconds) (REAL)
-30	.				number of seconds between fluid code outputs (seconds, REAL)
+1.				number of seconds between fluid code outputs (seconds, REAL)
 2013090					date of simulation (YYYYDDD)
 32400.					UT start time for simulation (seconds)
 60.					duration of run (seconds)
@@ -10,7 +10,7 @@
 0.					duration of convection (in seconds) before the reference (<= 0, we do not follow the field lines)  (tempsconv_1, REAL)
 0.					duration of convection (in seconds) before the reference (<= 0, we do not follow the field lines)  (tempsconv, REAL)
 0					time interval (seconds) between two tubes (step,REAL)
-30					time step between two calls to kinetic code (REAL)
+1.					time step between two calls to kinetic code (REAL)
 0.					transport (m / s) induced along the field line (vparaB, REAL)
 126.0					f10.7 index
 107.6					f10.7 3-month average centered on current month

@@ -1,7 +1,7 @@
 2					(kiappel, INTEGER)
 90kmmaxpt123.dat                                input file (initial ionospheric conditions)
 1.					time step (seconds) (REAL)
-1.				number of seconds between fluid code outputs (seconds, REAL)
+30	.				number of seconds between fluid code outputs (seconds, REAL)
 2013090					date of simulation (YYYYDDD)
 32400.					UT start time for simulation (seconds)
 60.					duration of run (seconds)

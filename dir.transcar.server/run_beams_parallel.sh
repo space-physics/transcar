@@ -5,11 +5,7 @@
 # respective beam energies.
 # this program is meant to be run from dir.transcar.server directory- cd there first
 
-<<<<<<< HEAD
-BeamEnergyTableFN=Prosp8Beam
-=======
 BeamEnergyTableFN=BT_E1E2prev.csv
->>>>>>> eb95003423a2db072bf674fa9aeb450e184846d3
 
 runBeams()
 {
@@ -20,19 +16,11 @@ E2=$2
 pr1=$3
 pr2=$4
 
-<<<<<<< HEAD
-RODIR=../../prosp0
-
-CurrDir="$RODIR/beam$E1"
-# freshen simulation directory
-[[ -d $RODIR ]] && { rm -rv $CurrDir; mkdir -v $CurrDir; }
-=======
 RODIR=../../iter0
 
 CurrDir="$RODIR/beam$E1"
 # freshen simulation directory
 [[ -d $RODIR ]] && { \rm -rv $CurrDir; mkdir -v $CurrDir; }
->>>>>>> eb95003423a2db072bf674fa9aeb450e184846d3
 
 BMlog=$RODIR/Beams.log
 TCconfig=dir.input/DATCAR
@@ -63,21 +51,14 @@ PrecFN="$CurrDir/dir.input/precinput.dat"
   flux=$(echo "scale=4; $flux0 / 0.5 / $Esum / $dE" | bc) 
 
   #get 'padding' so that beams are truncated correctly in energy
-<<<<<<< HEAD
-  pr=$pr1 #previous?
-  dElow=$(echo "$E1 - $pr" | bc)
-  Elow=$(echo "scale=4; $E1 - 0.5 * $dElow" | bc)
-  ne=$pr2  #next?
-=======
   pr=$pr1
   dElow=$(echo "$E1 - $pr" | bc)
   Elow=$(echo "scale=4; $E1 - 0.5 * $dElow" | bc)
-  ne=$pr2 
->>>>>>> eb95003423a2db072bf674fa9aeb450e184846d3
+  ne=$pr2
   dEhigh=$(echo "$E2 - $ne" | bc)
   Ehigh=$(echo "scale=4; $E2 - 0.5 * $dEhigh" | bc)
 
-[[ $DebugMsg -ne 0 ]] && echo $E1 $E2 $dE $Esum $flux $pr $dElow $Elow $ne $dEhigh $Ehigh 
+[[ $DebugMsg -ne 0 ]] && echo "$E1 $E2 $dE $Esum $flux $pr $dElow $Elow $ne $dEhigh $Ehigh"
 
   #generate TRANSCAR input file for this beam
   ThisPrecParam="$tstart\\n$Elow $flux\\n$Ehigh -1.0\\n$tfin\\n-1.0 -1.0"
@@ -105,9 +86,9 @@ PrecFN="$CurrDir/dir.input/precinput.dat"
 
 }
 
-teea () 
-{ 
-tee --append "$1" 
+teea ()
+{
+tee --append "$1"
 }
 
 

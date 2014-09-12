@@ -16,7 +16,7 @@ E2=$2
 pr1=$3
 pr2=$4
 
-RODIR=../../iter0
+RODIR=../../matt2013
 
 CurrDir="$RODIR/beam$E1"
 # freshen simulation directory
@@ -94,5 +94,5 @@ tee --append "$1"
 
 export -f runBeams
 export -f teea
-
-parallel --jobs 4 --colsep ',' runBeams :::: $BeamEnergyTableFN
+# jobs is equal to number of CPU cores by default
+parallel --eta --progress --joblog parallellog --colsep ',' runBeams :::: $BeamEnergyTableFN

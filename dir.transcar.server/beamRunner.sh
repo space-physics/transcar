@@ -64,7 +64,7 @@ PrecFN="$CurrDir/dir.input/precinput.dat"
   echo; echo "output to $CurrDir"
 
   #Run the sim
-  (cd $exedir && exec ./run_transcar.sh) $CurrDir
+  (cd $exedir && exec ./run_transcar.sh $CurrDir)
 
   #error trap
   LastErr=$?

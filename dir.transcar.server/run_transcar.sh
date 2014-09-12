@@ -62,7 +62,7 @@ cp -v transconvec_13.op.out "$ODIR/"
 
 
 # exec used to reduce memory usage http://stackoverflow.com/questions/786376
- (cd $ODIR && exec ./transconvec_13.op.out) |& > $ODIR/TranscarErrors.txt
+ (cd $ODIR && exec ./transconvec_13.op.out) >>$ODIR/TranscarErrors.txt 2>&1
     # egrep -i --line-buffered -e "Warning|Error|felin.f|trans.f|Input eV/cm2/s" | \
       
 

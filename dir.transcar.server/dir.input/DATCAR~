@@ -1,17 +1,17 @@
 2					(kiappel, INTEGER)
 90kmmaxpt123.dat                                input file (initial ionospheric conditions)
 1.					time step (seconds) (REAL)
-30	.				number of seconds between fluid code outputs (seconds, REAL)
-2013090					date of simulation (YYYYDDD)
-32400.					UT start time for simulation (seconds)
-60.					duration of run (seconds)
+30					number of seconds between fluid code outputs (seconds, REAL)
+2004022					date of simulation (YYYYDDD)
+21.					UT start time for simulation (seconds)
+34200.					duration of run (seconds)
 2					jpreci, precipation type (see table below, INTEGER)
-65.12,-147.43    				location of simulation, geodetic latitude,longitude
-0.					duration of convection (in seconds) before the reference (<= 0, we do not follow the field lines)  (tempsconv_1, REAL)
-0.					duration of convection (in seconds) before the reference (<= 0, we do not follow the field lines)  (tempsconv, REAL)
-0					time interval (seconds) between two tubes (step,REAL)
-1.					time step between two calls to kinetic code (REAL)
-0.					transport (m / s) induced along the field line (vparaB, REAL)
+78.,16.    				location of simulation, geodetic latitude,longitude
+0.					duree de la convection (en secondes) avant la reference (<=0, on ne suit pas les lignes de champ) (tempsconv_1, REAL)
+0.					duree de la convection (en secondes) apres la reference (<=0, on ne suit pas les lignes de champ) (tempsconv, REAL)
+0					intervalle de temps (en secondes) separant deux tubes (step,REAL)
+30					time step between two calls to kinetic code (REAL)
+0.					transport (en m/s) induit le long de la ligne de champ (vparaB, REAL)
 126.0					f10.7 index
 107.6					f10.7 3-month average centered on current month
 63.6					ap index
@@ -22,11 +22,11 @@
 1.					N correction factor (REAL)
 1.					H correction factor (REAL)
 -1.e-4					topside electron heat flux (mW/m^2, REAL)
-precinput.dat   	                electron precipitation distribution file (energy (eV) in first column, number flux (cm^-2 s^-1 eV^-1 sr^-1) in second column)
-1					precint, precipation energy interpolation (see table below, INTEGER)
-1					precext, precipation energy extrapolation (see table below, INTEGER)
-32420.					precipitation start time (seconds from day start)
-32440.					precipitation end time (seconds from day start)
+SERSIO.30s.v2.dat	                               electron precipitation distribution file (energy (eV) in first column, number flux (cm^-2 s^-1 eV^-1 sr^-1) in second column)
+0					precint, precipation energy interpolation (see table below, INTEGER)
+0					precext, precipation energy extrapolation (see table below, INTEGER)
+32421.					precipitation start time (seconds)
+33081.					precipitation end time (seconds)
 
 
 

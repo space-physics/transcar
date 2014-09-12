@@ -4,7 +4,7 @@
 30					number of seconds between fluid code outputs (seconds, REAL)
 2004022					date of simulation (YYYYDDD)
 21.					UT start time for simulation (seconds)
-34200.					duration of run (seconds)
+200.					duration of run (seconds)
 2					jpreci, precipation type (see table below, INTEGER)
 78.,16.    				location of simulation, geodetic latitude,longitude
 0.					duree de la convection (en secondes) avant la reference (<=0, on ne suit pas les lignes de champ) (tempsconv_1, REAL)
@@ -25,8 +25,8 @@
 SERSIO.30s.v2.dat	                               electron precipitation distribution file (energy (eV) in first column, number flux (cm^-2 s^-1 eV^-1 sr^-1) in second column)
 0					precint, precipation energy interpolation (see table below, INTEGER)
 0					precext, precipation energy extrapolation (see table below, INTEGER)
-32421.					precipitation start time (seconds)
-33081.					precipitation end time (seconds)
+120.					precipitation start time (seconds)
+180.					precipitation end time (seconds)
 
 
 

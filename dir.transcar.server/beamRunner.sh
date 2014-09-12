@@ -7,7 +7,7 @@ E2=$2
 pr1=$3
 pr2=$4
 
-RODIR=../../matt2013
+RODIR=~/matt2013
 exedir=~/transcar/dir.transcar.server
 
 CurrDir="$RODIR/beam$E1"

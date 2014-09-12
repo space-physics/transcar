@@ -15,5 +15,5 @@ tee -a "$1"
 
 export -f teea
 # jobs is equal to number of CPU cores by default
-parallel -S labHST0 \
+parallel -S labHST0 -S labHST1 \
     --eta --progress --joblog parallellog --colsep ',' transcar/dir.transcar.server/beamRunner.sh :::: $BeamEnergyTableFN

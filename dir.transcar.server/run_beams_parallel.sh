@@ -9,7 +9,7 @@ BeamEnergyTableFN=BT_E1E2prev.csv
 
 teea ()
 {
-tee --append "$1"
+tee -a "$1"
 }
 
 

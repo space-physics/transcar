@@ -30,7 +30,7 @@ mkdir -pv $CurrDir/dir.input $CurrDir/dir.output \
           $CurrDir/dir.data/dir.linux/dir.projection \
           $CurrDir/dir.data/dir.linux/dir.cine/dir.seff \
           $CurrDir/dir.data/dir.linux/dir.cine/dir.euvac \
-          |& teea $BMlog
+          |& tee --append $BMlog
 
 PrecFN="$CurrDir/dir.input/precinput.dat"
 
@@ -69,9 +69,9 @@ PrecFN="$CurrDir/dir.input/precinput.dat"
   #error trap
   LastErr=$?
   case "$LastErr" in
-  0) echo "run_beams: Energy $E1 completed in $CurrDir" | teea $BMlog;;
-  98) echo "run_beams: Skipped energy $E1 in $CurrDir" | teea $BMlog;;
-  99) echo "run_beams: Aborting run_beams of $CurrDir" | teea $BMlog; exit 99;;
-  126) echo "run_beams: Transconvec was not given exec permissions" | teea $BMlog; exit 126;;
-  *) echo "run_beams: Transcar exit code $LastErr" |  teea $BMlog; exit $LastErr;;
+  0) echo "run_beams: Energy $E1 completed in $CurrDir" | tee -a $BMlog;;
+  98) echo "run_beams: Skipped energy $E1 in $CurrDir" | tee -a $BMlog;;
+  99) echo "run_beams: Aborting run_beams of $CurrDir" | tee -a $BMlog; exit 99;;
+  126) echo "run_beams: Transconvec was not given exec permissions" | tee -a $BMlog; exit 126;;
+  *) echo "run_beams: Transcar exit code $LastErr" |  tee -a $BMlog; exit $LastErr;;
   esac

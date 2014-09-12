@@ -1,0 +1,44 @@
+idess =-1 no plot (input parameters).
+idess = 0 metacode created, without interactive session.
+idess = 1 metacode not created, but screened plots.
+idess = 2 metacode created, with interactive session.
+1 = Atmosphere neutre
+2 = production primaire
+3 = flux solaire min, max, interpole [cm-2.s-1]
+4 = flux solaire interpole [cm-2.s-1.nm-1]
+5 = Densite electronique
+6 = Sections efficaces
+7 = Productions du continuum et des raies discretes.
+8 = Production/eV en fonction de l'energie
+   1     2     3     4     5     6     7     8
+  -1    -1    -1    -1    -1    -1    -1    -1
+ iprt(1)  = 1 if print of Tobiska's output (solar flux)
+ iprt(2)  = 1 if print wavelength, energies, solar fluxes
+ iprt(3)  = 1 if print cross sections (on a 39 points energy grid).
+ iprt(4)  = 1 if print Ionisation  potentials (Threshold, [eV]).
+ iprt(5)  = 1 if print Normalized branching ratio.
+ iprt(6)  = 1 if print Neutral atmosphere.
+ iprt(7)  = 1 if print Comparison 1/cos(chi) and Chapman's function.
+ iprt(8)  = 1 if print Electron and ion production(/cm3).
+ iprt(9)  = 1 if print Production (/cm3),at 5 alt. and each energy.
+ iprt(10) = 1 if print Produced Photoel. (/cm3.sec.eV) at each altitude
+ iprt(11) = 1 if print Electron and ionized neutral production(/cm3).
+ iprt(12) = 1 if print of ion and electron densities
+ 1   2   3   4   5   6   7   8   9  10  11  12
+-1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1
+fcwave = Fudge factor to multiply the flux values below 257 angstrom.
+1.
+iflux = 0 --> photon flux computed from f107.
+      = 1 --> photon flux solar min with requiered f107.
+      = 2 --> photon flux solar max with requiered f107.
+      = 3 --> photon flux from Tobiska for given date (68172 --> 88366)
+      = 4 --> photon flux from EUVAC
+4
+Cross section set ? 1 = Torr et Torr, 1985, 2 = Fennelly et Torr, 1992
+1		2 conseille pour le transport
+computation mode :
+1 --> computation on 39 points
+2 --> solar continuum divided in about 1 eV boxes.
+1		1 conseille pour le transport
+Chapman function ? 0 --> full 1--> Smith 1974, 2-->Green et al 1964
+0

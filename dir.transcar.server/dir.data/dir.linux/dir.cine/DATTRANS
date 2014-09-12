@@ -1,0 +1,56 @@
+IPRT allows to turn individual print statements on or off
+(1): input spectrum		(2): energy deposition and error
+(3): In. and El. cross sections (4): Computed electron density
+(5): Detailled cross sections  	(6): lossfunction
+(7): Hem. fluxes (fhemtot)	(8): qntsty at alt izplt
+(9): Up/Dwn input/output prec.	(10): model atmosphere and column dens.
+(11): fhemtot vs source 	(12): integrated int. by E-sections
+(13): integrated flux		(14): ambient electron heating
+(15): energy dep in neutals	(16): excitation rates
+(17): MSTREAM output (short)	(18): MSTREAM output (long)
+(19): Prod.ions prim,.sec,rap.  (20): optical emissions
+(21): Primary production 	(22): Detailled primary production 
+(23): conductivities    	(24): Detailled conductivities
+(25): Moments suprathermiques
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26
+0 0 0 0 0 0 0 0 0  0  0  0  0  0  0  0  0  0  0  1  0  0  0  0  0  0
+MCOUNT  : print every MCOUNT altitude step
+(1) : intensity/density	  (2) : energy deposition
+(3) : excitation rates	  (4) : electron heating    (5) Primary prod.
+1   1  1  1   1
+1     1	  ncountE,ncountA  (step for printing)
+Metacodes are in /cepax5/data/lilen/dir.iono/dir.transcar/*.ps files
+idess=-1 no plot 
+idess= 0 metacode created, without interactive session.
+idess= 1 metacode not created, but screened interactive plot.
+idess= 2 metacode created, with interactive session.
+idess(1)  --> header					-->entrees.ps
+idess(2)  --> atmosphere 				-->atmos//knm.ps
+idess(3)  --> flux prim,hem. tot,totd,totu = f( E)   	-->fluxe.ps
+idess(4)  --> Intensity = f(mu)     			-->fluxa.ps
+idess(5)  --> flux prim,hem. tot,totd,totu = f(z)	-->fluxz.ps   
+idess(6)  --> Hemispherical total flux = f(z) (zoom)	-->fluxzz.ps
+idess(7)  --> flux totd,totu a zmax avec entrees. 	-->fluxtop.ps
+idess(8)  --> production 				-->prod.ps	
+idess(9)  --> Qe					-->heating.ps
+idess(10) --> Ne					-->Ne.ps
+idess(11) --> conductivites (z)				-->cond.ps
+idess(12) --> Range computation			  	-->range.ps
+idess(13) --> Suprathermal momentums			-->moments.ps
+ 1   2   3   4   5   6   7   8   9  10   11   12   13
+-1  -1  -1  -1  -1  -1  -1  -1  -1  -1   -1   -1   -1
+izplt(1-4): altitude indices for plots of energy distribution.         
+ieplt(1-4): energy indices for plots of angle distribution.      
+eplt(1-4) : energies (eV) for plots of altitude distribution.      
+          10      38      65        99        izplt
+          3       50     150       200        ieplt
+          10.   1000.   2000.     3000.        eplt
+  1       linear   : 1 if linear energy interpolation      RECOMMENDED 0
+  1	  lporter  : 0 if porter phase fct used at low E   RECOMMENDED 1
+  1       ldeltam  : 1 if Wiscombe's delta-M method	   RECOMMENDED 1
+  1   	  1 if lamber   				   RECOMMENDED 1
+  1 	  onlyfl   					   RECOMMENDED 1
+  1 	  exorc   					   RECOMMENDED 1
+  0 	  usrang   					   RECOMMENDED 0
+  1 	  usrtau   					   RECOMMENDED 1
+1 	  Nu(in) pour cond : 1=Schunk&Nagy 78, 0=Risbeth&Garriot 1969

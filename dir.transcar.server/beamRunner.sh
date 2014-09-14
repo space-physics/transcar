@@ -1,21 +1,19 @@
 #!/bin/bash
 
 DebugMsg=0
-set +e #don't stop on any error, so that return codes from transcar will work
-E1=$1
-E2=$2
-pr1=$3
-pr2=$4
-
-RODIR=~/matt2013
-exedir=~/transcar/dir.transcar.server
+#set +e #don't stop on any error, so that return codes from transcar will work
+RODIR=$1
+E1=$2
+E2=$3
+pr1=$4
+pr2=$5
 
 CurrDir="$RODIR/beam$E1"
 # freshen simulation directory
 [[ -d $RODIR ]] && { \rm -rv $CurrDir; mkdir -v $CurrDir; }
 
 BMlog=$RODIR/Beams.log
-TCconfig=$exedir/dir.input/DATCAR
+TCconfig=dir.input/DATCAR
 
 flux0=10016000000.0 #FIXME where does this come from?
 
@@ -66,7 +64,8 @@ PrecFN="$CurrDir/dir.input/precinput.dat"
   echo; echo "output to $CurrDir"
 
   #Run the sim
-  (cd $exedir && exec ./run_transcar.sh $CurrDir)
+  #(cd $exedir && exec ./run_transcar.sh $CurrDir)
+  ./run_transcar.sh $CurrDir
 
   #error trap
   LastErr=$?

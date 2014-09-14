@@ -1,6 +1,6 @@
 #!/bin/bash
-# upgraded to Bash 4 by Michael Hirsch 2014
-# original by Matt Zettergren 2013
+# Michael Hirsch 2014
+# using GNU parallel 20130922
 # this script for loops transcar, making a new precinput.dat each time for the 
 # respective beam energies.
 # this program is meant to be run from dir.transcar.server directory- cd there first

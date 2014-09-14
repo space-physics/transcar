@@ -56,7 +56,7 @@ PrecFN="$CurrDir/dir.input/precinput.dat"
 
   #generate TRANSCAR input file for this beam
   ThisPrecParam="$tstart\\n$Elow $flux\\n$Ehigh -1.0\\n$tfin\\n-1.0 -1.0"
-  echo "writing $ThisPrecParam to $PrecFN"
+  #echo "writing $ThisPrecParam to $PrecFN"
   echo -e "$ThisPrecParam" > "$PrecFN" # the -e option was in the original script
   
   echo "transconvec_13.op is running for a differential number flux of "

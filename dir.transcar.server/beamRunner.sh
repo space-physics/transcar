@@ -10,7 +10,7 @@ pr2=$5
 
 CurrDir="$RODIR/beam$E1"
 # freshen simulation directory
-[[ -d $RODIR ]] && { \rm -rv $CurrDir; mkdir -v $CurrDir; }
+[[ -d $CurrDir ]] && { \rm -rv $CurrDir; mkdir -v $CurrDir; }
 
 BMlog=$RODIR/Beams.log
 TCconfig=dir.input/DATCAR

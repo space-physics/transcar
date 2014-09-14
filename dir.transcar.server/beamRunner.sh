@@ -30,7 +30,7 @@ mkdir -pv $CurrDir/dir.input $CurrDir/dir.output \
           $CurrDir/dir.data/dir.linux/dir.projection \
           $CurrDir/dir.data/dir.linux/dir.cine/dir.seff \
           $CurrDir/dir.data/dir.linux/dir.cine/dir.euvac \
-          |& tee --append $BMlog
+          >>$BMlog 2>&1
 
 PrecFN="$CurrDir/dir.input/precinput.dat"
 
@@ -56,13 +56,13 @@ PrecFN="$CurrDir/dir.input/precinput.dat"
   ThisPrecParam="$tstart\\n$Elow $flux\\n$Ehigh -1.0\\n$tfin\\n-1.0 -1.0"
   #echo "writing $ThisPrecParam to $PrecFN"
   echo -e "$ThisPrecParam" > "$PrecFN" # the -e option was in the original script
-  
+if [[ $DebugMsg -ne 0 ]]; then  
   echo "transconvec_13.op is running for a differential number flux of "
   echo "$flux eV cm-2 s-1 sR-1"
   echo "in the energy range $E1 to $E2 eV"
   echo "Starting at t=$tstart sec. until t=$tfin sec."
   echo; echo "output to $CurrDir"
-
+fi
   #Run the sim
   #(cd $exedir && exec ./run_transcar.sh $CurrDir)
   ./run_transcar.sh $CurrDir

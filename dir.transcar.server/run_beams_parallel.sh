@@ -18,7 +18,15 @@
 # tested this yet and wanted to avoid a mishap.
 
 BeamEnergyTableFN=BT_E1E2prev.csv
+RODIR=../matt2013local
+exedir=transcar/2014-04branch/dir.transcar.server
 
+# purge output directory
+[[ -z $RODIR ]] && find $RODIR -type d -delete
+
+#-S labHST0,labHST1
 # jobs is equal to number of CPU cores by default
-parallel -S labHST0 -S labHST1 \
-    --eta --progress --joblog parallellog --colsep ',' transcar/dir.transcar.server/beamRunner.sh :::: $BeamEnergyTableFN
+parallel -S labHST0,labHST1 --return $RODIR --cleanup \
+    --nice 18 --eta --progress --joblog parallellog --colsep ',' \
+    --workdir $exedir \
+    "./beamRunner.sh" $RODIR :::: $BeamEnergyTableFN

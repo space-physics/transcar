@@ -19,14 +19,17 @@
 
 BeamEnergyTableFN=BT_E1E2prev.csv
 RODIR=../matt2013local
-exedir=transcar/2014-04branch/dir.transcar.server
+exedir=transcar/dir.transcar.server
 
 # purge output directory
-[[ -z $RODIR ]] && find $RODIR -type d -delete
-
+[[ -d $RODIR ]] && \rm -r $RODIR
+ssh labHST0 -t "[[ -d $exedir/$RODIR ]] && rm -r $exedir/$RODIR"
+ssh labHST1 -t "[[ -d $exedir/$RODIR ]] && rm -r $exedir/$RODIR"
+exit 0
 #-S labHST0,labHST1
 # jobs is equal to number of CPU cores by default
-parallel -S labHST0,labHST1 --return $RODIR --cleanup \
-    --nice 18 --eta --progress --joblog parallellog --colsep ',' \
+# note --cleanup doesn't work with parallel 20130922 b/c we're returning a whole directory tree (no rm -r in --cleanup)
+parallel -S labHST0,labHST1 --return $RODIR \
+    --nice 18 --halt 2 --eta --progress --joblog parallellog --colsep ',' \
     --workdir $exedir \
     "./beamRunner.sh" $RODIR :::: $BeamEnergyTableFN

@@ -26,7 +26,7 @@ TClog=$ODIR/transcarBash.log
 #TCoutFN=(transcar_output emissions.dat ediffnumflux.dat)
 
 #copy transcar input
-cp -v -t "$ODIR/dir.input/" dir.input/DATCAR dir.input/90kmmaxpt123.dat >>$TClog 2>&1
+cp -v -t "$ODIR/dir.input/" dir.input/DATCAR dir.input/90kmmaxpt123.dat dir.input/90kmmaxpt.dat >>$TClog 2>&1
 cp -v -t "$ODIR/dir.data/" dir.data/type >>$TClog 2>&1
 cp -v -t "$ODIR/dir.data/dir.linux/dir.geomag/" dir.data/dir.linux/dir.geomag/data_geom.bin >>$TClog 2>&1
 cp -v -t "$ODIR/dir.data/dir.linux/dir.geomag/" dir.data/dir.linux/dir.geomag/igrf90.dat >>$TClog 2>&1

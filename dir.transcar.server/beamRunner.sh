@@ -16,7 +16,7 @@ mkdir -p $CurrDir
 BMlog=$RODIR/Beams.log
 TCconfig=dir.input/DATCAR
 
-flux0=10016000000.0 #FIXME where does this come from?
+flux0=70114000000.0 #FIXME where does this come from?
 
 tstart=$(grep "precipitation start time (seconds)" $TCconfig | cut -f1)
 tfin=$(grep "precipitation end time (seconds)" $TCconfig | cut -f1)

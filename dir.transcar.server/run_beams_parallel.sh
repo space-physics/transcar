@@ -14,7 +14,7 @@
 # bring back simulation output to your PC.
 
 BeamEnergyTableFN=BT_E1E2prev.csv
-RODIR=../matt2013local
+RODIR=../matt2013b
 exedir=transcar/dir.transcar.server
 
 remotes=(labHST0 labHST1)
@@ -38,11 +38,7 @@ nice parallel \
     "./beamRunner.sh" $RODIR :::: $BeamEnergyTableFN
 
 #-- check results for proper simulation finish
-# not possible using find/tail/grep without for loop -- would need gawk -- easier to do this
-for f in $(find $RODIR -mindepth 2 -maxdepth 2 -type f -name "TranscarErrors.txt"); do
-outcome=$(tail -n1 $f)
-[[ $outcome != *fin\ normale ]] && echo "abnormal completion in $f"
-done
+./checkoutcome.sh $RODIR
 
 
 

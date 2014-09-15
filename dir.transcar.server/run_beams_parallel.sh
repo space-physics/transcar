@@ -38,9 +38,11 @@ nice parallel \
     "./beamRunner.sh" $RODIR :::: $BeamEnergyTableFN
 
 #-- check results for proper simulation finish
-beamlist=$(find $RODIR -mindepth 1 -type d)
-for beam in "${beamlist[@]}"; do
-    outcome=$(tail -n1 $beam/TranscarErrors.txt)
-    [[ $outcome != *fin normale* ]] && echo "abnormal finish for $beam"
+# not possible using find/tail/grep without for loop -- would need gawk -- easier to do this
+for f in $(find $RODIR -mindepth 2 -maxdepth 2 -type f -name "TranscarErrors.txt"); do
+outcome=$(tail -n1 $f)
+[[ $outcome != *fin\ normale ]] && echo "abnormal completion in $f"
 done
+
+
 

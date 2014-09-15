@@ -8,7 +8,7 @@ runTranscar()
 {
 [[ -z $1 ]] && { echo "error: must specify root directory e.g. ./run_beams ../BT"; exit 1; } 
 
-set +e #don't stop on error unless I direct it to
+#set +e #don't stop on error unless I direct it to
 
 #not necessary
 #http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in 

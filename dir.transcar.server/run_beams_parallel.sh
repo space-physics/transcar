@@ -17,15 +17,30 @@ BeamEnergyTableFN=BT_E1E2prev.csv
 RODIR=../matt2013local
 exedir=transcar/dir.transcar.server
 
+remotes=(labHST0 labHST1)
+
+#-------------
+remjp=$(IFS=,; echo "${remotes[*]}") #puts array into comma separated string for GNU parallel
+
 # purge output directory
 [[ -d $RODIR ]] && \rm -r $RODIR
-ssh labHST0 -t "[[ -d $exedir/$RODIR ]] && rm -r $exedir/$RODIR"
-ssh labHST1 -t "[[ -d $exedir/$RODIR ]] && rm -r $exedir/$RODIR"
+for remote in "${remotes[@]}"; do
+    ssh $remote -t "[[ -d $exedir/$RODIR ]] && rm -r $exedir/$RODIR"
+done
 
 #-S labHST0,labHST1
 # jobs is equal to number of CPU cores by default
 # note --cleanup doesn't work with parallel 20130922 b/c we're returning a whole directory tree (no rm -r in --cleanup)
-parallel -S labHST0,labHST1 --return $RODIR \
+nice parallel \
+    -S $remjp --return $RODIR \
     --nice 18 --halt 2 --eta --progress --joblog parallellog --colsep ',' \
     --workdir $exedir \
     "./beamRunner.sh" $RODIR :::: $BeamEnergyTableFN
+
+#-- check results for proper simulation finish
+beamlist=$(find $RODIR -mindepth 1 -type d)
+for beam in "${beamlist[@]}"; do
+    outcome=$(tail -n1 $beam/TranscarErrors.txt)
+    [[ $outcome != *fin normale* ]] && echo "abnormal finish for $beam"
+done
+

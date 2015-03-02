@@ -788,7 +788,7 @@ C[      Normalization coefficients initialisation
         prec_fname=chemin(1:lpath)//'dir.input/'
      &                  //prec_fname(1:lenc(prec_fname))
         prec_fname=prec_fname(1:lenc(prec_fname))
-print *, 'reading PRECIPITATION parameters from file: ',prec_fname
+ print *, 'reading PRECIPITATION parameters from file: ',prec_fname
         open(313,file=prec_fname)
  
         ioerr=1; ntimeser=1; timestat=1;

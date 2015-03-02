@@ -14,29 +14,37 @@
 # bring back simulation output to your PC.
 
 BeamEnergyTableFN=BT_E1E2prev.csv
-RODIR=../matt2013b
+RODIR=../matt2013interp
 exedir=transcar/dir.transcar.server
-
+localonly=1
 remotes=(labHST0 labHST1)
 
-#-------------
-remjp=$(IFS=,; echo "${remotes[*]}") #puts array into comma separated string for GNU parallel
+#------- start code --------------
+if [[ $localonly -eq 0 ]]; then
+  remjp=$(IFS=,; echo "${remotes[*]}") #puts array into comma separated string for GNU parallel
 
-# purge output directory
-[[ -d $RODIR ]] && \rm -r $RODIR
-for remote in "${remotes[@]}"; do
-    ssh $remote -t "[[ -d $exedir/$RODIR ]] && rm -r $exedir/$RODIR"
-done
+  # purge output directory
+  [[ -d $RODIR ]] && \rm -r $RODIR
+  for remote in "${remotes[@]}"; do
+      ssh $remote -t "[[ -d $exedir/$RODIR ]] && rm -r $exedir/$RODIR"
+  done
 
-#-S labHST0,labHST1
 # jobs is equal to number of CPU cores by default
 # note --cleanup doesn't work with parallel 20130922 b/c we're returning a whole directory tree (no rm -r in --cleanup)
-nice parallel \
+ 
+  parallel \
     -S $remjp --return $RODIR \
     --nice 18 --halt 2 --eta --progress --joblog parallellog --colsep ',' \
     --workdir $exedir \
     "./beamRunner.sh" $RODIR :::: $BeamEnergyTableFN
 
+else #local only
+  parallel \
+    --nice 18 --halt 2 --eta --progress --joblog parallellog --colsep ',' \
+    --workdir $exedir \
+    "./beamRunner.sh" $RODIR :::: $BeamEnergyTableFN
+
+fi
 #-- check results for proper simulation finish
 ./checkoutcome.sh $RODIR
 

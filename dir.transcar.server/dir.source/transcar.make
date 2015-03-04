@@ -18,10 +18,10 @@
 #OPTIONS=-w90 -assume byterecl -axW -O3
 #OPTIONS=-w90 -assume byterecl -axW
 
-F77=ifort #gfortran #ifort
-F90=ifort #gfortran #ifort
-OPTIONS=-assume byterecl -O3 -mtune=native -march=native  #for ifort
-#OPTIONS=-frecord-marker=4 -O3 -mtune=native -march=native #for gfortran 
+F77=gfortran #ifort
+F90=gfortran #ifort
+#OPTIONS=-assume byterecl -O3 -mtune=native -march=native  #for ifort
+OPTIONS=-frecord-marker=4 -O3 -mtune=native -march=native -std=legacy #for gfortran 
 FLAG_COMPIL= $(OPTIONS) -I$(INCLUDE) -c
 FLAG_LIEN= $(OPTIONS) -I$(INCLUDE) -o
 

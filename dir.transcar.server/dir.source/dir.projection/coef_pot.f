@@ -1,9 +1,11 @@
 	subroutine coef_pot(iyd,tu,kp,ndeg,mdeg,phipot,
      &		            Lmin,Lmax,latequi,ddp,ierr)
+Cf2py intent(in) iyd,tu,kp
+Cf2py intent(out) ndeg,mdeg,phipot,Lmin,Lmax,latequi,ddp,ierr
 	
 	implicit none
 
-        include 'TRANSPORT.INC'
+        include '../dir.include/TRANSPORT.INC'
 
         integer npt,ndeg0,mdeg0,ikp,len_coef,len_rec,len_buf,irec
         parameter(ndeg0=5,mdeg0=5,npt=(ndeg0+1)*(2*mdeg0+1))

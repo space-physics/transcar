@@ -2,6 +2,9 @@ subroutine potentiel(iyd,tu,kp,lon,lat,Eest,Enord,pot,ddp)
 	
 implicit none
 
+!f2py intent(in) :: iyd,tu,kp,lon,lat
+!f2py intent(out) :: Eest,Enord,pot, ddp
+
 integer,parameter :: npt=10000
 
 integer:: iyd,ndeg,mdeg,ierr,i,j

@@ -1,6 +1,8 @@
 	subroutine geo2mag(latgeo,longeo,latmag,lonmag,dlon)
 
 	implicit none
+Cf2py intent(in) latgeo, longeo
+Cf2py intent(out) latmag, lonmag, dlon
 
  
 c	routine de conversion des coordonnees geographiques

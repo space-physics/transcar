@@ -2,6 +2,8 @@ subroutine val_fit(lon,lat,ndeg,mdeg,coef_psi,latmin,latmax,latequi,psi,psi_est,
 
 implicit none
 
+!f2py intent(in) :: lon,lat,ndeg,mdeg,coef_psi,latmin,latmax,latequi
+!f2py intent(out):: psi,psi_est,psi_nord
 
 Integer,parameter::	npt=100000
 Real*8,parameter ::	pi=3.14159265358979d0,deg2rad=1.745329251994330d-2,	&

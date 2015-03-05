@@ -856,7 +856,7 @@ C[      Normalization coefficients initialisation
 	nrec_lec=0
 	nrec_ecr=0
 	ierr=0
-	do while (itube.le.ntubmax)	! debut de la boucle sur les lignes de champs
+	do while (itube.le.ntubmax)	! debut de la boucle sur les lignes de champs "beginning of the loop on the field lines"
 
 	  itube=itube+1
           do i_position=1,nb_position             ! Modif DA 0202 2001

@@ -1,8 +1,11 @@
 function [ne,vi,Ti,Te,time] = read_fluidmod(...
                         datadir,fluidfile,outfile,writeMat) %#ok<STOUT>
-% this function writes plasma.met
+% this function writes plasma.mat based on input file transcar_output
 %
 % the n1 etc. variable comes from read_tra.m -- a scary script indeed -- M.H.
+%
+% example:
+% [ne,vi,Ti,Te,time] = read_fluidmod('~/transcar/2014-04branch/matt2013local/beam3279.5/','transcar_output')
 data_type='tra';
 data_path=datadir;
 file=fluidfile;

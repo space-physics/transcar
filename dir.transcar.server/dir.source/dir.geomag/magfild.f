@@ -1,5 +1,8 @@
       subroutine magfild(latgeo,longeo,zref,year,Bmag,dipangle,orient)
 
+Cf2py intent(in) latgeo, longeo, zref, year
+Cf2py intent(out) Bmag, dipangle, orient
+
       real 		latgeo,longeo
       COMMON/GENER/	UMR,ERA,AQUAD,BQUAD
 	logical flginit

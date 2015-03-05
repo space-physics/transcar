@@ -1,6 +1,9 @@
 	subroutine convec(iyd,tu,kp,dlongeo,dlatgeo,
      &			  dlonmag,dlatmag,dlonref,dt,psi0,flgpot)
 	implicit none
+C Michael Hirsch, these intents have NOT been verified!
+Cf2py intent(in) iyd, tu, kp, dlongeo, dlatgeo, dlonmag, dlatmag, dlonref, dt, flgpot
+Cf2py intent(out) psi0
 
 	real*8 dlonmlt,lat,lon,dlat,dlon,dlon1,dlat1
 	real*8 tu,dt

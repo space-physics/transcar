@@ -1129,7 +1129,7 @@ c determination du point de depart de la convection
 	endif
 
 
-c initialisation du temps et ouverture du fichier
+c initialisation du temps et ouverture du fichier "initialization time and opening the file"
 
 	  tempsint=0.d0
 	  tempsort=0.d0
@@ -1204,7 +1204,7 @@ c initialisation du temps et ouverture du fichier
 
 
 c
-c definitions des parametres initiaux et sauvegarde initiale
+c definitions des parametres initiaux et sauvegarde initiale "definitions of initial parameters and initial backup"
 c
 
 	flagatmos=.true.

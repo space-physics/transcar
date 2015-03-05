@@ -16,6 +16,9 @@ runTranscar()
 
 ODIR=$1
 TClog=$ODIR/transcarBash.log
+TCconfig=dir.input/DATCAR
+msisinitfn=$(grep "input file (initial ionospheric conditions)" $TCconfig | cut -d" " -f1)
+echo "using msis init file $msisinitfn as specified in $TCconfig">>$TClog 2>&1
 
 #check for unused output dir
 [[ ! -d "$ODIR" ]] && { echo "Energy directory $ODIR does not exist" | tee -a $TClog; exit 98; }
@@ -26,22 +29,14 @@ TClog=$ODIR/transcarBash.log
 #TCoutFN=(transcar_output emissions.dat ediffnumflux.dat)
 
 #copy transcar input
-cp -v -t "$ODIR/dir.input/" dir.input/DATCAR dir.input/90kmmaxpt123.dat dir.input/90kmmaxpt.dat >>$TClog 2>&1
+cp -v -t "$ODIR/dir.input/" $TCconfig dir.input/$msisinitfn >>$TClog 2>&1
 cp -v -t "$ODIR/dir.data/" dir.data/type >>$TClog 2>&1
-cp -v -t "$ODIR/dir.data/dir.linux/dir.geomag/" dir.data/dir.linux/dir.geomag/data_geom.bin >>$TClog 2>&1
-cp -v -t "$ODIR/dir.data/dir.linux/dir.geomag/" dir.data/dir.linux/dir.geomag/igrf90.dat >>$TClog 2>&1
-cp -v -t "$ODIR/dir.data/dir.linux/dir.geomag/" dir.data/dir.linux/dir.geomag/igrf90s.dat >>$TClog 2>&1
+cp -v -t "$ODIR/dir.data/dir.linux/dir.geomag/" dir.data/dir.linux/dir.geomag/{data_geom.bin,igrf90.dat,igrf90s.dat} >>$TClog 2>&1
 cp -v -t "$ODIR/dir.data/dir.linux/dir.projection/" dir.data/dir.linux/dir.projection/varpot.dat >>$TClog 2>&1
 #cp -v -t "$ODIR/dir.data/dir.linux/dir.projection/" dir.data/dir.linux/dir.projection/varcourant.dat >>$TClog 2>&1  #makes program crash
-cp -v -t "$ODIR/dir.data/dir.linux/dir.cine/" dir.data/dir.linux/dir.cine/DATDEG >>$TClog 2>&1
-cp -v -t "$ODIR/dir.data/dir.linux/dir.cine/" dir.data/dir.linux/dir.cine/DATFEL >>$TClog 2>&1
-cp -v -t "$ODIR/dir.data/dir.linux/dir.cine/" dir.data/dir.linux/dir.cine/DATTRANS >>$TClog 2>&1
-cp -v -t "$ODIR/dir.data/dir.linux/dir.cine/" dir.data/dir.linux/dir.cine/FELTRANS >>$TClog 2>&1
-cp -v -t "$ODIR/dir.data/dir.linux/dir.cine/" dir.data/dir.linux/dir.cine/flux.flag >>$TClog 2>&1
+cp -v -t "$ODIR/dir.data/dir.linux/dir.cine/" dir.data/dir.linux/dir.cine/{DAT{DEG,FEL,TRANS},FELTRANS,flux.flag} >>$TClog 2>&1
 cp -v -t "$ODIR/dir.data/dir.linux/dir.cine/dir.euvac/" dir.data/dir.linux/dir.cine/dir.euvac/EUVAC.dat >>$TClog 2>&1
-cp -v -t "$ODIR/dir.data/dir.linux/dir.cine/dir.seff/" dir.data/dir.linux/dir.cine/dir.seff/crsb8 >>$TClog 2>&1
-cp -v -t "$ODIR/dir.data/dir.linux/dir.cine/dir.seff/" dir.data/dir.linux/dir.cine/dir.seff/crsphot1.dat >>$TClog 2>&1
-cp -v -t "$ODIR/dir.data/dir.linux/dir.cine/dir.seff/" dir.data/dir.linux/dir.cine/dir.seff/rdtb8 >>$TClog 2>&1
+cp -v -t "$ODIR/dir.data/dir.linux/dir.cine/dir.seff/" dir.data/dir.linux/dir.cine/dir.seff/{crsb8,crsphot1.dat,rdtb8} >>$TClog 2>&1
 
 #copy transcar itself
 cp -v transconvec_13.op.out "$ODIR/"

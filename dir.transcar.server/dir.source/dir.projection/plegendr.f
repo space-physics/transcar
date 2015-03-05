@@ -1,5 +1,7 @@
       Subroutine plegendr(n,x,pn,dpn)
 
+Cf2py intent(in) n,x
+Cf2py intent(out) pn,dpn
 	implicit none
 
 	integer n,m,i

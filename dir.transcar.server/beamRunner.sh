@@ -18,8 +18,8 @@ TCconfig=dir.input/DATCAR
 
 flux0=70114000000.0 #FIXME where does this come from?
 
-tstart=$(grep "precipitation start time (seconds)" $TCconfig | cut -f1)
-tfin=$(grep "precipitation end time (seconds)" $TCconfig | cut -f1)
+tstart=$(grep "precipitation start time (seconds" $TCconfig | cut -f1)
+tfin=$(grep "precipitation end time (seconds" $TCconfig | cut -f1)
 
 [[ -z $tstart ]] && { echo "error: could not find precip start in $TCconfig"; exit 1; } || { echo "using tstart= $tstart"; }
 [[ -z $tfin ]] && { echo "error: could not find precip end in $TCconfig"; exit 1; }  || { echo "using tfin= $tfin"; }

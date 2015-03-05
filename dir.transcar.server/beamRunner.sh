@@ -68,10 +68,11 @@ fi
 
   #error trap
   LastErr=$?
+  now=$(date +'%FT%T')
   case "$LastErr" in
-  0) echo "run_beams: Energy $E1 completed in $CurrDir" | tee -a $BMlog;;
-  98) echo "run_beams: Skipped energy $E1 in $CurrDir" | tee -a $BMlog;;
-  99) echo "run_beams: Aborting run_beams of $CurrDir" | tee -a $BMlog; exit 99;;
-  126) echo "run_beams: Transconvec was not given exec permissions" | tee -a $BMlog; exit 126;;
-  *) echo "run_beams: Transcar exit code $LastErr" |  tee -a $BMlog; exit $LastErr;;
+  0) echo "run_beams: $now Energy $E1 completed in $CurrDir" | tee -a $BMlog;;
+  98) echo "run_beams: $now Skipped energy $E1 in $CurrDir" | tee -a $BMlog;;
+  99) echo "run_beams: $now Aborting run_beams of $CurrDir" | tee -a $BMlog; exit 99;;
+  126) echo "run_beams: $now Transconvec was not given exec permissions" | tee -a $BMlog; exit 126;;
+  *) echo "run_beams: $now Transcar exit code $LastErr" |  tee -a $BMlog; exit $LastErr;;
   esac

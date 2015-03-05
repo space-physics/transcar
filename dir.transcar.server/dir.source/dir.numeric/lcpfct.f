@@ -1,10 +1,10 @@
 C=======================================================================
 
-      Subroutine LCPFCT ( RHOO, RHON, I1, IN, 
+      Subroutine LCPFCT ( RHOO, RHON, I1, IN,
      &                    SRHO1, VRHO1, SRHON, VRHON, PBC ,mode)
 
 C-----------------------------------------------------------------------
-c 
+c
 c     Originated: J.P. Boris         Code 4400, NRL          Feb 1987
 c     Modified:  Laboratory for Computational Physics & Fluid Dynamics
 c     Contact:    J.P. Boris, J.H. Gardner, A.M. Landsberg, or E.S. Oran
@@ -13,53 +13,53 @@ c     Description:  This routine solves generalized continuity equations
 c     of the form  dRHO/dt = -div (RHO*V) + SOURCES in the user's choice
 c     of Cartesian, cylindrical, or spherical coordinate systems.  A
 c     facility is included to allow definition of other coordinates.
-c     The grid can be Eulerian, sliding rezone, or Lagrangian and can 
-c     be arbitrarily spaced.  The algorithm is a low-phase-error FCT 
-c     algorithm, vectorized and optimized for a combination of speed and 
+c     The grid can be Eulerian, sliding rezone, or Lagrangian and can
+c     be arbitrarily spaced.  The algorithm is a low-phase-error FCT
+c     algorithm, vectorized and optimized for a combination of speed and
 c     flexibility.  A complete description appears in the NRL Memorandum
-c     Report (1992), "LCPFCT - A Flux-Corrected Transport Algorithm For 
+c     Report (1992), "LCPFCT - A Flux-Corrected Transport Algorithm For
 c     Solving Generalized Continuity Equations".
 c
-c     Arguments:    
+c     Arguments:
 c     RHOO   Real Array        grid point densities at start of step   I
 c     RHON   Real Array        grid point densities at end of step     O
 c     I1     Integer           first grid point of integration         I
 c     IN     Integer           last grid point of intergration         I
 c     SRHO1  Real Array        boundary guard cell factor at cell I1+1 I
 c     VRHO1  Real Array        boundary value added to guard cell I1-1 I
-c     SRHON  Real Array        boundary guard cell factor at cell IN+1 I 
+c     SRHON  Real Array        boundary guard cell factor at cell IN+1 I
 c     VRHON  Real Array        boundary value added to guard cell IN+1 I
 c     PBC    Logical           periodic boundaries if PBC = .true.     I
 c
 c        In this routine the last interface at RADHN(INP) is the outer
 c     boundary of the last cell indexed IN.  The first interface at
-c     RADHN(I1) is the outer boundary of the integration domain before 
+c     RADHN(I1) is the outer boundary of the integration domain before
 c     the first cell indexed I1.
 c
 c     Language and Limitations:  LCPFCT is a package of FORTRAN 77 sub-
 c     routines written in single precision (64 bits CRAY). The parameter
 c     NPT is used to establish the internal FCT array dimensions at the
 c     maximum size expected.  Thus NPT = 500 means that continuity equa-
-c     tions for systems up to 200 cells long in one direction can be 
+c     tions for systems up to 200 cells long in one direction can be
 c     integrated.  Underflows can occur when the function being trans-
 c     ported has a region of zeroes.  The calculations misconserve by
 c     one or two bits per cycle.  Relative phase and amplitude errors
 c     (for smooth functions) are typically a few percent for character-
-c     istic lengths of 1 - 2 cells (wavelengths of order 10 cells).  The 
-c     jump conditions for shocks are generally accurate to better than 1 
-c     percent.  Common blocks are used to transmit all data between the 
+c     istic lengths of 1 - 2 cells (wavelengths of order 10 cells).  The
+c     jump conditions for shocks are generally accurate to better than 1
+c     percent.  Common blocks are used to transmit all data between the
 c     subroutines in the LCPFCT package.
 c
-c     Auxiliary Subroutines:  CNVFCT, CONSERVE, COPYGRID, MAKEGRID, 
-c     NEW_GRID, RESIDIFF, SET_GRID, SOURCES, VELOCITY, ZERODIFF, and 
+c     Auxiliary Subroutines:  CNVFCT, CONSERVE, COPYGRID, MAKEGRID,
+c     NEW_GRID, RESIDIFF, SET_GRID, SOURCES, VELOCITY, ZERODIFF, and
 c     ZEROFLUX.  The detailed documentation report provided (or the
 c     listing below) explains the definitions and use of the arguments
 c     to these other subroutines making up the LCPFCT package.  These
 c     routines are not called from LCPFCT itself but are controlled by
-c     calls from the user.  Subroutines MAKEGRID, VELOCITY and SOURCES 
-c     in this package must first be called to set the grid geometry, 
-c     velocity-dependent flux and diffusion coefficients, and external 
-c     source arrays used by LCPFCT.  The other subroutines may be called 
+c     calls from the user.  Subroutines MAKEGRID, VELOCITY and SOURCES
+c     in this package must first be called to set the grid geometry,
+c     velocity-dependent flux and diffusion coefficients, and external
+c     source arrays used by LCPFCT.  The other subroutines may be called
 c     to perform other functions such as to modify boundary conditions,
 c     to perform special grid operations, or compute conservation sums.
 c
@@ -68,7 +68,7 @@ C-----------------------------------------------------------------------
           Implicit  NONE
           Integer   NPT, I1, IN, I1P, INP, I,mode
           Real      BIGNUM, SRHO1, VRHO1, SRHON, VRHON, RHO1M, RHONP
-          Real      RHOT1M, RHOTNP, RHOTD1M, RHOTDNP 
+          Real      RHOT1M, RHOTNP, RHOTD1M, RHOTDNP
           Logical   PBC
           Parameter ( NPT = 500 )
           Parameter ( BIGNUM = 1.0E38 )
@@ -81,23 +81,23 @@ c     /FCT_SCRH/ Holds scratch arrays for use by LCPFCT and CNVFCT
           Real     FLXH(NPT),     FABS(NPT),     FSGN(NPT)
           Real     TERM(NPT),     TERP(NPT),     LNRHOT(NPT)
           Real     LORHOT(NPT),   RHOT(NPT),     RHOTD(NPT)
-          Common  /FCT_SCRH/ SCRH, SCR1, DIFF,   FLXH,   FABS, FSGN, 
+          Common  /FCT_SCRH/ SCRH, SCR1, DIFF,   FLXH,   FABS, FSGN,
      &                       TERM, TERP, LNRHOT, LORHOT, RHOT, RHOTD
 
 c     /FCT_GRID/ Holds geometry, grid, area and volume information
-          Real     LO(NPT),       LN(NPT),       AH (NPT) 
-          Real     RLN(NPT),      LH (NPT),      RLH(NPT) 
+          Real     LO(NPT),       LN(NPT),       AH (NPT)
+          Real     RLN(NPT),      LH (NPT),      RLH(NPT)
           Real     ROH(NPT),      RNH(NPT),      ADUGTH(NPT)
           Common  /FCT_GRID/ LO, LN, AH, RLN, LH, RLH, ROH, RNH, ADUGTH
 
 c     /FCT_VELO/ Holds velocity-dependent flux coefficients
           Real     HADUDTH(NPT),  NULH(NPT),     MULH(NPT)
-          Real     EPSH(NPT),     VDTODR(NPT)   
+          Real     EPSH(NPT),     VDTODR(NPT)
           Common  /FCT_VELO/ HADUDTH, NULH, MULH, EPSH, VDTODR
 
 c     /FCT_MISC/ Holds the source array and diffusion coefficient
           Real     SOURCE(NPT),   DIFF1
-          Common  /FCT_MISC/ SOURCE, DIFF1          
+          Common  /FCT_MISC/ SOURCE, DIFF1
           Real     SOURCE0(NPT)
           Common  /FCT_test/ SOURCE0
 
@@ -120,7 +120,7 @@ C-----------------------------------------------------------------------
 
           DIFF(I1) = NULH(I1) * ( RHOO(I1) - RHO1M )
           DIFF(INP) = NULH(INP) * ( RHONP - RHOO(IN) )
-	  if (mode.eq.0) then
+      if (mode.eq.0) then
             FLXH(I1) = HADUDTH(I1) * ( RHOO(I1) + RHO1M )
             FLXH(INP) = HADUDTH(INP) * ( RHONP + RHOO(IN) )
           else
@@ -129,7 +129,7 @@ C-----------------------------------------------------------------------
           endif
 
           Do 1 I = I1P, IN
- 	    if (mode.eq.0) then
+        if (mode.eq.0) then
               FLXH(I) = HADUDTH(I) * ( RHOO(I) + RHOO(I-1) )
             else
               FLXH(I) = 2.*HADUDTH(I) * sqrt( RHOO(I) * RHOO(I-1) )
@@ -163,13 +163,13 @@ C-----------------------------------------------------------------------
              RHOTD1M = RHOTD(IN)
              RHOTDNP = RHOTD(I1)
           Else
-             RHOT1M = SRHO1*RHOT(I1) + VRHO1 
+             RHOT1M = SRHO1*RHOT(I1) + VRHO1
              RHOTNP = SRHON*RHOT(IN) + VRHON
-             RHOTD1M = SRHO1*RHOTD(I1) + VRHO1 
+             RHOTD1M = SRHO1*RHOTD(I1) + VRHO1
              RHOTDNP = SRHON*RHOTD(IN) + VRHON
           End If
 
-c     Calculate the transported antiduffusive fluxes and transported 
+c     Calculate the transported antiduffusive fluxes and transported
 c     and diffused density differences . . .
 C-----------------------------------------------------------------------
           FLXH(I1) = MULH(I1) * ( RHOT(I1) - RHOT1M )
@@ -182,7 +182,7 @@ C-----------------------------------------------------------------------
     3        DIFF(I) = RHOTD(I) - RHOTD(I-1)
 
           FLXH(INP) = MULH(INP) * ( RHOTNP - RHOT(IN) )
-          DIFF(INP) = RHOTDNP - RHOTD(IN) 
+          DIFF(INP) = RHOTDNP - RHOTD(IN)
 
 c     Calculate the magnitude & sign of the antidiffusive flux followed
 c     by the flux-limiting changes on the right and left . . .
@@ -201,18 +201,18 @@ C-----------------------------------------------------------------------
              TERM(I1) = BIGNUM
           End If
 
-c     Correct the transported fluxes completely and then calculate the 
+c     Correct the transported fluxes completely and then calculate the
 c     new Flux-Corrected Transport densities . . .
 C-----------------------------------------------------------------------
-          FLXH(I1) = FSGN(I1) * max ( 0.0, 
+          FLXH(I1) = FSGN(I1) * max ( 0.0,
      &                  min ( TERM(I1), FABS(I1), TERP(I1) ) )
 
           Do 5 I = I1, IN
-             FLXH(I+1) = FSGN(I+1) * max ( 0.0, 
+             FLXH(I+1) = FSGN(I+1) * max ( 0.0,
      &                min ( TERM(I+1), FABS(I+1), TERP(I+1) ) )
              RHON(I) = RLN(I) * ( LNRHOT(I)
-     &			      + (FLXH(I) - FLXH(I+1)) )
-     	     SOURCE0(i)=source(i)*rln(i)
+     &                + (FLXH(I) - FLXH(I+1)) )
+             SOURCE0(i)=source(i)*rln(i)
              if (flag) then
              if(flag)print*,'FC-',i,rhon(i),RLN(I)*LNrhot(i),
      &(FLXH(I)-FLXH(I+1))
@@ -226,16 +226,18 @@ C=======================================================================
 
       Subroutine MAKEGRID ( RADHO, RADHN, I1, INP, ALPHA )
 
+Cf2py intent(in) RADHO, RADHN, I1, ALPHA
+
 C-----------------------------------------------------------------------
 c
-c     Description:  This Subroutine initializes geometry variables and 
+c     Description:  This Subroutine initializes geometry variables and
 c     coefficients. It should be called first to initialize the grid.
-c     The grid must be defined for all of the grid interfaces from I1 to 
+c     The grid must be defined for all of the grid interfaces from I1 to
 c     INP.  Subsequent calls to VELOCITY and LCPFCT can work on only
 c     portions of the grid, however, to perform restricted integrations
 c     on separate line segments.
 c
-c     Arguments:  
+c     Arguments:
 c     RADHO    Real Array(INP)    old cell interface positions         I
 c     RADHN    Real Array(INP)    new cell interface positions         I
 c     I1       Integer            first cell interface                 I
@@ -258,12 +260,12 @@ c     /FCT_SCRH/ Holds scratch arrays for use by LCPFCT and CNVFCT
           Real     FLXH(NPT),     FABS(NPT),     FSGN(NPT)
           Real     TERM(NPT),     TERP(NPT),     LNRHOT(NPT)
           Real     LORHOT(NPT),   RHOT(NPT),     RHOTD(NPT)
-          Common  /FCT_SCRH/ SCRH, SCR1, DIFF,   FLXH,   FABS, FSGN, 
+          Common  /FCT_SCRH/ SCRH, SCR1, DIFF,   FLXH,   FABS, FSGN,
      &                       TERM, TERP, LNRHOT, LORHOT, RHOT, RHOTD
 
 c     /FCT_GRID/ Holds geometry, grid, area and volume information
-          Real     LO(NPT),       LN(NPT),       AH (NPT) 
-          Real     RLN(NPT),      LH (NPT),      RLH(NPT) 
+          Real     LO(NPT),       LN(NPT),       AH (NPT)
+          Real     RLN(NPT),      LH (NPT),      RLH(NPT)
           Real     ROH(NPT),      RNH(NPT),      ADUGTH(NPT)
           Common  /FCT_GRID/ LO, LN, AH, RLN, LH, RLH, ROH, RNH, ADUGTH
 
@@ -320,11 +322,11 @@ C-----------------------------------------------------------------------
              LO(I) = FTPI*(SCR1(I+1) - SCR1(I))
   301        LN(I) = FTPI*(DIFF(I+1) - DIFF(I))
           Go To 500
-         
+
 c  Special Coordinates: Areas and Volumes are User Supplied . . .
 C-----------------------------------------------------------------------
   400     Continue
-          
+
 c  Additional system independent geometric variables . . .
 C-----------------------------------------------------------------------
   500     Do 501 I = I1, IN
@@ -348,12 +350,12 @@ C=======================================================================
 
 C-----------------------------------------------------------------------
 c
-c     Description:   This subroutine calculates all velocity-dependent 
+c     Description:   This subroutine calculates all velocity-dependent
 c     coefficients for the LCPFCT and CNVFCT routines. This routine
 c     must be called before either LCPFCT or CNVFCT is called.  MAKEGRID
 c     must be called earlier to set grid and geometry data used here.
 c
-c     Arguments:  
+c     Arguments:
 c     UH     Real Array(NPT)   flow velocity at cell interfaces        I
 c     I1     Integer           first cell interface of integration     I
 c     INP    Integer           last cell interface = N + 1             I
@@ -372,18 +374,18 @@ c     /FCT_SCRH/ Holds scratch arrays for use by LCPFCT and CNVFCT
           Real     FLXH(NPT),     FABS(NPT),     FSGN(NPT)
           Real     TERM(NPT),     TERP(NPT),     LNRHOT(NPT)
           Real     LORHOT(NPT),   RHOT(NPT),     RHOTD(NPT)
-          Common  /FCT_SCRH/ SCRH, SCR1, DIFF,   FLXH,   FABS, FSGN, 
+          Common  /FCT_SCRH/ SCRH, SCR1, DIFF,   FLXH,   FABS, FSGN,
      &                       TERM, TERP, LNRHOT, LORHOT, RHOT, RHOTD
 
 c     /FCT_GRID/ Holds geometry, grid, area and volume information
-          Real     LO(NPT),       LN(NPT),       AH (NPT) 
-          Real     RLN(NPT),      LH (NPT),      RLH(NPT) 
+          Real     LO(NPT),       LN(NPT),       AH (NPT)
+          Real     RLN(NPT),      LH (NPT),      RLH(NPT)
           Real     ROH(NPT),      RNH(NPT),      ADUGTH(NPT)
           Common  /FCT_GRID/ LO, LN, AH, RLN, LH, RLH, ROH, RNH, ADUGTH
 
 c     /FCT_VELO/ Holds velocity-dependent flux coefficients
           Real     HADUDTH(NPT),  NULH(NPT),     MULH(NPT)
-          Real     EPSH(NPT),     VDTODR(NPT)   
+          Real     EPSH(NPT),     VDTODR(NPT)
           Common  /FCT_VELO/ HADUDTH, NULH, MULH, EPSH, VDTODR
 
         logical flag
@@ -392,14 +394,14 @@ c     /FCT_VELO/ Holds velocity-dependent flux coefficients
 C-----------------------------------------------------------------------
           I1P = I1 + 1
           IN = INP - 1
-         
-c     Calculate 0.5*Interface Area * Velocity Difference * DT (HADUDTH).  
+
+c     Calculate 0.5*Interface Area * Velocity Difference * DT (HADUDTH).
 c     Next calculate the interface epsilon (EPSH = V*DT/DX).  Then find
 c     the diffusion (NULH) and antidiffusion (MULH) coefficients.  The
 c     variation with epsilon gives fourth-order accurate phases when the
 c     grid is uniform, the velocity constant, and SCRH is set to zero.
-c     With SCRH nonzero (as below) slightly better results are obtained 
-c     in some of the tests.  Optimal performance, of course, depends on 
+c     With SCRH nonzero (as below) slightly better results are obtained
+c     in some of the tests.  Optimal performance, of course, depends on
 c     on the application.
 C-----------------------------------------------------------------------
           RDT = 1.0/DT
@@ -424,14 +426,14 @@ c     Now calculate VDTODR for CNVFCT . . .
 C-----------------------------------------------------------------------
           DT2 = 2.0*DT
           DT4 = 4.0*DT
-          VDTODR(I1) = DT2*DIFF(I1)/(RNH(I1P)-RNH(I1) + 
+          VDTODR(I1) = DT2*DIFF(I1)/(RNH(I1P)-RNH(I1) +
      &                               ROH(I1P)-ROH(I1))
 
           Do 2 I = I1P, IN
-    2        VDTODR(I) = DT4*DIFF(I)/(RNH(I+1)-RNH(I-1) + 
+    2        VDTODR(I) = DT4*DIFF(I)/(RNH(I+1)-RNH(I-1) +
      &                                ROH(I+1)-ROH(I-1))
 
-          VDTODR(INP) = DT2*DIFF(INP)/(RNH(INP)-RNH(IN) + 
+          VDTODR(INP) = DT2*DIFF(INP)/(RNH(INP)-RNH(IN) +
      &                                 ROH(INP)-ROH(IN))
 
        Return
@@ -445,7 +447,7 @@ C-----------------------------------------------------------------------
 c
 c     Description:   This Subroutine accumulates different source terms.
 c
-c     Arguments:  
+c     Arguments:
 c     I1     Integer           first cell to be integrated             I
 c     IN     Integer           last cell  to be integrated             I
 c     DT     Real              stepsize for the time integration       I
@@ -465,12 +467,12 @@ C-----------------------------------------------------------------------
           Implicit NONE
           Integer  NPT, NINDMAX, MODE, IS, I, I1, IN, I1P, INP
           Parameter ( NPT = 500, NINDMAX = 150 )
-     
+
           Real     C(NPT), D(NPT), DT, DTH, DTQ, D1, DN
 
 c     /FCT_NDEX/ Holds a scalar list of special cell information . . .
           Real     SCALARS(NINDMAX)
-          Integer  INDEX(NINDMAX), NIND 
+          Integer  INDEX(NINDMAX), NIND
           Common  /FCT_NDEX/ NIND, INDEX, SCALARS
 
 c     /FCT_SCRH/ Holds scratch arrays for use by LCPFCT and CNVFCT
@@ -478,12 +480,12 @@ c     /FCT_SCRH/ Holds scratch arrays for use by LCPFCT and CNVFCT
           Real     FLXH(NPT),     FABS(NPT),     FSGN(NPT)
           Real     TERM(NPT),     TERP(NPT),     LNRHOT(NPT)
           Real     LORHOT(NPT),   RHOT(NPT),     RHOTD(NPT)
-          Common  /FCT_SCRH/ SCRH, SCR1, DIFF,   FLXH,   FABS, FSGN, 
+          Common  /FCT_SCRH/ SCRH, SCR1, DIFF,   FLXH,   FABS, FSGN,
      &                       TERM, TERP, LNRHOT, LORHOT, RHOT, RHOTD
 
 c     /FCT_GRID/ Holds geometry, grid, area and volume information
-          Real     LO(NPT),       LN(NPT),       AH (NPT) 
-          Real     RLN(NPT),      LH (NPT),      RLH(NPT) 
+          Real     LO(NPT),       LN(NPT),       AH (NPT)
+          Real     RLN(NPT),      LH (NPT),      RLH(NPT)
           Real     ROH(NPT),      RNH(NPT),      ADUGTH(NPT)
           Common  /FCT_GRID/ LO, LN, AH, RLN, LH, RLH, ROH, RNH, ADUGTH
 
@@ -512,7 +514,7 @@ C-----------------------------------------------------------------------
             endif
             SCRH(I) = DTH*AH(I)*(D(I) + D(I-1))
     1       SOURCE(I) = SOURCE(I) + (SCRH(I+1) - SCRH(I))
-         SOURCE(I1) = SOURCE(I1) + (SCRH(I1P) - SCRH(I1)) 
+         SOURCE(I1) = SOURCE(I1) + (SCRH(I1P) - SCRH(I1))
       Return
 
 c  + C*GRAD(D) is computed efficiently and added to the SOURCE . . .
@@ -525,8 +527,8 @@ C-----------------------------------------------------------------------
             if (flag) then
              print*,'2-',i,C(I)*(AH(I+1)+AH(I))*DIFF(I),
      &DIFF(I),SOURCE(I)
-     	    endif
-    2       SOURCE(I) = SOURCE(I) 
+            endif
+    2       SOURCE(I) = SOURCE(I)
      &                + C(I)*(AH(I+1)+AH(I))*DIFF(I)
          SOURCE(I1) = SOURCE(I1) + C(I1)*(AH(I1P)+AH(I1))*
      &                 (SCRH(I1P)-SCRH(I1))
@@ -539,7 +541,7 @@ C-----------------------------------------------------------------------
              print*,'3-',i,DT*LO(I)*D(I),SOURCE(I)
             endif
 C           SOURCE(I) = SOURCE(I) + DT*LO(I)*D(I)
-3	continue
+   3   continue
       Return
 
 c  + DIV(D) is computed conservatively from interface data . . .
@@ -559,7 +561,7 @@ C-----------------------------------------------------------------------
          Do 5 I = IN, I1P, -1
             SCRH(I) = DTH*D(I)
             DIFF(I) = SCRH(I+1) - SCRH(I)
-    5       SOURCE(I) = SOURCE(I) 
+    5       SOURCE(I) = SOURCE(I)
      &                + C(I)*(AH(I+1)+AH(I))*DIFF(I)
          SOURCE(I1) = SOURCE(I1) + C(I1)*(AH(I1P)+AH(I1))*
      &                     (SCRH(I1P)-SCRH(I1))
@@ -578,7 +580,7 @@ C-----------------------------------------------------------------------
             if (flag) then
              print*,'7-',i,DT*D(I),DT,D(I),SOURCE(I)
             endif
-7	continue
+   7   continue
 
       RETURN
 
@@ -586,11 +588,11 @@ C-----------------------------------------------------------------------
 
 C=======================================================================
 
-      Subroutine CNVFCT ( RHOO, RHON, I1, IN, 
+      Subroutine CNVFCT ( RHOO, RHON, I1, IN,
      &                    SRHO1, VRHO1, SRHON, VRHON, PBC )
 
 C-----------------------------------------------------------------------
-c 
+c
 c     Originated: J.P. Boris         Code 4400, NRL          Feb 1987
 c     Modified:  Laboratory for Computational Physics & Fluid Dynamics
 c     Contact:    J.P. Boris, J.H. Gardner, A.M. Landsberg, or E.S. Oran
@@ -599,28 +601,28 @@ c     Description:  This routine solves an advective continuity equation
 c     of the form  dRHO/dt = -V*grad(RHO) + SOURCES in the user's choice
 c     of Cartesian, cylindrical, or spherical coordinate systems.  A
 c     facility is included to allow definition of other coordinates.
-c     The grid can be Eulerian, sliding rezone, or Lagrangian and can 
-c     be arbitrarily spaced.  The algorithm is a low-phase-error FCT 
-c     algorithm, vectorized and optimized for a combination of speed and 
+c     The grid can be Eulerian, sliding rezone, or Lagrangian and can
+c     be arbitrarily spaced.  The algorithm is a low-phase-error FCT
+c     algorithm, vectorized and optimized for a combination of speed and
 c     flexibility.  A complete description appears in the NRL Memorandum
-c     Report (1992), "LCPFCT - A Flux-Corrected Transport Algorithm For 
+c     Report (1992), "LCPFCT - A Flux-Corrected Transport Algorithm For
 c     Solving Generalized Continuity Equations".
 c
-c     Arguments: 
+c     Arguments:
 c     RHOO   Real Array        grid point densities at start of step   I
 c     RHON   Real Array        grid point densities at end of step     O
 c     I1     Integer           first grid point of integration         I
 c     IN     Integer           last grid point of intergration         I
 c     SRHO1  Real Array        boundary guard cell factor at cell I1+1 I
 c     VRHO1  Real Array        boundary value added to guard cell I1-1 I
-c     SRHON  Real Array        boundary guard cell factor at cell IN+1 I 
+c     SRHON  Real Array        boundary guard cell factor at cell IN+1 I
 c     VRHON  Real Array        boundary value added to guard cell IN+1 I
 c     PBC    Logical           periodic boundaries if PBC = .true.     I
 c
 c        In this routine the last interface at RADHN(INP) is the outer
 c     boundary of the last cell indexed IN.  The first interface at
-c     RADHN(I1) is the outer boundary of the integration domain before 
-c     the first cell indexed I1.  The description of CNVFCT and the 
+c     RADHN(I1) is the outer boundary of the integration domain before
+c     the first cell indexed I1.  The description of CNVFCT and the
 c     roles played by the auxiliary library routines is the same for
 c     LCPFCT given above.
 c
@@ -629,7 +631,7 @@ C-----------------------------------------------------------------------
           Implicit  NONE
           Integer   NPT, I1, IN, I1P, INP, I
           Real      BIGNUM, SRHO1, VRHO1, SRHON, VRHON, RHO1M, RHONP
-          Real      RHOT1M, RHOTNP, RHOTD1M, RHOTDNP 
+          Real      RHOT1M, RHOTNP, RHOTD1M, RHOTDNP
           Logical   PBC
           Parameter ( NPT = 500 )
           Parameter ( BIGNUM = 1.0E38 )
@@ -642,23 +644,23 @@ c     /FCT_SCRH/ Holds scratch arrays for use by LCPFCT and CNVFCT
           Real     FLXH(NPT),     FABS(NPT),     FSGN(NPT)
           Real     TERM(NPT),     TERP(NPT),     LNRHOT(NPT)
           Real     LORHOT(NPT),   RHOT(NPT),     RHOTD(NPT)
-          Common  /FCT_SCRH/ SCRH, SCR1, DIFF,   FLXH,   FABS, FSGN, 
+          Common  /FCT_SCRH/ SCRH, SCR1, DIFF,   FLXH,   FABS, FSGN,
      &                       TERM, TERP, LNRHOT, LORHOT, RHOT, RHOTD
 
 c     /FCT_GRID/ Holds geometry, grid, area and volume information
-          Real     LO(NPT),       LN(NPT),       AH (NPT) 
-          Real     RLN(NPT),      LH (NPT),      RLH(NPT) 
+          Real     LO(NPT),       LN(NPT),       AH (NPT)
+          Real     RLN(NPT),      LH (NPT),      RLH(NPT)
           Real     ROH(NPT),      RNH(NPT),      ADUGTH(NPT)
           Common  /FCT_GRID/ LO, LN, AH, RLN, LH, RLH, ROH, RNH, ADUGTH
 
 c     /FCT_VELO/ Holds velocity-dependent flux coefficients
           Real     HADUDTH(NPT),  NULH(NPT),     MULH(NPT)
-          Real     EPSH(NPT),     VDTODR(NPT)   
+          Real     EPSH(NPT),     VDTODR(NPT)
           Common  /FCT_VELO/ HADUDTH, NULH, MULH, EPSH, VDTODR
 
 c     /FCT_MISC/ Holds the source array and diffusion coefficient
           Real     SOURCE(NPT),   DIFF1
-          Common  /FCT_MISC/ SOURCE, DIFF1          
+          Common  /FCT_MISC/ SOURCE, DIFF1
 
 C-----------------------------------------------------------------------
           I1P = I1 + 1
@@ -670,12 +672,12 @@ C-----------------------------------------------------------------------
              RHO1M = RHOO(IN)
              RHONP = RHOO(I1)
           Else
-             RHO1M = SRHO1*RHOO(I1) + VRHO1 
+             RHO1M = SRHO1*RHOO(I1) + VRHO1
              RHONP = SRHON*RHOO(IN) + VRHON
           End If
 
           DIFF(I1) = NULH(I1) * ( RHOO(I1) - RHO1M )
-          FLXH(I1) = VDTODR(I1) * ( RHOO(I1) - RHO1M )          
+          FLXH(I1) = VDTODR(I1) * ( RHOO(I1) - RHO1M )
 
           Do 1 I = I1P, IN
              DIFF(I) = ( RHOO(I) - RHOO(I-1) )
@@ -690,7 +692,7 @@ c     transported & diffused mass elements  . . .
 C-----------------------------------------------------------------------
           Do 2 I = I1, IN
              LORHOT(I) = LN(I) * (RHOO(I) - 0.5*(FLXH(I+1) + FLXH(I)))
-     &                   + SOURCE(I) 
+     &                   + SOURCE(I)
              LNRHOT(I) = LORHOT(I) + (DIFF(I+1) - DIFF(I))
              RHOT(I)  = LORHOT(I)*RLN(I)
     2        RHOTD(I) = LNRHOT(I)*RLN(I)
@@ -703,13 +705,13 @@ C-----------------------------------------------------------------------
              RHOTD1M = RHOTD(IN)
              RHOTDNP = RHOTD(I1)
           Else
-             RHOT1M = SRHO1*RHOT(I1) + VRHO1 
+             RHOT1M = SRHO1*RHOT(I1) + VRHO1
              RHOTNP = SRHON*RHOT(IN) + VRHON
-             RHOTD1M = SRHO1*RHOTD(I1) + VRHO1 
+             RHOTD1M = SRHO1*RHOTD(I1) + VRHO1
              RHOTDNP = SRHON*RHOTD(IN) + VRHON
           End If
 
-c     Calculate the transported antiduffusive fluxes and transported 
+c     Calculate the transported antiduffusive fluxes and transported
 c     and diffused density differences . . .
 C-----------------------------------------------------------------------
           FLXH(I1) = MULH(I1) * ( RHOT(I1) - RHOT1M )
@@ -722,7 +724,7 @@ C-----------------------------------------------------------------------
     3        DIFF(I) = RHOTD(I) - RHOTD(I-1)
 
           FLXH(INP) = MULH(INP) * ( RHOTNP - RHOT(IN) )
-          DIFF(INP) = RHOTDNP - RHOTD(IN) 
+          DIFF(INP) = RHOTDNP - RHOTD(IN)
 
 c     Calculate the magnitude & sign of the antidiffusive flux followed
 c     by the flux-limiting changes on the right and left . . .
@@ -741,14 +743,14 @@ C-----------------------------------------------------------------------
              TERM(I1) = BIGNUM
           End If
 
-c     Correct the transported fluxes completely and then calculate the 
+c     Correct the transported fluxes completely and then calculate the
 c     new Flux-Corrected Transport densities . . .
 C-----------------------------------------------------------------------
-          FLXH(I1) = FSGN(I1) * max ( 0.0, 
+          FLXH(I1) = FSGN(I1) * max ( 0.0,
      &                  min ( TERM(I1), FABS(I1), TERP(I1) ) )
 
           Do 5 I = I1, IN
-             FLXH(I+1) = FSGN(I+1) * max ( 0.0, 
+             FLXH(I+1) = FSGN(I+1) * max ( 0.0,
      &                min ( TERM(I+1), FABS(I+1), TERP(I+1) ) )
              RHON(I) = RLN(I) * ( LNRHOT(I) + (FLXH(I) - FLXH(I+1)) )
     5        SOURCE(I) = 0.0
@@ -766,22 +768,22 @@ c     Description:   This routine computes the ostensibly conserved sum.
 c     Beware your boundary conditions and note that only one continuity
 c     equation is summed for each call to this subroutine.
 c
-c     Arguments:  
+c     Arguments:
 c     RHO    Real Array(NPT)   cell values for physical variable 'RHO' I
 c     I1     Integer           first cell to be integrated             I
 c     IN     Integer           last cell  to be integrated             I
 c     CSUM   Real              value of the conservation sum of rho    O
 c
 C-----------------------------------------------------------------------
- 
+
           Implicit NONE
           Integer  NPT, I, I1, IN
           Parameter ( NPT = 500 )
           Real     CSUM, RHO(NPT)
 
 c     /FCT_GRID/ Holds geometry, grid, area and volume information
-          Real     LO(NPT),       LN(NPT),       AH (NPT) 
-          Real     RLN(NPT),      LH (NPT),      RLH(NPT) 
+          Real     LO(NPT),       LN(NPT),       AH (NPT)
+          Real     RLN(NPT),      LH (NPT),      RLH(NPT)
           Real     ROH(NPT),      RNH(NPT),      ADUGTH(NPT)
           Common  /FCT_GRID/ LO, LN, AH, RLN, LH, RLH, ROH, RNH, ADUGTH
 
@@ -793,7 +795,7 @@ C-----------------------------------------------------------------------
 
       Return
       End
- 
+
 C=======================================================================
 
       Subroutine COPYGRID ( MODE, I1, IN )
@@ -806,10 +808,10 @@ c     I1 to IN including the boundary values at interface IN+1 when the
 c     argument MODE = 1.  When MODE = 2, these grid variables are reset
 c     from common block OLD_GRID.  This routine is used where the same
 c     grid is needed repeatedly after some of the values have been over-
-c     written, for example, by a grid which moves between the halfstep 
+c     written, for example, by a grid which moves between the halfstep
 c     and the whole step.
 c
-c     Argument:  
+c     Argument:
 c     I1       Integer         first cell index                        I
 c     IN       Integer         last cell index                         I
 c     MODE     Integer         = 1 grid variables copied into OLD_GRID I
@@ -825,12 +827,12 @@ c     /OLD_GRID/ Holds geometry, grid, area and volume information
           Real     LOP(NPT),      LNP(NPT),      AHP(NPT)
           Real     RLNP(NPT),     RLHP(NPT),     LHP(NPT)
           Real     ROHP(NPT),     RNHP(NPT),     ADUGTHP(NPT)
-          Common  /OLD_GRID/ LOP, LNP, AHP, RLNP, LHP, RLHP, 
+          Common  /OLD_GRID/ LOP, LNP, AHP, RLNP, LHP, RLHP,
      &                       ROHP,     RNHP,      ADUGTHP
 
 c     /FCT_GRID/ Holds geometry, grid, area and volume information
-          Real     LO(NPT),       LN(NPT),       AH (NPT) 
-          Real     RLN(NPT),      LH (NPT),      RLH(NPT) 
+          Real     LO(NPT),       LN(NPT),       AH (NPT)
+          Real     RLN(NPT),      LH (NPT),      RLH(NPT)
           Real     ROH(NPT),      RNH(NPT),      ADUGTH(NPT)
           Common  /FCT_GRID/ LO, LN, AH, RLN, LH, RLH, ROH, RNH, ADUGTH
 
@@ -846,7 +848,7 @@ C-----------------------------------------------------------------------
                 RLHP(I) = RLH(I)
                 ROHP(I) = ROH(I)
                 RNHP(I) = RNH(I)
-  102           ADUGTHP(I) = ADUGTH(I)                
+  102           ADUGTHP(I) = ADUGTH(I)
           Else If ( MODE .eq. 2 ) Then
              Do 201 I = I1, IN
                 LO(I)  = LOP(I)
@@ -858,12 +860,12 @@ C-----------------------------------------------------------------------
                 RLH(I) = RLHP(I)
                 ROH(I) = ROHP(I)
                 RNH(I) = RNHP(I)
-  202           ADUGTH(I) = ADUGTHP(I)                
+  202           ADUGTH(I) = ADUGTHP(I)
           Else
              Write ( 6, 1001 ) MODE
           End If
  1001     Format ( ' COPYGRID Error! MODE =', I3, ' (not 1 or 2!)' )
-         
+
       Return
       End
 
@@ -879,7 +881,7 @@ C-----------------------------------------------------------------------
 c     /FCT_MISC/ Holds the source array and diffusion coefficient
           Real     SOURCE(NPT),   DIFF1
           Common  /FCT_MISC/ SOURCE, DIFF1
-         
+
           Data SOURCE / NPT*0.0 /, DIFF1 / 0.999 /
 
       End
@@ -890,16 +892,16 @@ C=======================================================================
 
 C-----------------------------------------------------------------------
 c
-c     Description:  This Subroutine initializes geometry variables and 
+c     Description:  This Subroutine initializes geometry variables and
 c     coefficients when the most recent call to MAKEGRID used the same
 c     set of values RADHO and only the new interface locations RADHN are
 c     different.  NEW_GRID is computationally more efficienty than the
 c     complete grid procedure in MAKEGRID because several formulae do
-c     not need to be recomputed.  The grid should generally be defined 
-c     for the entire number of grid interfaces from 1 to INP,  however 
+c     not need to be recomputed.  The grid should generally be defined
+c     for the entire number of grid interfaces from 1 to INP,  however
 c     subsets of the entire grid may be reinitialized with care.
 c
-c     Arguments:  
+c     Arguments:
 c     RADHN    Real Array(INP)    new cell interface positions         I
 c     I1       Integer            first interface index                I
 c     INP      Integer            last interface index                 I
@@ -920,12 +922,12 @@ c     /FCT_SCRH/ Holds scratch arrays for use by LCPFCT and CNVFCT
           Real     FLXH(NPT),     FABS(NPT),     FSGN(NPT)
           Real     TERM(NPT),     TERP(NPT),     LNRHOT(NPT)
           Real     LORHOT(NPT),   RHOT(NPT),     RHOTD(NPT)
-          Common  /FCT_SCRH/ SCRH, SCR1, DIFF,   FLXH,   FABS, FSGN, 
+          Common  /FCT_SCRH/ SCRH, SCR1, DIFF,   FLXH,   FABS, FSGN,
      &                       TERM, TERP, LNRHOT, LORHOT, RHOT, RHOTD
 
 c     /FCT_GRID/ Holds geometry, grid, area and volume information
-          Real     LO(NPT),       LN(NPT),       AH (NPT) 
-          Real     RLN(NPT),      LH (NPT),      RLH(NPT) 
+          Real     LO(NPT),       LN(NPT),       AH (NPT)
+          Real     RLN(NPT),      LH (NPT),      RLH(NPT)
           Real     ROH(NPT),      RNH(NPT),      ADUGTH(NPT)
           Common  /FCT_GRID/ LO, LN, AH, RLN, LH, RLH, ROH, RNH, ADUGTH
 
@@ -973,11 +975,11 @@ C-----------------------------------------------------------------------
              AH(I) = FTPI*(SCRH(I) + RNH(I)*RNH(I))
   301        LN(I) = FTPI*(DIFF(I+1) - DIFF(I))
           Go To 500
-         
+
 c  Special Coordinates: Areas and Volumes are User Supplied . . .
 C-----------------------------------------------------------------------
   400     Continue
-          
+
 c  Additional system independent geometric variables . . .
 C-----------------------------------------------------------------------
   500     Do 501 I = I1, IN
@@ -1000,46 +1002,46 @@ C=======================================================================
       Subroutine RESIDIFF ( DIFFA )
 
 C-----------------------------------------------------------------------
-c 
+c
 c     Description:   Allows the user to give FCT some residual numerical
 c     diffusion by making the anti-diffusion coefficient smaller.
-c 
-c     Arguments:  
+c
+c     Arguments:
 c     DIFFA  Real    Replacement residual diffusion coefficient        I
 c                    Defaults to 0.999 but could be as high as 1.0000
-c 
+c
 C-----------------------------------------------------------------------
           Implicit NONE
           Integer  NPT
           Real     DIFFA
           Parameter ( NPT = 500 )
-     
+
 c     /FCT_MISC/ Holds the source array and diffusion coefficient
           Real     SOURCE(NPT),   DIFF1
           Common  /FCT_MISC/ SOURCE, DIFF1
-         
+
           DIFF1 = DIFFA
 
       Return
       End
- 
+
 C=======================================================================
 
       Subroutine SET_GRID ( RADR, I1, IN )
 
 C-----------------------------------------------------------------------
 c
-c     Description:  This subroutine includes the radial factor in the 
-c     cell volume for polar coordinates. It must be preceeded by a call 
+c     Description:  This subroutine includes the radial factor in the
+c     cell volume for polar coordinates. It must be preceeded by a call
 c     to MAKE_GRID with ALPHA = 1 to establish the angular dependence of
 c     the cell volumes and areas and a call to COPY_GRID to save this
 c     angular dependence.  The angular coordinate is measured in radians
 c     (0 to 2 pi) in cylindrical coordinates and cos theta (1 to -1) in
-c     spherical coordinates.  SET_GRID is called inside the loop over 
-c     radius in a multidimensional model to append the appropriate 
+c     spherical coordinates.  SET_GRID is called inside the loop over
+c     radius in a multidimensional model to append the appropriate
 c     radial factors when integrating in the angular direction.
-c  
-c     Arguments:  
+c
+c     Arguments:
 c     RADR     Real               radius of cell center                I
 c     I1       Integer            first cell index                     I
 c     IN       Integer            last cell index                      I
@@ -1054,12 +1056,12 @@ c     /OLD_GRID/ Holds geometry, grid, area and volume information
           Real     LOP(NPT),      LNP(NPT),      AHP(NPT)
           Real     RLNP(NPT),     RLHP(NPT),     LHP(NPT)
           Real     ROHP(NPT),     RNHP(NPT),     ADUGTHP(NPT)
-          Common  /OLD_GRID/ LOP, LNP, AHP, RLNP, LHP, RLHP, 
+          Common  /OLD_GRID/ LOP, LNP, AHP, RLNP, LHP, RLHP,
      &                       ROHP,     RNHP,      ADUGTHP
 
 c     /FCT_GRID/ Holds geometry, grid, area and volume information
-          Real     LO(NPT),       LN(NPT),       AH (NPT) 
-          Real     RLN(NPT),      LH (NPT),      RLH(NPT) 
+          Real     LO(NPT),       LN(NPT),       AH (NPT)
+          Real     RLN(NPT),      LH (NPT),      RLH(NPT)
           Real     ROH(NPT),      RNH(NPT),      ADUGTH(NPT)
           Common  /FCT_GRID/ LO, LN, AH, RLN, LH, RLH, ROH, RNH, ADUGTH
 
@@ -1094,14 +1096,14 @@ C=======================================================================
 C-----------------------------------------------------------------------
 c
 c     Description:   This Subroutine sets the FCT diffusion and anti-
-c     diffusion parameters to zero at the specified cell interface to 
-c     inhibit unwanted diffusion across the interface.  This routine is 
+c     diffusion parameters to zero at the specified cell interface to
+c     inhibit unwanted diffusion across the interface.  This routine is
 c     used for inflow and outflow boundary conditions.  If argument IND
 c     is positive, the coefficients at that particular interface are
 c     reset.  If IND is negative, the list of NIND indices in INDEX are
 c     used to reset that many interface coefficients.
 c
-c     Argument:  
+c     Argument:
 c     IND    Integer              index of interface to be reset       I
 c
 C-----------------------------------------------------------------------
@@ -1111,12 +1113,12 @@ C-----------------------------------------------------------------------
 
 c     /FCT_NDEX/ Holds a scalar list of special cell information . . .
           Real     SCALARS(NINDMAX)
-          Integer  INDEX(NINDMAX), NIND 
+          Integer  INDEX(NINDMAX), NIND
           Common  /FCT_NDEX/ NIND, INDEX, SCALARS
 
 c     /FCT_VELO/ Holds velocity-dependent flux coefficients
           Real     HADUDTH(NPT),  NULH(NPT),     MULH(NPT)
-          Real     EPSH(NPT),     VDTODR(NPT)   
+          Real     EPSH(NPT),     VDTODR(NPT)
           Common  /FCT_VELO/ HADUDTH, NULH, MULH, EPSH, VDTODR
 
 C-----------------------------------------------------------------------
@@ -1134,7 +1136,7 @@ C-----------------------------------------------------------------------
                 MULH(I) = 0.0
              End Do
           End If
-         
+
       Return
       End
 
@@ -1145,14 +1147,14 @@ C=======================================================================
 C-----------------------------------------------------------------------
 c
 c     Description:   This Subroutine sets all the velocity dependent FCT
-c     parameters to zero at the specified cell interface to inhibit 
-c     transport fluxes AND diffusion of material across the interface.  
+c     parameters to zero at the specified cell interface to inhibit
+c     transport fluxes AND diffusion of material across the interface.
 c     This routine is needed in solid wall boundary conditions.  If IND
 c     is positive, the coefficients at that particular interface are
 c     reset.  If IND is negative, the list of NIND indices in INDEX are
 c     used to reset that many interface coefficients.
 c
-c     Argument:  
+c     Argument:
 c     IND    Integer              index of interface to be reset       I
 c
 C-----------------------------------------------------------------------
@@ -1162,12 +1164,12 @@ C-----------------------------------------------------------------------
 
 c     /FCT_NDEX/ Holds a scalar list of special cell information . . .
           Real     SCALARS(NINDMAX)
-          Integer  INDEX(NINDMAX), NIND 
+          Integer  INDEX(NINDMAX), NIND
           Common  /FCT_NDEX/ NIND, INDEX, SCALARS
 
 c     /FCT_VELO/ Holds velocity-dependent flux coefficients
           Real     HADUDTH(NPT),  NULH(NPT),     MULH(NPT)
-          Real     EPSH(NPT),     VDTODR(NPT)   
+          Real     EPSH(NPT),     VDTODR(NPT)
           Common  /FCT_VELO/ HADUDTH, NULH, MULH, EPSH, VDTODR
 
 C-----------------------------------------------------------------------
@@ -1204,7 +1206,7 @@ C extra(1)=Radn(nx-2) C extra(2)=Radn(nx-1) C extra(3)=Radn(nx ) C extra(4)=xb C
 
         ylimd=ymoy+(xymoy-extra(4)*ymoy)*(x1-extra(4))/extra(5)
 
-	if (ylimd*y(nx).lt.0.) ylimd=y(nx)
+        if (ylimd*y(nx).lt.0.) ylimd=y(nx)
 
         return
         end
@@ -1223,10 +1225,10 @@ C       extra(5)=sig2
         xymoy=(extra(1)*y(nx-2)+extra(2)*y(nx-1)+extra(3)*y(nx))/3.
 
         bclimvd=abs(ymoy
-     &		    +(xymoy-extra(4)*ymoy)*(x1-extra(4))/extra(5))
+     &          +(xymoy-extra(4)*ymoy)*(x1-extra(4))/extra(5))
 
 c        bclimvd=abs(y(nx)
-c     &		    +(y(nx-1)-y(nx-2))/(extra(2)-extra(1))*(x1-extra(3)))
+c     &         +(y(nx-1)-y(nx-2))/(extra(2)-extra(1))*(x1-extra(3)))
 
         if (y(nx).ne.0.) then
           bclimvd=bclimvd/y(nx)
@@ -1251,12 +1253,12 @@ C       extra(5)=sig2
         xymoy=(extra(1)*y(nx-2)+extra(2)*y(nx-1)+extra(3)*y(nx))/3.
 
 
-	bclimd=ymoy+.5*(xymoy-extra(4)*ymoy)*(x1-extra(4))/extra(5)
-c	bclimd=y(nx)
+      bclimd=ymoy+.5*(xymoy-extra(4)*ymoy)*(x1-extra(4))/extra(5)
+c   bclimd=y(nx)
 c     &         +3.*(y(nx-1)-y(nx-2))/(extra(2)-extra(1))*(x1-extra(3))
 
 
-	if (bclimd*y(nx).lt.0.) bclimd=y(nx)
+      if (bclimd*y(nx).lt.0.) bclimd=y(nx)
 
         if (y(nx).ne.0.) then
           bclimd=bclimd/y(nx)

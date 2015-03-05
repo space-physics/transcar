@@ -21,16 +21,14 @@ flux0=70114000000.0 #FIXME where does this come from?
 tstart=$(grep "precipitation start time (seconds)" $TCconfig | cut -f1)
 tfin=$(grep "precipitation end time (seconds)" $TCconfig | cut -f1)
 
-[[ -z $tstart ]] && { echo "error: could not find precip start in $TCconfig"; exit 1; }
-[[ -z $tfin ]] && { echo "error: could not find precip end in $TCconfig"; exit 1; }  
+[[ -z $tstart ]] && { echo "error: could not find precip start in $TCconfig"; exit 1; } || { echo "using tstart= $tstart"; }
+[[ -z $tfin ]] && { echo "error: could not find precip end in $TCconfig"; exit 1; }  || { echo "using tfin= $tfin"; }
 
 # make a directory for this beam -- 
 # everything relevant to sim will reside in this directory, including executable!
 mkdir -pv $CurrDir/dir.input $CurrDir/dir.output \
-          $CurrDir/dir.data/dir.linux/dir.geomag \
-          $CurrDir/dir.data/dir.linux/dir.projection \
-          $CurrDir/dir.data/dir.linux/dir.cine/dir.seff \
-          $CurrDir/dir.data/dir.linux/dir.cine/dir.euvac \
+          $CurrDir/dir.data/dir.linux/dir.{geomag,projection} \
+          $CurrDir/dir.data/dir.linux/dir.cine/dir.{seff,euvac} \
           >>$BMlog 2>&1
 
 PrecFN="$CurrDir/dir.input/precinput.dat"

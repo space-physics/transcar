@@ -1,4 +1,8 @@
 	subroutine jour_mois(ian,ijour,imois)
+Cf2py intent(in) ian
+Cf2py intent(out) ijour
+Cf2py intent(out) imois
+Cf2py intent(out) iday
 
 	integer m1(12),m2(12)
 

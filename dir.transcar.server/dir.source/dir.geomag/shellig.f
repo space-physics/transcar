@@ -379,6 +379,9 @@ C*****FORM SLOWLY VARYING EXPRESSIONS                                   SHEL1800
 C
 C
       SUBROUTINE FELDG(GLAT,GLON,ALT,BNORTH,BEAST,BDOWN,BABS)           SHEL1890
+Cf2py intent(in) GLAT, GLON, ALT
+Cf2py intent(out) BNORTH, BEAST, BDOWN, BABS      
+
 C-------------------------------------------------------------------
 C CALCULATES EARTH MAGNETIC FIELD FROM SPHERICAL HARMONICS MODEL
 C REF: G. KLUGE, EUROPEAN SPACE OPERATIONS CENTRE, INTERNAL NOTE 61, 
@@ -622,7 +625,7 @@ C	USGS, MS 964, Box 25046 Federal Center, Denver, CO  80225
 C                                                                               
 C ===============================================================               
 
-	include 'CHEMIN.INC'
+	include '../dir.include/CHEMIN.INC'
 
 
 	CHARACTER	FSPEC*(*),FILEIN*80,FILEIN1*80

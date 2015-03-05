@@ -5,7 +5,7 @@
  
 c	routine de conversion des coordonnees geographiques
 c	aux coordonnees magnetiques dipolaires avec pole
-c	de centre (lat = (90-8.56)ø, lon = 277.31ø)
+c	de centre (lat = (90-8.56) deg, lon = 277.31 deg)
 
 c	latgeo = latitude  geographique en degres decimaux
 c	longeo = longitude geographique en degres decimaux

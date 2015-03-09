@@ -24,8 +24,8 @@ if [[ $localonly -eq 0 ]]; then
   remjp=$(IFS=,; echo "${remotes[*]}") #puts array into comma separated string for GNU parallel
 
   # purge output directory
-  [[ -d $RODIR ]] && \rm -r $RODIR
-  for remote in "${remotes[@]}"; do
+  [[ -d $RODIR ]] && \rm -r $RODIR #local
+  for remote in "${remotes[@]}"; do #remote
       ssh $remote -t "[[ -d $exedir/$RODIR ]] && rm -r $exedir/$RODIR"
   done
 

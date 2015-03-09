@@ -62,8 +62,8 @@ if [[ $DebugMsg -ne 0 ]]; then
   echo "Starting at t=$tstart sec. until t=$tfin sec."
   echo; echo "output to $CurrDir"
 fi
+
   #Run the sim
-  #(cd $exedir && exec ./run_transcar.sh $CurrDir)
   ./run_transcar.sh $CurrDir
 
   #error trap

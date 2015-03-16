@@ -1,5 +1,5 @@
 2					(kiappel, INTEGER)
-interp9.5km.dat        input file (initial ionospheric conditions)
+cont0.075km.dat        input file (initial ionospheric conditions)
 1.					time step (seconds) (REAL)
 1.				number of seconds between fluid code outputs (seconds, REAL)
 2013090					date of simulation (YYYYDDD)

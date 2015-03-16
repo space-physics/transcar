@@ -14,10 +14,11 @@
 # bring back simulation output to your PC.
 
 BeamEnergyTableFN=BT_E1E2prev.csv
-RODIR=../interp9.5km
+RODIR=../cont0.075km
 exedir=code/transcar/dir.transcar.server
 localonly=1
 remotes=(labHST0 labHST1)
+hact=0   # 2 term all jobs on error now, 1 let existing jobs finish, 0 keep running/starting 
 
 #------- start code --------------
 if [[ $localonly -eq 0 ]]; then
@@ -34,13 +35,13 @@ if [[ $localonly -eq 0 ]]; then
  
   parallel \
     -S $remjp --return $RODIR \
-    --nice 18 --halt 2 --eta --progress --joblog parallellog --colsep ',' \
+    --nice 18 --halt $hact --eta --progress --joblog parallellog --colsep ',' \
     --workdir $exedir \
     "./beamRunner.sh" $RODIR :::: $BeamEnergyTableFN
 
 else #local only
   parallel \
-    --nice 18 --halt 2 --eta --progress --joblog parallellog --colsep ',' \
+    --nice 18 --halt $hact --eta --progress --joblog parallellog --colsep ',' \
     --workdir $exedir \
     "./beamRunner.sh" $RODIR :::: $BeamEnergyTableFN
 

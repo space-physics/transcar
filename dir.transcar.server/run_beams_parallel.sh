@@ -14,7 +14,7 @@
 # bring back simulation output to your PC.
 
 BeamEnergyTableFN=BT_E1E2prev.csv
-RODIR=../cont0.075km
+RODIR=../conttanh0
 exedir=code/transcar/dir.transcar.server
 localonly=1
 remotes=(labHST0 labHST1)

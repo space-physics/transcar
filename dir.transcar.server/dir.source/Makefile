@@ -12,7 +12,7 @@ F90=$(fc)
 
 # -O3 gives SIGSEGV with gfortran, -O2 doesn't.
 ifeq ($(fc),ifort)
-OPTIONS=-assume byterecl  -O2 -mtune=native -march=native  -Wall #for ifort
+OPTIONS=-assume byterecl  -O2 -mtune=native -march=native #for ifort
 else ifeq ($(fc),gfortran)
 # we use std=legacy because there are deleted features used
 OPTIONS=-frecord-marker=4 -O2 -mtune=native -march=native  -std=legacy #-Wall #for gfortran 

@@ -1,17 +1,17 @@
-	subroutine jour_mois(ian,ijour,imois)
+       subroutine jour_mois(ian,ijour,imois)
 Cf2py intent(in) ian
 Cf2py intent(out) ijour
 Cf2py intent(out) imois
 Cf2py intent(out) iday
 
-	integer m1(12),m2(12)
+       integer m1(12),m2(12)
 
-	data m1/31,59,90,120,151,181,212,243,273,304,334,365/
-	data m2/31,60,91,121,152,182,213,244,274,305,335,366/
+       data m1/31,59,90,120,151,181,212,243,273,304,334,365/
+       data m2/31,60,91,121,152,182,213,244,274,305,335,366/
 
-	ijour=mod(ian,1000)
-	nan=(ian-ijour)/1000
-	njour=mod(nan,4)
+       ijour=mod(ian,1000)
+       nan=(ian-ijour)/1000
+       njour=mod(nan,4)
 
 	do 10 i=1,12
 

@@ -11,8 +11,8 @@
 !
 !
          integer nbralt,nbrsp,nbrango2,nbrang,nbrexc,nbrionst,nbren
-         PARAMETER (nbralt=201,nbrsp=5,nbrango2 = 16,nbrang=32,
-     .               nbrexc=15,nbrionst=5,nbren=400)
+         PARAMETER (nbralt=201,nbrsp=5,nbrango2 = 16,nbrang=32,         &
+     &               nbrexc=15,nbrionst=5,nbren=400)
 !
 !       Nom de la planete d'application, et distance au soleil (UA)
         character*10 planete
@@ -42,8 +42,8 @@
         data planete/'Terre'/
         data rayonUA /1./
  	
- 	data atomas /28.0134,31.9988,15.9994,1.00797,4.0026,14.0067,
-     .		     39.948,30.0061/
+ 	data atomas /28.0134,31.9988,15.9994,1.00797,4.0026,14.0067,        &
+     &		     39.948,30.0061/
 	data specie/'[N2]','[O2]','[O]','[H]','[He]','[N]','[A]','[NO]'/
  	
  	data ineutr/10/,ielec/12/,iindat /14/,transcar_dat/15/

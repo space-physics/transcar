@@ -80,7 +80,7 @@ c	write(6,*)'Writting NEUTRAL                             [A'
 3060    format (a5, ' neutral density [cm-3]')
 3065    format (5(1pe14.6))
 3066    format (a5,' Column density (Warning! non divided by ',
-     .			'sin(magn.dip angle) ')
+     &    'sin(magn.dip angle) ')
 c
       open (ineutr, file=data_path(1:lpath_data)
      &                         //'dir.cine/NEUTRAL_VERIF')
@@ -126,11 +126,11 @@ c 	write(6,*)'Writting ELEC'
  4006 format('1  pitch angles ')
  4007 format(5(1pe10.2))
  4008 format ('1  ------ densite electronique ',
-     .      /,'2     ambient electron parameters ',
-     .      /,'3     ne: number of alt.',
-     .      /,'4     alt: altitudes. (km)       ',
-     .      /,'5     denelc: number densities.(/cm3)',
-     .      /,'6 ') 
+     &      /,'2     ambient electron parameters ',
+     &      /,'3     ne: number of alt.',
+     &      /,'4     alt: altitudes. (km)       ',
+     &      /,'5     denelc: number densities.(/cm3)',
+     &      /,'6 ') 
  4009 format ('1  ------ densite electronique ',
      .      /,'2     ambient electron parameters ',
      .      /,'3     ne: number of alt.',
@@ -141,7 +141,7 @@ c 	write(6,*)'Writting ELEC'
  4011 format(5(1pe14.6))
  4012 format(i10)
  4013 format('1  ------  flux montant (cm-2.s-1.eV-1.sr-1)',/,
-     .'2   angle, cos(angle),gaussian weight and fluxes')
+     &  '2   angle, cos(angle),gaussian weight and fluxes')
  4014 format('Compositions [O+]/Ne (%)Mesures EISCAT. z50 =',f7.2,'km')
  4015 format(1f20.4,2f20.13)
  4016 format('Angles en ordre croissant.{0->90=fd},{90->180=fu}')
@@ -155,7 +155,7 @@ c 	write(6,*)'Writting ELEC'
  4022 format (4f18.4)
  4023 format (5f13.5)
  4024 format ('% O+/Ne Modele EISCAT-Ch.L. (dependant du temps). z50 =',
-     .		f7.2,'km')
+     &  f7.2,'km')
  4025 format ('% O+/Ne Modele Millestone')
 c
       open (ielec,file=data_path(1:lpath_data)

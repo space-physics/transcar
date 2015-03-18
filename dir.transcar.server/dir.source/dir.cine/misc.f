@@ -381,11 +381,11 @@ c 	Abramovitz and Stegun, 1970. jl 1990.
 c
       	dimension x(nx),fx(nx),absc(100),wt(100)
 1000 	format(10('-'),' Warning! Gaussian integration asked on a too',
-     .	    	/,20x,'small (',i3,') number of points. Will be ',
-     .      	/,20x,'performed on 6 points.')
+     &    /,20x,'small (',i3,') number of points. Will be ',
+     &    /,20x,'performed on 6 points.')
 1010 	format(10('-'),' Warning! Gaussian integration asked on an odd',
-     .		/,20x,'(',i3,') number of points. Will be performed ',
-     .  	/,20x,'on an even (',i3,') number of points.')
+     &    /,20x,'(',i3,') number of points. Will be performed ',
+     &    /,20x,'on an even (',i3,') number of points.')
 c
  	if(ngau.lt.6)then
 	  ngauss=6
@@ -773,7 +773,7 @@ C	  DENO   DENSITY OF ATOMIC OXYGEN (NB/CM**3)
 C	  DENN2  DENSITY OF MOLECULAR NITROGEN (NB/CM**3)
 C	  DENO2  DENSITY OF MOLECULAR OXYGEN (NB/CM**3)
 C
-      ALOG10(X) = 0.43429448 * ALOG(X)
+!      ALOG10(X) = 0.43429448 * ALOG(X)
 C
       TM = (TI + TN) / 2.0
       XLOG = ALOG10(TM)
@@ -849,7 +849,7 @@ C	  DENO   DENSITY OF ATOMIC OXYGEN (NB/CM**3)
 C	  DENN2  DENSITY OF MOLECULAR NITROGEN (NB/CM**3)
 C	  DENO2  DENSITY OF MOLECULAR OXYGEN (NB/CM**3)
 C
-      ALOG10(X) = 0.43429448 * ALOG(X)
+!      ALOG10(X) = 0.43429448 * ALOG(X)
 C
       TM = (TI + TN) / 2.0
       XNUO = 2.31E-10 * DENO

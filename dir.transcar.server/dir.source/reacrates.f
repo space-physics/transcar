@@ -29,7 +29,7 @@
 	  Tr=(Tn +16.*TOHot)/17.
 	  kOHotH=b1(1)*(Tr/1.e4)**c1(1) + b1(2)*(Tr/1.e4)**c1(2)
       Tr=(TnHot*16.+TH)/17.
-	  kHOHot=(b2(1)*(Tr/1.e4)**c2(1) + b2(2)*(Tr/1.e4)**c2(2))*         &
+	  kHOHot=(b2(1)*(Tr/1.e4)**c2(1) + b2(2)*(Tr/1.e4)**c2(2))*         
      &   exp(-227./Tr)
 
 !	Hot-Hot reaction rates

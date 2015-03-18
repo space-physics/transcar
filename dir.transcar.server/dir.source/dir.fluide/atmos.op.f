@@ -1,4 +1,4 @@
-	subroutine atmos(iyd,ces,stl,z,glat,glong,jpreci,f107,
+	subroutine atmos(iyd,ces,stl,z,glat,glong,jpreci,f107,              &
      &			ap,Ne,Te,Tj,nx,kiappel,file_cond)
  
 
@@ -457,8 +457,8 @@ C       --Z
             TnOHot(i)=4000.
 
 	    !Diffusive equilibrium profile
-	    NOHot(i)=NOHotRef*exp(-16.*m0*g0*1.e5/kb/TnOHot(i)*(z(i)-zNOHotRef)
-     &			/(z(i)/Re+1.)**2)
+	    NOHot(i)=NOHotRef*exp(-16.*m0*g0*1.e5/kb/TnOHot(i)*             &
+     &			(z(i)-zNOHotRef) / (z(i)/Re+1.)**2.)
             
 	    !Heat Flow is negligible
 	    q_NOHot(i)=0.

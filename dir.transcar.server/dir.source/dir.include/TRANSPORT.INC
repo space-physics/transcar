@@ -1,31 +1,31 @@
-c
-c Computational parameters :
-c --------------------------
-c nbralt   =	IPM:(MMAX) length of altitude grid (number of layers +1)
-c nbrsp    =	IPJ: number of species (1=N2 , 2=O2 , 3=O , 4=H , 5=He)
-c nbrango2 =	IPK : (KSTR2) one half of the maximum number of streams
-c nbrang   =	IPK : (KSTR2) maximum number of streams
-c nbrexc   =	IPJS: maximum number of excitation states
-c nbrionst =	IPJSP: number of ionized states
-c nbren    =	IPN: maximum length of the energy grid
-c
-c
+!
+! Computational parameters :
+! --------------------------
+! nbralt   =	IPM:(MMAX) length of altitude grid (number of layers +1)
+! nbrsp    =	IPJ: number of species (1=N2 , 2=O2 , 3=O , 4=H , 5=He)
+! nbrango2 =	IPK : (KSTR2) one half of the maximum number of streams
+! nbrang   =	IPK : (KSTR2) maximum number of streams
+! nbrexc   =	IPJS: maximum number of excitation states
+! nbrionst =	IPJSP: number of ionized states
+! nbren    =	IPN: maximum length of the energy grid
+!
+!
          integer nbralt,nbrsp,nbrango2,nbrang,nbrexc,nbrionst,nbren
          PARAMETER (nbralt=201,nbrsp=5,nbrango2 = 16,nbrang=32,
      .               nbrexc=15,nbrionst=5,nbren=400)
-c
-c       Nom de la planete d'application, et distance au soleil (UA)
+!
+!       Nom de la planete d'application, et distance au soleil (UA)
         character*10 planete
         real rayonUA
-c
-c 	For each specie:
-c 	  . Name.
-c 	  . Atomic mass (number).
-c
+!
+! 	For each specie:
+! 	  . Name.
+! 	  . Atomic mass (number).
+!
  	real atomas(8)
-c
+!
 	character*5 specie(8)
-c
+!
  	
  	integer unfic_in_transcar,unfic_out_transcar
  	integer fic_datdeg,fic_degout,fic_transout,fic_dattrans
@@ -35,7 +35,7 @@ c
  	integer ineutr,ielec,iindat,transcar_dat
         integer ifeldat,ifelprt,ifeltrans
         integer fic_euvcoeff,fic_euvindex
-c
+!
         include '../dir.include/CHEMIN.INC'
 
 

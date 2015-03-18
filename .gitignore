@@ -1,6 +1,7 @@
 *~
 
 # Compiled Object files
+*.pyf
 *.slo
 *.lo
 *.o
@@ -26,5 +27,4 @@
 
 # Executables
 *.exe
-*.out
 *.app

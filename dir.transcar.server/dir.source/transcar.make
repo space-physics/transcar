@@ -1,27 +1,21 @@
+MYCOMPILER=gfortran #ifort
+
 #Definition du type de machine et du compilateur
 #OS := $(shell uname)
-#
-#F77:=$(shell if [ "$(OS)" = "Linux"  ]; then echo "ifort";\
-#        else if [ "$(OS)" = "AIX"    ]; then echo "xlf";\
-#       else    [ "$(OS)" = "IRIX64" ]       echo "f77";\
-#        fi;fi)
-#F90:=$(shell if [ "$(OS)" = "Linux"  ]; then echo "ifort";\
-#        else if [ "$(OS)" = "AIX"    ]; then echo "xlf90";\
-#        else    [ "$(OS)" = "IRIX64" ]       echo "f90";\
-#        fi;fi)
 #OPTIONS:=$(shell if [ "$(OS)" = "Linux"  ]; then echo "-m486 -O -finit-local-zero -funroll-loops -ffast-math -fno-f2c -fno-automatic ";\
 #OPTIONS:=$(shell if [ "$(OS)" = "Linux"  ]; then echo "-w90 -assume byterecl -axW -O3";\
-#            else if [ "$(OS)" = "AIX"    ]; then echo "-qnolm -O3 -qspnans -qstrict  -qtune=pwr2 #-qmaxmem=-1";\
-#            else    [ "$(OS)" = "IRIX64" ]       echo "-N3 -N26 -O -w -A -s -f -B100 ";\
-#            fi;fi)
 
-#OPTIONS=-w90 -assume byterecl -axW -O3
-#OPTIONS=-w90 -assume byterecl -axW
+#OPTIONS=-w90 -assume byterecl -axW -O3 
 
-F77=gfortran #ifort
-F90=gfortran #ifort
-#OPTIONS=-assume byterecl -O3 -mtune=native -march=native  #for ifort
-OPTIONS=-frecord-marker=4 -O3 -mtune=native -march=native -std=legacy #for gfortran 
+F77=$(MYCOMPILER)
+F90=$(MYCOMPILER)
+
+ifeq ($(MYCOMPILER),ifort)
+    OPTIONS=-assume byterecl -O3 -mtune=native -march=native  #for ifort
+else #gfortran
+    OPTIONS=-frecord-marker=4 -O3 -mtune=native -march=native -std=legacy #for gfortran 
+endif
+
 FLAG_COMPIL= $(OPTIONS) -I$(INCLUDE) -c
 FLAG_LIEN= $(OPTIONS) -I$(INCLUDE) -o
 

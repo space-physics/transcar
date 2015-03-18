@@ -556,7 +556,7 @@ c     	calcul de densites
      .		denselregE(ialt)
  	enddo
 7050 	format(/,'Electron density in the E region',/,' altitude ',
-     .	      ' e- prod.  Computed [Ne]')
+     &    ' e- prod.  Computed [Ne]')
 7051 	format(1f10.2,2(1pe12.3))
 c
  	return
@@ -865,19 +865,19 @@ c
 1015  	format(/,5x,'alt',7x,'H+',8x,' He+')
 1020  	format(1h ,6(1pe10.2))
 1040  	format( /,'Production (/cm3.s),at 5 alt., in',i5,
-     .      ' energy boxes,due to N2,O2,O,H,He(produc(iz,neutspe,ien))')
+     .    ' energy boxes,due to N2,O2,O,H,He(produc(iz,neutspe,ien))')
 1050    format(1x,/,'alt=',f6.1)             
 1060  	format(2(1x,i2,3(1pe10.2)))
 1070  	format (/,5x,'Produced Photoel. (/cm3.s.eV) at each altitude',
-     . 		' (prophel(ialt,ien))',
-     .          / 12x, 'Altitude  ',
-     .          / , 5x, ' E ', 1x, 7f10.2)
+     .    ' (prophel(ialt,ien))',
+     .    / 12x, 'Altitude  ',
+     .    / , 5x, ' E ', 1x, 7f10.2)
 1080  	format (1x, f8.2, 8(1pe10.2))                                   
 1100  	format(1h ,7(1pe10.2))
 1110  	format('Electron and ionized neutral production (cm-3.s-1)',
-     . 		' (proneut(iz,neutspe))',/,
-     .		5x,'alt',7x,'Ne',9x,'Nn2',7x,'No2 ',6x,'No1 ',
-     .		7x,'H ',7x,'He')
+     .    ' (proneut(iz,neutspe))',/,
+     .    5x,'alt',7x,'Ne',9x,'Nn2',7x,'No2 ',6x,'No1 ',
+     .    7x,'H ',7x,'He')
 c
 c	write(6,*)'Writting                                            '
  	if(iprt(8).eq.1)then
@@ -919,7 +919,7 @@ c
             do 170 ien1=1,nen,2
               ien2=ien1+1
               write(ifelprt,1060)ien1,(produc(iz,neutspe,ien1),
-     .          neutspe=1,3 ),ien2,(produc(iz,neutspe,ien2),neutspe=1,3)
+     .         neutspe=1,3 ),ien2,(produc(iz,neutspe,ien2),neutspe=1,3)
 170         continue
             iz=iz+nnz
 180   	  continue   
@@ -958,37 +958,37 @@ c
 c
 c 	calculates and prints the energy through primary production
 c 	Integration over the energies
- 	do ialt = 1,nalt
- 	  zwork(ialt) = 0.
-	  do ien=1,nen
- 	    zwork(ialt) = zwork(ialt)+
+ 	    do ialt = 1,nalt
+ 	      zwork(ialt) = 0.
+	      do ien=1,nen
+ 	        zwork(ialt) = zwork(ialt)+
      .		    Ecent(ien)*prophel(ialt,ien)*engdd(ien)
- 	  enddo
- 	enddo
+ 	      enddo
+ 	    enddo
 c
- 	call hint(nalt,altkm,zwork,qpheleV)
+ 	    call hint(nalt,altkm,zwork,qpheleV)
 c
 c 	Dans ce pgme, les altitudes sont en km :
- 	qpheleV = qpheleV*1.e+05
-	qphelerg = qpheleV*1.6022e-12
-	write(ifelprt,5007) qpheleV,qphelerg
+ 	    qpheleV = qpheleV*1.e+05
+	    qphelerg = qpheleV*1.6022e-12
+	    write(ifelprt,5007) qpheleV,qphelerg
 c 	write(6,5007) qpheleV,qphelerg
 5007	format(/,
-     .	'The total E. from photoelectron prod.  is : ', 1pe10.4,
-     .	' eV/cm2/s',/,45x,'or : ',1pe10.4,' erg/cm2/s')
+     .  'The total E. from photoelectron prod.  is : ', 1pe11.4,
+     .  ' eV/cm2/s',/,45x,'or : ',1pe11.4,' erg/cm2/s')
 c
 c     	write in file ifeltrans for transport program. 
       	write(ifeltrans) nen,nalt,ns
       	write(ifeltrans) (Ecent(i),i=1,nen)
       	write(ifeltrans) (altkm(i),i=1,nalt)
       	write(ifeltrans) ((prophel(i,j),j=1,nen),i=1,nalt)
- 	write(ifeltrans) (proelec(i),i=1,nalt)
+ 	    write(ifeltrans) (proelec(i),i=1,nalt)
       	write(ifeltrans) ((prodion(ialt,isp),ialt=1,nalt),isp=1,ns+1)
       	close(ifeltrans)
       	close(ifelprt)
 c                                                       
- 	return
-	end
+ 	    return
+	    end
 c
 c------------------------ setpar ------------------------------
 c
@@ -1023,17 +1023,17 @@ c
         real chapesp(8),f107(3),ap(7)
 c
 1000    format (1x,/,'hour=',f6.2, 8x,'chi =',f6.2, 3x,'degrees',  
-     . 		6x,'exo temp =',f8.2,/)
+     .    6x,'exo temp =',f8.2,/)
 1010  	format ('     felin.f : Production of primary photoelectrons',
-     .		'. Sza (deg) :',f10.2)
+     .    '. Sza (deg) :',f10.2)
 c    .		'prod., Sza (deg) :',f10.2,/,' --------')
 1020   	format (' Spectral lines :',/,'      Wavelength (nm)     ',7x,
-     .		'energy(eV)        incident flux (photons/s.cm2)',/,
-     .		51x,'SC#21REFW  Computed  F79059N',/,48x,3f10.2,/,
-     .		1x,23('-'),2x,23('-'),2x,28('-'))
+     .    'energy(eV)        incident flux (photons/s.cm2)',/,
+     .    51x,'SC#21REFW  Computed  F79059N',/,48x,3f10.2,/,
+     .    1x,23('-'),2x,23('-'),2x,28('-'))
 1030 	format(3f8.3,1x,3f8.3,3(1pe10.2))  
 1050  	format (' Ionization potentials (threshold, [eV]), ',
-     .		'N2,O2,O,N2d,O2d,H,He ')
+     .    'N2,O2,O,N2d,O2d,H,He ')
 1060  	format( /,' Comparison 1/cos(chi) and',
      .          ' Chapman''s function (o,n2,o2)') 
 1070    format (1x, 7(1pe15.7) )                              
@@ -1044,12 +1044,12 @@ c    .		'prod., Sza (deg) :',f10.2,/,' --------')
      .  '|    O_2   (*1.e18cm2)      |', /,70('-'),/,
      .  'ANGSTROMS  ABS   N_2+   N+     ION ',
      .   '|  ABS    O_2+    O+    ION', /,70('-'))
-1140    format(12f7.3)
-1150    format(/,28('-'),/,' Lambda  |  O   (*1.e18cm2) |',
+1140   format(12f7.3)
+1150   format(/,28('-'),/,' Lambda  |  O   (*1.e18cm2) |',
      .    /,28('-'),/,'ANGSTROMS| ABS    ION       |', /,28('-'))
-1160    format(/,70('-'),/,
-     .  ' Lambda |      H   (*1.e18cm2)     |    He  (*1.e18cm2)     |',
-     .		/,70('-'),/,
+1160   format(/,70('-'),/,
+     . ' Lambda |      H   (*1.e18cm2)     |    He  (*1.e18cm2)     |',
+     .  /,70('-'),/,
      .  'ANGSTROMS      ABS        ION   |  ABS         ION',/,70('-'))
 c
 2010    format (/,'atmosphere neutre',/,f10.2, 20x, 'tempexo')
@@ -1060,19 +1060,19 @@ c
      .      ,' n(02)      n(01)',/,8x,' km      deg k    ',
      .       '   /cm3       /cm3       /cm3')
 2055    format (/,' no.   height     n(H)       n(He)       ',
-     .		'n(N)       n(A)', /,'         km        /cm3       ',
-     .		'/cm3       /cm3       /cm3')
+     .    'n(N)       n(A)', /,'         km        /cm3       ',
+     .    '/cm3       /cm3       /cm3')
 2060    format (i3,2f10.2,3(1pe11.3))
 2065    format (i3,f10.2,4(1pe11.3))
 c
 c     	ns is Number of neutral Species in atmosphere
 c     	nns = ns+2 allows for diss ioniz of o2 and n2
- 	ns  = nspec
- 	nns = ns + 2
+ 	    ns  = nspec
+ 	    nns = ns + 2
 c
 c 	set pi
- 	pi = 4.*atan(1.)
- 	nan = ifix(year)
+ 	    pi = 4.*atan(1.)
+ 	    nan = ifix(year)
 c
 c       Met les energies en ordre decroissant
         if(centE(1).gt.centE(nen))then
@@ -1124,7 +1124,7 @@ c----   Lecture des sections efficaces
 c 	sefftot = sections eff. totale, N2,O2,O
 c 	sefftion = sections eff. d'ionisation et d'ionisation dissocia
 c 	tive, N2,O2,O,Ndiss,Odiss.
- 	if(iseff.eq.1)then
+ 	  if(iseff.eq.1)then
 c 	  Fichier Torr et Torr de 39 energies (2 energies rajoutees 
 c 	  pour tenir compte du flux solaire de Tobiska, jl 1993)
  	  open(icrsphot,
@@ -1148,7 +1148,7 @@ c 	  pour tenir compte du flux solaire de Tobiska, jl 1993)
      .		          sefftot(i,5),seffion(i,7)
  	  enddo
  	  close(icrsphot)
- 	elseif(iseff.eq.2)then
+ 	  elseif(iseff.eq.2)then
 c 	  Fichier Fennely et Torr de 1946 energies (dont 2 rajoutees 
 c 	  pour tenir compte du flux solaire de Tobiska, jl 1993)
  	  open(icrsphot,
@@ -1182,11 +1182,11 @@ c 	    d'ionis. totale...
  	    sefftot(i,5) = max(sefftot(i,5),seffion(i,7))
  	  enddo
  	  close(icrsphot)
- 	endif
+ 	  endif
 c
 c ----	Estimation du flux solaire sur les 39 energies initiales,
 c 	en photons/cm2/s
- 	if(iflux.eq.0)then
+ 	  if(iflux.eq.0)then
 	  do i=1,nwave
  	    pflux(i)= (f107(1)-f107max)*(pfluxmin(i)-pfluxmax(i))/
      . 	   		(f107min-f107max) + pfluxmax(i)
@@ -1194,15 +1194,15 @@ c	    pflux(i)= (130.5-f107max)*(pfluxmin(i)-pfluxmax(i))/
 c    . 	   		(f107min-f107max) + pfluxmax(i)
 
  	  enddo
- 	elseif (iflux.eq.1)then
+ 	  elseif (iflux.eq.1)then
  	  do i=1,nwave
  	    pflux(i)= pfluxmin(i)
  	  enddo
- 	elseif (iflux.eq.2)then
+ 	  elseif (iflux.eq.2)then
  	  do i=1,nwave
  	    pflux(i)= pfluxmax(i)
  	  enddo
- 	elseif (iflux.eq.3)then
+ 	  elseif (iflux.eq.3)then
  	  if (nan.gt.99)then
  	    yyddd = (nan-1900)*1000+ifix(day)
  	  else
@@ -1234,7 +1234,7 @@ c   	  modification : OW, 12 dec 1997
  	  close(47)
 333       continue
 
- 	endif
+ 	  endif
 c 	Prend en compte la distance au soleil
  	do i=1,nwave
 	  pflux(i) = pflux(i)/(rayonUA**3)
@@ -1279,24 +1279,24 @@ c 	Takes the Torr fudge factor into account
  	enddo
 c
 c ----	Computes the normalized branching ratio
- 	call  branchratio(39,eV,threshold,number,wwt)
+ 	    call  branchratio(39,eV,threshold,number,wwt)
 c
 c 	Interpole les sections efficaces sur la grille d'energie de
 c 	travail du flux solaire
- 	do iwave = 1,nwave
- 	  sigt(iwave,1) = sefint(eV(iwave),1,1)
- 	  sigt(iwave,2) = sefint(eV(iwave),2,1)
- 	  sigt(iwave,3) = sefint(eV(iwave),3,1)
- 	  sigt(iwave,4) = sefint(eV(iwave),4,1)
- 	  sigt(iwave,5) = sefint(eV(iwave),5,1)
- 	  sigi(iwave,1) = sefint(eV(iwave),1,2)
- 	  sigi(iwave,2) = sefint(eV(iwave),2,2)
- 	  sigi(iwave,3) = sefint(eV(iwave),3,2)
- 	  sigi(iwave,4) = sefint(eV(iwave),4,2)
- 	  sigi(iwave,5) = sefint(eV(iwave),5,2)
- 	  sigi(iwave,6) = sefint(eV(iwave),6,2)
- 	  sigi(iwave,7) = sefint(eV(iwave),7,2)
- 	enddo
+ 	    do iwave = 1,nwave
+ 	      sigt(iwave,1) = sefint(eV(iwave),1,1)
+     	  sigt(iwave,2) = sefint(eV(iwave),2,1)
+     	  sigt(iwave,3) = sefint(eV(iwave),3,1)
+ 	      sigt(iwave,4) = sefint(eV(iwave),4,1)
+ 	      sigt(iwave,5) = sefint(eV(iwave),5,1)
+ 	      sigi(iwave,1) = sefint(eV(iwave),1,2)
+ 	      sigi(iwave,2) = sefint(eV(iwave),2,2)
+ 	      sigi(iwave,3) = sefint(eV(iwave),3,2)
+ 	      sigi(iwave,4) = sefint(eV(iwave),4,2)
+ 	      sigi(iwave,5) = sefint(eV(iwave),5,2)
+ 	      sigi(iwave,6) = sefint(eV(iwave),6,2)
+ 	      sigi(iwave,7) = sefint(eV(iwave),7,2)
+ 	    enddo
 c
 c
 c ----	Ecritures
@@ -1304,7 +1304,7 @@ c
         if (iprt(6).eq.1) then
           write(ifelprt,2010)tempexo
           write(ifelprt,2020)glat,glong,ap(1)
-  	  write(ifelprt,2023)day,nan
+  	      write(ifelprt,2023)day,nan
           write(ifelprt,2030)f107(3),f107(1)
           write(ifelprt,2050)
 	  if(nspec.le.3)then

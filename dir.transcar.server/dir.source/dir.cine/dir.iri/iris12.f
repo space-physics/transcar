@@ -412,9 +412,9 @@ c    &    ' !!!!   or exit (enter: 0)')
 c	read(*,*) idisk
 c	if(idisk.eq.1) goto (1344,1244) lread
 8449	FORMAT(1X////,
-     &	  ' !!!!   The file ',A45,/,
+     &    ' !!!!   The file ',A45,/,
      &    ' !!!!   is not in your directory,'/
-     &	  ' !!!!   IRI is NOT excecuted,')
+     &    ' !!!!   IRI is NOT excecuted,')
 	GOTO 3330
 C
 C LINEAR INTERPOLATION IN SOLAR ACTIVITY

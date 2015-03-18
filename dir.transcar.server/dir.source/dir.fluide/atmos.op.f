@@ -1,4 +1,4 @@
-	subroutine atmos(iyd,ces,stl,z,glat,glong,jpreci,f107,              &
+	   subroutine atmos(iyd,ces,stl,z,glat,glong,jpreci,f107,              
      &			ap,Ne,Te,Tj,nx,kiappel,file_cond)
  
 
@@ -236,7 +236,7 @@ C       --MZ
 
         real lonmag,latmag,tmag,cofo,cofh,cofn,Fe0,Ee0,Fi0,Ei0,chi0
         real Bmag,dipangle,Enord,Eest,vperpnord,vperpest,vhorizon,vpara
-	real kp,ddp,Jtop
+	    real kp,ddp,Jtop
         integer ikp
 
         common/buff/lonmag,latmag,tmag,ikp,cofo,cofh,cofn,chi0,
@@ -246,10 +246,10 @@ C       --MZ
         real cofn2,cofo2
         common/buff2/ cofn2,cofo2
 
-	real coef_flux
+	    real coef_flux
         common/prec/coef_flux
 
-	real Pr(npt,3),rhot(npt)
+        real Pr(npt,3),rhot(npt)
         real*8 tu,dlon,dlat
 c
         real Ph(npt),Po(npt),Po2(npt),Pn2(npt),Pn(npt)
@@ -274,26 +274,26 @@ C       PAS DE ME RENVOYER LE CODE MODIFIE.
         real burn
         common/burn/burnside
 
-	real temps,En,Ee,Eno,Eeo
+        real temps,En,Ee,Eno,Eeo
 cc 	 
         logical flag,flagatmos,flgini,flgread
-	common /atm/flagatmos
+        common /atm/flagatmos
 
         data flag/.true./
         data flgini/.true./
- 	integer kiappel
+        integer kiappel
 
-	real perturb,pert
+        real perturb,pert
 
-	real dTinf0(14),qetop0(14)
-	real cofo0(14),cofh0(14)
+        real dTinf0(14),qetop0(14)
+        real cofo0(14),cofh0(14)
 
-	real vparaB
+        real vparaB
         common /avril/vparaB
 
 
-	real rap
-	common /rap_prec/rap
+        real rap
+        common /rap_prec/rap
 
 
         logical precflag
@@ -303,28 +303,30 @@ cc
         real timeser(256), edist(256)
         real fluxdist(256,256)
         integer ntimeser,nfluxdist,precint,precext
-        common /precdist/ nfluxdist,ntimeser,timeser,edist,fluxdist,precint,precext
+        common /precdist/ nfluxdist,ntimeser,timeser,edist,fluxdist,
+     &     precint,precext
 
-	real e1,f1
+	    real e1,f1
         common /E930216/e1,f1,coefchamp
 
-	real*8 a0,c0,s0,x0,y0,xpos,ypos,pos0
+	    real*8 a0,c0,s0,x0,y0,xpos,ypos,pos0
 
 	
-	logical flg_err
-	common/err/flg_err	
+	    logical flg_err
+	    common/err/flg_err	
 
             
 C       Added to simulate an assumed neutral Hot O profile
 C       Matt Zettergren, 13/09/2004
         logical chkOHot,flagOHot
-	common /flagsOHot/ chkOHot,flagOHot
-        real NOHot(npt),TnOHot(npt),q_NOHot(npt),POHot(npt),fluxhot(npt)
-	common /OHot/ NOHot,TnOHot,q_NOHot,POHot,fluxhot
-	real secOHot
+	    common /flagsOHot/ chkOHot,flagOHot
+        real NOHot(npt),TnOHot(npt),q_NOHot(npt),POHot(npt),
+     &          fluxhot(npt)
+	    common /OHot/ NOHot,TnOHot,q_NOHot,POHot,fluxhot
+	    real secOHot
         real zNOHotref,pctOHot,NOHotRef
-	real zTnOHotRef,TnOHotRef,TnOHotDecay,TnOHotInf
-	common /OHotParams/ zNOHotref,pctOHot,NOHotRef,zTnOHotRef,
+	    real zTnOHotRef,TnOHotRef,TnOHotDecay,TnOHotInf
+	    common /OHotParams/ zNOHotref,pctOHot,NOHotRef,zTnOHotRef,
      &		TnOHotRef,TnOHotDecay,TnOHotInf
 C       --MZ
 	
@@ -336,15 +338,15 @@ C       Added in to account for RBR electron precipitation
 C       --Z
 
 
-	sec=ces
+	    sec=ces
         kp=ap2kp(ap(1))
         ikp=kp*3
-	nan=iyd/1000
-	njour=mod(iyd,1000)
-	chi=acos(coskhi(glat,glong,sec/3600.,nan,njour,2))
-	chi0=chi*180./3.14159265
+	    nan=iyd/1000
+	    njour=mod(iyd,1000)
+	    chi=acos(coskhi(glat,glong,sec/3600.,nan,njour,2))
+	    chi0=chi*180./3.14159265
 
-	rap=1.
+	    rap=1.
 !	if (njour.eq.48) then
 !	  open(83,file=data_path(1:lpath_data)
 !     &                       //'dir.fluide/var_rap.dat',
@@ -365,9 +367,9 @@ C       --Z
 
         temploc=(91.-chi*180./3.1415926)
         vartemp=(1+tanh(temploc*3.))/2.
-	J0=0.
-!	Qetop  = -5.e-4-4.e-3*exp(-(chi0-91.)**2/30.)
-!	Qetop=-2.e-3
+	    J0=0.
+!	    Qetop  = -5.e-4-4.e-3*exp(-(chi0-91.)**2/30.)
+!	    Qetop=-2.e-3
 	
 	  vmerid_inf=0.
 	  vzonal_inf=0.
@@ -381,13 +383,13 @@ C       --Z
 !	  cofh=1.
         goto 987
 
-987	continue	
+987	  continue	
 
 
-	dlon=dble(15.*tmag)
-	dlat=dble(latmag)
-	tu=dble(sec)
-	call courant(iyd,tu,kp,dlon,dlat,Jtop)
+	    dlon=dble(15.*tmag)
+	    dlat=dble(latmag)
+	    tu=dble(sec)
+	    call courant(iyd,tu,kp,dlon,dlat,Jtop)
 
 	
 !       Added for simulation of electron precpitation
@@ -433,7 +435,7 @@ C       --Z
 !	  close(917)
 !	endif
 
-        flagOHot=1
+        flagOHot=.TRUE.
         zNOHotRef=400.
         pctOHot=0.
         zTnOHotRef=90.
@@ -441,12 +443,12 @@ C       --Z
         TnOHotDecay=0.005
         TnOHotInf=4000.
 
-	if(flagOHot) then
-	  !Find the reference hot O density
-	  secOHot=sec
-	  call gtd6(iyd,secOHot,zNOHotRef,glat,glong,stl,
+	    if(flagOHot) then
+	     !Find the reference hot O density
+	     secOHot=sec
+	     call gtd6(iyd,secOHot,zNOHotRef,glat,glong,stl,
      &		f107(3),f107(2),ap,48,d,t)
-	  NOHotRef=pctOHot*0.01*d(2)
+	     NOHotRef=pctOHot*0.01*d(2)
 
 	  !Calculate the Hot O density over the desired altitude range
           do i=1,nx
@@ -457,7 +459,7 @@ C       --Z
             TnOHot(i)=4000.
 
 	    !Diffusive equilibrium profile
-	    NOHot(i)=NOHotRef*exp(-16.*m0*g0*1.e5/kb/TnOHot(i)*             &
+	    NOHot(i)=NOHotRef*exp(-16.*m0*g0*1.e5/kb/TnOHot(i)*             
      &			(z(i)-zNOHotRef) / (z(i)/Re+1.)**2.)
             
 	    !Heat Flow is negligible
@@ -468,10 +470,10 @@ C       --Z
 !       --MZ
 
 
-	do i=1,nx
+	    do i=1,nx
 
      
-	if (flagatmos) then
+	  if (flagatmos) then
 c	if (flgini) then
 
 	  if (z(i).le.zsup) indlim=i
@@ -540,7 +542,7 @@ C       Wm est la composante nord de la derive magnetique
 	  Wm(i)=Eest/Bmag*1000.-Wn(i)
 
 
-	Vm_2(i)=Vm(i)**2+Wm(i)**2
+	  Vm_2(i)=Vm(i)**2+Wm(i)**2
 
 c	J0 est en �/m-2
 	  JJ(i)=J0/1.6e-9*((800.+Re)/(z(i)+Re))**3
@@ -550,9 +552,9 @@ c	J0 est en �/m-2
 
           JJ(i)=JJ(i)*coef_cour
 
-	enddo
+	  enddo
 
-	if (flagatmos) then
+	  if (flagatmos) then
           indlim_1=indlim-1
           zlim=z(indlim)
           zlim_1=z(indlim_1)
@@ -632,15 +634,15 @@ c 		endif
 
           endif
 
-	endif
+	    endif
 
-	do i=indlim+1,nx
+	    do i=indlim+1,nx
 	  Po(i) =Po(indlim)/No(indlim)*No(i)
 	  Pn2(i)=Pn2(indlim)/Nn2(indlim)*Nn2(i)
 	  Po2(i)=Po2(indlim)/No2(indlim)*No2(i)
 	  Pn(i)=Pn(indlim)/Nn(indlim)*Nn(i)
 	  Ph(i)=Ph(indlim)/Nh(indlim)*Nh(i)
-	enddo
+	    enddo
 
 	  do i=1,nx								!MZ
 	    POHot(i)=0.!Po(i)*NOHot(i)/No(i)					!MZ
@@ -648,5 +650,5 @@ c 		endif
 
 c	if (flgini) flgini=.false.
 
-	return
-	end
+	    return
+	    end

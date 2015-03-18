@@ -2,12 +2,12 @@ c
 c--------------------------- prot ---------------------------------
 c 
         subroutine prot(centE,Ebot,ddeng,alt,altkm,
-     .	      iprt,nspec,nen,nang,nango2,nalt,jpreci,mcount,
-     .	      prodprotelec,primprotelec,fluxprimprot,qprimprot,
-     .	      prodionprot,gmu,gwt,densig,densneut)
+     &        iprt,nspec,nen,nang,nango2,nalt,jpreci,mcount,
+     &        prodprotelec,primprotelec,fluxprimprot,qprimprot,
+     &        prodionprot,gmu,gwt,densig,densneut)
 c
         implicit none
-	include 'TRANSPORT.INC'
+        include 'TRANSPORT.INC'
 c
 c 	Lus dans input :
 c 	  production des proto-ions
@@ -29,84 +29,84 @@ c	prodionprot (isp,ialt)                  : cm-3.s-1
 c 	1,2,3,4,5,6 -> N2+,O2+,O+,H+,He+,N+
 c
 c 	INPUTS
- 	integer iprt(40),mcount(5),nspec
+        integer iprt(40),mcount(5),nspec
         real centE(nbren),Ebot(nbren),ddeng(nbren)
- 	real alt(nbralt),altkm(nbralt),densneut(8,nbralt)
+        real alt(nbralt),altkm(nbralt),densneut(8,nbralt)
         real gmu(2*nbrango2),gwt(2*nbrango2)
         integer nen,nang,nalt,nango2
 c
 c 	INTERNAL PARAMETERS
 c
 c 	Parametres du flux de protons selon Hardy :
- 	real en_moy_keV,en_moy_eV,eflux,correc,eflux_init
- 	real Echar_protons
+        real en_moy_keV,en_moy_eV,eflux,correc,eflux_init
+        real Echar_protons
         real fluxdown(nbren,nbrango2),fluxup(nbren,nbrango2)
         real lonmag,latmag,tmag,cofo,cofh,cofn,Fe0,Ee0,Fi0,Ei0
     	real Flux_part_int,Flux_ener_int,chi0,Eprotelec
 c	prodionprot_init (isp,ialt)                  : cm-3.s-1
 c 	1,2,3,4 -> N2+,O2+,O+,N+
 c 	Isotropie du flux
- 	integer isotro
+        integer isotro
         real Bmag,dipangle,Enord,Eest,vperpnord,vperpest,vhorizon,vpara
         real ddp,Jtop
         integer ikp,lit,iener
- 	data lit/0/		! On passe par le code simplifie
+        data lit/0/		! On passe par le code simplifie
         common/buff/lonmag,latmag,tmag,ikp,cofo,cofh,cofn,chi0,
      &                  Fe0,Ee0,Fi0,Ei0,
      &                  Bmag,dipangle,Enord,Eest,
      &                  vperpnord,vperpest,vhorizon,vpara,ddp,Jtop
- 	real xnN2(nbralt),xnO2(nbralt),xnO1(nbralt)
- 	integer iz
- 	real xmin,xmax,ymin,ymax,tab(300)
+        real xnN2(nbralt),xnO2(nbralt),xnO1(nbralt)
+        integer iz
+        real xmin,xmax,ymin,ymax,tab(300)
 
 c 	Lus :
- 	integer nnen, nz,nspecprot
- 	real proprotion_init(nbren,2,200)
-       	real eprot(nbren),z(200)
+        integer nnen, nz,nspecprot
+        real proprotion_init(nbren,2,200)
+        real eprot(nbren),z(200)
 c
 c 	Calcules
- 	real proprotel_init(200,nbren),prodionprot_init(4,nbralt)
- 	real zmin,zmax,eprotmin,eprotmax,alp
+        real proprotel_init(200,nbren),prodionprot_init(4,nbralt)
+        real zmin,zmax,eprotmin,eprotmax,alp
 c
-	real pi,r2pi,densig(nbralt,nbren)
-       	real finput(nbren),foutput(nbren),finter(nbren,200)
- 	real proelec_init(200),prodion(200,nbrsp*2)
- 	integer ialt,ien,isp,jpreci,iang
+        real pi,r2pi,densig(nbralt,nbren)
+        real finput(nbren),foutput(nbren),finter(nbren,200)
+        real proelec_init(200),prodion(200,nbrsp*2)
+        integer ialt,ien,isp,jpreci,iang
 c
 c 	OUTPUTS
- 	real prodprotelec(nbralt),prodionprot(6,nbralt)
- 	real qti(nbralt),qia(4,nbralt)
-       	real primprotelec(nbralt,nbren)
-       	real fluxprimprot(nbralt,nbren)
-	real qprimprot(nbren,nbralt,-nbrango2:nbrango2)
+        real prodprotelec(nbralt),prodionprot(6,nbralt)
+        real qti(nbralt),qia(4,nbralt)
+        real primprotelec(nbralt,nbren)
+        real fluxprimprot(nbralt,nbren)
+        real qprimprot(nbren,nbralt,-nbrango2:nbrango2)
 c
 900  	format (5f10.2)
 910  	format (5(1pe10.2))
 920  	format (20x,'Altitude:',f10.2,' km')
 1000 	format (/,'Input protoelectron production [cm-3.s-1.eV-1]')
 1010 	format (/,'# of Energies and altitudes for primary ',/,
-     .        'protoelectron fluxes (nnen,nz):',2i10)
+     &        'protoelectron fluxes (nnen,nz):',2i10)
 1040 	format (/,' Prod. (proprotel_init) (cm-3.s-1.eV-1):')
 1050 	format (/,'# of Energies and altitudes for secondary ',/,
-     .        'electon fluxes (nen,nalt):',2i10)
+     &        'electon fluxes (nen,nalt):',2i10)
 1060 	format (/,' Primary protoelectron flux : (cm-2.s-1.eV-1) :')
 1070 	format (/,' no of e. and alt. for sec. ',
-     .        'el. fluxes (nen,nalt):',2i10)
+     &        'el. fluxes (nen,nalt):',2i10)
 1080 	format ('Primary interpolated prod. :(cm-3.s-1.eV-1):')
 1090	format('Electron primary production due to protons impact',/,
-     .		'(prodprotelec) [cm-3.s-1]')
+     &      '(prodprotelec) [cm-3.s-1]')
 c
-	do ialt = 1,nalt
-	  prodprotelec(ialt) = 0.
- 	  do ien = 1,nen
- 	    primprotelec(ialt,ien) = 0.
- 	    fluxprimprot(ialt,ien) = 0.
- 	    do iang = -nango2,nango2
-c  	      qprimprot(ien,ialt,iang) = 0.
- 	    enddo
- 	  enddo
- 	enddo
- 	if(jpreci.le.2) return
+        do ialt = 1,nalt
+          prodprotelec(ialt) = 0.
+ 	        do ien = 1,nen
+              primprotelec(ialt,ien) = 0.
+              fluxprimprot(ialt,ien) = 0.
+              do iang = -nango2,nango2
+!                  	      qprimprot(ien,ialt,iang) = 0.
+              enddo
+            enddo
+        enddo
+        if(jpreci.le.2) return
 c
 c 	Si on est ici, c'est qu'on a des protons.
         pi=atan(1.)*4.
@@ -116,19 +116,19 @@ c 	Si on lit les donnees protons depuis un fichier, lit = 1
 c 	Si on les calcule a partir du code low_protons, lit = 0
 c
 c
- 	if (lit.eq.0)then
+        if (lit.eq.0)then
 c
- 	  iz = 0
- 	  do ialt = 1,nalt
- 	   if(altkm(ialt).le.840.)then
- 	     iz = iz+1
- 	     z(iz) = altkm(ialt)
- 	     xnN2(iz) = densneut(1,ialt)
- 	     xnO2(iz) = densneut(2,ialt)
- 	     xnO1(iz) = densneut(3,ialt)
- 	   endif
- 	  enddo
- 	  nz = iz
+            iz = 0
+            do ialt = 1,nalt
+              if(altkm(ialt).le.840.)then
+                iz = iz+1
+                z(iz) = altkm(ialt)
+                xnN2(iz) = densneut(1,ialt)
+                xnO2(iz) = densneut(2,ialt)
+                xnO1(iz) = densneut(3,ialt)
+              endif
+            enddo
+            nz = iz
 c
 c 	  Calcul de l'energie caracteristique des ions
 c

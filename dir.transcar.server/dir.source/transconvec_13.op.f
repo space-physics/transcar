@@ -307,7 +307,7 @@
         real incE
 
 	common/neutral/Nh,No,No2,Nn2,Nn,Tn,Un,Vn,Wn
-	common/param/	N_0,T_0,P_0,Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,                &
+	common/param/	N_0,T_0,P_0,Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,                
      &			Qi0,Qj0,Qe0
 	common/adim/R0,t0,G0
 	common/prodion/Ph,Po,Po2,Pn2,Pn
@@ -322,9 +322,9 @@
 	common/fluxtop/Qetop
 
 
-        common/buff/lonmag,latmag,tmag,ikp,cofo,cofh,cofn,chi0,         &
-     &                  Fe0,Ee0,Fi0,Ei0,                                &
-     &                  Bmag,dipangle,Enord,Eest,                       &
+        common/buff/lonmag,latmag,tmag,ikp,cofo,cofh,cofn,chi0,         
+     &                  Fe0,Ee0,Fi0,Ei0,                                
+     &                  Bmag,dipangle,Enord,Eest,                       
      &                  vperpnord,vperpest,vhorizon,vpara,ddp,Jtop
 
 !-------Control of MSIS90 dens.
@@ -337,7 +337,7 @@
 
         common /supra/Nes,Jes,Tes,qes
 
-        common /noel/el_dens,O_plus,N2_plus,NO_plus,                    &
+        common /noel/el_dens,O_plus,N2_plus,NO_plus,                    
      &               O2_plus,temp_o,temp_m,temp_e
 
 	common /avril/vparaB
@@ -350,7 +350,7 @@
 	real zTnOHotRef,TnOHotRef,TnOHotDecay,TnOHotInf				!MZ
 	logical chkOHot,flagOHot						!MZ
 	common /flagsOHot/ chkOHot,flagOHot					!MZ
-	common /OHotParams/ zNOHotRef,pctOHot,NOHotRef,zTnOHotRef,          &
+	common /OHotParams/ zNOHotRef,pctOHot,NOHotRef,zTnOHotRef,          
      &		TnOHotRef,TnOHotDecay,TnOHotInf
 
         real Eprec,Fprec
@@ -364,7 +364,7 @@
         real timeser(1024), edist(1024)
         real fluxdist(1024,1024)
         integer ntimeser,nfluxdist,precint,precext
-        common /precdist/ nfluxdist,ntimeser,timeser,                   &
+        common /precdist/ nfluxdist,ntimeser,timeser,                   
      &                  edist,fluxdist,precint,precext
         integer ioerr
         character*80 prec_fname 
@@ -414,7 +414,7 @@
         filein = filein(1:lenc(filein))
 !-------MZ
 	print *, 'reading parameters from file: ',filein
-        open(unfic_in_transcar,file=filein,form='unformatted',          &
+        open(unfic_in_transcar,file=filein,form='unformatted',          
      &                access='direct',status='unknown',recl=4*2*ncol0)
 
 
@@ -554,7 +554,7 @@
         longbuf=nligne*ncol
 	longrec=itype*longbuf
 
-	open(unfic_in_transcar,file=filein,form='unformatted',              &
+	open(unfic_in_transcar,file=filein,form='unformatted',              
      &                  access='direct',status='unknown',recl=longrec)
 
         N_0=1.e4

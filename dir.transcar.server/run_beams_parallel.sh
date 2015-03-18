@@ -14,19 +14,20 @@
 # bring back simulation output to your PC.
 
 BeamEnergyTableFN=BT_E1E2prev.csv
-RODIR=../conttanh0
+RODIR=../out/conttanh0_ifort
 exedir=code/transcar/dir.transcar.server
 localonly=1
 remotes=(labHST0 labHST1)
 hact=0   # 2 term all jobs on error now, 1 let existing jobs finish, 0 keep running/starting 
 
 #------- start code --------------
+[[ -d $RODIR ]] && \rm -r $RODIR  #cleanup local output
+
 if [[ $localonly -eq 0 ]]; then
   remjp=$(IFS=,; echo "${remotes[*]}") #puts array into comma separated string for GNU parallel
 
-  # purge output directory
-  [[ -d $RODIR ]] && \rm -r $RODIR #local
-  for remote in "${remotes[@]}"; do #remote
+  # purge remote output directory  
+  for remote in "${remotes[@]}"; do 
       ssh $remote -t "[[ -d $exedir/$RODIR ]] && rm -r $exedir/$RODIR"
   done
 

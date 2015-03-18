@@ -1,356 +1,356 @@
-        subroutine trans(knm,nspec,nalt,zbot,ztop,hrloc,day,year,jpreci,
-     .        tempexo,f107,ap,chideg,glat,glong,albedo,
-     .        altkm,alt,tneutre,densneut,colden,nang,nango2,
-     .        angzb,gmu,gwt,nen,centE,botE,ddeng,fluxdown,fluxup,denelc,
-     .        temelc,temion,smgdpa,prodiontot,chaufelec,kiappel,
-     .        Ne_supra,courant_supra,Te_supra,Chaleur_supra,ut)
+        subroutine trans(knm,nspec,nalt,zbot,ztop,hrloc,day,year,jpreci,&
+     &        tempexo,f107,ap,chideg,glat,glong,albedo,                 &
+     &        altkm,alt,tneutre,densneut,colden,nang,nango2,            &
+     &        angzb,gmu,gwt,nen,centE,botE,ddeng,fluxdown,fluxup,denelc,&
+     &        temelc,temion,smgdpa,prodiontot,chaufelec,kiappel,        &
+     &        Ne_supra,courant_supra,Te_supra,Chaleur_supra,ut)
 
-c
-c-----------------------------------------------------------------------
-C	This code solves the transport equation with the multistream
-C	approach using the modified DISORT subroutine
-C	(C) Copyright by D.Lummerzheim, 1985
-C	                 J.Lilensten  , 1993
-C-----------------------------------------------------------------------
-C	Version with anisotropic boundary condition
-C-----------------------------------------------------------------------
-c 	jl, Avril 1995
-c            Version de trans originale ou les sorties sont 
-c	ecrites dans un format lisible, et on ne recompile pas quand on 
-c	veut changer un nbre d'energies, angles ou altitudes. 
-c	Dans le processus d'indentation et de lisibilite du pgmme,
-c 	quelques bugs ont ete corriges, sur les coefficients d'emission
-c	et des dimensions mal faites. A ces bugs pres, memes resultats
-c	que l'original.
-c 	Programme de dessins inclus.
-c 	La photoproduction primaire est incluse.
-c 	Ce programme peut etre appele indifferemment par le couplage
-c 	fluide/cinetique ou independemment.
-c 	Correction de la normalisation des flux (nov 2000)
-c
-C-----------------------------------------------------------------------
+!
+!-----------------------------------------------------------------------
+!	This code solves the transport equation with the multistream
+!	approach using the modified DISORT subroutine
+!	(C) Copyright by D.Lummerzheim, 1985
+!	                 J.Lilensten  , 1993
+!-----------------------------------------------------------------------
+!	Version with anisotropic boundary condition
+!-----------------------------------------------------------------------
+! 	jl, Avril 1995
+!            Version de trans originale ou les sorties sont 
+!	ecrites dans un format lisible, et on ne recompile pas quand on 
+!	veut changer un nbre d'energies, angles ou altitudes. 
+!	Dans le processus d'indentation et de lisibilite du pgmme,
+! 	quelques bugs ont ete corriges, sur les coefficients d'emission
+!	et des dimensions mal faites. A ces bugs pres, memes resultats
+!	que l'original.
+! 	Programme de dessins inclus.
+! 	La photoproduction primaire est incluse.
+! 	Ce programme peut etre appele indifferemment par le couplage
+! 	fluide/cinetique ou independemment.
+! 	Correction de la normalisation des flux (nov 2000)
+!
+!-----------------------------------------------------------------------
 	implicit logical (l)
 	include 'TRANSPORT.INC'
-c
-c In the following comments
-c 	 z = altitude, E = energy, A = angle, sp = species
-c 		 exc = excitation, ionst = ion state
-c
-c ====================================================================
-c Computational parameters :
-c ====================================================================
-c nbren    =	IPN: max. length of the energy grid
-c nen      =	IPN: actual length of the energy grid
-c nbralt   =	IPM:(MMAX) length of altitude grid (number of layers +1)
-c nalt	   =	actual # of altitudes
-c nbrsp    =	IPJ: max # of species (1=N2 , 2=O2 , 3=O , 4=H , 5=He)
-c nspec    =	IPJ: actual # of species 
-c nbrexc   =	IPJS: maximum number of excitation states
-c nbrionst =	IPJSP: number of ionized states
-c nbrango2 =	IPK :  one half of the maximum number of streams
-c nango2   =    kstr2 : one half of the actual number of streams
-c nang     = 	actual number of stream (must be less or equal 16; 
-c 	        should preferably be a power of two, if more than 16 
-c 		streams are required,recompile all subroutines with 
-c 		larger arrays)
-c nbrlayer =	nbralt-1: number of layers
-c ncalc  =  2*nbralt-1: number of layer boundaries (computational layer)
-c jsg (sp) : number of states
-c jsp (sp) : number of excited ion states
-c
-c e(E) 	   = energy grid [eV]
-c engdd(E) = energy width grid [eV]
-c
-c alt(z)   = altitude grid [cm]
-c altkm(z) = altitude grid [km]
-c
-c tau(0:z-1) = collision depth [1]
-c
-c pitchang(2*nbrango2) = angle grid [sr]
-c weitang(2*nbrango2) = gaussian weigths     (1 ...    nbrango2 : up, 
-c			             nbrango2+1 ...  2*nbrango2 : down)
-c cosang(2*nbrango2) = cos(pitchang)
-c
-c ====================================================================
-c Atmosphere and ionosphere parameters :
-c ====================================================================
-c
-c Cross sections
-c --------------
-c ethres(sp,exc,ionst) = threshold energy [eV]
-c bratio(ionst,sp) = branching ratio
-c ntherm(z) = energy index for thermal electrons
-c cel(sp,E) = elastic cross sections [cm2]
-c cin(sp,E) = inelastic cross sections [cm2]
-c cinex(sp,exc,E) = excitation cross sections [cm2]
-c omdeg(E,sp) = differential cross section for primary (exc. and ion.)
-c 		[cm2.eV-1]
-c omsec(E,sp) = differential cross section for secondary [cm2.eV-1]
-c elosse(E,z) = loss function (continuous slowing down approximation) 
-c 		due to electron-electron and Coulomb interaction
-c 		[eV.cm2]
-c
-c Neutral atmosphere
-c ------------------
-c densneut(sp,z) = Neutral density [cm-3] for N2,O2,O,H,He ...
-c dentot(z) = Total neutral density [cm-3]
-c colden(sp,z) = Column density [cm-2]
-c denmass(z) = Mass of the neutral gaz
-c press(z) = Atmospheric pressure [g.cm-2]
-c yyddd = date (integer)
-c tneutre(z) = Neutral temperature [K]
-c smgdpa(z) = sin(magnetic dip angle)
-c chideg,year,day,hrloc,tempexo,glat,Apind,f107,f107bar
-c
-c Ionosphere
-c ----------
-c denelc(z) = Electron density [cm-3]
-c temelc(z) = Electron temperature [K]
-c temion(z) = Ion temperature [K]
-c
-c ====================================================================
-c Transport parameters :
-c ====================================================================
-c
-c-------------------------------------------------------------------
-c Q**	--> 	INTENSITIES 			[cm-2 s-1 eV-1 sr-1]  
-c-------------------------------------------------------------------
-c
-c qxdown(E,-A/2 -->1)= Electron precipitations (ex qext)
-c 	        -nango2 = vertical
-c qxup(E,1 -->A/2)   = Measured e- up intensity (created)
-c qdwn (-A/2 -->1)   = Electron precipitations (ex fiso)
-c qntsty(E,z,A)      = Computed intensity (ex fint), 3 niveau/couche
-c intensite 	     = Computed intensity (cree), 1 niveau/couche
-c qgaupin(z,A)       = Computed intensity (ex gaupin)
-c qint (z,-A-->A)    = Source from higher energies in the E loop 
-c qprimpHot(E,z,A)   = Source function from primary photo electrons 
-c qprimpRot(E,z,A)   = Source function from primary proto electrons 
-c qprim(E,z,A)       = Total source function 
+!
+! In the following comments
+! 	 z = altitude, E = energy, A = angle, sp = species
+! 		 exc = excitation, ionst = ion state
+!
+! ====================================================================
+! Computational parameters :
+! ====================================================================
+! nbren    =	IPN: max. length of the energy grid
+! nen      =	IPN: actual length of the energy grid
+! nbralt   =	IPM:(MMAX) length of altitude grid (number of layers +1)
+! nalt	   =	actual # of altitudes
+! nbrsp    =	IPJ: max # of species (1=N2 , 2=O2 , 3=O , 4=H , 5=He)
+! nspec    =	IPJ: actual # of species 
+! nbrexc   =	IPJS: maximum number of excitation states
+! nbrionst =	IPJSP: number of ionized states
+! nbrango2 =	IPK :  one half of the maximum number of streams
+! nango2   =    kstr2 : one half of the actual number of streams
+! nang     = 	actual number of stream (must be less or equal 16; 
+! 	        should preferably be a power of two, if more than 16 
+! 		streams are required,recompile all subroutines with 
+! 		larger arrays)
+! nbrlayer =	nbralt-1: number of layers
+! ncalc  =  2*nbralt-1: number of layer boundaries (computational layer)
+! jsg (sp) : number of states
+! jsp (sp) : number of excited ion states
+!
+! e(E) 	   = energy grid [eV]
+! engdd(E) = energy width grid [eV]
+!
+! alt(z)   = altitude grid [cm]
+! altkm(z) = altitude grid [km]
+!
+! tau(0:z-1) = collision depth [1]
+!
+! pitchang(2*nbrango2) = angle grid [sr]
+! weitang(2*nbrango2) = gaussian weigths     (1 ...    nbrango2 : up, 
+!			             nbrango2+1 ...  2*nbrango2 : down)
+! cosang(2*nbrango2) = cos(pitchang)
+!
+! ====================================================================
+! Atmosphere and ionosphere parameters :
+! ====================================================================
+!
+! Cross sections
+! --------------
+! ethres(sp,exc,ionst) = threshold energy [eV]
+! bratio(ionst,sp) = branching ratio
+! ntherm(z) = energy index for thermal electrons
+! cel(sp,E) = elastic cross sections [cm2]
+! cin(sp,E) = inelastic cross sections [cm2]
+! cinex(sp,exc,E) = excitation cross sections [cm2]
+! omdeg(E,sp) = differential cross section for primary (exc. and ion.)
+! 		[cm2.eV-1]
+! omsec(E,sp) = differential cross section for secondary [cm2.eV-1]
+! elosse(E,z) = loss function (continuous slowing down approximation) 
+! 		due to electron-electron and Coulomb interaction
+! 		[eV.cm2]
+!
+! Neutral atmosphere
+! ------------------
+! densneut(sp,z) = Neutral density [cm-3] for N2,O2,O,H,He ...
+! dentot(z) = Total neutral density [cm-3]
+! colden(sp,z) = Column density [cm-2]
+! denmass(z) = Mass of the neutral gaz
+! press(z) = Atmospheric pressure [g.cm-2]
+! yyddd = date (integer)
+! tneutre(z) = Neutral temperature [K]
+! smgdpa(z) = sin(magnetic dip angle)
+! chideg,year,day,hrloc,tempexo,glat,Apind,f107,f107bar
+!
+! Ionosphere
+! ----------
+! denelc(z) = Electron density [cm-3]
+! temelc(z) = Electron temperature [K]
+! temion(z) = Ion temperature [K]
+!
+! ====================================================================
+! Transport parameters :
+! ====================================================================
+!
+!-------------------------------------------------------------------
+! Q**	--> 	INTENSITIES 			[cm-2 s-1 eV-1 sr-1]  
+!-------------------------------------------------------------------
+!
+! qxdown(E,-A/2 -->1)= Electron precipitations (ex qext)
+! 	        -nango2 = vertical
+! qxup(E,1 -->A/2)   = Measured e- up intensity (created)
+! qdwn (-A/2 -->1)   = Electron precipitations (ex fiso)
+! qntsty(E,z,A)      = Computed intensity (ex fint), 3 niveau/couche
+! intensite 	     = Computed intensity (cree), 1 niveau/couche
+! qgaupin(z,A)       = Computed intensity (ex gaupin)
+! qint (z,-A-->A)    = Source from higher energies in the E loop 
+! qprimpHot(E,z,A)   = Source function from primary photo electrons 
+! qprimpRot(E,z,A)   = Source function from primary proto electrons 
+! qprim(E,z,A)       = Total source function 
 
-c
-c-------------------------------------------------------------------
-c F**	-->	FLUXES
-c-------------------------------------------------------------------
-c
-c Projection en angle d'ordre 1 : flux hemispherique [eV-1.cm-2.s-1]
-c ------------------------------------------------------------------
-c fluxprim (z,E) = Primary electron flux from felin.f
-c fhemu (E,z)    = Up  projected flux (2pi.sum(mu.qntsty.dmu)) (ex fup)
-c fhemd (E,z)    = dwn projected flux (2pi.sum(mu.qntsty.dmu)) (ex fdwn)
-c fhemtot(E,z)   = fhemd + fhemu
-c
-c Projection on angles and integration in energy : 
-c ------------------------------------------------
-c 			Hemispherical particle fluxes [cm-2.s-1]
-c       		----------------------------------------
-c fpartup(z)  = up particle flux (sum(dE.fhemu)) 
-c fpartdwn(z) = down particle flux (sum(dE.fhemd))
-c fpartsum(z) = Total particle flux (sum(dE.fhemtot))
-c
-c Projection on angles and energy : 
-c ---------------------------------
-c			Hemispherical energy fluxes [eV.cm-2.s-1]
-c			-----------------------------------------
-c feup(z) = up energy flux (sum(E.dE.fhemu))
-c fedwn(z) = down energy flux (sum(E.dE.fhemd))
-c fesum(z)= Total energy flux
-c
-c-------------------------------------------------------------------
-c ENERGY
-c-------------------------------------------------------------------
-c
-c engdep (z,2) = Energy deposition per layer
-c edep         = Energy depositon per cm at layer boundaries
-c Qeflux (z)   =  heating by fast electrons [eV cm-3 sec-1]
-c Qetherm (z)  =  thermalized heating electron flux [eV cm-3 sec-1]
-c chaufelec (z)       = Qeflux + Qetherm [eV cm-3 sec-1]
-c enrate(sp+1,exc+1,z+1) = E deposited in ionisation and excitation.
-c	 		 [eV.cm-3.s-1]
-c 	  enrate(ist<jsg(isp)) --> exc. for specie isp, at each alt.
-c	 		 [eV.cm-3.s-1]
-c 	  enrate(jsg(isp)) --> ion. for specie isp, at each alt.
-c	 		 [eV.cm-3.s-1]
-c 	  enrate(jsg(isp)+1) --> total for specie isp, at each alt.
-c	 		 [eV.cm-3.s-1]
-c	  enrate(nalt+1)     --> height integrated for each specie.
-c	 		 [eV.cm-2.s-1]
-c enrion(z)    = ionization energy for all species.
-c
-c qphelerg  = Energy input due to photoelectrons [erg/cm2/sec]
-c qpheleV   = Energy input due to photoelectrons [eV/cm2/sec]
-c qprecerg  = Energy input due to precipitation [erg/cm2/sec]
-c qpreceV   = Energy input due to precipitation [eV/cm2/sec]
-c qtoterg   = Total energy input [erg/cm2/sec]
-c qtoteV    = Total energy input [eV/cm2/sec]
-c qsump     = Reflected energy [eV/cm2/sec]
-c entot     = Total absorbed energy [eV/cm2/sec]
-c shsum(sp)    = Total energy deposition [eV cm-2 sec-1]
-c                         through inelastic coll. [eV/cm2/sec]
-c shsumtot  = total E. absorbed through inelastic coll. [eV/cm2/sec]
-c elhsum    = E. absorbed through heating  [eV/cm2/sec]
-c elratio(z,2) = % of energy due to heating
-c relerr    = Rate of energy conservation
-c elos2     = Average energy loss per ion pair [eV] from qtot
-c elos      = Average energy loss per ion pair [eV] from entot
-c elos1     = Average energy loss per ion pair [eV] from {qtot-qsump}
-c
-c-------------------------------------------------------------------
-c PRODUCTION
-c-------------------------------------------------------------------
-c
-c photelec(z) = primary pHotoelectron production [cm-3.s-1]
-c
-c protelec(z) = primary pRotoelectron production [cm-3.s-1]
-c prodionprot (isp,ialt) primary ion production rate due to protons  :
-c 	 cm-3.s-1
-c   1,2,3,6 -> N2+,O2+,O+,N+ (H+ et He+ ne sont pas calcules)
+!
+!-------------------------------------------------------------------
+! F**	-->	FLUXES
+!-------------------------------------------------------------------
+!
+! Projection en angle d'ordre 1 : flux hemispherique [eV-1.cm-2.s-1]
+! ------------------------------------------------------------------
+! fluxprim (z,E) = Primary electron flux from felin.f
+! fhemu (E,z)    = Up  projected flux (2pi.sum(mu.qntsty.dmu)) (ex fup)
+! fhemd (E,z)    = dwn projected flux (2pi.sum(mu.qntsty.dmu)) (ex fdwn)
+! fhemtot(E,z)   = fhemd + fhemu
+!
+! Projection on angles and integration in energy : 
+! ------------------------------------------------
+! 			Hemispherical particle fluxes [cm-2.s-1]
+!       		----------------------------------------
+! fpartup(z)  = up particle flux (sum(dE.fhemu)) 
+! fpartdwn(z) = down particle flux (sum(dE.fhemd))
+! fpartsum(z) = Total particle flux (sum(dE.fhemtot))
+!
+! Projection on angles and energy : 
+! ---------------------------------
+!			Hemispherical energy fluxes [eV.cm-2.s-1]
+!			-----------------------------------------
+! feup(z) = up energy flux (sum(E.dE.fhemu))
+! fedwn(z) = down energy flux (sum(E.dE.fhemd))
+! fesum(z)= Total energy flux
+!
+!-------------------------------------------------------------------
+! ENERGY
+!-------------------------------------------------------------------
+!
+! engdep (z,2) = Energy deposition per layer
+! edep         = Energy depositon per cm at layer boundaries
+! Qeflux (z)   =  heating by fast electrons [eV cm-3 sec-1]
+! Qetherm (z)  =  thermalized heating electron flux [eV cm-3 sec-1]
+! chaufelec (z)       = Qeflux + Qetherm [eV cm-3 sec-1]
+! enrate(sp+1,exc+1,z+1) = E deposited in ionisation and excitation.
+!	 		 [eV.cm-3.s-1]
+! 	  enrate(ist<jsg(isp)) --> exc. for specie isp, at each alt.
+!	 		 [eV.cm-3.s-1]
+! 	  enrate(jsg(isp)) --> ion. for specie isp, at each alt.
+!	 		 [eV.cm-3.s-1]
+! 	  enrate(jsg(isp)+1) --> total for specie isp, at each alt.
+!	 		 [eV.cm-3.s-1]
+!	  enrate(nalt+1)     --> height integrated for each specie.
+!	 		 [eV.cm-2.s-1]
+! enrion(z)    = ionization energy for all species.
+!
+! qphelerg  = Energy input due to photoelectrons [erg/cm2/sec]
+! qpheleV   = Energy input due to photoelectrons [eV/cm2/sec]
+! qprecerg  = Energy input due to precipitation [erg/cm2/sec]
+! qpreceV   = Energy input due to precipitation [eV/cm2/sec]
+! qtoterg   = Total energy input [erg/cm2/sec]
+! qtoteV    = Total energy input [eV/cm2/sec]
+! qsump     = Reflected energy [eV/cm2/sec]
+! entot     = Total absorbed energy [eV/cm2/sec]
+! shsum(sp)    = Total energy deposition [eV cm-2 sec-1]
+!                         through inelastic coll. [eV/cm2/sec]
+! shsumtot  = total E. absorbed through inelastic coll. [eV/cm2/sec]
+! elhsum    = E. absorbed through heating  [eV/cm2/sec]
+! elratio(z,2) = % of energy due to heating
+! relerr    = Rate of energy conservation
+! elos2     = Average energy loss per ion pair [eV] from qtot
+! elos      = Average energy loss per ion pair [eV] from entot
+! elos1     = Average energy loss per ion pair [eV] from {qtot-qsump}
+!
+!-------------------------------------------------------------------
+! PRODUCTION
+!-------------------------------------------------------------------
+!
+! photelec(z) = primary pHotoelectron production [cm-3.s-1]
+!
+! protelec(z) = primary pRotoelectron production [cm-3.s-1]
+! prodionprot (isp,ialt) primary ion production rate due to protons  :
+! 	 cm-3.s-1
+!   1,2,3,6 -> N2+,O2+,O+,N+ (H+ et He+ ne sont pas calcules)
 
-c
-c Par rapport a felin, je prend l'ordre N2+,O2+,0+,H+,He+,N+ ,
-c qui est celui dans lequel sont ecrites les especes dans 
-c TRANSPORT.INC. Cela necessite de refaire passer N+ de la 4eme 
-c position a la 6eme. Cela se fait dans phel.f
-c prodionphot(sp+1,z) = Ion production due to photoionization [cm-3.s-1]
-c 			sp + 1 tient compte de N+ dissocie par photons.
-c               	[cm-3.s-1]
-c               	prodionphot(ionspe=1,iz)--->N2+ 
-c               	prodionphot(ionspe=2,iz)--->O2+ 
-c               	prodionphot(ionspe=3,iz)--->O+ 
-c               	prodionphot(ionspe=4,iz)--->H+ 
-c               	prodionphot(ionspe=5,iz)--->He+ 
-c               	prodionphot(ionspe=6,iz)--->N+ 
-c
-c primelec(z,E) = primary photoelectron production/eV  [cm-3.s-1.eV-1]
-c
-c primprotelec(z,E)=primary protoelectron production/eV  [cm-3.s-1.eV-1]
-c
-c prodionsec(sp,z) = Ion production due to transport [cm-3.s-1]
-c                       prodionsec(ionspe=1,iz)--->N2+ 
-c                       prodionsec(ionspe=2,iz)--->O2+ 
-c                       prodionsec(ionspe=3,iz)--->O+ 
-c                       prodionsec(ionspe=4,iz)--->H+ 
-c                       prodionsec(ionspe=5,iz)--->He+ 
-c                       prodionsec(ionspe=6,iz)--->N+ 
-c prodiontot(sp,z) =  prodionprim(sp,z) + prodionsec(sp,z)
-c                       prodiontot(ionspe=1,iz)--->N2+ 
-c                       prodiontot(ionspe=2,iz)--->O2+ 
-c                       prodiontot(ionspe=3,iz)--->O+ 
-c                       prodiontot(ionspe=4,iz)--->H+ 
-c                       prodiontot(ionspe=5,iz)--->He+ 
-c                       prodiontot(ionspe=6,iz)--->N+ 
-c prodelsec(z) = Electron production due to transport [cm-3.s-1]
-c prate (sp,exc+1,z+1) = taux de production d'excitation ou ionisation
-c 		         [cm-3.s-1]
-c 	prate (ialt<=nalt)  = [cm-3.s-1]
-c 	prate (ialt=nalt+1) = [cm-2.s-1] : integrale en colonne
-c
-c cemis (z) = integrated emission rate [cm-2.s-1]
-c 
-c-------------------------------------------------------------------
-c SUPRATHERMAL MOMENTUM 
-c-------------------------------------------------------------------
-c
-c First momentum : suprathermal electron density [cm-3] 
-c       Ne_supra        = 1er  moment   [cm-3]
-c Second momentum : suprathermal courant [cm-2.s-1] 
-c       courant_supra   = 2eme moment   [cm-2.s-1]
-c Third momentum : suprathermal temperature [K]
-c       Te_supra        = 3eme moment   [K]
-c Fourth momentum : Energy flux (Heat flux) [eV.cm-2.s-1]
-c       Chaleur_supra   = 4eme moment   [eV.cm-2.s-1]
-c 
-c-------------------------------------------------------------------
-c MISCELANEOUS
-c-------------------------------------------------------------------
-c
-c conductivity calculation
-c ------------------------
-c denselcalc(z) = Electron density in the E region out of trans [cm-3]
-c cped(z)       = Pedersen conductivity [MHO.m-1]
-c cpedsum       = Integrated Pedersen conductivity [MHO]
-c chal(z)       = Hall conductivity [MHO.m-1]
-c chalsum       = Integrated Hall conductivity [MHO]
-c ratHoP(z)     = Ratio Hall/Pedersen conductivity
-c ratHoPsum     = Integrated Ratio Hall/Pedersen conductivity
-c cpedCS        = Integrated Pedersen conductivity from Senior [MHO]
-c chalCS        = Integrated Hall conductivity from Senior [MHO]
-c gyreave       = Average electron gyrofrequency [s-1]
-c gyriave       = Average ion gyrofrequency [s-1]
-c collionSN(z)  = ion/n collision frequency [s-1], Schunk&Nagy
-c collionRG(z)  = ion/n collision frequency [s-1], Rishbeth&Garriot
-c colle(z)      = electron/neutral collision frequency [s-1]
-c collOp(z)     = O+/Neutral collision frequency [s-1]
-c collNOp(z)    = NO+/Neutral collision frequency [s-1]
-c collO2p(z)    = O2+/Neutral collision frequency [s-1]
-c collen2(z)    = electron/N2 collision frequency [s-1]
-c colleo2(z)    = electron/O2 collision frequency [s-1]
-c colleo1(z)    = electron/O1 collision frequency [s-1]
+!
+! Par rapport a felin, je prend l'ordre N2+,O2+,0+,H+,He+,N+ ,
+! qui est celui dans lequel sont ecrites les especes dans 
+! TRANSPORT.INC. Cela necessite de refaire passer N+ de la 4eme 
+! position a la 6eme. Cela se fait dans phel.f
+! prodionphot(sp+1,z) = Ion production due to photoionization [cm-3.s-1]
+! 			sp + 1 tient compte de N+ dissocie par photons.
+!               	[cm-3.s-1]
+!               	prodionphot(ionspe=1,iz)--->N2+ 
+!               	prodionphot(ionspe=2,iz)--->O2+ 
+!               	prodionphot(ionspe=3,iz)--->O+ 
+!               	prodionphot(ionspe=4,iz)--->H+ 
+!               	prodionphot(ionspe=5,iz)--->He+ 
+!               	prodionphot(ionspe=6,iz)--->N+ 
+!
+! primelec(z,E) = primary photoelectron production/eV  [cm-3.s-1.eV-1]
+!
+! primprotelec(z,E)=primary protoelectron production/eV  [cm-3.s-1.eV-1]
+!
+! prodionsec(sp,z) = Ion production due to transport [cm-3.s-1]
+!                       prodionsec(ionspe=1,iz)--->N2+ 
+!                       prodionsec(ionspe=2,iz)--->O2+ 
+!                       prodionsec(ionspe=3,iz)--->O+ 
+!                       prodionsec(ionspe=4,iz)--->H+ 
+!                       prodionsec(ionspe=5,iz)--->He+ 
+!                       prodionsec(ionspe=6,iz)--->N+ 
+! prodiontot(sp,z) =  prodionprim(sp,z) + prodionsec(sp,z)
+!                       prodiontot(ionspe=1,iz)--->N2+ 
+!                       prodiontot(ionspe=2,iz)--->O2+ 
+!                       prodiontot(ionspe=3,iz)--->O+ 
+!                       prodiontot(ionspe=4,iz)--->H+ 
+!                       prodiontot(ionspe=5,iz)--->He+ 
+!                       prodiontot(ionspe=6,iz)--->N+ 
+! prodelsec(z) = Electron production due to transport [cm-3.s-1]
+! prate (sp,exc+1,z+1) = taux de production d'excitation ou ionisation
+! 		         [cm-3.s-1]
+! 	prate (ialt<=nalt)  = [cm-3.s-1]
+! 	prate (ialt=nalt+1) = [cm-2.s-1] : integrale en colonne
+!
+! cemis (z) = integrated emission rate [cm-2.s-1]
+! 
+!-------------------------------------------------------------------
+! SUPRATHERMAL MOMENTUM 
+!-------------------------------------------------------------------
+!
+! First momentum : suprathermal electron density [cm-3] 
+!       Ne_supra        = 1er  moment   [cm-3]
+! Second momentum : suprathermal courant [cm-2.s-1] 
+!       courant_supra   = 2eme moment   [cm-2.s-1]
+! Third momentum : suprathermal temperature [K]
+!       Te_supra        = 3eme moment   [K]
+! Fourth momentum : Energy flux (Heat flux) [eV.cm-2.s-1]
+!       Chaleur_supra   = 4eme moment   [eV.cm-2.s-1]
+! 
+!-------------------------------------------------------------------
+! MISCELANEOUS
+!-------------------------------------------------------------------
+!
+! conductivity calculation
+! ------------------------
+! denselcalc(z) = Electron density in the E region out of trans [cm-3]
+! cped(z)       = Pedersen conductivity [MHO.m-1]
+! cpedsum       = Integrated Pedersen conductivity [MHO]
+! chal(z)       = Hall conductivity [MHO.m-1]
+! chalsum       = Integrated Hall conductivity [MHO]
+! ratHoP(z)     = Ratio Hall/Pedersen conductivity
+! ratHoPsum     = Integrated Ratio Hall/Pedersen conductivity
+! cpedCS        = Integrated Pedersen conductivity from Senior [MHO]
+! chalCS        = Integrated Hall conductivity from Senior [MHO]
+! gyreave       = Average electron gyrofrequency [s-1]
+! gyriave       = Average ion gyrofrequency [s-1]
+! collionSN(z)  = ion/n collision frequency [s-1], Schunk&Nagy
+! collionRG(z)  = ion/n collision frequency [s-1], Rishbeth&Garriot
+! colle(z)      = electron/neutral collision frequency [s-1]
+! collOp(z)     = O+/Neutral collision frequency [s-1]
+! collNOp(z)    = NO+/Neutral collision frequency [s-1]
+! collO2p(z)    = O2+/Neutral collision frequency [s-1]
+! collen2(z)    = electron/N2 collision frequency [s-1]
+! colleo2(z)    = electron/O2 collision frequency [s-1]
+! colleo1(z)    = electron/O1 collision frequency [s-1]
  
-c range calculation
-c ------------------
-c range(z)      = distance in g/cm2 for range computation.
-c zprodmax(sp)  = Altitude of electron prod. max [km]
-c prodmax(sp)   = Electron production at this height [cm-3]
+! range calculation
+! ------------------
+! range(z)      = distance in g/cm2 for range computation.
+! zprodmax(sp)  = Altitude of electron prod. max [km]
+! prodmax(sp)   = Electron production at this height [cm-3]
  
-c
-c optical emission rates
-c ----------------------
-c flbh (photon intensity and filter counts)
-c
-c libre parcours moyen 
-c --------------------
-c lpm(z,E)
-c
-c-------------------------------------------------------------------
-c SWITCHES
-c------------------------------------------------------------------- 
-c lmaxw/lgauss/lpower : shape of input spectrum
-c qinput	: total energy input in erg/cm2/sec
-c epeak,epara : peak energy and parameter (power)
-c ehalf   : halfwidth of Gaussian spectrum = EPEAK*EHALF
-c eshift  : param. to define the amplitude of the added powerlaw
-c		  I(eshift)=I(epeak)
-c lpower1 : ADDITIONAL powerlaw to be added on maxwell or gauss
-c lpower2 : ADDITIONAL powerlaw at high en. (above epower, with 
-c	 	  apower exp.)
-c switches for turning on/off different options (these should
-c	generally left at the default setting):
-c lruther : sceening selection (Wedde-Strand vs. Rutherford)
-c ldelta  : Wiscombe's delta-M method applied
-c iphase,gphase	: phase function selection
-c lmono,kmono	: monodirectional input spectrum
-c lporter : low energy phase function from Porter et al., 1987
-c albedo   : particle albedo at bottom of atmosphere
-c switches for testing of the correct preformance of the code
-c nstop	: test-stop after NSTOP times through the energy loop
-c external/internal source on file (if LEXT = true, set LMAXW
-c          to false, otherwise the Maxwellian will be superposed
-c          to the external source)(specify as Hollerith constant '...'H)
-c
-c-------------------------------------------------------------------
-c INTERNAL WORKING ARRAYS 
-c------------------------------------------------------------------- 
-c ctot(2*z-1) = working array for energy 
-c utau(2*z-1) = differential in tau
-c gls(0-->A) = phase function moments
-c eup = up energy flux (sum(E.dE.fhemu))
-c edwn = down energy flux (sum(E.dE.fhemd))
-c partup  = up particle flux (sum(dE.fhemu)) 
-c partdwn = down particle flux (sum(dE.fhemd))
-c fldn(z) = work array for sub. MSTREAM
-c flup(z) = work array for sub. MSTREAM
-c temp(2),dens(8) = arrays for MSIS
-c twork(2*nbralt-1) = array for layers
-c zwork(nbralt) = array for altitudes
-c              --> si kiappel = 1, ce sont les donnees 
-c                   contenue dans ELEC et NEUTRAL pour un run unique
-c                   du programme.
-c	if kiappel = 1, the data are contained in ELEC and NEUTRAL for a single run of the program.
-c
-c               --> si kiappel = 2, ce sont les donnees necessaires
-c                   au transport fluide
-c	if kiappel = 2, these are the necessary data transmission fluid
+!
+! optical emission rates
+! ----------------------
+! flbh (photon intensity and filter counts)
+!
+! libre parcours moyen 
+! --------------------
+! lpm(z,E)
+!
+!-------------------------------------------------------------------
+! SWITCHES
+!------------------------------------------------------------------- 
+! lmaxw/lgauss/lpower : shape of input spectrum
+! qinput	: total energy input in erg/cm2/sec
+! epeak,epara : peak energy and parameter (power)
+! ehalf   : halfwidth of Gaussian spectrum = EPEAK*EHALF
+! eshift  : param. to define the amplitude of the added powerlaw
+!		  I(eshift)=I(epeak)
+! lpower1 : ADDITIONAL powerlaw to be added on maxwell or gauss
+! lpower2 : ADDITIONAL powerlaw at high en. (above epower, with 
+!	 	  apower exp.)
+! switches for turning on/off different options (these should
+!	generally left at the default setting):
+! lruther : sceening selection (Wedde-Strand vs. Rutherford)
+! ldelta  : Wiscombe's delta-M method applied
+! iphase,gphase	: phase function selection
+! lmono,kmono	: monodirectional input spectrum
+! lporter : low energy phase function from Porter et al., 1987
+! albedo   : particle albedo at bottom of atmosphere
+! switches for testing of the correct preformance of the code
+! nstop	: test-stop after NSTOP times through the energy loop
+! external/internal source on file (if LEXT = true, set LMAXW
+!          to false, otherwise the Maxwellian will be superposed
+!          to the external source)(specify as Hollerith constant '...'H)
+!
+!-------------------------------------------------------------------
+! INTERNAL WORKING ARRAYS 
+!------------------------------------------------------------------- 
+! ctot(2*z-1) = working array for energy 
+! utau(2*z-1) = differential in tau
+! gls(0-->A) = phase function moments
+! eup = up energy flux (sum(E.dE.fhemu))
+! edwn = down energy flux (sum(E.dE.fhemd))
+! partup  = up particle flux (sum(dE.fhemu)) 
+! partdwn = down particle flux (sum(dE.fhemd))
+! fldn(z) = work array for sub. MSTREAM
+! flup(z) = work array for sub. MSTREAM
+! temp(2),dens(8) = arrays for MSIS
+! twork(2*nbralt-1) = array for layers
+! zwork(nbralt) = array for altitudes
+!              --> si kiappel = 1, ce sont les donnees 
+!                   contenue dans ELEC et NEUTRAL pour un run unique
+!                   du programme.
+!	if kiappel = 1, the data are contained in ELEC and NEUTRAL for a single run of the program.
+!
+!               --> si kiappel = 2, ce sont les donnees necessaires
+!                   au transport fluide
+!	if kiappel = 2, these are the necessary data transmission fluid
 	
 	
 	
@@ -382,10 +382,10 @@ c	if kiappel = 2, these are the necessary data transmission fluid
      .		tau(0:nbralt-1),altkm(nbralt),temion(nbralt),
      .		denmass(nbralt),press(nbralt),utau(2*nbralt-1)
 
-c 	densig = somme des seff + L(E)
+! 	densig = somme des seff + L(E)
  	real densig(nbralt,nbren)
  	real Ne(nbralt),lpm(nbralt,nbren)
-c
+!
 	integer jsg(nbrsp*2+1),jsp(nbrsp*2+1)
 *	JSG : number of states
 *	JSP : number of excited ion states
@@ -404,7 +404,7 @@ c
 	real qprim(nbren,nbralt,-nbrango2:nbrango2)
 	real qprimpHot(nbren,nbralt,-nbrango2:nbrango2)
 	real qprimpRot(nbren,nbralt,-nbrango2:nbrango2)
-c
+!
 	real qntsty(nbren,2*nbralt-1,-nbrango2:nbrango2),
      .	  qgaupin(2*nbralt-1,-nbrango2:nbrango2),
      .    fhemu(nbren,nbralt),fhemd(nbren,nbralt),
@@ -413,7 +413,7 @@ c
  	real feup(nbralt),fedwn(nbralt),fesum(nbralt),eup,edwn
  	real fpartup(nbralt),fpartdwn(nbralt),fpartsum(nbralt),
      .	     partup,partdwn
-c
+!
 	real fldn(nbralt),flup(nbralt)    ! work array for sub. MSTREAM
  
 	real enrate(nbrsp*2,nbrexc+1,nbralt+1),chaufelec(nbralt),
@@ -422,8 +422,8 @@ c
      .		enrion(nbralt),engdep(nbralt,2),elratio(nbralt,2),
      .		cemis(nbralt),Qeflux(nbralt),Qetherm(nbralt),
      .		edep(nbralt)
-c
-c 	Next arrays are for conductivity calculation.
+!
+! 	Next arrays are for conductivity calculation.
       	real denselcalc(nbralt)
  	real cped(nbralt),chal(nbralt),ratHoP(nbralt)
  	real ratHoPsum,cpedsum,chalsum,cpedCS,chalCS
@@ -437,7 +437,7 @@ c 	Next arrays are for conductivity calculation.
 *	for LBH and NI (photon intensity)
         real wavelbh(105),flbh(105),lbhint
         real waveni(9),fni(9),tni(9),niint,niextint
-c 
+! 
 	character word*4
 *	real t0,t1
 	character *80 crsin,option,rdtin,exfile
@@ -465,7 +465,7 @@ c
 !-------MZ
  
 *	Default values
-c
+!
 	data  lchem/.false./
 *	LPRINT	: switch to turn printed output on/off
 *	LPLOT	: switch to turn output for plot routines on/off
@@ -475,7 +475,7 @@ c
 *	    (1) : intensity/density	(2) : energy deposition
 *	    (3) : excitation rates	(4) : electron heating
 *	LCHEM   : generate output for ionchemistry code
-c 	Switches for prints :
+! 	Switches for prints :
 *	IPRT allows to turn individual print statements on or off
 *	(1): input spectrum		(2): energy deposition and error
 *	(3): energy grid		(4): electron density
@@ -488,24 +488,24 @@ c 	Switches for prints :
 *	(15): energy dep in neutals	(16): excitation rates
 *	(17): MSTREAM output (short)	(18): MSTREAM output (long)
 *	(19): table of emissions	(20): optical emissions
-c 	idess(1)  --> atmosphere     			
-c 	idess(2)  --> production 				
-c 	idess(3)  --> flux prim,hemispherical tot,totd,totu = f( E)   
-c 	idess(4)  --> flux prim,hemispherical tot,totd,totu = f(mu)     
-c 	idess(5)  --> flux prim,hemispherical tot,totd,totu = f(z)    
-c 	idess(6)  --> Hemispherical total flux = f(z) (zoom)
-c 	idess(7)  --> E-region conductivities
-c 	idess(8)  --> flux totd,totu a l'alt. la + hte, avec entrees. 
-c 	idess(9)  --> chaufelec
-c 	idess(10) --> header
-c 	idess(11) --> Ne
-c 	idess(12) --> Range computation
-c 	idess(13) --> Suprathermal momentums
+! 	idess(1)  --> atmosphere     			
+! 	idess(2)  --> production 				
+! 	idess(3)  --> flux prim,hemispherical tot,totd,totu = f( E)   
+! 	idess(4)  --> flux prim,hemispherical tot,totd,totu = f(mu)     
+! 	idess(5)  --> flux prim,hemispherical tot,totd,totu = f(z)    
+! 	idess(6)  --> Hemispherical total flux = f(z) (zoom)
+! 	idess(7)  --> E-region conductivities
+! 	idess(8)  --> flux totd,totu a l'alt. la + hte, avec entrees. 
+! 	idess(9)  --> chaufelec
+! 	idess(10) --> header
+! 	idess(11) --> Ne
+! 	idess(12) --> Range computation
+! 	idess(13) --> Suprathermal momentums
  	integer iprt(40),idess(20),izplt(4),ieplt(4)
  	real eplt(4)
  	real centE(nbren),botE(nbren),ddeng(nbren)
  	real angzb(2*nbrango2),gmu(2*nbrango2),gwt(2*nbrango2)
-c 
+! 
 	data lmaxw/.false./lgauss/.false./lpower/.false./
      .	      lpower1/.false./epeak/300./epara/2./
      .	      eshift/1./ehalf/.1/lpower2/.false./epower/1000./apower/3./
@@ -518,10 +518,10 @@ c
 *	lpower1 : ADDITIONAL powerlaw to be added on maxwell or gauss
 *	lpower2 : ADDITIONAL powerlaw at high en. (above epower, with 
 *	 	  apower exp.)
-c
+!
  	logical onlyfl,usrang,exsorc,usrtau
  	data lruther/.true./iphase/0/gphase/.5/
-c
+!
 *	switches for turning on/off different options (these should
 *		generally left at the default setting):
 *	LRUTHER : sceening selection (Wedde-Strand vs. Rutherford)
@@ -530,12 +530,12 @@ c
 *	LMONO,KMONO	: monodirectional input spectrum
 *	lporter : low energy phase function from Porter et al., 1987
 *	albedo   : particle albedo at bottom of atmosphere
-c 
+! 
 	data lt1/.true./lt3/.true./lt4/.true./consto/0.d0/
      .		constb/0.d0/lt5/.true./etest/100./nstop/0/
-c	switches for testing of the correct preformance of the code
-c	NSTOP	: test-stop after NSTOP times through the energy loop
-c 
+!	switches for testing of the correct preformance of the code
+!	NSTOP	: test-stop after NSTOP times through the energy loop
+! 
 1000   format('No.=',i10,';',i3,' E;',i2,' A;',i3,' Alt; Sun=',
      .        a3,';yr=',i2,';day=',i3,';LT=',f5.2,';lat=',f6.2,
      .        ';Ap=',f5.1,';f10.7=',f6.2,';fav=',f6.2,
@@ -549,7 +549,7 @@ c
 1020 	format(f10.2,2(1pe10.2))
 1305 	format('   Energy    Qxdown   Computed    Qxup    Computed')
 1300	format(5(1pe10.2))
-c
+!
 2002	format(/1x,'The energy grid covers the range from :',f6.3,
      .		' eV up to :',f8.1,' eV')
 2850    format (/,'atmosphere neutre, modele MSIS 90',/,
@@ -571,7 +571,7 @@ c
 2885    format (/,' no.   height     n(He)      n(Ar)       ',
      .		'n(H)       n(N)', /,'         km        /cm2       ',
      .		'/cm2       /cm2       /cm2')
-c
+!
 4012	format(' *****************    Wiscombe''s delta-M method',
      .		' is NOT applied    ************')
 4013	format(' Wiscombe''s delta-M method is applied')
@@ -581,7 +581,7 @@ c
 4016	format(' The screening parameter for the Rutherford phase',
      .		' function is calculated',/,
      .		' from the Bethe/Moliere formula for E > 500 eV')
-c
+!
 5000	format('Date:',i6.5,' time:',f6.2,' LT'/'Longitude :',f6.1,
      .	  ' Latitude :',f6.1,/,'10.7 cm flux :',f6.1,
      .	  ' average :',f6.1,' Ap',f6.1,/,'MSIS exospheric',
@@ -594,7 +594,7 @@ c
 5008    format(
      .	'Input eV/cm2/s (erg/cm2/s): prec:',1pe9.2,' (',1pe8.2,')',
      .	' nue-: ',1pe9.2,' (',1pe8.2,')')
-c
+!
 6002	format(' ',-5pf10.2,4(1pe12.4))
 6006	format
      .	 ('Boundary conditions (intensity) (eV-1 cm-2 s-1 ster-1)  :',/,
@@ -610,7 +610,7 @@ c
 6011	format('Gaussian weight : ',(4f12.5))
 6012 	format (/,'  Altitude',t21,'tau')
 6013 	format (-5pf10.2,2(1pe20.8))
-c 
+! 
 7000	format(-5pf5.1,2x,7(1pe9.2))
 7001 	format(/,' Alt.    ------ Energy Flux ------  E-depos. ',
      .   '---- Particle flux ----',/,' km            eV cm-2 sec-1',
@@ -627,7 +627,7 @@ c
 7003	format(//' Energy deposited in heating of the ambient electrons'
      .  	,' [eV cm-3 sec-1]',/,'Alt. [km]',6x
      .		,'heating thermalization',3x,'total','  crossE [eV]')
-c    .  	 '  % of e-dep'/)
+!    .  	 '  % of e-dep'/)
 7004	format(-5pf7.2,3x,3(1pe12.3),0pf7.2,2x,1pe8.1,2x,f7.3)
 7005	format(//t10,' Energy deposition in ',a13,' (eV cm-3 sec-1)'//
      .		'Altitude   total ',5a10/)
@@ -668,7 +668,7 @@ c    .  	 '  % of e-dep'/)
 7055 	format('Alt. of electron prod. max. from',a6,' : ',f10.2,' km',
      .	       /,'Value at this height  ',16x,' : ',1pe10.2,' cm-3')
 7057 	format('Theoretical  range for [N2]  ',1pe10.2,' g/cm2')
-c
+!
 7100 	format(/,10x,'Hemispherical fluxes [cm-2 s-1 eV-1]',/,10x,
      .	       37('-'),/,'fhemtot(E,z) = (2pi.sum(mu.qntsty.dmu))')
 7110 	format(f10.2,' km       ',5(1pe10.2))
@@ -677,21 +677,21 @@ c
      .	       ,37('-'),/,'fhemu(E,z) = (2pi.sum(mu.qntsty.dmu))')
 7140 	format(/,10x,'Downward hemispherical fluxes [cm-2 s-1 eV-1]',/,
      .	       10x,37('-'),/,'fhemd(E,z) = (2pi.sum(mu.qntsty.dmu))')
-c
+!
 8000	format(//15x,'Total Energy Deposition per layer',
      .		' (eV cm-2 sec-1)'/
      .		13x,'Altitude',3x,'E-flux diff.',
      .		9x,'E-dep.',5x,'rel. diff.'/)
 8001	format(5x,-5pf15.2,2(2(1pe15.3),0pf15.3,2x))
-c
-c----------------------------------------------------------------------
-c
+!
+!----------------------------------------------------------------------
+!
         write(6,*)'    trans.f : Kinetic transport. jpreci=',
      .		jpreci,'ut=',UT
-c
+!
 
 
-c       write(6,*)'Reed...                                      [A'
+!       write(6,*)'Reed...                                      [A'
         call zeroit(qdwn,nbrango2)
 	call zeroit(e,nbren)
 	call zeroit(Qeflux,nbralt)
@@ -709,15 +709,15 @@ c       write(6,*)'Reed...                                      [A'
      .	   lamber,onlyfl,exsorc,usrang,usrtau,ddeng,centE,botE,icolin)
 
 
-c
-c 	Initialise phase function
-c
+!
+! 	Initialise phase function
+!
 	if(gphase.lt.0.) then
 	  lgphase=.true.
 	else
 	  lgphase=.false.
 	end if
-c
+!
 	if(ldeltam) then
 	  write(fic_transout,4013)
 	else
@@ -725,8 +725,8 @@ c
 	end if
 	if(iphase.ne.0) write(fic_transout,4014) iphase,gphase
 	if(lruther) write(fic_transout,4016)
-c
-c 	Initialise some values.
+!
+! 	Initialise some values.
 	nlayer=nalt-1
 	mmax=2*nlayer+1
 	pi=atan(1.)*4.
@@ -737,11 +737,11 @@ c 	Initialise some values.
  	else
 	  yyddd=int(year)*1000+int(day)
  	endif
-c
+!
 	eng0=e(1)-engdd(1)/2.
 	engmax=e(nen)+engdd(nen)/2.
 	write(fic_transout,2002) eng0,engmax
-c 
+! 
 	do m=1,nalt
  	  denmass(m)=0.
  	  dentot(m)=0.
@@ -751,7 +751,7 @@ c
  	  enddo
 	  denmass(m)=denmass(m)*1.6726e-24	! mass density in gramm
  	enddo
-c
+!
 	do m=1,nalt
  	  press(m) = 0.
  	  do isp = 1,nspec
@@ -791,8 +791,8 @@ c
 	  do i=1,nalt,mcount(1)
             write(fic_transout,2860)i,altkm(i),temelc(i),denelc(i)
  	  enddo
-c
-c 	  Densite colonne
+!
+! 	  Densite colonne
           write(fic_transout,2880)
 	  if(nspec.le.3)then
 	    iwrite=nspec
@@ -813,13 +813,13 @@ c 	  Densite colonne
  	    enddo
 	  endif
         endif
-c
+!
 
  	do ien = 1,nen
 	  call eloss(e(ien),ien,temelc,denelc,elosse,
      .		nbren,nen,nbralt,nalt)
 	  do ialt=1,nalt
-c           densig(ialt,ien) = 0.
+!           densig(ialt,ien) = 0.
             densig(ialt,ien) = elosse(ien,ialt)/ddeng(ien)
  	    do isp = 1,nspec
               densig(ialt,ien) = densig(ialt,ien) + 
@@ -827,23 +827,23 @@ c           densig(ialt,ien) = 0.
  	    enddo
  	  enddo
  	enddo
-c       read in primary pHoto electron production rates. 
-c 		photelec(z) 		: cm-3.s-1
-c 	        prodionphot(isp+1,z)	: cm-3.s-1
-c 		primelec(z,E) 		: cm-3.s-1.eV-1
-c 		fluxprim(z,E)		: cm-2.s-1.eV-1
-c 		qprimpHot(E,z,A)	: cm-2.s-1.eV-1.sr-1
+!       read in primary pHoto electron production rates. 
+! 		photelec(z) 		: cm-3.s-1
+! 	        prodionphot(isp+1,z)	: cm-3.s-1
+! 		primelec(z,E) 		: cm-3.s-1.eV-1
+! 		fluxprim(z,E)		: cm-2.s-1.eV-1
+! 		qprimpHot(E,z,A)	: cm-2.s-1.eV-1.sr-1
         call phel(e,alt,altkm,iprt,fluxprim,
      .	      primelec,qprimpHot,photelec,nspec,nen,nang,nango2,nalt,
      .	      jpreci,mcount,prodionphot,densig)
 
-c
-c       read in primary pRoto electron production rates. 
-c 		protelec(z) 		: cm-3.s-1
-c 		primprotelec(z,E) 	: cm-3.s-1.eV-1
-c 		fluxprimprot(z,E) 	: cm-2.s-1.eV-1
-c 		qprimpRot(E,z,A)	: cm-2.s-1.eV-1.sr-1
-c
+!
+!       read in primary pRoto electron production rates. 
+! 		protelec(z) 		: cm-3.s-1
+! 		primprotelec(z,E) 	: cm-3.s-1.eV-1
+! 		fluxprimprot(z,E) 	: cm-2.s-1.eV-1
+! 		qprimpRot(E,z,A)	: cm-2.s-1.eV-1.sr-1
+!
 
         call prot(e,Ebot,ddeng,alt,altkm,iprt,
      .        nspec,nen,nang,nango2,nalt,jpreci,mcount,
@@ -1602,11 +1602,11 @@ c47 	format(1i4,4f10.2,2(1pe12.3))
      .		  denselcalc(ialt),denelc(ialt)
  	    enddo
  	endif
-c
-c 	Computes the E-region conductivities
+!
+! 	Computes the E-region conductivities
  	if(iprt(23).eq.1 .or. iprt(24).eq.1 .or. idess(11).eq.1) then
  	  do ialt = 1,nalt
-c 	    Il se peut qu'on ait produit entre 2 appels de atmos...
+! 	    Il se peut qu'on ait produit entre 2 appels de atmos...
  	    Ne(ialt) = max(denelc(ialt),denselcalc(ialt))
  	  enddo
        	  call conductivite(nalt,altkm,Ne,densneut,
@@ -1616,7 +1616,7 @@ c 	    Il se peut qu'on ait produit entre 2 appels de atmos...
      .		collionSN,collionRG,collen2,colleo2,colleo1,colle,iprt,
      .		f107(1),icolin)
  	endif
-c
+!
  	if(iprt(9).eq.1)then
  	  write(fic_transout,*)
  	  write(fic_transout,1305)
@@ -1625,8 +1625,8 @@ c
      .	     qntsty(ien,1,-nango2),qxup(ien,nango2),qntsty(ien,1,nango2)
  	  enddo
  	endif
-c
-c 	Computes the theoretical range.
+!
+! 	Computes the theoretical range.
  	avogadro = 6.023e+23
  	if (ezero.ne.0.)then
  	  E0 = ezero/1000.
@@ -1634,13 +1634,13 @@ c 	Computes the theoretical range.
  	  write(6,7057)thrange
  	  write(fic_transout,7057)thrange
  	endif
-c 	calculates the altitude in g/cm2
+! 	calculates the altitude in g/cm2
  	do iz = 1,nalt
  	  range(iz)=(alt(1)-alt(iz))*densneut(1,iz)*atomas(1)/avogadro
  	enddo
-c
+!
  	if(iprt(21).eq.1 .or. iprt(22).eq.1)then
-c 	  Search for the max. production altitude.
+! 	  Search for the max. production altitude.
  	  do isp = 1,nspec
  	    do iz=1,nalt
  	      twork(iz) = prodionsec(isp,iz)
@@ -1656,7 +1656,7 @@ c 	  Search for the max. production altitude.
  	endif
  
 *	final printing
-c 	calcul du libre parcours moyen
+! 	calcul du libre parcours moyen
  	if(iprt(26).eq.1)then
  	write(fic_transout,1010)e(5),e(nen)
         do ialt=1,nalt
@@ -1673,11 +1673,11 @@ c 	calcul du libre parcours moyen
 	endif
 
  
-c 	Il faut revoir le calcul de l'energie qui ne veut plus rien 
-c 	dire apres toutes les modifs faites
-c	if(kiappel.eq.1) write(6,7010) qtoteV,qsump,entot,shsumtot,
-c    .		      elhsum
-c 	write(6,7018)word,abs(relerr)
+! 	Il faut revoir le calcul de l'energie qui ne veut plus rien 
+! 	dire apres toutes les modifs faites
+!	if(kiappel.eq.1) write(6,7010) qtoteV,qsump,entot,shsumtot,
+!    .		      elhsum
+! 	write(6,7018)word,abs(relerr)
   	write(6,*)
   	write(6,*)'Kinetic Transport execute success'
 
@@ -1687,7 +1687,7 @@ c 	write(6,7018)word,abs(relerr)
 	write(fic_transout,7010)qtoteV,qsump,entot,shsumtot,elhsum
  	write(fic_transout,7018)word,abs(relerr)
 	write(fic_transout,7012) elos2,elos,elos1
-c
+!
  	  iyd = ifix(year)
  	  if(iyd.gt.99)iyd=iyd-1900
 	  if(jpreci.eq.1 .or. jpreci.eq.3 .or. jpreci.eq.4)then
@@ -1699,17 +1699,17 @@ c
             write(messag,1001)knm,nen,nang,nalt,sun,iyd,ifix(day),
      .                      hrloc,glat,ap(1),f107(1),chideg,tempexo
 	  endif
-c
+!
  	close (ifeltrans)
  	close (fic_transout)
  	close (irdtin)
-c
-c 	Remise a zero des conditions initiales de sections efficaces
-c 	differentielles.
+!
+! 	Remise a zero des conditions initiales de sections efficaces
+! 	differentielles.
         if (kiappel.eq.1) call ecrit_DATDEG
 
  	return
-c
+!
 993	print*,' Diff.cross-sect. file is in error. Status=',iost
 	stop 'error'		! call abort
 992	print*,' Cross-section file is in error. Status=',iost
@@ -1719,11 +1719,11 @@ c
 	stop 'error'		! call abort
 996	print*, ' Error with assigning input file for external source.'
 	stop 'error'		! call abort
-c
+!
 	end
-c 
-c ----------------------------------------------------------------------
-c
+! 
+! ----------------------------------------------------------------------
+!
 **********************************************************************
 *	Subroutines for the electron transport code TRANS
 *	in addition the these routines the DISORT and MSIS packages
@@ -1733,9 +1733,9 @@ c
 *	library and reside on a separate file of the TRANS package.
 *	Version for Cray (single precision)
 **********************************************************************
-c 
-c----------------------------------------------------------------------
-c 
+! 
+!----------------------------------------------------------------------
+! 
 	subroutine eloss(eng,n,temelc,denelc,elosse,nbren,nen,nbralt,
      .			 nalt)
 *
@@ -1761,21 +1761,21 @@ c
 	    elosse(n,m)=fac*3.37e-12*denelc(m)**.97/eng**.94
 	    if(fac.le.0.) elosse(n,m)=0.
 	  end if
-c          elosse(n,m)=dE_dt(eng,denelc(m)*1.e6,temelc(m))/1.6e-11
+!          elosse(n,m)=dE_dt(eng,denelc(m)*1.e6,temelc(m))/1.6e-11
  	enddo
-c 
+! 
 	return
 	end
-c
-c--------------------------------------------------------------------
-c
+!
+!--------------------------------------------------------------------
+!
 	subroutine endep(nspec,nalt,e,cinex,engdd,ethres,bratio,qntsty,
      .	    alt,smgdpa,densneut,jsg,jsp,shsum,enrate,prate,ntherm,
      .	    nen)
  
-c
+!
  	include 'TRANSPORT.INC'
-c
+!
 	real cinex(nbrsp,nbrexc,nbren),ethres(nbrsp,nbrexc,nbrionst),
      .	     engdd(nbren),bratio(nbrionst,nbrsp),
      .       qntsty(nbren,2*nbralt-1,-nbrango2:nbrango2),alt(nbralt),
@@ -1784,31 +1784,31 @@ c
      .       prate(nbrsp*2,nbrexc+1,nbralt+1)
 	integer ntherm(nbralt),jsg(nbrsp*2+1),jsp(nbrsp*2+1)
  	integer nspec,isp
-c
-* 	Calculate excitation and ionisation rates (PRATE) and energy 
-* 	deposision in excited states (ENRATE)
-* 	the "state" JSG(isp) contains the ionization rate
-* 	the "state" JSG(isp)+1 contains the sum of all states (including
-* 	ionization).
-* 	the "altitude level" nalt+1 contains the integral over altitude
+!
+! 	Calculate excitation and ionisation rates (PRATE) and energy 
+! 	deposision in excited states (ENRATE)
+! 	the "state" JSG(isp) contains the ionization rate
+! 	the "state" JSG(isp)+1 contains the sum of all states (including
+! 	ionization).
+! 	the "altitude level" nalt+1 contains the integral over altitude
  
       call zeroit(enrate,nbrsp*2*(nbrexc+1)*(nbralt+1))
       call zeroit(prate,nbrsp*2*(nbrexc+1)*(nbralt+1))
       do isp = 1,nspec
 	shsum(isp)=0.
-c
-c 	prate = production rate
-c 	     1= N2
-c 	     2= O2
-c 	     3= O
-c 	     4= H
-c 	     5= He
-c 	     6= N
-c 	 
+!
+! 	prate = production rate
+! 	     1= N2
+! 	     2= O2
+! 	     3= O
+! 	     4= H
+! 	     5= He
+! 	     6= N
+! 	 
 	do ialt=1,nalt
 	  do istate=1,jsg(isp)
 	    do ien=ntherm(ialt),nen
-c 	      ethres(isp,ist,1)is the smallest excitation threshold.
+! 	      ethres(isp,ist,1)is the smallest excitation threshold.
 	      cros=cinex(isp,istate,ien)*ethres(isp,istate,1)
 	      if(istate.eq.jsg(isp)) then
 	        cros=0.
@@ -1829,11 +1829,11 @@ c 	      ethres(isp,ist,1)is the smallest excitation threshold.
  	  enddo			! boucle sur les etats d'excitation
  	  if (isp.eq.1)then
 	    do ien=ntherm(ialt),nen
-c
-c 	      On tient compte des ionisations pre-dissociatives.
-c             NI = N+. Issue de 50% B'1Su(#12) + 50% sum-sngl (#8) + 
-c 	      5% B1pu (#11). Il manque C'4S+u. Est ce sum.sngl  
-c 	      (= Rydberg ?)?
+!
+! 	      On tient compte des ionisations pre-dissociatives.
+!             NI = N+. Issue de 50% B'1Su(#12) + 50% sum-sngl (#8) + 
+! 	      5% B1pu (#11). Il manque !'4S+u. Est ce sum.sngl  
+! 	      (= Rydberg ?)?
  	      prate (6,jsg(6),ialt) = prate(1,12,ialt)*0.5 + 
      .               prate(1,8,ialt) * 0.5 + prate(1,11,ialt)*0.05
  	      enrate (6,jsg(6),ialt) = enrate(1,12,ialt)*0.5 + 
@@ -1842,8 +1842,8 @@ c 	      (= Rydberg ?)?
  	    enddo		! boucle sur les energies
  	  endif			! If l'azote
  	enddo			! boucle sur les altitudes
-c
-c 	Computes integral over altitudes. Stored in nalt+1
+!
+! 	Computes integral over altitudes. Stored in nalt+1
 	do ialt=2,nalt
 	  ddz=(alt(ialt-1)-alt(ialt))/smgdpa(ialt)
 	  do istate=1,jsg(isp)
@@ -1856,8 +1856,8 @@ c 	Computes integral over altitudes. Stored in nalt+1
 	do istate=1,jsg(isp)
    	  shsum(isp)=shsum(isp)+enrate(isp,istate,nalt+1)
  	enddo
-c
-c 	Computes sum over all states. Stored in jsp(isp)+1
+!
+! 	Computes sum over all states. Stored in jsp(isp)+1
 	do ialt=1,nalt
 	  enrate(isp,jsg(isp)+1,ialt)=0.
 	  prate(isp,jsg(isp)+1,ialt)=0.
@@ -1873,13 +1873,13 @@ c 	Computes sum over all states. Stored in jsp(isp)+1
       return
       end
  
-C----------------------------------------------------------------------
+!----------------------------------------------------------------------
  
 	subroutine intgrl(e1,e2,f,e,de,sum,sume,nen,m)
-c
+!
  	include 'TRANSPORT.INC'
 	real f(nbren,nbralt),e(nbren),de(nbren)
-c
+!
 	n2=nlevtrans(e,de,e2,nen)
 	n1=nlevtrans(e,de,e1,n2)
 	sum=0.
@@ -1888,23 +1888,23 @@ c
 	  sum=sum+f(n,m)*de(n)
    	  sume=sume+f(n,m)*e(n)*de(n)
  	enddo
-c
+!
 	return
 	end
-c----------------------------------------------------------------------
-c
+!----------------------------------------------------------------------
+!
  	subroutine moments(nalt,alt,altkm,nen,e,engdd,
      .		nang,nango2,weitang,cosang,intensite,iprt,ntherm,
      .		Ne_supra,courant_supra,Te_supra,Chaleur_supra)
-c
+!
  	implicit none
-c
+!
         integer npt
-c
+!
  	include 'TRANSPORT.INC'
-c
-c 	Entrees :
-c 	---------
+!
+! 	Entrees :
+! 	---------
 	real engdd(nbren),alt(nbralt),altkm(nbralt),e(nbren)
         real weitang(2*nbrango2),cosang(2*nbrango2)
  	real intensite(nbren,nbralt,-nbrango2:nbrango2)
@@ -1912,48 +1912,48 @@ c 	---------
 	integer ntherm(nbralt)
 	logical flux_flg
 
-c 	Sorties :
-c 	---------
-c 	Ne_supra 	= 1er  moment 	[cm-3]
-c 	courant_supra 	= 2eme moment 	[cm-2.s-1]
-c 			  POSITIF VERS LE BAS 
-c 	Te_supra 	= 3eme moment 	[K] 
-c 	Chaleur_supra 	= 4eme moment 	[eV.cm-2.s-1]
-c 			  POSITIVE VERS LE BAS 
-c 	
+! 	Sorties :
+! 	---------
+! 	Ne_supra 	= 1er  moment 	[cm-3]
+! 	courant_supra 	= 2eme moment 	[cm-2.s-1]
+! 			  POSITIF VERS LE BAS 
+! 	Te_supra 	= 3eme moment 	[K] 
+! 	Chaleur_supra 	= 4eme moment 	[eV.cm-2.s-1]
+! 			  POSITIVE VERS LE BAS 
+! 	
      	real Ne_supra(nbralt),courant_supra(nbralt),Te_supra(nbralt),
      .		Chaleur_supra(nbralt)
 
-c 	Parametres internes :
-c 	---------------------
+! 	Parametres internes :
+! 	---------------------
  	integer ialt,ien,iang
  	real trav(nbren),me,boltz,pi
  	real vmoy(nbralt) 		!vitesse moyenne = courant/Ne
-c 	Flux stationnaire signe : + vers le haut, - vers le bas
-c 	Projections en angle d'ordre 0, 1 et 2 [eV-1.cm-2.s-1] :
-c 	fproj0(E,z) = 2pi*sum(intensite*dmu)
-c 	fproj1(E,z) = 2pi*sum(mu*intensite*dmu)
-c 	fproj2(E,z) = 2pi*sum(mu**2*intensite*dmu)
+! 	Flux stationnaire signe : + vers le haut, - vers le bas
+! 	Projections en angle d'ordre 0, 1 et 2 [eV-1.cm-2.s-1] :
+! 	fproj0(E,z) = 2pi*sum(intensite*dmu)
+! 	fproj1(E,z) = 2pi*sum(mu*intensite*dmu)
+! 	fproj2(E,z) = 2pi*sum(mu**2*intensite*dmu)
  	real fproj0(nbren,nbralt),fproj1(nbren,nbralt),
      .		fproj2(nbren,nbralt)
-c
+!
         real Qetopcalc
         common/fluxtopcalc/Qetopcalc
         real Qealt(nbralt)
-c
-c 	Attention aux unites ! La masse electronique est exprimee
-c 	en eV.cm-2.s2
-c 	La constante de Boltzmann est en eV.K-1
+!
+! 	Attention aux unites ! La masse electronique est exprimee
+! 	en eV.cm-2.s2
+! 	La constante de Boltzmann est en eV.K-1
  	data me /5.69E-16/
  	data boltz /8.6173E-05/
-c
+!
  	pi = 4.*atan(1.)
-c
-c 	calcul des flux signes projetes :
-c       fproj0 = sum(intensite*dmu)
-c       fproj1 = sum(mu*intensite*dmu)
-c       fproj2 = sum(mu**2*intensite*dmu)
-c
+!
+! 	calcul des flux signes projetes :
+!       fproj0 = sum(intensite*dmu)
+!       fproj1 = sum(mu*intensite*dmu)
+!       fproj2 = sum(mu**2*intensite*dmu)
+!
 
 	call zeroit(Ne_supra,nalt)
 	call zeroit(Te_supra,nalt)
@@ -1989,34 +1989,34 @@ c
           do ien = ntherm(ialt),nen
             fproj0(ien,ialt) = 0.
             fproj1(ien,ialt) = 0.
-c            fproj2(ien,ialt) = 0.
+!            fproj2(ien,ialt) = 0.
             do iang = -nango2,-1,1
-c 	      Descendant : cosinus positif
+! 	      Descendant : cosinus positif
               fproj0(ien,ialt)=fproj0(ien,ialt)+intensite(ien,ialt,iang)
      .			*weitang(iabs(iang))
               fproj1(ien,ialt)=fproj1(ien,ialt)-intensite(ien,ialt,iang)
      .                  *weitang(iabs(iang))*cosang(iabs(iang))
-c              fproj2(ien,ialt)=fproj2(ien,ialt)+intensite(ien,ialt,iang)
-c     .                  *weitang(iabs(iang))*cosang(iabs(iang))**2
+!              fproj2(ien,ialt)=fproj2(ien,ialt)+intensite(ien,ialt,iang)
+!     .                  *weitang(iabs(iang))*cosang(iabs(iang))**2
             enddo
             do iang = 1,nango2,1
-c 	      montant : cosinus negatif
+! 	      montant : cosinus negatif
               fproj0(ien,ialt)=fproj0(ien,ialt)
      .                  +max(0.,intensite(ien,ialt,iang))
      .			*weitang(iabs(iang))
               fproj1(ien,ialt)=fproj1(ien,ialt)
      .                  +max(0.,intensite(ien,ialt,iang))
      .                  *weitang(iabs(iang))*cosang(iabs(iang))
-c              fproj2(ien,ialt)=fproj2(ien,ialt)
-c     .                  +max(0.,intensite(ien,ialt,iang))
-c     .                  *weitang(iabs(iang))*cosang(iabs(iang))**2
+!              fproj2(ien,ialt)=fproj2(ien,ialt)
+!     .                  +max(0.,intensite(ien,ialt,iang))
+!     .                  *weitang(iabs(iang))*cosang(iabs(iang))**2
             enddo
             fproj0(ien,ialt)=fproj0(ien,ialt)*2.*pi
             fproj1(ien,ialt)=fproj1(ien,ialt)*2.*pi
             fproj2(ien,ialt)=fproj2(ien,ialt)*2.*pi
           enddo
         enddo
-c
+!
 	do ialt = 1,nalt
   	  do ien = ntherm(ialt),nen
  	    Ne_supra(ialt) = Ne_supra(ialt) +
@@ -2028,22 +2028,22 @@ c
  	    chaleur_supra(ialt) = chaleur_supra(ialt) +
      .		fproj1(ien,ialt)*engdd(ien)*e(ien)
  	  enddo
-c
+!
  	  Ne_supra(ialt) = Ne_supra(ialt)*sqrt(me/2.)
  	  vmoy(ialt) = courant_supra(ialt)/Ne_supra(ialt)
-c
+!
  	enddo
-c
+!
  	do ialt = 1,nalt
-c 	  Attention ! a basse altitude, on peut avoir des valeurs 
-c 	  de Te_supra negatives (faibles).... 
-c 	  Quelle conduite pour le code couple ?
-c
+! 	  Attention ! a basse altitude, on peut avoir des valeurs 
+! 	  de Te_supra negatives (faibles).... 
+! 	  Quelle conduite pour le code couple ?
+!
  	  Te_supra(ialt) = Te_supra(ialt)/Ne_supra(ialt)
      .			*sqrt(2.*me)/3./boltz
-c
+!
  	enddo
-c 	  
+! 	  
  	if(iprt(25).eq.1)then
  	  write (fic_transout,1000)
  	  do ialt = 1,nalt
@@ -2051,34 +2051,34 @@ c
      .		courant_supra(ialt),Te_supra(ialt),Chaleur_supra(ialt)
  	  enddo
  	endif
-c
-c       division par 2 pour isotropie
+!
+!       division par 2 pour isotropie
         Qetopcalc = -1.* Chaleur_supra(1)*1.6022e-12/2.
         Qetopcalc = Qetopcalc/2.
-c
+!
 1000	format(10x,'Moments suprathermiques',/,10x,23('-'),/,
      .	'Altitude    Ne_supra courant_supra Te_supra Chaleur_supra',/,
      .  '  [km]       [cm-3]    [cm-2.s-1]    [K]    [eV.cm-2.s-1]')
 1010 	format(f10.2,4(1pe10.2))
  	  
-c
+!
        	return
        	end
-c
-c----------------------------------------------------------------------
-c
-c----------------------------------------------------------------------
-c
+!
+!----------------------------------------------------------------------
+!
+!----------------------------------------------------------------------
+!
 	subroutine mstream(eng,ien,nang,maxlyr,fiso,tau,utau,ssalb,
      .		albedo,gls,eps,ldeltam,lpr1,lpr2,linear,iphase,gphase,
      .		qint,gaupin,fldn,flup,nalt,lamber,onlyfl,exsorc,usrang,
      .		usrtau,qprim)
-*
-*	"driver" for the 1990 DISORT version.  This subroutine sets up
-*	the input for disort and reorders the output to make it 
-*	compatible
-*	with the electron transport code.
-*
+!
+!	"driver" for the 1990 DISORT version.  This subroutine sets up
+!	the input for disort and reorders the output to make it 
+!	compatible
+!	with the electron transport code.
+!
  	include 'TRANSPORT.INC'
 	parameter (maxphi=1)
 
@@ -2166,7 +2166,7 @@ c
           print*,'*** error in IPHASE: ',iphase
           stop '***error'
         end if
-c
+!
         do  k=0,nang,1
           do ilyr=2,maxlyr
             pmom(k,ilyr)=pmom(k,1)      ! same phase fct for every alt.
@@ -2175,24 +2175,24 @@ c
  
  
 	nango2=nang/2
-c 	The photoelectron source function is considered as regularly
-c 	distributed on the considered layer : One half is attibuted
-c 	to the top (from top to middle), one half to the middle (from
-c 	middle to bottom)
+! 	The photoelectron source function is considered as regularly
+! 	distributed on the considered layer : One half is attibuted
+! 	to the top (from top to middle), one half to the middle (from
+! 	middle to bottom)
 	do m=1,maxlyr			! maxlyr = nalt-1
 	  ms=3*(m-1)
 	  do k=1,nango2,1
-c 	    Top of layer
+! 	    Top of layer
  	    quelle = qint(2*m-1,k)+qprim(ien,m,k)
 	    src(ms+1,nango2+k)=max(quelle,0.)
  	    quelle = qint(2*m-1,-k)+qprim(ien,m,-k)
 	    src(ms+1,nango2+1-k)=max(quelle,0.)
-c 	    Center of layer
-c	    quelle = qint(2*m,k)+qprim(ien,m,k)/2.
-c    	    src(ms+2,nango2+k)=max(quelle,0.)
-c	    quelle = qint(2*m,-k)+qprim(ien,m,-k)/2.
-c    	    src(ms+2,nango2+1-k)=max(quelle,0.)
-c 	    Bottom of layer
+! 	    Center of layer
+!	    quelle = qint(2*m,k)+qprim(ien,m,k)/2.
+!    	    src(ms+2,nango2+k)=max(quelle,0.)
+!	    quelle = qint(2*m,-k)+qprim(ien,m,-k)/2.
+!    	    src(ms+2,nango2+1-k)=max(quelle,0.)
+! 	    Bottom of layer
  	    quelle = qint(2*m+1,k)+qprim(ien,m+1,k)
 	    src(ms+3,nango2+k)=max(quelle,0.)
  	    quelle = qint(2*m+1,-k)+qprim(ien,m+1,-k)
@@ -2212,12 +2212,12 @@ c 	    Bottom of layer
      .		2*nbrango2, 2*nbrango2, maxphi, rfldir, wkfldn,
      .		wkflup, dfdt, uavg, uu, uou, nbrango2, linear, 
      .		fic_transout)
-c
+!
 	do mlyr=1,maxlyr
 	  mt=2*mlyr-1				! top of the layer
 	  mc=2*mlyr				! center of the layer
-c 	  Dans DISORT, uavg est divise par 4pi (et multiplie par 2pi).
-c 	  On retabli la multipication par 2pi.
+! 	  Dans DISORT, uavg est divise par 4pi (et multiplie par 2pi).
+! 	  On retabli la multipication par 2pi.
 	  gaupin(mt,0)=uavg(mt)*pi4
 	  gaupin(mc,0)=uavg(mc)*pi4
 	  fldn(mlyr)=wkfldn(mt)
@@ -2229,7 +2229,7 @@ c 	  On retabli la multipication par 2pi.
 	    gaupin(mc,-k)=uou(nango2+1-k,mc)
  	  enddo
  	enddo
-c
+!
 	mb=2*maxlyr+1				! bottom of last layer
 	gaupin(mb,0)=uavg(mb)*pi4
 	fldn(maxlyr+1)=wkfldn(mb)
@@ -2240,49 +2240,49 @@ c
 402	continue
 	return
 	end
-c
-c--------------------------- phel ---------------------------------
-c 
+!
+!--------------------------- phel ---------------------------------
+! 
         subroutine phel(e,alt,altkm,iprt,fluxprim,
      .	      primelec,qprim,photelec,nspec,nen,nang,nango2,nalt,
      .	      jpreci,mcount,prodionprim,densig)
-c
+!
 	include 'TRANSPORT.INC'
-c
-c       read in primary electron production rates.  determine angular
-c       dependence of primaries.  calculate source function qprim.
-c 	On interpole la production primaire prophel(z,ephel) sur la 
-c 	production primaire primelec(alt,e). Puis primelec est 
-c 	transforme en flux fluxprim(alt,e) qui est distribue
-c 	sur la fonction source. Reecrit (jl,12/1989).
-c
-c 	Lus dans feltrans :
-c 		prophel (z,E)		: cm-3.s-1.eV-1
-c		proelec(z)		: cm-3.s-1
-c		prodion(z,isp+1)	: cm-3.s-1 (4 = N+)
-c 	Outputs interpolees :
-c 		primelec(z,E) 		: cm-3.s-1.eV-1
-c 		photelec(z) 		: cm-3.s-1
-c 		prodionprim(isp+1,z)	: cm-3.s-1 (4 = N+)
-c 	Outputs deduites des interpolations :
-c 		fluxprim(z,E)		: cm-2.s-1.eV-1
-c 		qprim(E,z,A)		: cm-2.s-1.eV-1.sr-1
-c
-c 	INPUTS
+!
+!       read in primary electron production rates.  determine angular
+!       dependence of primaries.  calculate source function qprim.
+! 	On interpole la production primaire prophel(z,ephel) sur la 
+! 	production primaire primelec(alt,e). Puis primelec est 
+! 	transforme en flux fluxprim(alt,e) qui est distribue
+! 	sur la fonction source. Reecrit (jl,12/1989).
+!
+! 	Lus dans feltrans :
+! 		prophel (z,E)		: cm-3.s-1.eV-1
+!		proelec(z)		: cm-3.s-1
+!		prodion(z,isp+1)	: cm-3.s-1 (4 = N+)
+! 	Outputs interpolees :
+! 		primelec(z,E) 		: cm-3.s-1.eV-1
+! 		photelec(z) 		: cm-3.s-1
+! 		prodionprim(isp+1,z)	: cm-3.s-1 (4 = N+)
+! 	Outputs deduites des interpolations :
+! 		fluxprim(z,E)		: cm-2.s-1.eV-1
+! 		qprim(E,z,A)		: cm-2.s-1.eV-1.sr-1
+!
+! 	INPUTS
  	integer iprt(40),mcount(5)
         real e(nbren),alt(nbralt),altkm(nbralt),densneut(8,nbralt)
 	real  cel(nbrsp,nbren),cin(nbrsp,nbren)
         integer nen,nang,nalt,nango2
-c 	INTERNAL PARAMETERS
+! 	INTERNAL PARAMETERS
 	real pi,densig(nbralt,nbren)
        	real ephel(nbren),prophel(nbralt,nbren),z(nbralt)
        	real finput(nbren),foutput(nbren),finter(nbren,nbralt)
  	real proelec(nbralt),prodion(nbralt,nbrsp*2)
-c 	OUTPUTS
+! 	OUTPUTS
  	real photelec(nbralt),prodionprim(nbrsp*2,nbralt)
        	real primelec(nbralt,nbren),fluxprim(nbralt,nbren)
 	real qprim(nbren,nbralt,-nbrango2:nbrango2)
-c
+!
 900  	format (5f10.2)
 910  	format (5(1pe10.2))
 920  	format (20x,'Altitude:',f10.2,' km')
@@ -2296,7 +2296,7 @@ c
 1070 	format (/,' no of e. and alt. for sec. ',
      .        'el. fluxes (nen,nalt):',2i10)
 1080 	format ('Primary interpolated prod. :(cm-3.s-1.eV-1):')
-c
+!
  	if(jpreci.eq.1 .or. jpreci.eq.3 .or. jpreci.eq.4)then
  	  do ialt = 1,nalt
 	    photelec(ialt) = 0.
@@ -2317,14 +2317,14 @@ c
       	rewind(ifeltrans)
 	pi=atan(1.)*4.
       	r2pi = 1./(pi*2.)
-c
-c  *  	read in primary photoelectron flux data
-c     	nnen   : # energies.
-c     	nz     : # altitudes.
-c     	ephel   : energies.
-c     	z      : altitudes.
-c     	prophel    : primary production,cm-3.s-1.eV-1,issus de prime .
-c
+!
+!  *  	read in primary photoelectron flux data
+!     	nnen   : # energies.
+!     	nz     : # altitudes.
+!     	ephel   : energies.
+!     	z      : altitudes.
+!     	prophel    : primary production,cm-3.s-1.eV-1,issus de prime .
+!
       	read  (ifeltrans) nnen, nz,nnspec
       	read  (ifeltrans) (ephel(j), j = 1,nnen)
       	read  (ifeltrans) (z(i), i = 1,nz)
@@ -2341,45 +2341,45 @@ c
           do i=1,nz
             write(fic_transout,920)  z(i)
             write (fic_transout,910)(prophel(i,j), j = 1,nnen)
-c           [prophel]=cm-3.s-1.eV-1
+!           [prophel]=cm-3.s-1.eV-1
  	  enddo
       	endif
-c
-c 	Interpolations en altitude
-c 	Production totale
+!
+! 	Interpolations en altitude
+! 	Production totale
  	call intlin(nz,z,proelec,nalt,altkm,photelec)
-c 	Production d'ions par especes.
+! 	Production d'ions par especes.
  	do isp = 1,nnspec+1
  	  do ialt = 1,nz
  	    finput(ialt) = prodion(ialt,isp)
  	  enddo
  	  call intlin(nz,z,finput,nalt,altkm,foutput)
-c 	  On va repasser N+ en position 6, comme pour les especes
-c 	  neutres
+! 	  On va repasser N+ en position 6, comme pour les especes
+! 	  neutres
  	  if (isp.le.3)then
  	    do ialt = 1,nalt
  	      prodionprim(isp,ialt) = foutput(ialt)
  	    enddo
  	  else if (isp.eq.4)then
-c 	    On avait N+, on le passe en position 6
+! 	    On avait N+, on le passe en position 6
  	    do ialt = 1,nalt
  	      prodionprim(6,ialt) = foutput(ialt)
  	    enddo
  	  else if (isp.eq.5)then
-c 	    On avait H+, on le passe en position 4
+! 	    On avait H+, on le passe en position 4
  	    do ialt = 1,nalt
  	      prodionprim(4,ialt) = foutput(ialt)
  	    enddo
  	  else if (isp.eq.6)then
-c 	    On avait He+, on le passe en position 5
+! 	    On avait He+, on le passe en position 5
  	    do ialt = 1,nalt
  	      prodionprim(5,ialt) = foutput(ialt)
  	    enddo
  	  endif
  	enddo
-c 
-c
-c 	Interpolation en energie:
+! 
+!
+! 	Interpolation en energie:
 	do iz=1,nz
 	  do ien=1,nnen
 	    finput(ien)=prophel(iz,ien)
@@ -2389,7 +2389,7 @@ c 	Interpolation en energie:
 	    finter(ien,iz)=foutput(ien)
  	  enddo
  	enddo
-c 	Interpolation en altitude:
+! 	Interpolation en altitude:
  	do ien=1,nen
 	  do iz=1,nz
 	    finput(iz)=finter(ien,iz)
@@ -2399,9 +2399,9 @@ c 	Interpolation en altitude:
 	    primelec(ialt,ien)=foutput(ialt)
  	  enddo
  	enddo
-c
+!
       if(iprt(22).eq.1)then
-c       print primary production rate.
+!       print primary production rate.
         write (fic_transout,1070) nen, nalt
         write (fic_transout,*) 'Altitudes (alt)'
         write (fic_transout,900) (altkm(ialt), ialt = 1,nalt)
@@ -2413,24 +2413,24 @@ c       print primary production rate.
           write (fic_transout,910)(primelec(ialt,k), k = 1,nen)
  	enddo
       endif
-c
-c 	On passe en flux.
+!
+! 	On passe en flux.
  	do ien = 1,nen
 	  do ialt=1,nalt
   	    fluxprim(ialt,ien)= primelec(ialt,ien)/densig(ialt,ien) 
             do iang=-nango2,nango2
-c 	      La division par 2 pi vient de l'integration polaire
+! 	      La division par 2 pi vient de l'integration polaire
               qprim(ien,ialt,iang)= fluxprim(ialt,ien)* r2pi
-c 	      On redivise par 2 parce que le flux primaire est 
-c 	      isotrope (la moitie vers le haut et la moitie vers le
-c 	      bas)
+! 	      On redivise par 2 parce que le flux primaire est 
+! 	      isotrope (la moitie vers le haut et la moitie vers le
+! 	      bas)
               qprim(ien,ialt,iang)= qprim(ien,ialt,iang)/2. 
  	    enddo
  	  enddo
  	enddo
-c
+!
         if(iprt(21).eq.1 .or. iprt(22).eq.1)then
-c         print normalized source function.
+!         print normalized source function.
           write (fic_transout,1050) nen, nalt
           write (fic_transout,*) 'Energies (e)'
           write (fic_transout,910) (e(j), j = 1,nen)
@@ -2445,22 +2445,22 @@ c         print normalized source function.
             write(fic_transout,910)(fluxprim(ialt,ien), ien = 1,nen)
  	  enddo
         endif
-c
+!
         return
         end
-c
-c--------------------------------------------------------------------
-c
+!
+!--------------------------------------------------------------------
+!
         subroutine qmstr(n,mmax,nspec,engdd,densneut,ctot,elosse,
      .           qint,fint,omdeg,omsec,weitang,nbren,nen,nbralt,nalt,
      .		 nbrsp,nbrango2,nango2,irdtin)
-*
-*		Accelerated Cray version
-*       This subroutine calculates the sources due to degradation 
-*       of electrons in energy. (See equ. 2)
-*       The second half of the derivatives of the loss functions is 
-*       also calculated here.
-*
+!
+!		Accelerated Cray version
+!       This subroutine calculates the sources due to degradation 
+!       of electrons in energy. (See equ. 2)
+!       The second half of the derivatives of the loss functions is 
+!       also calculated here.
+!
         implicit logical (l)
         real engdd(nbren),densneut(8,nbralt),ctot(2*nbralt-1),
      .	  elosse(nbren,nbralt),
@@ -2543,19 +2543,19 @@ c
         return
         end
  
-C----------------------------------------------------------------------
+!----------------------------------------------------------------------
  
 	function ncross(e,engdd,qntsty,ialt,Etherm,denelc,nen)
-c
-*	calculates the crossover energy of the thermal and streaming 
-*	electrons
-c
+!
+!	calculates the crossover energy of the thermal and streaming 
+!	electrons
+!
  	implicit none
-c
+!
         integer npt
-c
+!
  	include 'TRANSPORT.INC'
-c
+!
  	real etherm,emass
  	integer ialt,nen,nmax,nn,nlevtrans,n,ncross
 	real qntsty(nbren,2*nbralt-1,-nbrango2:nbrango2),e(nbren)
@@ -2570,7 +2570,7 @@ c
 
 	pi=atan(1.)*4.
 	if(denelc.le.1.e-30.or.Etherm.le.0.)then
-c		ncross=1
+!		ncross=1
 		return
 	end if
 	emass=5.69e-16
@@ -2586,14 +2586,14 @@ c		ncross=1
 	    return
 	  end if
 100	continue
-c	print*,'>> ncross error.',ialt,flx,qntsty(nmax,2*ialt-1,0),
-c     .				nn,nmax
-c	ncross=1
+!	print*,'>> ncross error.',ialt,flx,qntsty(nmax,2*ialt-1,0),
+!     .				nn,nmax
+!	ncross=1
 	return
 	end
-c
-c----------------------------------------------------------------------
-c
+!
+!----------------------------------------------------------------------
+!
 	subroutine porter(g,eng,nang)
 	real g(0:nang),eng
 	real e(0:16),gama(16),beta(16),alfa(16)
@@ -2608,10 +2608,10 @@ c
 	data alfa/2.7,4.62e-1,3.17e-1,4.77e-1,1.92e-1,1.32e-1,1.32e-1,
      .		1.24e-1,8.07e-2,1.19e-1,3.78e-1,4.73e-1,-1.71,-1.27,
      .		-1.12,-1.08/
-*
-*	alternate phase function to replace Rutherford for low energy
-*	see Porter et al., 1987
-*
+!
+!	alternate phase function to replace Rutherford for low energy
+!	see Porter et al., 1987
+!
 	if(nang.gt.32) then
 		print*, 'Arrays in PORTER too small'
 		stop '***error'
@@ -2632,13 +2632,13 @@ c
 	return
 	end
  
-C----------------------------------------------------------------------
+!----------------------------------------------------------------------
 	subroutine recdown(g,nang,alfa,beta,gama)
 	parameter (maxstr=32,madd=9,mdim=maxstr+madd)
 	real g1(0:mdim),g2(0:mdim),g(0:nang),alfa,beta,gama
-*
-*	downward recursion for Porter's phase function
-*
+!
+!	downward recursion for Porter's phase function
+!
 	if(beta.eq.0.) then
 		if(gama.eq.0.) then		! isotropic
 			g(0)=1.
@@ -2656,7 +2656,7 @@ C----------------------------------------------------------------------
 		fnorm2=beta/(4.*alfa*(1.+alfa))/fnorm
 	end if
 	infty=mdim
-*	infty=nang+madd	      ! is this better? faster? still accuarate?
+!	infty=nang+madd	      ! is this better? faster? still accuarate?
 	del=1./(nang+madd)**4
 	call zeroit(g2,mdim+1)
 430	continue
@@ -2691,14 +2691,14 @@ C----------------------------------------------------------------------
 	return
 	end
  
-C----------------------------------------------------------------------
+!----------------------------------------------------------------------
  
 	subroutine recup(g,nang,alfa,beta,gama)
 	parameter (maxstr=32,mdim=maxstr)
 	real g1(0:mdim),g2(0:mdim),g(0:nang),alfa,beta,gama
-*
-* 	use recursion relation upwards
-*
+!
+! 	use recursion relation upwards
+!
 	if(beta.eq.0.) then
 		if(gama.eq.0.) then			! isotropic
 			g(0)=1.
@@ -2733,13 +2733,13 @@ C----------------------------------------------------------------------
 	return
 	end
  
-C----------------------------------------------------------------------
+!----------------------------------------------------------------------
  
 	subroutine ruther(g,eng,nang)
-*
-*	screened Rutherford phase function
-*	corr is an adjustment to the screening parameter eps
-*
+!
+!	screened Rutherford phase function
+!	corr is an adjustment to the screening parameter eps
+!
 	real g(0:nang),eps,eng
 	if(eng.ge.1000.) then
 		corr=0.6*(1000./eng)**0.09
@@ -2762,14 +2762,14 @@ C----------------------------------------------------------------------
 		return
 	end if
 	end
-c 
-c----------------------------------------------------------------------
-c 
+! 
+!----------------------------------------------------------------------
+! 
 	integer function nlevtrans(e,engdd,eng,nen)
  
-*	Function to find the grid number to which a given energy belongs
-*	input   ENG : energy
-*	output  NLEV : nearest cell to energy ENG
+!	Function to find the grid number to which a given energy belongs
+!	input   ENG : energy
+!	output  NLEV : nearest cell to energy ENG
  
  	real e(nen),engdd(nen)
  
@@ -2786,21 +2786,21 @@ c
 	end if
 	nlevtrans=1
  	return
-c
+!
 	end
-c
-c---------------------------- densout -------------------------------
-c 
+!
+!---------------------------- densout -------------------------------
+! 
         subroutine densout(hrloc,nalt,altkm,prodeltot,denelc,denselcalc)
-c
+!
         include 'TRANSPORT.INC'
-c
+!
         real prodeltot(nbralt),altkm(nbralt),denelc(nbralt)
         real denselcalc(nbralt)
         real prod,hrloc
         integer ialt,nalt
-c
-c       calcul de densites
+!
+!       calcul de densites
         do ialt=1,nalt
           if (altkm(ialt).lt.85.)then
             alphaeff=7.30e+04*exp(-altkm(ialt)/3.3)
@@ -2814,12 +2814,12 @@ c       calcul de densites
             denselcalc(ialt) = denelc(ialt)
           endif
         enddo
-c
+!
         return
         end
-c
-c-------------------------- reed ----------------------------
-c
+!
+!-------------------------- reed ----------------------------
+!
       subroutine reed (iprt,idess,mcount,ncountE,ncountA,
      .	   linear,ldeltam,lporter,nspec,e,Ebot,engdd,nen,
      .	   nang,nango2,pitchang,cosang,weitang,angzb,gmu,gwt,
@@ -2829,16 +2829,16 @@ c
      .	   qxdown,qxup,fluxup,fluxdown,temelc,temion,ezero,izplt,ieplt,
      .	   eplt,nke,jsg,jsp,ethres,bratio,cel,cin,cinex,
      .	   lamber,onlyfl,exsorc,usrang,usrtau,ddeng,centE,botE,icolin)
-c
+!
 	include 'TRANSPORT.INC'
-c
+!
  	logical lporter,linear,ldeltam,lamber,onlyfl,exsorc,usrang,
      .		usrtau
  	character*80 crsin,rdtin,crsinput
  	integer iprt(40),mcount(5),ncountE,ncountA,idess(20),
      .		izplt(4),ieplt(4),icolin
  	real eplt(4)
-c
+!
  	integer nspec,knmneutral,nalt,jpreci
  	integer isp,ialt,iexc,ilinear,iporter,ien,iost,i,j,iang,jp
 	character*30 istdate
@@ -2848,16 +2848,16 @@ c
      . 	 	glat,glong,albedo,alt(nbralt),
      .		altkm(nbralt),tneutre(nbralt),densneut(8,nbralt),
      .     	colden(8,nbralt)
-c
+!
  	character headline*80,rtext*20,phasfct*6
-c
+!
  	integer iopal,nen,knmsig
  	real centE(nbren),botE(nbren),ddeng(nbren)
  	real e(nbren),Ebot(nbren),engdd(nbren),esig(nbren),bsig(nbren),
      .  	ethres(nbrsp,nbrexc,nbrionst),bratio(nbrionst,nbrsp),
      .  	cel(nbrsp,nbren), cin(nbrsp,nbren),
      .  	cinex(nbrsp,nbrexc,nbren)
-c
+!
  	integer knm,nensig,ne,nang,nango2,jsg(nbrsp*2+1),jsp(nbrsp*2+1)
  	real ezero,trav(nbren)
  	real pitchang(2*nbrango2),cosang(2*nbrango2),weitang(2*nbrango2)
@@ -2867,16 +2867,16 @@ c
  	real denelc(nbralt),temelc(nbralt),
      .	       zel(nbralt),smgdpa(nbralt),temion(nbralt)
 	character*9 title(nbrexc,nbrsp)
-c
+!
 	open(fic_transout,file=
      .	data_path(1:lpath_data)
      &        //'dir.cine/TRANSOUT'
      .	,status='unknown')
 	rewind fic_transout
-c 
-c-------------------------------------------------------------
-c-------------------- lecture DATTRANS ------------------------
-c
+! 
+!-------------------------------------------------------------
+!-------------------- lecture DATTRANS ------------------------
+!
 	open(fic_datdeg,file=
      .	data_path(1:lpath_data)
      &        //'dir.cine/DATDEG',
@@ -2889,19 +2889,19 @@ c
 	read(fic_datdeg,'(a)') rdtin
  	rdtin = rdtin(1:lenc(rdtin))
  	close(fic_datdeg)
-c
+!
 	open(fic_dattrans,file= data_path(1:lpath_data)
      &                                //'dir.cine/DATTRANS',
      .	status='OLD', iostat=iost,err=997)
 	rewind fic_dattrans
  	call xline(15,fic_dattrans)
  	read(fic_dattrans,*)(iprt(i),i=1,26)
-c	MCOUNT  : print every MCOUNT altitude step
-c	    (1) : intensity/density	(2) : energy deposition
-c	    (3) : excitation rates	(4) : electron heating
+!	MCOUNT  : print every MCOUNT altitude step
+!	    (1) : intensity/density	(2) : energy deposition
+!	    (3) : excitation rates	(4) : electron heating
  	call xline(3,fic_dattrans)
  	read(fic_dattrans,*)(mcount(i),i=1,5)
-c 	ncount = Printing energy and angle steps
+! 	ncount = Printing energy and angle steps
  	read(fic_dattrans,*) ncountE,ncountA
  	call xline(19,fic_dattrans)
  	read(fic_dattrans,*)(idess(i),i=1,13)
@@ -2935,21 +2935,21 @@ c 	ncount = Printing energy and angle steps
  	if (iusrtau.eq.0)usrtau=.false.
  	read(fic_dattrans,*)icolin
  	close (fic_dattrans)
-c
-c
-c----------------------------------------------------------------
-c----------------- lecture de sections efficaces ----------------
-c
-c  *    read in ionization and excitation cross-sections vs energy.
-c
-c	print*,' open file: ',data_path(1:lpath_data)
-c     &                              //crsin
+!
+!
+!----------------------------------------------------------------
+!----------------- lecture de sections efficaces ----------------
+!
+!  *    read in ionization and excitation cross-sections vs energy.
+!
+!	print*,' open file: ',data_path(1:lpath_data)
+!     &                              //crsin
 	open(icrsin,file=data_path(1:lpath_data)
      &                         //crsin,status='OLD',form='UNFORMATTED',
      .		iostat=iost,err=992)
 	rewind icrsin
-c	print*,' open file: ',data_path(1:lpath_data)
-c     &                              //rdtin
+!	print*,' open file: ',data_path(1:lpath_data)
+!     &                              //rdtin
 	open(irdtin,file=data_path(1:lpath_data)
      &                         //rdtin,status='OLD',form='UNFORMATTED',
      .		iostat=iost,err=993)
@@ -2987,11 +2987,11 @@ c     &                              //rdtin
 	  print*,'jp,nbrionst :',jp,nbrionst
 	  stop 'error'		! call abort
  	endif
-c
+!
 	read(icrsin) (esig(ien),ien=1,nensig)
 	read(icrsin) (bsig(ien),ien=1,nensig)
 	read(icrsin) (engdd(ien),ien=1,nensig)
-*	Read cross-sections
+!	Read cross-sections
 	read(icrsin) (jsg(isp),isp=1,nspecsig),(jsp(isp),isp=1,nspecsig)
 	read(icrsin) ((title(iexc,isp),isp=1,nspecsig),iexc=1,nbrexc)
   
@@ -3016,15 +3016,15 @@ c
      .		iexc=1,nbrexc),ien=1,nensig)
  	close (icrsin)
 
-c
-c 	On tient compte de l'azote NI (N+)
+!
+! 	On tient compte de l'azote NI (N+)
  	jsg(6) = 1		! On ne produit que N+
  	jsp(6) = 1		! et dans un seul etat
-c
-c 	The differential cross sections are read in the transport
-c 	equation resolution process.
-c
-c       Met les energies en ordre croissant
+!
+! 	The differential cross sections are read in the transport
+! 	equation resolution process.
+!
+!       Met les energies en ordre croissant
         if(centE(1).lt.centE(nen))then
           do ien = 1,nen
             e(ien) = centE(ien)
@@ -3052,7 +3052,7 @@ c       Met les energies en ordre croissant
         close(955)
 !       -MZ
 
-c
+!
  	if (e(1) .ne. esig(1)) then
  	  write(6,*)'erreur:sig et trans ne tournent pas sur la '
  	  write(6,*)'meme grille d''entree des energies'
@@ -3065,7 +3065,7 @@ c
  	  stop
  	endif 
 1000    format(5(1pe10.2))
-c
+!
 	if(nango2.gt.nbrango2) then
 	  print*,' Too many streams: nbrango2 = ', nbrango2,
      .		 '                   nango2   = ', nango2
@@ -3077,11 +3077,11 @@ c
 	else
 	  phasfct='Wedde '
 	end if
-c
-c  	Oriente les angles comme il faut pour disort.
-c 	qxdown (-nango2--->-1)=flux down 
-c 	qxup   (1--->nango2)=flux up 
-c
+!
+!  	Oriente les angles comme il faut pour disort.
+! 	qxdown (-nango2--->-1)=flux down 
+! 	qxup   (1--->nango2)=flux up 
+!
  	do iang = 1,nango2
  	  pitchang(iang) = angzb(nango2+1-iang)
  	  pitchang(nango2+iang) = angzb(iang+nango2)
@@ -3094,9 +3094,9 @@ c
             qxup(ien,nango2+1-iang) = fluxup(ien,iang)
  	  enddo
  	enddo
-c
-c 	Writting
-c
+!
+! 	Writting
+!
 	write(fic_transout,4002) istdate
 	write(fic_transout,4003)nbren,nen,nbralt,nalt,2*nbrango2,nang,
      .	  nbrsp,nspec,nbrexc,nbrionst
@@ -3125,13 +3125,13 @@ c
 4018	format(' The albedo at ',f4.0,' km is set to ',f4.2/
      .		' The low energy phase function is taken from ',a6)
 4019	format(1x,a70)
-c
+!
       	write (fic_transout,5030) zbot, ztop
       	write (fic_transout,5040) hrloc, glat, day
       	write (fic_transout,5050) tempexo, f107a, f107,albedo
       	write (fic_transout,5070) year,nalt
       	write (fic_transout,5080) nen, nang, knm
-c
+!
       	write (fic_transout,5090) (altkm(ialt), ialt = 1,nalt)
       	write (fic_transout,5020) (denelc(ialt), ialt = 1,nalt)
       	write (fic_transout,5100) (e(n), n = 1,nen)
@@ -3140,7 +3140,7 @@ c
 	write (fic_transout,5112) (cosang(iang),iang=1,nang)
 	write (fic_transout,5114) (weitang(iang),iang=1,nang)
 	write (fic_transout,*)
-c
+!
 	if(iprt(3).eq.1) then
  	  do isp=1,nspec
 	    write(fic_transout,2003) specie(isp)
@@ -3224,9 +3224,9 @@ c
 5112 	format (/,' Corresponding cosines (cosang):',/,4(1f16.13,2x))
 5114 	format (/,' Corresponding weight (weitang):',/,4(1f16.13,2x))
 5190 	format (' Incident flux vs energy :',/,5(1x,1pe10.2))
-c
+!
       return
-c
+!
 993	print*,' Diff.cross-sect. file is in error. Status=',iost
 	stop 'error'		! call abort
 992	print*,' Cross-section file is in error. Status=',iost

@@ -13,7 +13,7 @@ F90=$(MYCOMPILER)
 ifeq ($(MYCOMPILER),ifort)
     OPTIONS=-assume byterecl -O3 -mtune=native -march=native  #for ifort
 else #gfortran
-    OPTIONS=-frecord-marker=4 -O3 -mtune=native -march=native -std=legacy #for gfortran 
+    OPTIONS=-frecord-marker=4 --free-form -O3 -mtune=native -march=native -std=legacy #for gfortran 
 endif
 
 FLAG_COMPIL= $(OPTIONS) -I$(INCLUDE) -c

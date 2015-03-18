@@ -656,8 +656,9 @@
 7017	format(/' The average e. loss per ion pair of ',a13,
      .		  ' is',f7.2,' eV'/)
 7018    format('Energy ',a4,' of',0pf7.2,' %')
-7019	format(/'Warning: excessive downward energy flux thru lower border'/
-     .    'Suggest: set albedo to 1. , increase Ne, reduce input flux'/)
+7019	format(/'Warning: excessive downward energy flux',              
+     &    ' thru lower border'/                                         
+     &    'Suggest: set albedo to 1. , increase Ne, reduce input flux'/)
 7020	format(/'Integrated intensity between',f10.1,' and',f10.1,
      .    ' eV',/,' compared to integral from',f10.1,' eV to infinity'/)
 7030	format(/,'Altitude ',7a10/)

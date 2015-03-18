@@ -1519,8 +1519,8 @@ c
           do m=1,indlim,inc
             write(44,*) alt(indlim+1-m)
             do ien=1,nen
-              write(44,*) (fhemd(ien,m)/2./3.1416,
-     &            fhemu(ien,m)/2./3.1416)
+C              write(44,*) (fhemd(ien,m)/2./3.1416,
+C     &            fhemu(ien,m)/2./3.1416)
             enddo
           enddo
 

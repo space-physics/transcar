@@ -1,22 +1,22 @@
 c
 c-----------------------------------------------------------------
 c
- 	subroutine conductivite(nalt,altkm,denelc,densneut,
-     .		tneutre,temelc,temion,chideg,glat,glong,year,day,
-     .		hrloc,cped,chal,ratHoP,cpedsum,chalsum,cpedCS,chalCS,
-     .		ratHoPsum,gyreave,gyriave,collOp,collNOp,collO2p,
-     .		collionSN,collionRG,collen2,colleo2,colleo1,colle,iprt,
-     .		f107,icolin)
+        subroutine conductivite(nalt,altkm,denelc,densneut,
+     &		tneutre,temelc,temion,chideg,glat,glong,year,day,
+     &		hrloc,cped,chal,ratHoP,cpedsum,chalsum,cpedCS,chalCS,
+     &		ratHoPsum,gyreave,gyriave,collOp,collNOp,collO2p,
+     &		collionSN,collionRG,collen2,colleo2,colleo1,colle,iprt,
+     &		f107,icolin)
 c
- 	implicit none
- 	include 'TRANSPORT.INC'
+        implicit none
+        include 'TRANSPORT.INC'
 c
- 	integer nalt,ialt,iprt(40),icolin
- 	integer file_cond
- 	real altkm(nbralt),denelc(nbralt),O1prate(nbralt),
-     .	     densneut(8,nbralt)
- 	real tneutre(nbralt),temelc(nbralt),temion(nbralt)
- 	real cped(nbralt),chal(nbralt),ratHoP(nbralt)
+        integer nalt,ialt,iprt(40),icolin
+        integer file_cond
+        real altkm(nbralt),denelc(nbralt),O1prate(nbralt),
+     &	     densneut(8,nbralt)
+        real tneutre(nbralt),temelc(nbralt),temion(nbralt)
+        real cped(nbralt),chal(nbralt),ratHoP(nbralt)
  	real omegae(nbralt), omegai(nbralt),gyreave,gyriave
  	real collionSN(nbralt),colle(nbralt),collionRG(nbralt)
  	real collOp(nbralt),collNOp(nbralt),collO2p(nbralt)
@@ -252,13 +252,13 @@ c    .		chalCS,cpedCS
 c
 990   	format (60('-'),/,'chideg,coschi=',2(1p1e10.2))
 1000  	format (/,'conductivites :',/,
-     .      '   Altitude       Hall     Pedersen      H/P     Ne[cm-3]',
-     .	    '   Te [K]         Ti[K]')
+     &    '   Altitude       Hall     Pedersen      H/P     Ne[cm-3]',
+     &    '   Te [K]         Ti[K]')
 1010  	format (f10.2,3x,2(1p1e11.2),1x,1p1e10.2,1x,1p1e10.2,
-     .		2(0p1f10.2))
+     &    2(0p1f10.2))
 1020    format(/,'COND. INTEGREES [MHO]:',/,
-     .		'Latitude  f107    Chideg',
-     .	     '     Hall   Pedersen    H/P   Hall.C.S. Ped.C.S.')
+     &    'Latitude  f107    Chideg',
+     &    '     Hall   Pedersen    H/P   Hall.C.S. Ped.C.S.')
 1030    format (1f6.2,7f9.3)
 1040 	format(/,'Frequences de collision')
 1045    format(/,

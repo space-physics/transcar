@@ -340,8 +340,8 @@ c
      .      ,' n(02)      n(01)',/,8x,' km      deg k      g/cm3   ',
      .       '   /cm3       /cm3       /cm3')
 2055    format (/,' no.   height     n(He)      n(Ar)       ',
-     .		'n(H)       n(N)', /,'         km        /cm3       ',
-     .		'/cm3       /cm3       /cm3')
+     .    'n(H)       n(N)', /,'         km        /cm3       ',
+     .    '/cm3       /cm3       /cm3')
 2060    format (i3,2f10.2,4(1pe11.3))
 2065    format (i3,f10.2,4(1pe11.3))
 100     format(1x,'mass', i5, '  not valid')
@@ -615,7 +615,7 @@ C
    10 CONTINUE
       GOTO 90
    50 CONTINUE
-      DD=DENSM(ALT,1.,0,TZ,MN3,ZN3,TN3,TGN3,MN2,ZN2,TN2,TGN2)
+      DD=DENSM(ALT,1.,0.,TZ,MN3,ZN3,TN3,TGN3,MN2,ZN2,TN2,TGN2)
       T(2)=TZ
    90 CONTINUE
       ALAST=ALT

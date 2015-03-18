@@ -2,7 +2,7 @@ c
 c----------------------------------------------------------------------
 c
         subroutine quelle_grille(emax,nen,centE,botE,ddeng,
-     .                          nang,nango2,gmu,gwt,angzb)
+     &                          nang,nango2,gmu,gwt,angzb)
 
 c
  	implicit none
@@ -190,9 +190,9 @@ c 	efficaces.
           write(fic_datdeg,1075)
  	endif
 1070 	format('.true',11x,
-     .		'logint: interpolation type for cross sections')
+     &    'logint: interpolation type for cross sections')
 1075 	format('.false.',10x,
-     .		'logint: interpolation type for cross sections')
+     &    'logint: interpolation type for cross sections')
 c
  	if(lt1)then
           write(fic_datdeg,1080)
@@ -232,9 +232,9 @@ c
           write(fic_datdeg,1125)
  	endif
 1120 	format('.true.',11x,
-     .		'lopal : sec. distrib. de Opal (Rees sinon)')
+     &    'lopal : sec. distrib. de Opal (Rees sinon)')
 1125 	format('.false.',10x,
-     .		'lopal : sec. distrib. de Opal (Rees sinon)')
+     &    'lopal : sec. distrib. de Opal (Rees sinon)')
 
  	close(fic_datdeg)
 c
@@ -247,12 +247,12 @@ c1040 	format(a,3x,' Fic. de sortie des seff diff. (Eprim-->E)')
 1030 	format(a)
 1040 	format(a)
 1050 	format('idess =-1 no plot.',/,
-     .	 'idess = 0 metacode created, without interactive session.',/,
-     .	 'idess = 1 metacode not created, but screened plots.',/,
-     .	 'idess = 2 metacode created, with interactive session.',/,
-     .	  2i5,5x,'(seff, seff detailled)')
+     &    'idess = 0 metacode created, without interactive session.',/,
+     &    'idess = 1 metacode not created, but screened plots.',/,
+     &    'idess = 2 metacode created, with interactive session.',/,
+     &   2i5,5x,'(seff, seff detailled)')
 1060 	format('iprint = 1 if print (whatever number otherwise)',/,
-     .	       8x,'sigel  siginel  rmatrix diff-sig-test ',/,4i10)
+     &    8x,'sigel  siginel  rmatrix diff-sig-test ',/,4i10)
 1130 	format(a7)
 c
 	nang=8

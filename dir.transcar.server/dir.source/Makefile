@@ -1,52 +1,58 @@
-# -O3 gives SIGSEGV with gfortran, -O2 doesn't.
-MYCOMPILER=gfortran #ifort
+# first mkdir dir.transcar.server/dir.obj (one time)
+# USAGE: 
+# make -s fc=gfortran
+# make -s fc=ifort
 
-#Definition du type de machine et du compilateur
-#OS := $(shell uname)
-#OPTIONS:=$(shell if [ "$(OS)" = "Linux"  ]; then echo "-m486 -O -finit-local-zero -funroll-loops -ffast-math -fno-f2c -fno-automatic ";\
-#OPTIONS:=$(shell if [ "$(OS)" = "Linux"  ]; then echo "-w90 -assume byterecl -axW -O3";\
-
-#OPTIONS=-w90 -assume byterecl -axW -O3 
-
-F77=$(MYCOMPILER)
-F90=$(MYCOMPILER)
-
-ifeq ($(MYCOMPILER),ifort)
-    OPTIONS=-assume byterecl -O2 -mtune=native -march=native  #for ifort
-else #gfortran
-    OPTIONS=-frecord-marker=4 -O2 -mtune=native -march=native -std=legacy #for gfortran 
+ifeq ($(strip $(fc)),)
+fc=gfortran
 endif
+
+F77=$(fc)
+F90=$(fc)
+
+# -O3 gives SIGSEGV with gfortran, -O2 doesn't.
+ifeq ($(fc),ifort)
+OPTIONS=-assume byterecl  -O2 -mtune=native -march=native  -Wall #for ifort
+else ifeq ($(fc),gfortran)
+# we use std=legacy because there are deleted features used
+OPTIONS=-frecord-marker=4 -O2 -mtune=native -march=native  -std=legacy #-Wall #for gfortran 
+else
+$(info you must specify your compiler with fc=mycompiler.  E.g. make fc=gfortran)
+endif
+
+COMPINFO=$(shell $(fc) --version | head -n1)
+OPSYS=$(shell uname -a)
+$(info $(COMPINFO) on $(OPSYS))
+
 
 FLAG_COMPIL= $(OPTIONS) -I$(INCLUDE) -c
 FLAG_LIEN= $(OPTIONS) -I$(INCLUDE) -o
 
-
-#LIB=/opt/intel/compiler60/ia32/lib/libPOSF90.a
 LIB=$(LD_LIBRARY_PATH)/
 
-
 #Definition des variables d'environnements pour la compilation
+TCDIR := $(shell cd ..; pwd)
 
-TRANSCAR  := $(shell cd ..; pwd)
-SOURCE=$(TRANSCAR)/dir.source
-FLUIDE=$(TRANSCAR)/dir.source/dir.fluide
-CINETIC=$(TRANSCAR)/dir.source/dir.cine
-NUMERIC=$(TRANSCAR)/dir.source/dir.numeric
-SYSTEM=$(TRANSCAR)/dir.source/dir.system
-CONVECTION=$(TRANSCAR)/dir.source/dir.convection
-PROJECTION=$(TRANSCAR)/dir.source/dir.projection
-GEOMAG=$(TRANSCAR)/dir.source/dir.geomag
-IMM=$(TRANSCAR)/dir.source/dir.imm
-IRI=$(TRANSCAR)/dir.source/dir.cine/dir.iri
-INCLUDE=$(TRANSCAR)/dir.source/dir.include
-BUT_OBJ=$(TRANSCAR)/dir.obj
-BUT_EXE=$(TRANSCAR)
+SOURCE=$(TCDIR)/dir.source
+FLUIDE=$(TCDIR)/dir.source/dir.fluide
+CINETIC=$(TCDIR)/dir.source/dir.cine
+NUMERIC=$(TCDIR)/dir.source/dir.numeric
+SYSTEM=$(TCDIR)/dir.source/dir.system
+CONVECTION=$(TCDIR)/dir.source/dir.convection
+PROJECTION=$(TCDIR)/dir.source/dir.projection
+GEOMAG=$(TCDIR)/dir.source/dir.geomag
+IMM=$(TCDIR)/dir.source/dir.imm
+IRI=$(TCDIR)/dir.source/dir.cine/dir.iri
+INCLUDE=$(TCDIR)/dir.source/dir.include
+BUT_OBJ=$(TCDIR)/dir.obj
+BUT_EXE=$(TCDIR)
+
 #
 op:	$(BUT_EXE)/transconvec_13.op.out
+#	
 #
 clean: 
 	$(RM) $(BUT_OBJ)/*.o
-
 #
 #Definition des modules
 #----------------------

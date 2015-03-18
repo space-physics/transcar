@@ -257,12 +257,12 @@ C********1*********2*********3*********4*********5*********6*********7**
 
 1000 	  format('  EUV 91 Energy and Photon Flux for ',i10,/)
 1010 	format (5x,'Wavelength',5x,'Middle',6x,'Energy',6x,'Middle',8x,
-     .		'Photon',5x,'Energy',/,58x,'flux',8x,'flux',/,
-     .		7x,'[nm]',10x,'[nm]',8x,'[eV]',8x,'[eV]',9x,'[cm-2.',
-     . 		5x,'[eV.cm-2.',/,3x,13('-'),12x,14('-'),15x,'s-1.nm-1]',
-     .		3x,'s-1.nm-1]',/)
+     .    'Photon',5x,'Energy',/,58x,'flux',8x,'flux',/,
+     .    7x,'[nm]',10x,'[nm]',8x,'[eV]',8x,'[eV]',9x,'[cm-2.',
+     .    5x,'[eV.cm-2.',/,3x,13('-'),12x,14('-'),15x,'s-1.nm-1]',
+     .    3x,'s-1.nm-1]',/)
 1020 	format
-     .	    (2(1F8.1,1x),1f8.1,1x,2(1F7.2,1x),1f7.2,6x,2(1p1E9.3,3x))
+     .	    (2(1F8.1,1x),1f8.1,1x,2(1F7.2,1x),1f7.2,6x,2(1p1E10.3,3x))
 c
  	  if (impress.eq.1)then
 	    write (iout,1000)yyddd+i 

@@ -20,15 +20,3 @@
 	
 	  return
 	  end
-
-! MH this function is now built-in to both ifort and gfortran
-!	  subroutine getcwd(file_dir)
-!
-!	  integer*4 ilen,ierror
-!	  character*(*) file_dir
-
-!	  call pxfgetcwd(file_dir,ilen,ierror)
-!	file_dir='/home/blelly/dir.spacegrid'
-!	file_dir=''
-!	  return
-!	  end

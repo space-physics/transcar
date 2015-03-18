@@ -277,8 +277,8 @@ c 	Verification ...
  	qtot=qtot            ! total energy input in eV/cm2/sec/sr
 	write(6,1000)Fe,qtot/1.00e+03,xnorm
 1000 	format ('Energie integree :',/,9x,1pe10.2,'keV/cm2/s/sr desire',
-     .		/,9x,1pe10.2,' keV/cm2/s/sr calcule  ',
-     .         '(facteur de normalisation :',0p1f10.6,')')
+     &    /,9x,1pe10.2,' keV/cm2/s/sr calcule  ',
+     &    '(facteur de normalisation :',0p1f10.6,')')
 c
 c
  	return

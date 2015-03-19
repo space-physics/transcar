@@ -14,7 +14,8 @@
 # bring back simulation output to your PC.
 
 BeamEnergyTableFN=BT_E1E2prev.csv
-RODIR=../out/conttanh0_ifort
+RODIR=$1
+[[ -z $RODIR ]] && { echo "you must specify an output directory"; exit 1; }
 exedir=code/transcar/dir.transcar.server
 localonly=1
 remotes=(labHST0 labHST1)

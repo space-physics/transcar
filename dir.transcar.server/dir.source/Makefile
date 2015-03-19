@@ -2,6 +2,8 @@
 # USAGE: 
 # make -s fc=gfortran
 # make -s fc=ifort
+#
+# Note that ifort will error out on msis90.f when using warn all
 
 ifeq ($(strip $(fc)),)
 fc=gfortran
@@ -12,10 +14,10 @@ F90=$(fc)
 
 # -O3 gives SIGSEGV with gfortran, -O2 doesn't.
 ifeq ($(fc),ifort)
-OPTIONS=-assume byterecl  -O2 -mtune=native -march=native #for ifort
+OPTIONS=-assume byterecl  -O2 -mtune=native -march=native #-warn all #for ifort
 else ifeq ($(fc),gfortran)
 # we use std=legacy because there are deleted features used
-OPTIONS=-frecord-marker=4 -O2 -mtune=native -march=native  -std=legacy #-Wall #for gfortran 
+OPTIONS=-frecord-marker=4 -O2 -mtune=native -march=native  -std=legacy #-pedantic #-Wall #for gfortran 
 else
 $(info you must specify your compiler with fc=mycompiler.  E.g. make fc=gfortran)
 endif
@@ -48,9 +50,8 @@ BUT_OBJ=$(TCDIR)/dir.obj
 BUT_EXE=$(TCDIR)
 
 #
-op:	$(BUT_EXE)/transconvec_13.op.out
-#	
-#
+all: $(BUT_EXE)/transconvec_13.op.out
+
 clean: 
 	$(RM) $(BUT_OBJ)/*.o
 #

@@ -378,9 +378,9 @@
      &       qxup(nbren,nbrango2),qint(2*nbralt-1,-nbrango2:nbrango2)
      
         real densneut(8,nbralt),temelc(nbralt),denelc(nbralt),
-     .        dentot(nbralt),alt(nbralt),colden(8,nbralt),
-     .        tau(0:nbralt-1),altkm(nbralt),temion(nbralt),
-     .        denmass(nbralt),press(nbralt),utau(2*nbralt-1)
+     &        dentot(nbralt),alt(nbralt),colden(8,nbralt),
+     &        tau(0:nbralt-1),altkm(nbralt),temion(nbralt),
+     &        denmass(nbralt),press(nbralt),utau(2*nbralt-1)
 
 !     densig = somme des seff + L(E)
         real densig(nbralt,nbren)
@@ -406,22 +406,22 @@
         real qprimpRot(nbren,nbralt,-nbrango2:nbrango2)
 !
         real qntsty(nbren,2*nbralt-1,-nbrango2:nbrango2),
-     .      qgaupin(2*nbralt-1,-nbrango2:nbrango2),
-     .    fhemu(nbren,nbralt),fhemd(nbren,nbralt),
-     .      fhemtot(nbren,nbralt)
+     &      qgaupin(2*nbralt-1,-nbrango2:nbrango2),
+     &    fhemu(nbren,nbralt),fhemd(nbren,nbralt),
+     &      fhemtot(nbren,nbralt)
         real intensite(nbren,nbralt,-nbrango2:nbrango2)
         real feup(nbralt),fedwn(nbralt),fesum(nbralt),eup,edwn
         real fpartup(nbralt),fpartdwn(nbralt),fpartsum(nbralt),
-     .         partup,partdwn
+     &         partup,partdwn
 !
         real fldn(nbralt),flup(nbralt)    ! work array for sub. MSTREAM
  
         real enrate(nbrsp*2,nbrexc+1,nbralt+1),chaufelec(nbralt),
-     .        shsum(nbrsp), prate(nbrsp*2,nbrexc+1,nbralt+1),
-     .        prodionsec(nbrsp*2,nbralt),prodelsec(nbralt),
-     .        enrion(nbralt),engdep(nbralt,2),elratio(nbralt,2),
-     .        cemis(nbralt),Qeflux(nbralt),Qetherm(nbralt),
-     .        edep(nbralt)
+     &        shsum(nbrsp), prate(nbrsp*2,nbrexc+1,nbralt+1),
+     &        prodionsec(nbrsp*2,nbralt),prodelsec(nbralt),
+     &        enrion(nbralt),engdep(nbralt,2),elratio(nbralt,2),
+     &        cemis(nbralt),Qeflux(nbralt),Qetherm(nbralt),
+     &        edep(nbralt)
 !
 !     Next arrays are for conductivity calculation.
         real denselcalc(nbralt)
@@ -532,68 +532,68 @@
 *    albedo   : particle albedo at bottom of atmosphere
 ! 
         data lt1/.true./lt3/.true./lt4/.true./consto/0.d0/
-     .        constb/0.d0/lt5/.true./etest/100./nstop/0/
+     &        constb/0.d0/lt5/.true./etest/100./nstop/0/
 !    switches for testing of the correct preformance of the code
 !    NSTOP    : test-stop after NSTOP times through the energy loop
 ! 
 1000   format('No.=',i10,';',i3,' E;',i2,' A;',i3,' Alt; Sun=',
-     .        a3,';yr=',i2,';day=',i3,';LT=',f5.2,';lat=',f6.2,
-     .        ';Ap=',f5.1,';f10.7=',f6.2,';fav=',f6.2,
-     .        ';texo=',f7.2,2x)
+     &        a3,';yr=',i2,';day=',i3,';LT=',f5.2,';lat=',f6.2,
+     &        ';Ap=',f5.1,';f10.7=',f6.2,';fav=',f6.2,
+     &        ';texo=',f7.2,2x)
 1001   format('No.=',i10,';',i3,' E;',i2,' A;',i3,' Alt; Sun=',
-     .        a3,';yr=',i2,';day=',i3,';LT=',f5.2,';lat=',f6.2,
-     .        ';Ap=',f5.1,';f10.7=',f6.2,';sza=',f6.2,
-     .        ';texo=',f7.2,2x)
+     &        a3,';yr=',i2,';day=',i3,';LT=',f5.2,';lat=',f6.2,
+     &        ';Ap=',f5.1,';f10.7=',f6.2,';sza=',f6.2,
+     &        ';texo=',f7.2,2x)
 1010     format('libre parcours moyen a ',1pe10.2,' eV et a ',1pe10.2,
-     .         'eV',/,'altitude lpm 1   lpm2')
+     &         'eV',/,'altitude lpm 1   lpm2')
 1020     format(f10.2,2(1pe10.2))
 1305     format('   Energy    Qxdown   Computed    Qxup    Computed')
 1300    format(5(1pe10.2))
 !
 2002    format(/1x,'The energy grid covers the range from :',f6.3,
-     .        ' eV up to :',f8.1,' eV')
+     &        ' eV up to :',f8.1,' eV')
 2850    format (/,'atmosphere neutre, modele MSIS 90',/,
-     .       ' no.   height    n(n2)     '
-     .      ,' n(02)      n(01)',/,8x,' km   ',
-     .       '   /cm3       /cm3       /cm3')
+     &       ' no.   height    n(n2)     '
+     &      ,' n(02)      n(01)',/,8x,' km   ',
+     &       '   /cm3       /cm3       /cm3')
 2855    format (/,' no.   height     n(He)      n(Ar)       ',
-     .        'n(H)       n(N)', /,'         km        /cm3       ',
-     .        '/cm3       /cm3       /cm3')
+     &        'n(H)       n(N)', /,'         km        /cm3       ',
+     &        '/cm3       /cm3       /cm3')
 2860    format (i3,f10.2,4(1pe11.3))
 2865    format (i3,2f10.2,3(1pe11.3))
 2870    format (' no.   height  T neutral Mass-dsty   Pressure',/,
-     .          '         km       [K]      [mbar]      [g]  ')
+     &          '         km       [K]      [mbar]      [g]  ')
 2875    format (' no.   height     Te         Ne ',/,
-     .          '         km       [K]      [cm-3]')
+     &          '         km       [K]      [cm-3]')
 2880    format (/,'COLUMN DENSITY',/, ' no.   height    n(n2)     '
-     .      ,' n(02)      n(01)',/,8x,' km   ',
-     .       '   /cm2       /cm2       /cm2')
+     &      ,' n(02)      n(01)',/,8x,' km   ',
+     &       '   /cm2       /cm2       /cm2')
 2885    format (/,' no.   height     n(He)      n(Ar)       ',
-     .        'n(H)       n(N)', /,'         km        /cm2       ',
-     .        '/cm2       /cm2       /cm2')
+     &        'n(H)       n(N)', /,'         km        /cm2       ',
+     &        '/cm2       /cm2       /cm2')
 !
 4012    format(' *****************    Wiscombe''s delta-M method',
-     .        ' is NOT applied    ************')
+     &        ' is NOT applied    ************')
 4013    format(' Wiscombe''s delta-M method is applied')
 4014    format(' *****************    Phase function is not',
-     .        ' Rutherford !!!!',
-     .        t70,'IPHASE =',i3,',  GPHASE =',f8.4)
+     &        ' Rutherford !!!!',
+     &        t70,'IPHASE =',i3,',  GPHASE =',f8.4)
 4016    format(' The screening parameter for the Rutherford phase',
-     .        ' function is calculated',/,
-     .        ' from the Bethe/Moliere formula for E > 500 eV')
+     &        ' function is calculated',/,
+     &        ' from the Bethe/Moliere formula for E > 500 eV')
 !
 5000    format('Date:',i6.5,' time:',f6.2,' LT'/'Longitude :',f6.1,
-     .      ' Latitude :',f6.1,/,'10.7 cm flux :',f6.1,
-     .      ' average :',f6.1,' Ap',f6.1,/,'MSIS exospheric',
-     .      ' temperature is ',f8.0,' K')
+     &      ' Latitude :',f6.1,/,'10.7 cm flux :',f6.1,
+     &      ' average :',f6.1,' Ap',f6.1,/,'MSIS exospheric',
+     &      ' temperature is ',f8.0,' K')
 5007   format(
      &  'The total E. input from precipitation source is : ', 1pe11.4,
      &  ' eV/cm2/s',/,45x,'or : ',1pe11.4,' erg/cm2/s',/,18x,
      &  'and from photoelectron source : ',1pe11.4,' eV/cm2/s',/,45x,
      &  'or : ',1pe11.4,' erg/cm2/s')
 5008    format(
-     .    'Input eV/cm2/s (erg/cm2/s): prec:',1pe9.2,' (',1pe9.2,')',
-     .    ' nue-: ',1pe9.2,' (',1pe9.2,')')
+     &    'Input eV/cm2/s (erg/cm2/s): prec:',1pe9.2,' (',1pe9.2,')',
+     &    ' nue-: ',1pe9.2,' (',1pe9.2,')')
 !
 6002   format(' ',-5pf10.2,4(1pe12.4))
 6006   format
@@ -601,11 +601,11 @@
      &     4(1pe12.5))
 6007    format('Phase function moments :',/,f12.4,(4f12.4))
 6008    format(/'    Altitude ',t15,' Flux (+) ',
-     .      t26,' Flux (-) ',t38,'Source (+)',t50,'Source (-)',/,
-     .      '    km',t17,'eV-1 cm-2 sec-1',t40,'eV-1 cm-2 sec-1'/)
+     &      t26,' Flux (-) ',t38,'Source (+)',t50,'Source (-)',/,
+     &      '    km',t17,'eV-1 cm-2 sec-1',t40,'eV-1 cm-2 sec-1'/)
 6009   format
-     .  ('Calculated Intensity at boundary (eV-1 cm-2 s-1 ster-1) :',/,
-     .        (4(1pe12.5)))
+     &  ('Calculated Intensity at boundary (eV-1 cm-2 s-1 ster-1) :',/,
+     &        (4(1pe12.5)))
 6010    format('Gaussian angle  : ',(4f12.5))
 6011    format('Gaussian weight : ',(4f12.5))
 6012     format (/,'  Altitude',t21,'tau')
@@ -613,82 +613,82 @@
 ! 
 7000    format(-5pf5.1,2x,7(1pe9.2))
 7001     format(/,' Alt.    ------ Energy Flux ------  E-depos. ',
-     .   '---- Particle flux ----',/,' km            eV cm-2 sec-1',
-     .   '       /eVcm3sec       cm-2 sec-1',/,'            (-)',
-     .   '     (+)     total              (-)     (+)     total')
+     &   '---- Particle flux ----',/,' km            eV cm-2 sec-1',
+     &   '       /eVcm3sec       cm-2 sec-1',/,'            (-)',
+     &   '     (+)     total              (-)     (+)     total')
 7002    format(/'Energy albedo at highest altitude          :',f11.5,/,
-     .        'Particle albedo at highest altitude        :',f11.5/
-     .          'Total energy deposition (qdep = Edwn-Eup)  :',1pe11.3,
-     .        ' eV cm-2 sec-1',//,
-     .    'Characteristic energy of incident spectrum:',0pf12.3,
-     .    ' keV ',/,12x,'or (ignoring flux below 50 eV):',f12.3,' keV'/
-     .     7x,'of upward spectrum:       ',10x,f12.3,' keV ',/,12x,
-     .    'or (ignoring flux below 50 eV):',f12.3,' keV')
+     &        'Particle albedo at highest altitude        :',f11.5/
+     &          'Total energy deposition (qdep = Edwn-Eup)  :',1pe11.3,
+     &        ' eV cm-2 sec-1',//,
+     &    'Characteristic energy of incident spectrum:',0pf12.3,
+     &    ' keV ',/,12x,'or (ignoring flux below 50 eV):',f12.3,' keV'/
+     &     7x,'of upward spectrum:       ',10x,f12.3,' keV ',/,12x,
+     &    'or (ignoring flux below 50 eV):',f12.3,' keV')
 7003   format(//' Energy deposited in heating of the ambient electrons'
-     .      ,' [eV cm-3 sec-1]',/,'Alt. [km]',6x
-     .        ,'heating thermalization',3x,'total','  crossE [eV]')
+     &      ,' [eV cm-3 sec-1]',/,'Alt. [km]',6x
+     &        ,'heating thermalization',3x,'total','  crossE [eV]')
 !    .       '  % of e-dep'/)
 7004    format(-5pf7.2,3x,3(1pe12.3),0pf7.2,2x,1pe8.1,2x,f7.3)
 7005    format(//t10,' Energy deposition in ',a13,' (eV cm-3 sec-1)'//
-     .        'Altitude   total ',5a10/)
+     &        'Altitude   total ',5a10/)
 7006    format(-5pf7.2,6(1pe10.2))
 7008    format(/' Total Heating :',1pe11.3,' eV cm-2 sec-1'/)
 7007    format(/' Total energy deposition in ',a5,' is ',1pe10.3,
-     .      ' eV cm-2 sec-1 (shsum)'/)
+     &      ' eV cm-2 sec-1 (shsum)'/)
 7009    format(//t10,' Excitation rates for ',a13,' (cm-3 sec-1)'//
-     .        'Altitude  total   ',5a10/)
+     &        'Altitude  total   ',5a10/)
 7010      format(
-     .  /'Total energy input of :',1pe10.3,' eV.cm-2.s-1 (qtoteV)',
-     .  /,'             of which ',1pe10.3,' is reflected (qsump)',
-     .    /,'                  and ',1pe10.3,' is absorbed (entot) ',
-     .  /,25x,'through inelastic collisions (shsum =',1pe10.3,')',
-     .    /,25x,'                  + heating (elhsum =',1pe10.3,')')
+     &  /'Total energy input of :',1pe10.3,' eV.cm-2.s-1 (qtoteV)',
+     &  /,'             of which ',1pe10.3,' is reflected (qsump)',
+     &    /,'                  and ',1pe10.3,' is absorbed (entot) ',
+     &  /,25x,'through inelastic collisions (shsum =',1pe10.3,')',
+     &    /,25x,'                  + heating (elhsum =',1pe10.3,')')
 7011    format(/'total: ',10x,7(1pe10.2))
 7012    format(//' The average E. loss per ion pair is :',
-     .             f7.2,' eV (from qtoteV)',/,34x,
-     .      'or :',f7.2,' eV (from (entot))',/,34x,
-     .      'or :',f7.2,' eV (from (qtoteV-qsump))')
+     &             f7.2,' eV (from qtoteV)',/,34x,
+     &      'or :',f7.2,' eV (from (entot))',/,34x,
+     &      'or :',f7.2,' eV (from (qtoteV-qsump))')
 7013    format(/t10,'Electron-electron interaction loss function :',
-     .        ' L/dE * [e]'//'   Energy   ',11(-5pf6.2,' km ')/)
+     &        ' L/dE * [e]'//'   Energy   ',11(-5pf6.2,' km ')/)
 7014    format(' ',12(1pe9.2,1x))
 7015    format(1x,-5pf7.2,12x,2(1pe13.3))
 7016    format(/' Height integrated :',2(1pe13.3))
 7017    format(/' The average e. loss per ion pair of ',a13,
-     .          ' is',f7.2,' eV'/)
+     &          ' is',f7.2,' eV'/)
 7018    format('Energy ',a4,' of',0pf7.2,' %')
 7019    format(/'Warning: excessive downward energy flux',              
      &   ' thru lower border'/                                         
      &   'Suggest: set albedo to 1. , increase Ne, reduce input flux'/)
 7020    format(/'Integrated intensity between',f10.1,' and',f10.1,
-     .   ' eV',/,' compared to integral from',f10.1,' eV to infinity'/)
+     &   ' eV',/,' compared to integral from',f10.1,' eV to infinity'/)
 7030    format(/,'Altitude ',7a10/)
 7033    format(/'total: ',10(1pe10.2))
 7050     format(/,'Electron density',/,' altitude ',
-     .          ' e- prod.  Computed [Ne]   Input [Ne]')
+     &          ' e- prod.  Computed [Ne]   Input [Ne]')
 7051     format(1f10.2,3(1pe12.3))
 7055    format('Alt. of electron prod. max. from',a6,' : ',f10.2,' km',
-     .           /,'Value at this height  ',16x,' : ',1pe10.2,' cm-3')
+     &           /,'Value at this height  ',16x,' : ',1pe10.2,' cm-3')
 7057     format('Theoretical  range for [N2]  ',1pe10.2,' g/cm2')
 !
 7100     format(/,10x,'Hemispherical fluxes [cm-2 s-1 eV-1]',/,10x,
-     .           37('-'),/,'fhemtot(E,z) = (2pi.sum(mu.qntsty.dmu))')
+     &           37('-'),/,'fhemtot(E,z) = (2pi.sum(mu.qntsty.dmu))')
 7110     format(f10.2,' km       ',5(1pe10.2))
 7120     format(/,' Energies (eV) -->  ',5(1pe10.2),/,70('-'))
 7130   format(/,10x,'Upward hemispherical fluxes [cm-2 s-1 eV-1]',/,10x
-     .           ,37('-'),/,'fhemu(E,z) = (2pi.sum(mu.qntsty.dmu))')
+     &           ,37('-'),/,'fhemu(E,z) = (2pi.sum(mu.qntsty.dmu))')
 7140   format(/,10x,'Downward hemispherical fluxes [cm-2 s-1 eV-1]',/,
-     .           10x,37('-'),/,'fhemd(E,z) = (2pi.sum(mu.qntsty.dmu))')
+     &           10x,37('-'),/,'fhemd(E,z) = (2pi.sum(mu.qntsty.dmu))')
 !
 8000    format(//15x,'Total Energy Deposition per layer',
-     .        ' (eV cm-2 sec-1)'/
-     .        13x,'Altitude',3x,'E-flux diff.',
-     .        9x,'E-dep.',5x,'rel. diff.'/)
+     &        ' (eV cm-2 sec-1)'/
+     &        13x,'Altitude',3x,'E-flux diff.',
+     &        9x,'E-dep.',5x,'rel. diff.'/)
 8001    format(5x,-5pf15.2,2(2(1pe15.3),0pf15.3,2x))
 !
 !----------------------------------------------------------------------
 !
         write(6,*)'    trans.f : Kinetic transport. jpreci=',
-     .        jpreci,'ut=',UT
+     &        jpreci,'ut=',UT
 !
 
 
@@ -700,14 +700,14 @@
         call zeroit(chaufelec,nbralt)
         call zeroit(engdd,nbren)
         call reed (iprt,idess,mcount,ncountE,ncountA,
-     .    linear,ldeltam,lporter,nspec,e,Ebot,engdd,nen,
-     .    nang,nango2,pitchang,cosang,weitang,angzb,gmu,gwt,
-     .    f107(3),f107(1),smgdpa,day,year,glong,alt,altkm,nalt,
-     .    tneutre,densneut,denelc,colden,title,jpreci,
-     .    zbot,ztop,hrloc,tempexo,knm,glat,ap(1),albedo,
-     .    qxdown,qxup,fluxup,fluxdown,temelc,temion,ezero,izplt,ieplt,
-     .    eplt,nke,jsg,jsp,ethres,bratio,cel,cin,cinex,
-     .    lamber,onlyfl,exsorc,usrang,usrtau,ddeng,centE,botE,icolin)
+     &    linear,ldeltam,lporter,nspec,e,Ebot,engdd,nen,
+     &    nang,nango2,pitchang,cosang,weitang,angzb,gmu,gwt,
+     &    f107(3),f107(1),smgdpa,day,year,glong,alt,altkm,nalt,
+     &    tneutre,densneut,denelc,colden,title,jpreci,
+     &    zbot,ztop,hrloc,tempexo,knm,glat,ap(1),albedo,
+     &    qxdown,qxup,fluxup,fluxdown,temelc,temion,ezero,izplt,ieplt,
+     &    eplt,nke,jsg,jsp,ethres,bratio,cel,cin,cinex,
+     &    lamber,onlyfl,exsorc,usrang,usrtau,ddeng,centE,botE,icolin)
 
 
 !
@@ -762,31 +762,31 @@
        enddo
  
        write(fic_transout,5000) yyddd,hrloc,glong,glat,
-     .            f107(1),f107(3),ap(1),tempexo
+     &            f107(1),f107(3),ap(1),tempexo
        if(iprt(10).eq.1)then
           write(fic_transout,2850)
           if(nspec.le.3)then
             iwrite=nspec
             do i=1,nalt,mcount(1)
               write(fic_transout,2860)i,altkm(i),
-     .            (densneut(isp,i),isp=1,iwrite)
+     &            (densneut(isp,i),isp=1,iwrite)
             enddo
           else
             iwrite=3
             do i=nalt,1,-1
               write(fic_transout,2860)i,alt(i),
-     .            (densneut(isp,i),isp=1,iwrite)
+     &            (densneut(isp,i),isp=1,iwrite)
             enddo
             write(fic_transout,2855)
             do i=nalt,1,-1
               write(fic_transout,2860)i,alt(i),
-     .            (densneut(isp,i),isp=4,nspec)
+     &            (densneut(isp,i),isp=4,nspec)
             enddo
           endif
           write(fic_transout,2870)
           do i=1,nalt,mcount(1)
             write(fic_transout,2865)i,altkm(i),tneutre(i),
-     .            denmass(i),press(i)
+     &            denmass(i),press(i)
           enddo
           write(fic_transout,2875)
           do i=1,nalt,mcount(1)
@@ -799,18 +799,18 @@
             iwrite=nspec
             do i=1,nalt,mcount(1)
               write(fic_transout,2860)i,altkm(i),
-     .            (colden(isp,i),isp=1,iwrite)
+     &            (colden(isp,i),isp=1,iwrite)
             enddo
           else
             iwrite=3
             do i=nalt,1,-1
               write(fic_transout,2860)i,alt(i),
-     .            (colden(isp,i),isp=1,iwrite)
+     &            (colden(isp,i),isp=1,iwrite)
             enddo
             write(fic_transout,2885)
             do i=nalt,1,-1
               write(fic_transout,2860)i,alt(i),
-     .            (colden(isp,i),isp=4,nspec)
+     &            (colden(isp,i),isp=4,nspec)
             enddo
           endif
        endif
@@ -818,13 +818,13 @@
 
       do ien = 1,nen
        call eloss(e(ien),ien,temelc,denelc,elosse,
-     .        nbren,nen,nbralt,nalt)
+     &        nbren,nen,nbralt,nalt)
         do ialt=1,nalt
 !           densig(ialt,ien) = 0.
             densig(ialt,ien) = elosse(ien,ialt)/ddeng(ien)
           do isp = 1,nspec
               densig(ialt,ien) = densig(ialt,ien) + 
-     .            (cin(isp,ien)+cel(isp,ien))*densneut(isp,ialt)
+     &            (cin(isp,ien)+cel(isp,ien))*densneut(isp,ialt)
           enddo
         enddo
       enddo
@@ -835,8 +835,8 @@
 !         fluxprim(z,E)        : cm-2.s-1.eV-1
 !         qprimpHot(E,z,A)    : cm-2.s-1.eV-1.sr-1
         call phel(e,alt,altkm,iprt,fluxprim,
-     .         primelec,qprimpHot,photelec,nspec,nen,nang,nango2,nalt,
-     .          jpreci,mcount,prodionphot,densig)
+     &         primelec,qprimpHot,photelec,nspec,nen,nang,nango2,nalt,
+     &          jpreci,mcount,prodionphot,densig)
 
 !
 !       read in primary pRoto electron production rates. 
@@ -847,16 +847,16 @@
 !
 
         call prot(e,Ebot,ddeng,alt,altkm,iprt,
-     .        nspec,nen,nang,nango2,nalt,jpreci,mcount,
-     .        protelec,primprotelec,fluxprimprot,qprimpRot,
-     .          prodionprot,gmu,gwt,densig,densneut)
+     &        nspec,nen,nang,nango2,nalt,jpreci,mcount,
+     &        protelec,primprotelec,fluxprimprot,qprimpRot,
+     &          prodionprot,gmu,gwt,densig,densneut)
 
 
         do iang = -nango2,nango2
           do ialt = 1,nalt
             do ien = 1,nen
               qprim(ien,ialt,iang) = qprimpHot(ien,ialt,iang)+
-     .                                 qprimpRot(ien,ialt,iang)
+     &                                 qprimpRot(ien,ialt,iang)
             enddo
           enddo
         enddo
@@ -917,7 +917,7 @@ c       --------------------------------------------------------------
         ctot(mm)= elosse(nen,ialt)/engdd(nen)
         do isp=1,nspec
          ctot(mm)=ctot(mm)+
-     .        (cin(isp,nen)+cel(isp,nen))*densneut(isp,ialt)
+     &        (cin(isp,nen)+cel(isp,nen))*densneut(isp,ialt)
         enddo
        enddo
       do ilyr=1,nlayer
@@ -925,14 +925,14 @@ c       --------------------------------------------------------------
         ctot(mm)=(elosse(nen,ilyr)+elosse(nen,ilyr+1))*0.5/engdd(nen)
         do isp=1,nspec
           ctot(mm)=ctot(mm) + (cin(isp,nen)+cel(isp,nen))*
-     .            (densneut(isp,ilyr)+densneut(isp,ilyr+1))*0.5
+     &            (densneut(isp,ilyr)+densneut(isp,ilyr+1))*0.5
         enddo
       enddo
       do m=1,mmax
        if(ctot(m).le.1e-20) then
         print*,'Message issued from /dir.cine/trans.f'
         print*,nen,' Something is wrong with CTOT :',
-     .                (ctot(mm),mm=1,mmax)
+     &                (ctot(mm),mm=1,mmax)
         stop 'error'        ! call abort
        endif
       enddo
@@ -974,14 +974,14 @@ c
       call zeroit(twork,nlayer)
       do m=1,nlayer
            twork(m+1)=twork(m)+(elosse(n,m)+elosse(n,m+1))/engdd(n)
-     .        *(alt(m)-alt(m+1))/2.
+     &        *(alt(m)-alt(m+1))/2.
        enddo
 c
       do ialt=1,nalt
         tau(ialt-1)=twork(ialt)
         do isp=1,nspec
              tau(ialt-1)=tau(ialt-1)+
-     .                  (cin(isp,n)+cel(isp,n))*colden(isp,ialt)
+     &                  (cin(isp,n)+cel(isp,n))*colden(isp,ialt)
          enddo
        enddo
       if(.not.lt3) then
@@ -1024,7 +1024,7 @@ c       arret dans disort.
       do m=1,nlayer
         do j=1,nspec
           ssalb(m)=ssalb(m)+cel(j,n)*(densneut(j,m)+
-     .            densneut(j,m+1))*0.5/ctot(2*m)
+     &            densneut(j,m+1))*0.5/ctot(2*m)
 c         if (n.eq.34) then
 c         print*,n,m,j,altkm(m),cel(j,n),densneut(j,m),densneut(j,m+1),
 c     &ctot(2*m)
@@ -1044,9 +1044,9 @@ c         endif
         qdwn(k)=qxdown(n,k)
        enddo
       call mstream(eng,n,nang,nlayer,qdwn,tau,utau,ssalb,albedo,
-     .        gls,eps,ldeltam,lpr17,lpr18,linear,iphase,gphase,
-     .        qint,qgaupin,fldn,flup,nalt,lamber,onlyfl,exsorc,usrang,
-     .        usrtau,qprim)
+     &        gls,eps,ldeltam,lpr17,lpr18,linear,iphase,gphase,
+     &        qint,qgaupin,fldn,flup,nalt,lamber,onlyfl,exsorc,usrang,
+     &        usrtau,qprim)
          
       flux=0.
       do m=1,nalt
@@ -1063,7 +1063,7 @@ c         endif
 *      integrate intensity over dmu, dtau, and EdE
       do m=1,nlayer
         flux=flux + (qgaupin(2*m-1,0)+qgaupin(2*m+1,0))*
-     .        (tau(m)-tau(m-1))/2.
+     &        (tau(m)-tau(m-1))/2.
        enddo
  
 *      Optional printing
@@ -1085,13 +1085,13 @@ c
           qqup=0.
           do k=-nango2,-1,1
                qqdown=qqdown+qint(2*m-1,k)*weitang(iabs(k))*
-     .            cosang(iabs(k))
+     &            cosang(iabs(k))
            enddo
           do k=1,nango2,1
                qqup=qqup+qint(2*m-1,k)*weitang(iabs(k))*cosang(iabs(k))
            enddo
              write(fic_transout,6002) alt(m),fhemu(n,m),fhemd(n,m),
-     .            qqup,qqdown
+     &            qqup,qqdown
          enddo
       end if
  
@@ -1102,28 +1102,28 @@ c
           ctot(2*m-1)= elosse(n-1,m)/engdd(n-1)
           do j=1,nspec
             ctot(2*m-1)=ctot(2*m-1)+(cin(j,n-1)+cel(j,n-1))*
-     .                densneut(j,m)
+     &                densneut(j,m)
            enddo
          enddo
         do m=1,nlayer
           ctot(2*m)=(elosse(n-1,m)+elosse(n-1,m+1))*0.5/engdd(n-1)
           do j=1,nspec
             ctot(2*m)=ctot(2*m) + (cin(j,n-1)+cel(j,n-1))*
-     .        (densneut(j,m)+densneut(j,m+1))*0.5
+     &        (densneut(j,m)+densneut(j,m+1))*0.5
            enddo
          enddo
         do m=1,mmax
           if(ctot(m).le.1e-20) then
             print*,n-1,' Something is wrong with CTOT :',
-     .                        (ctot(mm),mm=1,nalt)
+     &                        (ctot(mm),mm=1,nalt)
             stop 'error'        ! call abort
           end if
          enddo
  
 c        print*,n,'=n, calling qmstr'
         if(lt1) call qmstr(n,mmax,nspec,engdd,densneut,ctot,elosse,
-     .            qint,qntsty,omdeg,omsec,weitang,nbren,nen,nbralt,
-     .        nalt,nbrsp,nbrango2,nango2,irdtin)
+     &            qint,qntsty,omdeg,omsec,weitang,nbren,nen,nbralt,
+     &        nalt,nbrsp,nbrango2,nango2,irdtin)
       end if
  
       if(.not.lt3) then
@@ -1190,13 +1190,13 @@ c       Intensites calculees aux altitudes programmees dans DATTRANS
 c           Downward ...
            do iang = 1,nango2
                 write(fic_transout,7160)angzb(iang),
-     .             (max(0.,intensite(ien+i*ncountE,iz,nango2+1-iang)),
-     .           i=0,4)
+     &             (max(0.,intensite(ien+i*ncountE,iz,nango2+1-iang)),
+     &           i=0,4)
            enddo
            do iang = 1,nango2,1
                 write(fic_transout,7170)angzb(iang+nango2),
-     .             (max(0.,intensite(ien+i*ncountE,iz,-iang)),
-     .           i=0,4)
+     &             (max(0.,intensite(ien+i*ncountE,iz,-iang)),
+     &           i=0,4)
            enddo
          enddo
         enddo
@@ -1216,7 +1216,7 @@ c      Flux hemispherique total
          write(fic_transout,7120) (e(ien+i*ncountE),i=0,4)
          do ialt = 1,nalt,mcount(1)
            write(fic_transout,7110)altkm(ialt),
-     .           (max(0.,fhemtot(ien+i*ncountE,ialt)),i=0,4)
+     &           (max(0.,fhemtot(ien+i*ncountE,ialt)),i=0,4)
          enddo
         enddo
 c      Flux hemispherique montant
@@ -1225,7 +1225,7 @@ c      Flux hemispherique montant
          write(fic_transout,7120) (e(ien+i*ncountE),i=0,4)
          do ialt = 1,nalt,mcount(1)
            write(fic_transout,7110)altkm(ialt),
-     .           (max(0.,fhemu(ien+i*ncountE,ialt)),i=0,4)
+     &           (max(0.,fhemu(ien+i*ncountE,ialt)),i=0,4)
          enddo
         enddo
 c      Flux hemispherique descendant
@@ -1234,7 +1234,7 @@ c      Flux hemispherique descendant
          write(fic_transout,7120) (e(ien+i*ncountE),i=0,4)
          do ialt = 1,nalt,mcount(1)
            write(fic_transout,7110)altkm(ialt),
-     .           (max(0.,fhemd(ien+i*ncountE,ialt)),i=0,4)
+     &           (max(0.,fhemd(ien+i*ncountE,ialt)),i=0,4)
          enddo
         enddo
       endif
@@ -1246,7 +1246,7 @@ c
       do ialt=1,nalt
         etherm=temelc(ialt)*boltz    ! start at thermal energy
         ntherm(ialt)=
-     .        ncross(e,engdd,qntsty,ialt,etherm,denelc(ialt),nen)
+     &        ncross(e,engdd,qntsty,ialt,etherm,denelc(ialt),nen)
 c      cross over of thermal/streaming electrons
         estart=e(ntherm(ialt))    
         call intgrl(estart,engmax,fhemd,e,engdd,partdwn,edwn,nen,ialt)
@@ -1308,7 +1308,7 @@ c     Bob Robinson's definition of E_char
           sum2=sum2+sum3
           s2=s2+(su2+sum2)*dz
           if(mod(m,mcount(1)).eq.1)write(fic_transout,7015) alt(m),
-     .              sum1,sum2
+     &              sum1,sum2
          enddo
         write(fic_transout,7016) s1,s2
       end if
@@ -1316,16 +1316,16 @@ c
 c    Calculate production and energy deposition profiles
 c
       call endep(nspec,nalt,e,cinex,engdd,ethres,bratio,qntsty,
-     .        alt,smgdpa,densneut,jsg,jsp,shsum,enrate,prate,ntherm,
-     .        nen)
+     &        alt,smgdpa,densneut,jsg,jsp,shsum,enrate,prate,ntherm,
+     &        nen)
 
 
 c
 c     Calcul des moments suprathermiques
 c
         call moments(nalt,alt,altkm,nen,e,engdd,
-     .          nang,nango2,weitang,cosang,intensite,iprt,ntherm,
-     .          Ne_supra,courant_supra,Te_supra,Chaleur_supra)
+     &          nang,nango2,weitang,cosang,intensite,iprt,ntherm,
+     &          Ne_supra,courant_supra,Te_supra,Chaleur_supra)
 
 c
         call zeroit(prodelsec,nalt)
@@ -1333,7 +1333,7 @@ c
         do isp=1,nspec
 *        get deposition profile for species J
         if (kiappel.eq.1)
-     .      print*,'     ',specie(isp),' deposition profile done','[A'
+     &      print*,'     ',specie(isp),' deposition profile done','[A'
         do m=1,nalt
            prodionsec(isp,m) = 0.
          enddo
@@ -1355,24 +1355,24 @@ c          B'1Su est predissociative. Il s'agit de l'etat 12
         do m=2,nalt
           edep(m)=edep(m)+enrate(isp,jsg(isp)+1,m)
           engdep(m,2)=engdep(m,2)+
-     .        (enrate(isp,jsg(isp)+1,m-1)+enrate(isp,jsg(isp)+1,m))*
-     .        (alt(m-1)-alt(m))/2./smgdpa(m)
+     &        (enrate(isp,jsg(isp)+1,m-1)+enrate(isp,jsg(isp)+1,m))*
+     &        (alt(m-1)-alt(m))/2./smgdpa(m)
          enddo
         if(iprt(15).eq.1.and.shsum(isp).ne.0.)  then
           write(fic_transout,7005)specie(isp),(title(js,isp),js=1,5)
           do m=1,nalt,mcount(2)
             write(fic_transout,7006)alt(m),enrate(isp,jsg(isp)+1,m),
-     .               (enrate(isp,js,m),js=1,5)
+     &               (enrate(isp,js,m),js=1,5)
              enddo
           write(fic_transout,7011) (enrate(isp,js,nalt+1),js=1,5)
            if (jsg(isp).gt.5)then
             write(fic_transout,7030) (title(js,isp),js=6,jsg(isp))
             do m=1,nalt,mcount(2)
               write(fic_transout,7006) alt(m),
-     .                (enrate(isp,js,m),js=6,jsg(isp))
+     &                (enrate(isp,js,m),js=6,jsg(isp))
                enddo
             write(fic_transout,7033) (enrate(isp,js,nalt+1),
-     .            js=6,jsg(isp))
+     &            js=6,jsg(isp))
            endif
         end if
         write(fic_transout,7007) specie(isp),shsum(isp)
@@ -1386,17 +1386,17 @@ c          B'1Su est predissociative. Il s'agit de l'etat 12
           write(fic_transout,7009)specie(isp),(title(js,isp),js=1,5)
           do m=1,nalt,mcount(3)
                write(fic_transout,7006) alt(m),prate(isp,jsg(j)+1,m),
-     .                        (prate(isp,js,m),js=1,5)
+     &                        (prate(isp,js,m),js=1,5)
            enddo
           write(fic_transout,7011) (prate(isp,js,nalt+1),js=1,5)
            if (jsg(isp).gt.5)then
             write(fic_transout,7030) (title(js,isp),js=6,jsg(isp))
             do m=1,nalt,mcount(3)
                  write(fic_transout,7006)alt(m),
-     .            (prate(isp,js,m),js=6,jsg(isp))
+     &            (prate(isp,js,m),js=6,jsg(isp))
              enddo
             write(fic_transout,7033) 
-     .            (prate(isp,js,nalt+1),js=6,jsg(isp))
+     &            (prate(isp,js,nalt+1),js=6,jsg(isp))
            endif
           elos=shsum(isp)/prate(isp,jsg(isp),nalt+1)
           write(fic_transout,7017) specie(isp),elos
@@ -1407,7 +1407,7 @@ c
          write(fic_transout,7013) (alt(m),m=1,nalt,nalt/5)
          do n=1,nlevtrans(e,engdd,160.,nen),1
            write(fic_transout,7014) e(n),
-     .        (elosse(n,m)/engdd(n),m=1,nalt,nalt/5)
+     &        (elosse(n,m)/engdd(n),m=1,nalt,nalt/5)
          enddo
         end if
         elhsum=0.
@@ -1417,14 +1417,14 @@ c      if(nn.eq.0)nn=1
        if(nn.le.1)nn=2
       etherm=temelc(m)*boltz
       Qetherm(m)=elosse(nn,m)*(e(nn)-1.5*etherm)*
-     .          qntsty(nn,2*m-1,0)
+     &          qntsty(nn,2*m-1,0)
       do n=ntherm(m),nen,1
         Qeflux(m)=Qeflux(m)+elosse(n,m)*qntsty(n,2*m-1,0)*engdd(n)
            chaufelec(m)=Qeflux(m)+Qetherm(m)
        enddo
       if(m.ge.2) then
         ddh=(chaufelec(m-1)+chaufelec(m))/2.*(alt(m-1)-alt(m))/
-     .            smgdpa(m)
+     &            smgdpa(m)
         engdep(m,2)=engdep(m,2)+ddh
         edep(m)=edep(m)+chaufelec(m)
         if(engdep(m,1).gt.0.) elratio(m,1)=ddh/engdep(m,1)
@@ -1440,7 +1440,7 @@ c      if(nn.eq.0)nn=1
         write(fic_transout,7003)
         do m=1,nalt,mcount(4)
           write(fic_transout,7004) alt(m),Qeflux(m),Qetherm(m),
-     .            chaufelec(m),e(ntherm(m))
+     &            chaufelec(m),e(ntherm(m))
 c    .         ,elratio(m,1)*100.,elratio(m,2)*100.
            enddo
       end if
@@ -1487,7 +1487,7 @@ c
         shsumtot=0.
         prtot=0.
          if (jpreci.ne.1 .and. jpreci.ne.3 .and. jpreci.ne.4)
-     .        call hint(nalt,alt,photelec,prtot)
+     &        call hint(nalt,alt,photelec,prtot)
          do j=1,nspec
           prtot=prtot + prate(j,jsg(j),nalt+1)     ! total ionization
           entot=entot+shsum(j)        ! total energy deposition
@@ -1510,7 +1510,7 @@ c       Computes the total ion and electron production
         do ialt = 1,nalt
 c       electrons
        prodeltot(ialt) = photelec(ialt) + prodelsec(ialt)+
-     .                protelec(ialt)
+     &                protelec(ialt)
 c       N2+
        prodionprim(1,ialt) = prodionphot(1,ialt)+ prodionprot(1,ialt)
        prodiontot(1,ialt) = prodionprim(1,ialt) + prodionsec(1,ialt)
@@ -1531,11 +1531,11 @@ c       N+
        prodiontot(6,ialt) = prodionprim(6,ialt) + prodionsec(6,ialt)
         enddo
 2010     format(a6,' ion production : ',/,
-     .        'Altitude   Primary    Secondary  Ratio S/P, Total',/,
-     .          ' [km]     [cm-3s-1]   [cm-3s-1]          [cm-3s-1]')
+     &        'Altitude   Primary    Secondary  Ratio S/P, Total',/,
+     &          ' [km]     [cm-3s-1]   [cm-3s-1]          [cm-3s-1]')
 2015     format(' Electron production : ',/,
-     .        'Altitude   Primary    Secondary  Ratio S/P, Total',/,
-     .          ' [km]     [cm-3s-1]   [cm-3s-1]          [cm-3s-1]')
+     &        'Altitude   Primary    Secondary  Ratio S/P, Total',/,
+     &          ' [km]     [cm-3s-1]   [cm-3s-1]          [cm-3s-1]')
 2020     format(1f10.2,4(1pe10.2))
 2030     format(1f10.2,2(1pe10.2),10x,1pe10.2)
       if(iprt(19).eq.1) then
@@ -1545,12 +1545,12 @@ c       N+
            if(prodionprim(isp,ialt).ne.0.)then
              rapport = prodionsec(isp,ialt)/prodionprim(isp,ialt)
              write(fic_transout,2020)
-     .          altkm(ialt),prodionprim(isp,ialt),
-     .          prodionsec(isp,ialt),rapport,prodiontot(isp,ialt)
+     &          altkm(ialt),prodionprim(isp,ialt),
+     &          prodionsec(isp,ialt),rapport,prodiontot(isp,ialt)
             else
              write(fic_transout,2030)
-     .          altkm(ialt),prodionprim(isp,ialt),
-     .          prodionsec(isp,ialt),prodiontot(isp,ialt)
+     &          altkm(ialt),prodionprim(isp,ialt),
+     &          prodionsec(isp,ialt),prodiontot(isp,ialt)
             endif
          enddo
        enddo
@@ -1561,12 +1561,12 @@ c      On ecrit le N+ qui vient de la dissociation de N2
               if(prodionprim(isp,ialt).ne.0.)then
                 rapport = prodionsec(isp,ialt)/prodionprim(isp,ialt)
                 write(fic_transout,2020)
-     .            altkm(ialt),prodionprim(isp,ialt),
-     .            prodionsec(isp,ialt),rapport,prodiontot(isp,ialt)
+     &            altkm(ialt),prodionprim(isp,ialt),
+     &            prodionsec(isp,ialt),rapport,prodiontot(isp,ialt)
                else
                 write(fic_transout,2030)
-     .            altkm(ialt),prodionprim(isp,ialt),
-     .            prodionsec(isp,ialt),prodiontot(isp,ialt)
+     &            altkm(ialt),prodionprim(isp,ialt),
+     &            prodionsec(isp,ialt),prodiontot(isp,ialt)
                endif
             enddo
        continue
@@ -1576,17 +1576,17 @@ c
          do ialt = 1,nalt
            rapport=0.
             if(photelec(ialt).ne.0.)
-     .            rapport = prodelsec(ialt)/photelec(ialt)
+     &            rapport = prodelsec(ialt)/photelec(ialt)
            write(fic_transout,2020)altkm(ialt),photelec(ialt),
-     .        prodelsec(ialt),rapport,prodeltot(ialt)
+     &        prodelsec(ialt),rapport,prodeltot(ialt)
          enddo
        elseif (jpreci.eq.3) then
          do ialt = 1,nalt
            rapport=0.
             if(protelec(ialt).ne.0.)
-     .            rapport = prodelsec(ialt)/protelec(ialt)
+     &            rapport = prodelsec(ialt)/protelec(ialt)
            write(fic_transout,2020)altkm(ialt),protelec(ialt),
-     .        prodelsec(ialt),rapport,prodeltot(ialt)
+     &        prodelsec(ialt),rapport,prodeltot(ialt)
          enddo
        endif
       endif
@@ -1600,7 +1600,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
          write(fic_transout,7050)
          do ialt = 1,nalt
            write(fic_transout,7051)altkm(ialt),prodeltot(ialt),
-     .          denselcalc(ialt),denelc(ialt)
+     &          denselcalc(ialt),denelc(ialt)
          enddo
        endif
 !
@@ -1611,11 +1611,11 @@ c47     format(1i4,4f10.2,2(1pe12.3))
          Ne(ialt) = max(denelc(ialt),denselcalc(ialt))
        enddo
              call conductivite(nalt,altkm,Ne,densneut,
-     .        tneutre,temelc,temion,chideg,glat,glong,year,day,
-     .        hrloc,cped,chal,ratHoP,cpedsum,chalsum,cpedCS,chalCS,
-     .        ratHoPsum,gyreave,gyriave,collOp,collNOp,collO2p,
-     .        collionSN,collionRG,collen2,colleo2,colleo1,colle,iprt,
-     .        f107(1),icolin)
+     &        tneutre,temelc,temion,chideg,glat,glong,year,day,
+     &        hrloc,cped,chal,ratHoP,cpedsum,chalsum,cpedCS,chalCS,
+     &        ratHoPsum,gyreave,gyriave,collOp,collNOp,collO2p,
+     &        collionSN,collionRG,collen2,colleo2,colleo1,colle,iprt,
+     &        f107(1),icolin)
       endif
 !
       if(iprt(9).eq.1)then
@@ -1651,7 +1651,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
            prodmax(isp)=twork(iprodmax)
            zprodmax(isp)=altkm(iprodmax)
            write(fic_transout,7055) specie(isp),zprodmax(isp),
-     .            prodmax(isp)
+     &            prodmax(isp)
          endif
        enddo
       endif
@@ -1665,7 +1665,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
             lpm(ialt,ien) = 0.
             do isp = 1,nspec
               lpm(ialt,ien) = lpm(ialt,ien) + 
-     .                  (cin(isp,ien)+cel(isp,ien))*densneut(isp,ialt)
+     &                  (cin(isp,ien)+cel(isp,ien))*densneut(isp,ialt)
             enddo
             lpm(ialt,ien)= 1./lpm(ialt,ien) 
           enddo
@@ -1694,11 +1694,11 @@ c47     format(1i4,4f10.2,2(1pe12.3))
       if(jpreci.eq.1 .or. jpreci.eq.3 .or. jpreci.eq.4)then
             sun='off'
             write(messag,1000)knm,nen,nang,nalt,sun,iyd,ifix(day),
-     .                      hrloc,glat,ap(1),f107(1),f107(3),tempexo
+     &                      hrloc,glat,ap(1),f107(1),f107(3),tempexo
       else
             sun=' on'
             write(messag,1001)knm,nen,nang,nalt,sun,iyd,ifix(day),
-     .                      hrloc,glat,ap(1),f107(1),chideg,tempexo
+     &                      hrloc,glat,ap(1),f107(1),chideg,tempexo
       endif
 !
       close (ifeltrans)
@@ -1738,7 +1738,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !----------------------------------------------------------------------
 ! 
       subroutine eloss(eng,n,temelc,denelc,elosse,nbren,nen,nbralt,
-     .             nalt)
+     &             nalt)
 *
 *    This subroutine calculates the loss function (continuous slowing
 *    down approximation) due to electron-electron and Coulomb
@@ -1771,18 +1771,18 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !--------------------------------------------------------------------
 !
       subroutine endep(nspec,nalt,e,cinex,engdd,ethres,bratio,qntsty,
-     .        alt,smgdpa,densneut,jsg,jsp,shsum,enrate,prate,ntherm,
-     .        nen)
+     &        alt,smgdpa,densneut,jsg,jsp,shsum,enrate,prate,ntherm,
+     &        nen)
  
 !
       include 'TRANSPORT.INC'
 !
         real cinex(nbrsp,nbrexc,nbren),ethres(nbrsp,nbrexc,nbrionst),
-     .         engdd(nbren),bratio(nbrionst,nbrsp),
-     .       qntsty(nbren,2*nbralt-1,-nbrango2:nbrango2),alt(nbralt),
-     .       densneut(8,nbralt),shsum(nbrsp),smgdpa(nbralt),
-     .         enrate(nbrsp*2,nbrexc+1,nbralt+1),e(nbren),
-     .       prate(nbrsp*2,nbrexc+1,nbralt+1)
+     &         engdd(nbren),bratio(nbrionst,nbrsp),
+     &       qntsty(nbren,2*nbralt-1,-nbrango2:nbrango2),alt(nbralt),
+     &       densneut(8,nbralt),shsum(nbrsp),smgdpa(nbralt),
+     &         enrate(nbrsp*2,nbrexc+1,nbralt+1),e(nbren),
+     &       prate(nbrsp*2,nbrexc+1,nbralt+1)
         integer ntherm(nbralt),jsg(nbrsp*2+1),jsp(nbrsp*2+1)
          integer nspec,isp
 !
@@ -1815,18 +1815,18 @@ c47     format(1i4,4f10.2,2(1pe12.3))
             cros=0.
             do jp=1,jsp(isp)
                  cros=cros+cinex(isp,jsg(isp),ien)*bratio(jp,isp)
-     .            *ethres(isp,jsg(isp),jp)
+     &            *ethres(isp,jsg(isp),jp)
              enddo
           end if
           prate(isp,istate,ialt)=prate(isp,istate,ialt) +
      &          qntsty(ien,2*ialt-1,0)*cinex(isp,istate,ien)*engdd(ien)
              enrate(isp,istate,ialt)=enrate(isp,istate,ialt) +
-     .         qntsty(ien,2*ialt-1,0)*cros*engdd(ien)
+     &         qntsty(ien,2*ialt-1,0)*cros*engdd(ien)
          enddo        ! boucle sur les energies
         prate(isp,istate,ialt)=
-     .            prate(isp,istate,ialt)*densneut(isp,ialt)
+     &            prate(isp,istate,ialt)*densneut(isp,ialt)
            enrate(isp,istate,ialt)=
-     .            enrate(isp,istate,ialt)*densneut(isp,ialt)
+     &            enrate(isp,istate,ialt)*densneut(isp,ialt)
        enddo            ! boucle sur les etats d'excitation
        if (isp.eq.1)then
         do ien=ntherm(ialt),nen
@@ -1836,9 +1836,9 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !           5% B1pu (#11). Il manque !'4S+u. Est ce sum.sngl  
 !           (= Rydberg ?)?
            prate (6,jsg(6),ialt) = prate(1,12,ialt)*0.5 + 
-     .               prate(1,8,ialt) * 0.5 + prate(1,11,ialt)*0.05
+     &               prate(1,8,ialt) * 0.5 + prate(1,11,ialt)*0.05
            enrate (6,jsg(6),ialt) = enrate(1,12,ialt)*0.5 + 
-     .               enrate(1,8,ialt) * 0.5 + enrate(1,11,ialt)*0.05
+     &               enrate(1,8,ialt) * 0.5 + enrate(1,11,ialt)*0.05
 
          enddo        ! boucle sur les energies
        endif            ! If l'azote
@@ -1864,9 +1864,9 @@ c47     format(1i4,4f10.2,2(1pe12.3))
       prate(isp,jsg(isp)+1,ialt)=0.
       do istate=1,jsg(isp)
         prate(isp,jsg(isp)+1,ialt)=
-     .        prate(isp,jsg(isp)+1,ialt)+prate(isp,istate,ialt)
+     &        prate(isp,jsg(isp)+1,ialt)+prate(isp,istate,ialt)
            enrate(isp,jsg(isp)+1,ialt)=
-     .        enrate(isp,jsg(isp)+1,ialt)+enrate(isp,istate,ialt)
+     &        enrate(isp,jsg(isp)+1,ialt)+enrate(isp,istate,ialt)
        enddo
       enddo
       enddo            ! Boucle sur les especes
@@ -1895,8 +1895,8 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !----------------------------------------------------------------------
 !
          subroutine moments(nalt,alt,altkm,nen,e,engdd,
-     .        nang,nango2,weitang,cosang,intensite,iprt,ntherm,
-     .        Ne_supra,courant_supra,Te_supra,Chaleur_supra)
+     &        nang,nango2,weitang,cosang,intensite,iprt,ntherm,
+     &        Ne_supra,courant_supra,Te_supra,Chaleur_supra)
 !
          implicit none
 !
@@ -1923,7 +1923,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !               POSITIVE VERS LE BAS 
 !     
          real Ne_supra(nbralt),courant_supra(nbralt),Te_supra(nbralt),
-     .        Chaleur_supra(nbralt)
+     &        Chaleur_supra(nbralt)
 
 !     Parametres internes :
 !     ---------------------
@@ -1936,7 +1936,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !     fproj1(E,z) = 2pi*sum(mu*intensite*dmu)
 !     fproj2(E,z) = 2pi*sum(mu**2*intensite*dmu)
          real fproj0(nbren,nbralt),fproj1(nbren,nbralt),
-     .        fproj2(nbren,nbralt)
+     &        fproj2(nbren,nbralt)
 !
         real Qetopcalc
         common/fluxtopcalc/Qetopcalc
@@ -2003,11 +2003,11 @@ c47     format(1i4,4f10.2,2(1pe12.3))
             do iang = 1,nango2,1
 !           montant : cosinus negatif
               fproj0(ien,ialt)=fproj0(ien,ialt)
-     .                  +max(0.,intensite(ien,ialt,iang))
-     .            *weitang(iabs(iang))
+     &                  +max(0.,intensite(ien,ialt,iang))
+     &            *weitang(iabs(iang))
               fproj1(ien,ialt)=fproj1(ien,ialt)
-     .                  +max(0.,intensite(ien,ialt,iang))
-     .                  *weitang(iabs(iang))*cosang(iabs(iang))
+     &                  +max(0.,intensite(ien,ialt,iang))
+     &                  *weitang(iabs(iang))*cosang(iabs(iang))
 !              fproj2(ien,ialt)=fproj2(ien,ialt)
 !     .                  +max(0.,intensite(ien,ialt,iang))
 !     .                  *weitang(iabs(iang))*cosang(iabs(iang))**2
@@ -2021,13 +2021,13 @@ c47     format(1i4,4f10.2,2(1pe12.3))
       do ialt = 1,nalt
         do ien = ntherm(ialt),nen
          Ne_supra(ialt) = Ne_supra(ialt) +
-     .        fproj0(ien,ialt)/sqrt(e(ien)) *engdd(ien)
+     &        fproj0(ien,ialt)/sqrt(e(ien)) *engdd(ien)
          Te_supra(ialt) = Te_supra(ialt) +
-     .        fproj0(ien,ialt)*sqrt(e(ien)) *engdd(ien)
+     &        fproj0(ien,ialt)*sqrt(e(ien)) *engdd(ien)
          courant_supra(ialt) = courant_supra(ialt) +
-     .        fproj1(ien,ialt)*engdd(ien)
+     &        fproj1(ien,ialt)*engdd(ien)
          chaleur_supra(ialt) = chaleur_supra(ialt) +
-     .        fproj1(ien,ialt)*engdd(ien)*e(ien)
+     &        fproj1(ien,ialt)*engdd(ien)*e(ien)
        enddo
 !
        Ne_supra(ialt) = Ne_supra(ialt)*sqrt(me/2.)
@@ -2041,7 +2041,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !       Quelle conduite pour le code couple ?
 !
        Te_supra(ialt) = Te_supra(ialt)/Ne_supra(ialt)
-     .            *sqrt(2.*me)/3./boltz
+     &            *sqrt(2.*me)/3./boltz
 !
       enddo
 !       
@@ -2049,7 +2049,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
        write (fic_transout,1000)
        do ialt = 1,nalt
          write(fic_transout,1010)altkm(ialt),Ne_supra(ialt),
-     .        courant_supra(ialt),Te_supra(ialt),Chaleur_supra(ialt)
+     &        courant_supra(ialt),Te_supra(ialt),Chaleur_supra(ialt)
        enddo
       endif
 !
@@ -2071,9 +2071,9 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !----------------------------------------------------------------------
 !
         subroutine mstream(eng,ien,nang,maxlyr,fiso,tau,utau,ssalb,
-     .        albedo,gls,eps,ldeltam,lpr1,lpr2,linear,iphase,gphase,
-     .        qint,gaupin,fldn,flup,nalt,lamber,onlyfl,exsorc,usrang,
-     .        usrtau,qprim)
+     &        albedo,gls,eps,ldeltam,lpr1,lpr2,linear,iphase,gphase,
+     &        qint,gaupin,fldn,flup,nalt,lamber,onlyfl,exsorc,usrang,
+     &        usrtau,qprim)
 !
 !    "driver" for the 1990 DISORT version.  This subroutine sets up
 !    the input for disort and reorders the output to make it 
@@ -2086,25 +2086,25 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 *    input/output variables
  
         real fiso(-nbrango2:-1), tau(0:nbralt-1), ssalb(nbralt-1),
-     .         gls(0:2*nbrango2), qint(2*nbralt-1,-nbrango2:nbrango2),
-     .         gaupin(2*nbralt-1,-nbrango2:nbrango2),fldn(nbralt),
-     .         flup(nbralt)
+     &         gls(0:2*nbrango2), qint(2*nbralt-1,-nbrango2:nbrango2),
+     &         gaupin(2*nbralt-1,-nbrango2:nbrango2),fldn(nbralt),
+     &         flup(nbralt)
         real qprim(nbren,nbralt,-nbrango2:nbrango2)
         logical lpr1,lpr2,ldeltam
  
 *    internal (active) variables
  
         real dtauc(nbralt-1), pmom(0:2*nbrango2,nbralt-1), 
-     .          umu(2*nbrango2),uou(2*nbrango2,2*nbralt-1),
-     .          uavg(2*nbralt-1),utau(2*nbralt-1),wkfldn(2*nbralt-1), 
-     .        wkflup(2*nbralt-1)
+     &          umu(2*nbrango2),uou(2*nbrango2,2*nbralt-1),
+     &          uavg(2*nbralt-1),utau(2*nbralt-1),wkfldn(2*nbralt-1), 
+     &        wkflup(2*nbralt-1)
         logical prnt(7),exsorc
  
 *    internal (dummy) variables
  
         real hl(0:2*nbrango2),phi(maxphi),src(3*(nbralt-1),2*nbrango2),
-     .        srcu(3*(nbralt-1),2*nbrango2),rfldir(2*nbralt-1), 
-     .            dfdt(2*nbralt-1), uu(2*nbrango2,2*nbralt-1,maxphi)
+     &        srcu(3*(nbralt-1),2*nbrango2),rfldir(2*nbralt-1), 
+     &            dfdt(2*nbralt-1), uu(2*nbrango2,2*nbralt-1,maxphi)
  
         character*8 header
         logical lamber, onlyfl, usrang, usrtau, lpass, linear
@@ -2145,7 +2145,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
           pmom(1,1)=1. + 2.*eps*(1.-(1.+eps)*log(1.+1./eps))
           do k=2,nang,1
             pmom(k,1)=((2.*k-1.)*(1.+2.*eps)*pmom(k-1,1) -
-     .                  k*pmom(k-2,1))/(k-1.)
+     &                  k*pmom(k-2,1))/(k-1.)
           enddo
         else if(iphase.eq.2) then               ! Henyey Greenstein
           pmom(0,1)=1.
@@ -2205,14 +2205,14 @@ c47     format(1i4,4f10.2,2(1pe12.3))
         tsrc=0.
  
       call disort(ien,maxlyr,dtauc,ssalb,pmom,
-     .        usrtau, ntau, utau, nang, usrang,
-     .        numu, umu, nphi, phi, fbeam, umu0, src, srcu,
-     .        phi0, fiso, lamber, albedo, hl, bsrc,
-     .        tsrc, ldeltam, exsorc, onlyfl,
-     .        accur, prnt, header, nbralt-1, 2*nbralt-1,
-     .        2*nbrango2, 2*nbrango2, maxphi, rfldir, wkfldn,
-     .        wkflup, dfdt, uavg, uu, uou, nbrango2, linear, 
-     .        fic_transout)
+     &        usrtau, ntau, utau, nang, usrang,
+     &        numu, umu, nphi, phi, fbeam, umu0, src, srcu,
+     &        phi0, fiso, lamber, albedo, hl, bsrc,
+     &        tsrc, ldeltam, exsorc, onlyfl,
+     &        accur, prnt, header, nbralt-1, 2*nbralt-1,
+     &        2*nbrango2, 2*nbrango2, maxphi, rfldir, wkfldn,
+     &        wkflup, dfdt, uavg, uu, uou, nbrango2, linear, 
+     &        fic_transout)
 !
       do mlyr=1,maxlyr
        mt=2*mlyr-1                ! top of the layer
@@ -2245,8 +2245,8 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !--------------------------- phel ---------------------------------
 ! 
         subroutine phel(e,alt,altkm,iprt,fluxprim,
-     .          primelec,qprim,photelec,nspec,nen,nang,nango2,nalt,
-     .          jpreci,mcount,prodionprim,densig)
+     &          primelec,qprim,photelec,nspec,nen,nang,nango2,nalt,
+     &          jpreci,mcount,prodionprim,densig)
 !
         include 'TRANSPORT.INC'
 !
@@ -2289,13 +2289,13 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 920      format (20x,'Altitude:',f10.2,' km')
 1000     format (/,'Input photoelectron production [cm-3.s-1.eV-1]')
 1010     format (/,'# of Energies and altitudes for primary ',/,
-     .        'photoelectron fluxes (nnen,nz):',2i10)
+     &        'photoelectron fluxes (nnen,nz):',2i10)
 1040     format (/,' Prod. (prophel) issus de felin (cm-3.s-1.eV-1):')
 1050     format (/,'# of Energies and altitudes for secondary ',/,
-     .        'electon fluxes (nen,nalt):',2i10)
+     &        'electon fluxes (nen,nalt):',2i10)
 1060     format (/,' Primary photoelectron flux : (cm-2.s-1.eV-1) :')
 1070     format (/,' no of e. and alt. for sec. ',
-     .        'el. fluxes (nen,nalt):',2i10)
+     &        'el. fluxes (nen,nalt):',2i10)
 1080     format ('Primary interpolated prod. :(cm-3.s-1.eV-1):')
 !
       if(jpreci.eq.1 .or. jpreci.eq.3 .or. jpreci.eq.4)then
@@ -2312,9 +2312,9 @@ c47     format(1i4,4f10.2,2(1pe12.3))
        return
       endif
           open (ifeltrans,file=
-     .    data_path(1:lpath_data)
+     &    data_path(1:lpath_data)
      &        //'dir.cine/FELTRANS',
-     .    form='unformatted')
+     &    form='unformatted')
           rewind(ifeltrans)
       pi=atan(1.)*4.
           r2pi = 1./(pi*2.)
@@ -2438,7 +2438,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
           write (fic_transout,*) 'Altitudes (alt)'
           write (fic_transout,900) (altkm(i), i = 1,nalt)
           write (fic_transout,*) 
-     .        'Electron primary production (photelec) [cm-3.s-1]'
+     &        'Electron primary production (photelec) [cm-3.s-1]'
           write (fic_transout,900) (photelec(ialt), ialt = 1,nalt)
           write (fic_transout,1060)
           do ialt=1,nalt,mcount(5)
@@ -2453,8 +2453,8 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !--------------------------------------------------------------------
 !
         subroutine qmstr(n,mmax,nspec,engdd,densneut,ctot,elosse,
-     .           qint,fint,omdeg,omsec,weitang,nbren,nen,nbralt,nalt,
-     .         nbrsp,nbrango2,nango2,irdtin)
+     &           qint,fint,omdeg,omsec,weitang,nbren,nen,nbralt,nalt,
+     &         nbrsp,nbrango2,nango2,irdtin)
 !
 !        Accelerated Cray version
 !       This subroutine calculates the sources due to degradation 
@@ -2464,10 +2464,10 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !
         implicit logical (l)
         real engdd(nbren),densneut(8,nbralt),ctot(2*nbralt-1),
-     .      elosse(nbren,nbralt),
-     .    qint(2*nbralt-1,-nbrango2:nbrango2),
-     .         fint(nbren,2*nbralt-1,-nbrango2:nbrango2),
-     .    omdeg(nbren,nbrsp),omsec(nbren,nbrsp),weitang(nbrango2)
+     &      elosse(nbren,nbralt),
+     &    qint(2*nbralt-1,-nbrango2:nbrango2),
+     &         fint(nbren,2*nbralt-1,-nbrango2:nbrango2),
+     &    omdeg(nbren,nbrsp),omsec(nbren,nbrsp),weitang(nbrango2)
         real rdp(2*nbralt-1),rds(2*nbralt-1)
         real fsec(2*nbralt-1),fac(2*nbralt-1)
  
@@ -2488,9 +2488,9 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 109        continue
       do 103 m=1,maxlyr
         rdp(2*m) = rdp(2*m) + omdeg(in,j)*
-     .            (densneut(j,m)+densneut(j,m+1))*0.5
+     &            (densneut(j,m)+densneut(j,m+1))*0.5
         rds(2*m) = rds(2*m) + 
-     .            omsec(in,j)*(densneut(j,m)+densneut(j,m+1))*0.5
+     &            omsec(in,j)*(densneut(j,m)+densneut(j,m+1))*0.5
 103       continue
       do 102 m=1,mmax
             rdp(m) = rdp(m)/ctot(m)*dde    ! definition of Rjm an equ. 9
@@ -2511,7 +2511,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
         do 106 m=1,mmax
           toto = rds(m)*fsec(m)/2.
           if(toto.lt.testmax .and. toto.gt.testmin)
-     .           qint(m,0)=qint(m,0) + toto
+     &           qint(m,0)=qint(m,0) + toto
 106        continue
  
             do 107 k=-nango2,nango2,1
@@ -2519,7 +2519,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
         do 108 m=1,mmax
                 toto = rdp(m)*fint(in,m,k)+ rds(m)*fsec(m)
             if(toto.lt.testmax .and. toto.gt.testmin)
-     .            qint(m,k)=qint(m,k) + toto
+     &            qint(m,k)=qint(m,k) + toto
 108        continue
         end if
 107       continue
@@ -2536,7 +2536,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
          do 202 m=1,mmax
            toto = fac(m)*fint(n,m,k)
           if(toto.lt.testmax .and. toto.gt.testmin)
-     .                   qint(m,k)=qint(m,k) + toto
+     &                   qint(m,k)=qint(m,k) + toto
 202        continue
       end if
 200    continue
@@ -2599,16 +2599,16 @@ c47     format(1i4,4f10.2,2(1pe12.3))
         real g(0:nang),eng
         real e(0:16),gama(16),beta(16),alfa(16)
         data e/0.,2.3,2.9,3.9,5.,10.,15.,20.,25.,30.,50.,90.,
-     .        100.,300.,500.,800.,1000./
+     &        100.,300.,500.,800.,1000./
         data gama/2.68e-1,3.32e-1,2.47e-1,3.81e-1,2.28e-1,1.27e-1,
-     .        7.59e-2,6.23e-2,5.55e-2,2.95e-2,1.76e-2,1.61e-2,
-     .        8.60e-3,6.70e-3,5.09e-3,4.21e-3/
+     &        7.59e-2,6.23e-2,5.55e-2,2.95e-2,1.76e-2,1.61e-2,
+     &        8.60e-3,6.70e-3,5.09e-3,4.21e-3/
         data beta/5.24e1,9.13e-1,5.39e-1,7.34e-1,4.66e-1,6.47e-1,
-     .        6.98e-1,6.74e-1,7.11e-1,1.06,6.12,8.64,2.37e1,8.32,
-     .        3.34,1.97/
+     &        6.98e-1,6.74e-1,7.11e-1,1.06,6.12,8.64,2.37e1,8.32,
+     &        3.34,1.97/
         data alfa/2.7,4.62e-1,3.17e-1,4.77e-1,1.92e-1,1.32e-1,1.32e-1,
-     .        1.24e-1,8.07e-2,1.19e-1,3.78e-1,4.73e-1,-1.71,-1.27,
-     .        -1.12,-1.08/
+     &        1.24e-1,8.07e-2,1.19e-1,3.78e-1,4.73e-1,-1.71,-1.27,
+     &        -1.12,-1.08/
 !
 !    alternate phase function to replace Rutherford for low energy
 !    see Porter et al., 1987
@@ -2652,7 +2652,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
         fnorm2=0.
         else                    ! Porter
         fnorm=0.25/(gama*(1.+gama))+
-     .            0.25*beta/(alfa*(1.+alfa))
+     &            0.25*beta/(alfa*(1.+alfa))
         fnorm1=1./(4.*gama*(1.+gama))/fnorm
         fnorm2=beta/(4.*alfa*(1.+alfa))/fnorm
         end if
@@ -2668,7 +2668,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
        do 410 k=infty-1,1,-1
        g1(k-1)=((2.*k+1.)*(1.+2.*gama)*g1(k)-k*g1(k+1))/(k+1.)
        if(beta.ne.0.) g2(k-1)=(-(2.*k+1.)*(1.+2.*alfa)*g2(k)-
-     .            k*g2(k+1))/(k+1.)
+     &            k*g2(k+1))/(k+1.)
        if(g1(k-1).gt.1e10.or.g2(k-1).gt.1e10) then
         infty=infty-1
         if(infty.le.1) then
@@ -2710,23 +2710,23 @@ c47     format(1i4,4f10.2,2(1pe12.3))
         fnorm=1./(4.*gama*(1.+gama))           ! rutherford
        else
         fnorm=(1./(gama*(1.+gama))+            ! porter
-     .            beta/(alfa*(1.+alfa)))/4.
+     &            beta/(alfa*(1.+alfa)))/4.
        end if
        g1(0)=1./(4.*gama*(1.+gama))/fnorm
        g1(1)=(1.+2.*gama)/(4.*gama*(1.+gama))-
-     .        .5*log(1.+1./gama)
+     &        .5*log(1.+1./gama)
        g1(1)=g1(1)/fnorm
        call zeroit(g2,mdim+1)
        if(beta.ne.0.) then
         g2(0)=beta/(4.*alfa*(1.+alfa))/fnorm
         g2(1)=(1.+2.*alfa)/(4.*alfa*(1.+alfa))-
-     .            .5*log(1.+1./alfa)
+     &            .5*log(1.+1./alfa)
         g2(1)=-beta*g2(1)/fnorm
        end if
        do 410 k=2,nang,1
        g1(k)=((2.*k-1.)*(1.+2.*gama)*g1(k-1)-k*g1(k-2))/(k-1.)
        if(beta.ne.0.) g2(k)=(-(2.*k-1.)*(1.+2.*alfa)*g2(k-1)-
-     .            k*g2(k-2))/(k-1.)
+     &            k*g2(k-2))/(k-1.)
 410    continue
        do 420 k=0,nang,1
        g(k)=g1(k)+g2(k)
@@ -2822,22 +2822,22 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !-------------------------- reed ----------------------------
 !
       subroutine reed (iprt,idess,mcount,ncountE,ncountA,
-     .    linear,ldeltam,lporter,nspec,e,Ebot,engdd,nen,
-     .    nang,nango2,pitchang,cosang,weitang,angzb,gmu,gwt,
-     .    f107a,f107,smgdpa,day,year,glong,alt,altkm,nalt,
-     .    tneutre,densneut,denelc,colden,title,jpreci,
-     .    zbot,ztop,hrloc,tempexo,knm,glat,Apind,albedo,
-     .    qxdown,qxup,fluxup,fluxdown,temelc,temion,ezero,izplt,ieplt,
-     .    eplt,nke,jsg,jsp,ethres,bratio,cel,cin,cinex,
-     .    lamber,onlyfl,exsorc,usrang,usrtau,ddeng,centE,botE,icolin)
+     &    linear,ldeltam,lporter,nspec,e,Ebot,engdd,nen,
+     &    nang,nango2,pitchang,cosang,weitang,angzb,gmu,gwt,
+     &    f107a,f107,smgdpa,day,year,glong,alt,altkm,nalt,
+     &    tneutre,densneut,denelc,colden,title,jpreci,
+     &    zbot,ztop,hrloc,tempexo,knm,glat,Apind,albedo,
+     &    qxdown,qxup,fluxup,fluxdown,temelc,temion,ezero,izplt,ieplt,
+     &    eplt,nke,jsg,jsp,ethres,bratio,cel,cin,cinex,
+     &    lamber,onlyfl,exsorc,usrang,usrtau,ddeng,centE,botE,icolin)
 !
         include 'TRANSPORT.INC'
 !
       logical lporter,linear,ldeltam,lamber,onlyfl,exsorc,usrang,
-     .        usrtau
+     &        usrtau
       character*80 crsin,rdtin,crsinput
       integer iprt(40),mcount(5),ncountE,ncountA,idess(20),
-     .        izplt(4),ieplt(4),icolin
+     &        izplt(4),ieplt(4),icolin
       real eplt(4)
 !
       integer nspec,knmneutral,nalt,jpreci
@@ -2846,18 +2846,18 @@ c47     format(1i4,4f10.2,2(1pe12.3))
       integer lenc
       real bid
       real zbot,ztop,hrloc,year,tempexo,f107,f107a,Apind,day,
-     .          glat,glong,albedo,alt(nbralt),
-     .        altkm(nbralt),tneutre(nbralt),densneut(8,nbralt),
-     .         colden(8,nbralt)
+     &          glat,glong,albedo,alt(nbralt),
+     &        altkm(nbralt),tneutre(nbralt),densneut(8,nbralt),
+     &         colden(8,nbralt)
 !
       character headline*80,rtext*20,phasfct*6
 !
       integer iopal,nen,knmsig
       real centE(nbren),botE(nbren),ddeng(nbren)
       real e(nbren),Ebot(nbren),engdd(nbren),esig(nbren),bsig(nbren),
-     .      ethres(nbrsp,nbrexc,nbrionst),bratio(nbrionst,nbrsp),
-     .      cel(nbrsp,nbren), cin(nbrsp,nbren),
-     .      cinex(nbrsp,nbrexc,nbren)
+     &      ethres(nbrsp,nbrexc,nbrionst),bratio(nbrionst,nbrsp),
+     &      cel(nbrsp,nbren), cin(nbrsp,nbren),
+     &      cinex(nbrsp,nbrexc,nbren)
 !
       integer knm,nensig,ne,nang,nango2,jsg(nbrsp*2+1),jsp(nbrsp*2+1)
       real ezero,trav(nbren)
@@ -2866,22 +2866,22 @@ c47     format(1i4,4f10.2,2(1pe12.3))
       real qxdown(nbren,-nbrango2:-1),qxup(nbren,nbrango2)
       real fluxdown(nbren,nbrango2),fluxup(nbren,nbrango2)
       real denelc(nbralt),temelc(nbralt),
-     .           zel(nbralt),smgdpa(nbralt),temion(nbralt)
+     &           zel(nbralt),smgdpa(nbralt),temion(nbralt)
       character*9 title(nbrexc,nbrsp)
 !
        open(fic_transout,file=
-     .    data_path(1:lpath_data)
+     &    data_path(1:lpath_data)
      &        //'dir.cine/TRANSOUT'
-     .    ,status='unknown')
+     &    ,status='unknown')
        rewind fic_transout
 ! 
 !-------------------------------------------------------------
 !-------------------- lecture DATTRANS ------------------------
 !
         open(fic_datdeg,file=
-     .    data_path(1:lpath_data)
+     &    data_path(1:lpath_data)
      &        //'dir.cine/DATDEG',
-     .    status='OLD',iostat=iost,err=997)
+     &    status='OLD',iostat=iost,err=997)
          rewind(fic_datdeg)
          read (fic_datdeg,*)ibid
         read(fic_datdeg,'(a)') crsinput
@@ -2893,7 +2893,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !
         open(fic_dattrans,file= data_path(1:lpath_data)
      &                                //'dir.cine/DATTRANS',
-     .    status='OLD', iostat=iost,err=997)
+     &    status='OLD', iostat=iost,err=997)
         rewind fic_dattrans
          call xline(15,fic_dattrans)
          read(fic_dattrans,*)(iprt(i),i=1,26)
@@ -2947,13 +2947,13 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !     &                              //crsin
        open(icrsin,file=data_path(1:lpath_data)
      &                         //crsin,status='OLD',form='UNFORMATTED',
-     .        iostat=iost,err=992)
+     &        iostat=iost,err=992)
        rewind icrsin
 !    print*,' open file: ',data_path(1:lpath_data)
 !     &                              //rdtin
        open(irdtin,file=data_path(1:lpath_data)
      &                         //rdtin,status='OLD',form='UNFORMATTED',
-     .        iostat=iost,err=993)
+     &        iostat=iost,err=993)
         rewind irdtin
         read(irdtin) headline
         iopal=index(headline,'Opal')
@@ -2980,7 +2980,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
       endif
 
         if(nensig.gt.nbren.or.nspec.gt.nbrsp.or.iexc.gt.nbrexc.or.
-     .        jp.gt.nbrionst) then
+     &        jp.gt.nbrionst) then
        print*,'actual and maximum values'
       print*,'nensig,nbren :',nensig,nbren
       print*,'nspec,nbrsp :',nspec,nbrsp
@@ -3009,12 +3009,12 @@ c47     format(1i4,4f10.2,2(1pe12.3))
         !
   
         read(icrsin)(((ethres(isp,iexc,jp),isp=1,nspecsig),
-     .        iexc=1,nbrexc),jp=1,nbrionst)
+     &        iexc=1,nbrexc),jp=1,nbrionst)
         read(icrsin) ((bratio(jp,isp),jp=1,nbrionst),isp=1,nspecsig)
         read(icrsin) ((cel(isp,ien),isp=1,nspecsig),ien=1,nensig)
         read(icrsin) ((cin(isp,ien),isp=1,nspecsig),ien=1,nensig)
         read(icrsin) (((cinex(isp,iexc,ien),isp=1,nspecsig),
-     .        iexc=1,nbrexc),ien=1,nensig)
+     &        iexc=1,nbrexc),ien=1,nensig)
       close (icrsin)
 
 !
@@ -3069,7 +3069,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !
       if(nango2.gt.nbrango2) then
       print*,' Too many streams: nbrango2 = ', nbrango2,
-     .         '                   nango2   = ', nango2
+     &         '                   nango2   = ', nango2
       stop 'error'        ! call abort
       end if
       if(nang.eq.2) lporter=.false.
@@ -3100,7 +3100,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !
         write(fic_transout,4002) istdate
         write(fic_transout,4003)nbren,nen,nbralt,nalt,2*nbrango2,nang,
-     .      nbrsp,nspec,nbrexc,nbrionst
+     &      nbrsp,nspec,nbrexc,nbrionst
         write(fic_transout,4004) crsin,rdtin
       if(linear) then
        write(fic_transout,4009)
@@ -3111,20 +3111,20 @@ c47     format(1i4,4f10.2,2(1pe12.3))
         write(fic_transout,4019) headline
 4002  format(' Electron transport code',/,a30)
 4003  format(/' The input parameter statement gives:'/
-     . ' max. (nbren)  and actual (nen)  length of E-grid     :',2i5,/,
-     . ' max. (nbralt) and actual (nalt) length of alt-grid   :',2i5,/,
-     . ' max. (nbrang) and actual (nang) length of angle-grid :',2i5,/,
-     . ' max. (nbrsp)  and actual (nspec)number of species    :',2i5,/,
-     . ' number of excitation states (nbrexc) :',i5,/,
-     . ' number of ion states (nbrionst) :',i5)
+     & ' max. (nbren)  and actual (nen)  length of E-grid     :',2i5,/,
+     & ' max. (nbralt) and actual (nalt) length of alt-grid   :',2i5,/,
+     & ' max. (nbrang) and actual (nang) length of angle-grid :',2i5,/,
+     & ' max. (nbrsp)  and actual (nspec)number of species    :',2i5,/,
+     & ' number of excitation states (nbrexc) :',i5,/,
+     & ' number of ion states (nbrionst) :',i5)
 4004  format(/' Cross-section input files              : ',a20,/,
-     .          ' Differential cross-section input files : ',a20)
+     &          ' Differential cross-section input files : ',a20)
 4008  format(/' The energy degradation source',
-     .   ' term is interpolated using an exp-lin',/,' function in tau')
+     &   ' term is interpolated using an exp-lin',/,' function in tau')
 4009    format(' The energy degradation source',
-     .        'term is interpolated linearly with tau.')
+     &        'term is interpolated linearly with tau.')
 4018    format(' The albedo at ',f4.0,' km is set to ',f5.2/
-     .        ' The low energy phase function is taken from ',a6)
+     &        ' The low energy phase function is taken from ',a6)
 4019    format(1x,a70)
 !
           write (fic_transout,5030) zbot, ztop
@@ -3147,22 +3147,22 @@ c47     format(1i4,4f10.2,2(1pe12.3))
          write(fic_transout,2003) specie(isp)
           do ien=1,nen
            write(fic_transout,2004) e(ien),engdd(ien),
-     .          cin(isp,ien)+cel(isp,ien),cin(isp,ien),cel(isp,ien)
+     &          cin(isp,ien)+cel(isp,ien),cin(isp,ien),cel(isp,ien)
          enddo
        enddo
       endif
       write(fic_transout,*)
 2003    format(/,4x,'Energy',2x,'bin width',9x,' cross sect',a5,/
-     .        4x,' (eV) ',2x,'  (eV)   ',3x,'total',3x,'inelastic',
-     .        4x,'elastic')
+     &        4x,' (eV) ',2x,'  (eV)   ',3x,'total',3x,'inelastic',
+     &        4x,'elastic')
 2004    format(1x,0pf9.2,f9.3,3(1pe11.3))
 1080    format('Elastic cross-sections (cel(specie,energy)):',/,
-     .        3x,'Energy',6x,5(4x,a4,4x))
+     &        3x,'Energy',6x,5(4x,a4,4x))
 1090    format(1x)
 1100    format(1pe10.2,2x,5(1pe12.3))
 1110    format(/,t20,'Inelastic cross-sections of ',a5,
-     .           /,t20,'---------------------------------',
-     .           /,'    Energy ','   total   ',5a10)
+     &           /,t20,'---------------------------------',
+     &           /,'    Energy ','   total   ',5a10)
 1120    format( /,'    Energy ',10a11)
 1130    format(1pe10.2,10e10.3)
 1140    format(/' Threshold in eV :')
@@ -3177,18 +3177,18 @@ c47     format(1i4,4f10.2,2(1pe12.3))
         write(fic_transout,1110) specie(isp),(title(i,isp),i=1,5)
         do ien=1,nen
           write(fic_transout,1130) e(ien),cin(isp,ien),
-     .            (cinex(isp,iexc,ien),iexc=1,5)
+     &            (cinex(isp,iexc,ien),iexc=1,5)
          enddo
          if(jsg(isp).gt.5)then
           write(fic_transout,1120) (title(i,isp),i= 6,jsg(isp))
           do ien=1,nen
             write(fic_transout,1130) e(ien),
-     .          (cinex(isp,iexc,ien),iexc=6,jsg(isp))
+     &          (cinex(isp,iexc,ien),iexc=6,jsg(isp))
            enddo
          endif
            write(fic_transout,1140)
            write(fic_transout,1150)
-     .        (title(i,isp),ethres(isp,i,1),i=1,jsg(isp))
+     &        (title(i,isp),ethres(isp,i,1),i=1,jsg(isp))
        enddo
         end if
       if (iprt(1).eq.1)then
@@ -3199,7 +3199,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 130       continue
           do 140 iang=1,nango2
          write(fic_transout,*)
-     .        'Upward flux.   Angle =',pitchang(nango2+iang)
+     &        'Upward flux.   Angle =',pitchang(nango2+iang)
             write (fic_transout,5190) (qxup(ien,iang),ien=1,nen)
 140       continue
       endif
@@ -3207,17 +3207,17 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 5020     format (' Electron dens. (denelc)[cm-3]:',/,5(1x,1pe10.2))
 5030     format (' Min. and max. alt. (zbot,ztop)       :',2f10.2)
 5040     format (' Hour angle (hrloc)                       :',f10.2,/,
-     .          ' Latitude (glat)                          :',f10.2,/,
-     .          ' Julian day (day)                         :',f10.2)
+     &          ' Latitude (glat)                          :',f10.2,/,
+     &          ' Julian day (day)                         :',f10.2)
 5050     format (' Desired exospheric temp. (tempexo)       :',f10.2,/,
-     .          ' Solar 10.7-cm line output- ave.(f107a)  :',f10.2,/,
-     .          ' Solar 10.7-cm line output- today (f107)  :',f10.2,/,
-     .            ' Albedo at lowest altitude (albedo)       :',f10.2)
+     &          ' Solar 10.7-cm line output- ave.(f107a)  :',f10.2,/,
+     &          ' Solar 10.7-cm line output- today (f107)  :',f10.2,/,
+     &            ' Albedo at lowest altitude (albedo)       :',f10.2)
 5070    format (' Year                                     :',1f10.2,/,
-     .        ' Number of altitude grid points (nalt)    :',i10)
+     &        ' Number of altitude grid points (nalt)    :',i10)
 5080     format (' Number of energy grid points (nen)       :',i10,/,
-     .          ' Number of angle grid points (nang)       :',i10,/,
-     .          ' Experiment id. number (knm)              :',i10)
+     &          ' Number of angle grid points (nang)       :',i10,/,
+     &          ' Experiment id. number (knm)              :',i10)
 5090     format (' Working altitude grid points (alt):',/,5(1x,1f10.2))
 5100     format (/,' Energie grid points (e)  :',/,5(1x,1f10.2))
 5105     format (/,' dE grid points (e)  :',/,5(1x,1f10.2))

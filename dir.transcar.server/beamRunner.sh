@@ -64,7 +64,7 @@ if [[ $DebugMsg -ne 0 ]]; then
 fi
 
   #Run the sim
-  ./run_transcar.sh $CurrDir
+  ./transcar_run.sh $CurrDir
 
   #error trap
   LastErr=$?

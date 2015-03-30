@@ -1,12 +1,13 @@
 #!/bin/bash
+# michael hirsch, based on M. Zettergren code
+# setups up beam directories
 
-DebugMsg=0
-#set +e #don't stop on any error, so that return codes from transcar will work
+DebugMsg=0 #0 for less verbose
+
+setupBeamDirs()
+{
 RODIR=$1
 E1=$2
-E2=$3
-pr1=$4
-pr2=$5
 
 CurrDir="$RODIR/beam$E1"
 # freshen simulation directory
@@ -25,11 +26,18 @@ tfin=$(grep "precipitation end time (seconds" $TCconfig | cut -f1)
 [[ -z $tfin ]] && { echo "error: could not find precip end in $TCconfig"; exit 1; }  #|| { echo "using tfin= $tfin"; }
 
 # make a directory for this beam -- 
-# everything relevant to sim will reside in this directory, including executable!
+# everything relevant to sim will reside in this directory, including executable
 mkdir -pv $CurrDir/dir.input $CurrDir/dir.output \
           $CurrDir/dir.data/dir.linux/dir.{geomag,projection} \
           $CurrDir/dir.data/dir.linux/dir.cine/dir.{seff,euvac} \
           >>$BMlog 2>&1
+}
+
+setupPrec()
+{
+E2=$1
+pr1=$2
+pr2=$3
 
 PrecFN="$CurrDir/dir.input/precinput.dat"
 
@@ -53,8 +61,8 @@ PrecFN="$CurrDir/dir.input/precinput.dat"
 
   #generate TRANSCAR input file for this beam
   ThisPrecParam="$tstart\\n$Elow $flux\\n$Ehigh -1.0\\n$tfin\\n-1.0 -1.0"
-  #echo "writing $ThisPrecParam to $PrecFN"
   echo -e "$ThisPrecParam" > "$PrecFN" # the -e option was in the original script
+  
 if [[ $DebugMsg -ne 0 ]]; then  
   echo "transconvec_13.op is running for a differential number flux of "
   echo "$flux eV cm-2 s-1 sR-1"
@@ -62,17 +70,24 @@ if [[ $DebugMsg -ne 0 ]]; then
   echo "Starting at t=$tstart sec. until t=$tfin sec."
   echo; echo "output to $CurrDir"
 fi
+}
 
-  #Run the sim
-  ./transcar_run.sh $CurrDir
-
-  #error trap
-  LastErr=$?
-  now=$(date +'%FT%T')
-  case "$LastErr" in
+errorTrap()
+{
+LastErr=$1
+now=$(date +'%FT%T')
+case "$LastErr" in
   0) echo "run_beams: $now Energy $E1 completed in $CurrDir" | tee -a $BMlog;;
   98) echo "run_beams: $now Skipped energy $E1 in $CurrDir" | tee -a $BMlog;;
   99) echo "run_beams: $now Aborting run_beams of $CurrDir" | tee -a $BMlog; exit 99;;
   126) echo "run_beams: $now Transconvec was not given exec permissions" | tee -a $BMlog; exit 126;;
   *) echo "run_beams: $now Transcar exit code $LastErr" |  tee -a $BMlog; exit $LastErr;;
-  esac
+esac
+}
+
+setupBeamDirs $1 $2 
+setupPrec $3 $4 $5
+
+#Run the sim
+  ./transcar_run.sh $CurrDir
+errorTrap $?

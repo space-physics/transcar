@@ -5,6 +5,7 @@
 #
 # Note that ifort will error out on msis90.f when using warn all
 
+#if no compiler specified, use gfortran
 ifeq ($(strip $(fc)),)
 fc=gfortran
 endif
@@ -22,10 +23,13 @@ else
 $(info you must specify your compiler with fc=mycompiler.  E.g. make fc=gfortran)
 endif
 
+#print compiler and OS to terminal
 COMPINFO=$(shell $(fc) --version | head -n1)
 OPSYS=$(shell uname -a)
 $(info $(COMPINFO) on $(OPSYS))
 
+#make object directory
+$(shell mkdir -p ../dir.obj)
 
 FLAG_COMPIL= $(OPTIONS) -I$(INCLUDE) -c
 FLAG_LIEN= $(OPTIONS) -I$(INCLUDE) -o

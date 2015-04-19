@@ -6,7 +6,7 @@
 
 copyTranscarFiles()
 {
-[[ -z $1 ]] && { echo "error: must specify root directory"; exit 1; }
+[[ -z $1 ]] && { echo "error: must specify root directory" | tee -a $TClog; exit 1; }
 ODIR=$1
 [[ ! -d $ODIR ]] && { echo "Beam dir. $ODIR does not exist" | tee -a $TClog; exit 98; }
 
@@ -15,24 +15,23 @@ TCconfig=dir.input/DATCAR #this is hard-coded in transcar
 
 initfn=$(grep "input file (initial ionospheric conditions)" $TCconfig | cut -d" " -f1)
 if [[ -n $initfn ]]; then
- echo "using msis init file $initfn as specified in $TCconfig">>$TClog 2>&1
+ echo "using msis init file $initfn as specified in $TCconfig">>$TClog
 else
  echo "initial conditions file not found, aborting"
  exit 1
 fi
 
 #copy transcar input
-cp -v -t "$ODIR/dir.input/" $TCconfig dir.input/$initfn >>$TClog 2>&1
-cp -v -t "$ODIR/dir.data/" dir.data/type >>$TClog 2>&1
-cp -v -t "$ODIR/dir.data/dir.linux/dir.geomag/" dir.data/dir.linux/dir.geomag/{data_geom.bin,igrf90.dat,igrf90s.dat} >>$TClog 2>&1
-cp -v -t "$ODIR/dir.data/dir.linux/dir.projection/" dir.data/dir.linux/dir.projection/varpot.dat >>$TClog 2>&1
-#cp -v -t "$ODIR/dir.data/dir.linux/dir.projection/" dir.data/dir.linux/dir.projection/varcourant.dat >>$TClog 2>&1  #makes program crash
-cp -v -t "$ODIR/dir.data/dir.linux/dir.cine/" dir.data/dir.linux/dir.cine/{DAT{DEG,FEL,TRANS},FELTRANS,flux.flag} >>$TClog 2>&1
-cp -v -t "$ODIR/dir.data/dir.linux/dir.cine/dir.euvac/" dir.data/dir.linux/dir.cine/dir.euvac/EUVAC.dat >>$TClog 2>&1
-cp -v -t "$ODIR/dir.data/dir.linux/dir.cine/dir.seff/" dir.data/dir.linux/dir.cine/dir.seff/{crsb8,crsphot1.dat,rdtb8} >>$TClog 2>&1
-
+\cp --parents -t "$ODIR/dir.input/" $TCconfig dir.input/$initfn 2>>$TClog
+\cp --parents -t "$ODIR/dir.data/" dir.data/type 2>>$TClog
+\cp --parents -t "$ODIR/dir.data/dir.linux/dir.geomag/" dir.data/dir.linux/dir.geomag/{data_geom.bin,igrf90.dat,igrf90s.dat} 2>>$TClog
+\cp --parents -t "$ODIR/dir.data/dir.linux/dir.projection/" dir.data/dir.linux/dir.projection/varpot.dat 2>>$TClog
+#\cp --parents -t "$ODIR/dir.data/dir.linux/dir.projection/" dir.data/dir.linux/dir.projection/varcourant.dat 2>>$TClog  #makes program crash
+\cp --parents -t "$ODIR/dir.data/dir.linux/dir.cine/" dir.data/dir.linux/dir.cine/{DAT{DEG,FEL,TRANS},FELTRANS,flux.flag} 2>>$TClog
+\cp --parents -t "$ODIR/dir.data/dir.linux/dir.cine/dir.euvac/" dir.data/dir.linux/dir.cine/dir.euvac/EUVAC.dat 2>>$TClog
+\cp --parents -t "$ODIR/dir.data/dir.linux/dir.cine/dir.seff/" dir.data/dir.linux/dir.cine/dir.seff/{crsb8,crsphot1.dat,rdtb8} 2>>$TClog
 #copy transcar itself
-cp -v transconvec_13.op.out "$ODIR/"
+\cp transconvec_13.op.out "$ODIR/"
 }
 
 runTranscar()
@@ -46,7 +45,7 @@ runTranscar()
 #/usr/bin/time --output="$ODIR/timing.txt" ./transconvec_13.op.out | \
 
 # exec used to reduce memory usage http://stackoverflow.com/questions/786376
- (cd $ODIR && exec ./transconvec_13.op.out) >>$ODIR/TranscarErrors.txt 2>&1
+ (cd $ODIR && exec ./transconvec_13.op.out) 2>$ODIR/transcarErrors.log >$ODIR/transcar.log
     # egrep -i --line-buffered -e "Warning|Error|felin.f|trans.f|Input eV/cm2/s" | \
 
 }

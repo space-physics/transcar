@@ -36,7 +36,7 @@
         integer ifeldat,ifelprt,ifeltrans
         integer fic_euvcoeff,fic_euvindex
 !
-        include '../dir.include/CHEMIN.INC'
+        include 'CHEMIN.INC'
 
 
         data planete/'Terre'/

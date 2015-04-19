@@ -17,8 +17,8 @@ integer*4 :: ftell,num,max_num
 integer*8 :: ftelli8
 integer*2 ::tempo(124)
 
-!include 'chemin.inc'
-include '../dir.include/chemin.inc' !MH inserted for f2py
+include 'CHEMIN.INC'
+!include '../dir.include/CHEMIN.INC' !MH inserted for f2py
 
 print*,'size=',size
 

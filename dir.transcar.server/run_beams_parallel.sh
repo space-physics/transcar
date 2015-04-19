@@ -21,6 +21,8 @@ RODIR=$1
 [[ -z $RODIR ]] && { echo "you must specify an output directory"; exit 1; }
 exedir=code/transcar/dir.transcar.server
 
+flux0=70114000000.0
+
 hact=0   # 2 term all jobs on error now, 1 let existing jobs finish, 0 keep running/starting
 
 #------- start code --------------
@@ -41,13 +43,13 @@ if [[ $localonly -eq 0 ]]; then
     -S $remjp --return $RODIR \
     --nice 18 --halt $hact --eta --progress --joblog parallellog --colsep ',' \
     --workdir $exedir \
-    "./beamRunner.sh" $RODIR :::: $BeamEnergyTableFN
+    "./beamRunner.sh" $RODIR $flux0 :::: $BeamEnergyTableFN
 
 else #local only
   parallel \
     --nice 18 --halt $hact --eta --progress --joblog parallellog --colsep ',' \
     --workdir $exedir \
-    "./beamRunner.sh" $RODIR :::: $BeamEnergyTableFN
+    "python3 transcar_run.py" $RODIR $flux0 :::: $BeamEnergyTableFN
 
 fi
 #-- check results for proper simulation finish

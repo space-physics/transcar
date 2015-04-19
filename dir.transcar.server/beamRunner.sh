@@ -25,12 +25,9 @@ tfin=$(grep "precipitation end time (seconds" $TCconfig | cut -f1)
 [[ -z $tstart ]] && { echo "error: could not find precip start in $TCconfig"; exit 1; } #|| { echo "using tstart= $tstart"; }
 [[ -z $tfin ]] && { echo "error: could not find precip end in $TCconfig"; exit 1; }  #|| { echo "using tfin= $tfin"; }
 
-# make a directory for this beam -- 
+# make a directory for this beam --
 # everything relevant to sim will reside in this directory, including executable
-mkdir -pv $CurrDir/dir.input $CurrDir/dir.output \
-          $CurrDir/dir.data/dir.linux/dir.{geomag,projection} \
-          $CurrDir/dir.data/dir.linux/dir.cine/dir.{seff,euvac} \
-          >>$BMlog 2>&1
+mkdir -p $CurrDir/dir.output 2>>$BMlog
 }
 
 setupPrec()
@@ -47,7 +44,7 @@ PrecFN="$CurrDir/dir.input/precinput.dat"
   Esum=$(echo "$E2 + $E1" | bc)
 
   # bc will not give any decimal without scale argument in this case
-  flux=$(echo "scale=4; $flux0 / 0.5 / $Esum / $dE" | bc) 
+  flux=$(echo "scale=4; $flux0 / 0.5 / $Esum / $dE" | bc)
 
   #get 'padding' so that beams are truncated correctly in energy
   pr=$pr1
@@ -62,8 +59,8 @@ PrecFN="$CurrDir/dir.input/precinput.dat"
   #generate TRANSCAR input file for this beam
   ThisPrecParam="$tstart\\n$Elow $flux\\n$Ehigh -1.0\\n$tfin\\n-1.0 -1.0"
   echo -e "$ThisPrecParam" > "$PrecFN" # the -e option was in the original script
-  
-if [[ $DebugMsg -ne 0 ]]; then  
+
+if [[ $DebugMsg -ne 0 ]]; then
   echo "transconvec_13.op is running for a differential number flux of "
   echo "$flux eV cm-2 s-1 sR-1"
   echo "in the energy range $E1 to $E2 eV"
@@ -74,7 +71,7 @@ fi
 
 errorTrap()
 {
-LastErr=$1
+local LastErr=$1
 now=$(date +'%FT%T')
 case "$LastErr" in
   0) echo "run_beams: $now Energy $E1 completed in $CurrDir" | tee -a $BMlog;;
@@ -85,7 +82,7 @@ case "$LastErr" in
 esac
 }
 
-setupBeamDirs $1 $2 
+setupBeamDirs $1 $2
 setupPrec $3 $4 $5
 
 #Run the sim

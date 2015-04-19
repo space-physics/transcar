@@ -10,9 +10,9 @@ idess = 2 metacode created, with interactive session.
 iprint = 1 if print (whatever number otherwise)
         sigel  siginel  rmatrix diff-sig-test 
          1         1        -1        -1
-.false.          logint: interpolation type for cross sections
-.false.          lt1   : test without ionization
-.false.          lt2   : test only with ionization
-.false.          lt3   : test without degradation
-.false.          lt4   : test without excitation
-.false.          lopal : sec. distrib. de Opal (Rees sinon)
+.true           logint: interpolation type for cross sections
+.true.           lt1   : test without ionization
+.true.           lt2   : test only with ionization
+.true.           lt3   : test without degradation
+.true.           lt4   : test without excitation
+.true.           lopal : sec. distrib. de Opal (Rees sinon)

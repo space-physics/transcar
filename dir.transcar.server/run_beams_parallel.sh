@@ -31,9 +31,10 @@ hact=0   # 2 term all jobs on error now, 1 let existing jobs finish, 0 keep runn
 if [[ $localonly -eq 0 ]]; then
   remjp=$(IFS=,; echo "${remotes[*]}") #puts array into comma separated string for GNU parallel
 
-  # purge remote output directory
+  # purge remote output directory and setup ssh agent for duration of sims
   for remote in "${remotes[@]}"; do
-      ssh $remote -t "[[ -d $exedir/$RODIR ]] && rm -r $exedir/$RODIR"
+    ssh-add -t 7200 "$HOME/.ssh/$remote" #use ssh agent so as to not have to retype password
+    ssh $remote -t "[[ -d $exedir/$RODIR ]] && rm -r $exedir/$RODIR"
   done
 
 # jobs is equal to number of CPU cores by default
@@ -44,6 +45,8 @@ if [[ $localonly -eq 0 ]]; then
     --nice 18 --halt $hact --eta --progress --joblog parallellog --colsep ',' \
     --workdir $exedir \
     "./beamRunner.sh" $RODIR $flux0 :::: $BeamEnergyTableFN
+
+  ssh-add -D #remove ssh keys from memory
 
 else #local only
   parallel \

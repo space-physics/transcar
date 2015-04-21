@@ -13,7 +13,7 @@
 # 2) when simulation is completed, the "return" argument of parallel uses rsync to
 # bring back simulation output to your PC.
 
-localonly=1
+localonly=0
 remotes=(labHST0 labHST1 irs4 irs3 swoboj)
 
 BeamEnergyTableFN=BT_E1E2prev.csv
@@ -44,7 +44,7 @@ if [[ $localonly -eq 0 ]]; then
     -S $remjp --return $RODIR \
     --nice 18 --halt $hact --eta --progress --joblog parallellog --colsep ',' \
     --workdir $exedir \
-    "./beamRunner.sh" $RODIR $flux0 :::: $BeamEnergyTableFN
+    "python3 transcar_run.py" $RODIR $flux0 :::: $BeamEnergyTableFN
 
   ssh-add -D #remove ssh keys from memory
 

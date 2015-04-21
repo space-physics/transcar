@@ -9,7 +9,7 @@ setupBeamDirs()
 RODIR=$1
 E1=$2
 
-mkdir $RODIR
+mkdir -p $RODIR
 BMlog=$RODIR/Beams.log
 CurrDir="$RODIR/beam$E1"
 TCconfig=dir.input/DATCAR
@@ -19,7 +19,7 @@ TCconfig=dir.input/DATCAR
 # make a directory for this beam --
 # everything relevant to sim will reside in this directory, including executable
 mkdir -p $CurrDir/dir.output 2>>$BMlog
-mkdir $CurrDir/dir.input 2>>$BMlog
+mkdir -p $CurrDir/dir.input 2>>$BMlog
 
 flux0=70114000000.0
 

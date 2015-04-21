@@ -9,17 +9,20 @@ setupBeamDirs()
 RODIR=$1
 E1=$2
 
-mkdir -p $RODIR
 BMlog=$RODIR/Beams.log
 CurrDir="$RODIR/beam$E1"
 TCconfig=dir.input/DATCAR
 
 # freshen simulation directory
 [[ -d $CurrDir ]] && \rm -r $CurrDir
+mkdir -p $CurrDir #so that log can write
+
 # make a directory for this beam --
 # everything relevant to sim will reside in this directory, including executable
-mkdir -p $CurrDir/dir.output 2>>$BMlog
-mkdir -p $CurrDir/dir.input 2>>$BMlog
+mkdir -p $CurrDir/dir.input $CurrDir/dir.output \
+        $CurrDir/dir.data/dir.linux/dir.{geomag,projection} \
+        $CurrDir/dir.data/dir.linux/dir.cine/dir.{seff,euvac} \
+        2>>$BMlog
 
 flux0=70114000000.0
 

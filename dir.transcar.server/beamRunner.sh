@@ -9,7 +9,10 @@ setupBeamDirs()
 RODIR=$1
 E1=$2
 
+BMlog=$RODIR/Beams.log
 CurrDir="$RODIR/beam$E1"
+TCconfig=dir.input/DATCAR
+
 # freshen simulation directory
 [[ -d $CurrDir ]] && \rm -r $CurrDir
 # make a directory for this beam --
@@ -17,10 +20,7 @@ CurrDir="$RODIR/beam$E1"
 mkdir -p $CurrDir/dir.output 2>>$BMlog
 mkdir $CurrDir/dir.input 2>>$BMlog
 
-BMlog=$RODIR/Beams.log
-TCconfig=dir.input/DATCAR
-
-flux0=70114000000.0 #FIXME where does this come from?
+flux0=70114000000.0
 
 tstart=$(grep "precipitation start time (seconds" $TCconfig | cut -f1)
 tfin=$(grep "precipitation end time (seconds" $TCconfig | cut -f1)

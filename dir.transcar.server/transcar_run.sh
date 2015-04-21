@@ -22,14 +22,14 @@ else
 fi
 
 #copy transcar input
-\cp --parents -t "$ODIR/dir.input/" $TCconfig dir.input/$initfn 2>>$TClog
-\cp --parents -t "$ODIR/dir.data/" dir.data/type 2>>$TClog
-\cp --parents -t "$ODIR/dir.data/dir.linux/dir.geomag/" dir.data/dir.linux/dir.geomag/{data_geom.bin,igrf90.dat,igrf90s.dat} 2>>$TClog
-\cp --parents -t "$ODIR/dir.data/dir.linux/dir.projection/" dir.data/dir.linux/dir.projection/varpot.dat 2>>$TClog
-#\cp --parents -t "$ODIR/dir.data/dir.linux/dir.projection/" dir.data/dir.linux/dir.projection/varcourant.dat 2>>$TClog  #makes program crash
-\cp --parents -t "$ODIR/dir.data/dir.linux/dir.cine/" dir.data/dir.linux/dir.cine/{DAT{DEG,FEL,TRANS},FELTRANS,flux.flag} 2>>$TClog
-\cp --parents -t "$ODIR/dir.data/dir.linux/dir.cine/dir.euvac/" dir.data/dir.linux/dir.cine/dir.euvac/EUVAC.dat 2>>$TClog
-\cp --parents -t "$ODIR/dir.data/dir.linux/dir.cine/dir.seff/" dir.data/dir.linux/dir.cine/dir.seff/{crsb8,crsphot1.dat,rdtb8} 2>>$TClog
+\cp -p -t "$ODIR/dir.input/" $TCconfig dir.input/$initfn 2>>$TClog
+\cp -p -t "$ODIR/dir.data/" dir.data/type 2>>$TClog
+\cp -p -t "$ODIR/dir.data/dir.linux/dir.geomag/" dir.data/dir.linux/dir.geomag/{data_geom.bin,igrf90.dat,igrf90s.dat} 2>>$TClog
+\cp -p -t "$ODIR/dir.data/dir.linux/dir.projection/" dir.data/dir.linux/dir.projection/varpot.dat 2>>$TClog
+#\cp -p -t "$ODIR/dir.data/dir.linux/dir.projection/" dir.data/dir.linux/dir.projection/varcourant.dat 2>>$TClog  #makes program crash
+\cp -p -t "$ODIR/dir.data/dir.linux/dir.cine/" dir.data/dir.linux/dir.cine/{DAT{DEG,FEL,TRANS},FELTRANS,flux.flag} 2>>$TClog
+\cp -p -t "$ODIR/dir.data/dir.linux/dir.cine/dir.euvac/" dir.data/dir.linux/dir.cine/dir.euvac/EUVAC.dat 2>>$TClog
+\cp -p -t "$ODIR/dir.data/dir.linux/dir.cine/dir.seff/" dir.data/dir.linux/dir.cine/dir.seff/{crsb8,crsphot1.dat,rdtb8} 2>>$TClog
 #copy transcar itself
 \cp transconvec_13.op.out "$ODIR/"
 }
@@ -45,7 +45,7 @@ runTranscar()
 #/usr/bin/time --output="$ODIR/timing.txt" ./transconvec_13.op.out | \
 
 # exec used to reduce memory usage http://stackoverflow.com/questions/786376
- (cd $ODIR && exec ./transconvec_13.op.out) 2>$ODIR/transcarErrors.log >$ODIR/transcar.log
+ (cd $ODIR && exec ./transconvec_13.op.out) 2>>$ODIR/transcarErrors.log >>$ODIR/transcar.log
     # egrep -i --line-buffered -e "Warning|Error|felin.f|trans.f|Input eV/cm2/s" | \
 
 }

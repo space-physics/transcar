@@ -12,7 +12,10 @@ E1=$2
 CurrDir="$RODIR/beam$E1"
 # freshen simulation directory
 [[ -d $CurrDir ]] && \rm -r $CurrDir
-mkdir -p $CurrDir
+# make a directory for this beam --
+# everything relevant to sim will reside in this directory, including executable
+mkdir -p $CurrDir/dir.output 2>>$BMlog
+mkdir $CurrDir/dir.input 2>>$BMlog
 
 BMlog=$RODIR/Beams.log
 TCconfig=dir.input/DATCAR
@@ -25,9 +28,7 @@ tfin=$(grep "precipitation end time (seconds" $TCconfig | cut -f1)
 [[ -z $tstart ]] && { echo "error: could not find precip start in $TCconfig"; exit 1; } #|| { echo "using tstart= $tstart"; }
 [[ -z $tfin ]] && { echo "error: could not find precip end in $TCconfig"; exit 1; }  #|| { echo "using tfin= $tfin"; }
 
-# make a directory for this beam --
-# everything relevant to sim will reside in this directory, including executable
-mkdir -p $CurrDir/dir.output 2>>$BMlog
+
 }
 
 setupPrec()

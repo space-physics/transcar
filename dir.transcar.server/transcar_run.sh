@@ -6,18 +6,20 @@
 
 copyTranscarFiles()
 {
-[[ -z $1 ]] && { echo "error: must specify root directory" | tee -a $TClog; exit 1; }
+[[ -z $1 ]] && { echo "error: must specify root directory"; exit 1; }  #no log yet
 ODIR=$1
+TClog=$ODIR/transcarErrors.log
+TCout=$ODIR/transcar.log
 [[ ! -d $ODIR ]] && { echo "Beam dir. $ODIR does not exist" | tee -a $TClog; exit 98; }
 
-TClog=$ODIR/transcarBash.log
+
 TCconfig=dir.input/DATCAR #this is hard-coded in transcar
 
 initfn=$(grep "input file (initial ionospheric conditions)" $TCconfig | cut -d" " -f1)
 if [[ -n $initfn ]]; then
- echo "using msis init file $initfn as specified in $TCconfig">>$TClog
+ echo "using msis init file $initfn as specified in $TCconfig">>$TCout
 else
- echo "initial conditions file not found, aborting"
+ echo "initial conditions file not found, aborting" 2>>$TClog
  exit 1
 fi
 
@@ -31,7 +33,7 @@ fi
 \cp -p -t "$ODIR/dir.data/dir.linux/dir.cine/dir.euvac/" dir.data/dir.linux/dir.cine/dir.euvac/EUVAC.dat 2>>$TClog
 \cp -p -t "$ODIR/dir.data/dir.linux/dir.cine/dir.seff/" dir.data/dir.linux/dir.cine/dir.seff/{crsb8,crsphot1.dat,rdtb8} 2>>$TClog
 #copy transcar itself
-\cp -p transconvec_13.op.out "$ODIR/"
+\cp -p transconvec_13.op.out "$ODIR/" 2>>$TClog
 }
 
 runTranscar()
@@ -45,7 +47,7 @@ runTranscar()
 #/usr/bin/time --output="$ODIR/timing.txt" ./transconvec_13.op.out | \
 
 # exec used to reduce memory usage http://stackoverflow.com/questions/786376
- (cd $ODIR && exec ./transconvec_13.op.out) 2>>$ODIR/transcarErrors.log >>$ODIR/transcar.log
+ (cd $ODIR && exec ./transconvec_13.op.out) 2>>$TClog >>$TCout
     # egrep -i --line-buffered -e "Warning|Error|felin.f|trans.f|Input eV/cm2/s" | \
 
 }

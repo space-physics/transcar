@@ -27,7 +27,7 @@ def runTranscar(odir,errfn,msgfn):
             #print(out,err) #will be none since we didn't use PIPE
         except IOError as e:
             exit(e)   
-
+ 
 def transcaroutcheck(odir,errfn):
     fok = join(odir,fileok)
     try:

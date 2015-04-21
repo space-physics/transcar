@@ -9,6 +9,7 @@ setupBeamDirs()
 RODIR=$1
 E1=$2
 
+mkdir $RODIR
 BMlog=$RODIR/Beams.log
 CurrDir="$RODIR/beam$E1"
 TCconfig=dir.input/DATCAR

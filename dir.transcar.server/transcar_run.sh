@@ -31,7 +31,7 @@ fi
 \cp -p -t "$ODIR/dir.data/dir.linux/dir.cine/dir.euvac/" dir.data/dir.linux/dir.cine/dir.euvac/EUVAC.dat 2>>$TClog
 \cp -p -t "$ODIR/dir.data/dir.linux/dir.cine/dir.seff/" dir.data/dir.linux/dir.cine/dir.seff/{crsb8,crsphot1.dat,rdtb8} 2>>$TClog
 #copy transcar itself
-\cp transconvec_13.op.out "$ODIR/"
+\cp -p transconvec_13.op.out "$ODIR/"
 }
 
 runTranscar()

@@ -9,7 +9,6 @@ import sys
 sys.path.extend(['../../transcar-utils','../../hist-utils'])
 from parseTranscar import readTranscarInput
 from cp_parents import cp_parents
-from empty_file import empty_file
 
 transcarexe = 'transconvec_13.op.out'
 fileok = 'finish.status'
@@ -37,11 +36,11 @@ def transcaroutcheck(odir,errfn):
             if last == 'STOP fin normale':
                 f.write('true')
             else:
-                print('transcaroutcheck: {} got unexpected return value, transcar may not have finished the sim'.format(odir))
-                print(last)
                 f.write('false')
+                print('transcaroutcheck: {} got unexpected return value, transcar may not have finished the sim'.format(odir))
+                exit(last)
     except IOError as e:
-        print('transcaroutcheck: problem reading transcar output.  {}'.format(e) )
+        exit('transcaroutcheck: problem reading transcar output.  {}'.format(e) )
 
 def setuptranscario(rodir,beamEnergy):
     inp = readTranscarInput(datcar)

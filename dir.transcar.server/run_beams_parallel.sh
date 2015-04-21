@@ -34,6 +34,7 @@ if [[ $localonly -eq 0 ]]; then
   # purge remote output directory and setup ssh agent for duration of sims
   for remote in "${remotes[@]}"; do
     ssh-add -t 7200 "$HOME/.ssh/$remote" #use ssh agent so as to not have to retype password
+    ssh $remote -t "(cd $exedir && git pull && cd dir.source && make -s && cd; cd code/transcar-utils && git pull && cd ../hist-utils && git pull)"
     ssh $remote -t "[[ -d $exedir/$RODIR ]] && rm -r $exedir/$RODIR"
   done
 

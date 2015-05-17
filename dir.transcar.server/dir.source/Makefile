@@ -1,4 +1,3 @@
-# first mkdir dir.transcar.server/dir.obj (one time)
 # USAGE: 
 # make -s fc=gfortran
 # make -s fc=ifort

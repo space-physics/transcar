@@ -6,9 +6,10 @@ from os import makedirs
 from subprocess import Popen
 #
 import sys
-sys.path.extend(['../../transcar-utils','../../hist-utils'])
+sys.path.append('../../transcar-utils')
 from parseTranscar import readTranscarInput
-from cp_parents import cp_parents
+#
+from histutils.cp_parents import cp_parents
 
 transcarexe = 'transconvec_13.op.out'
 fileok = 'finish.status'
@@ -37,10 +38,10 @@ def transcaroutcheck(odir,errfn):
                 f.write('true')
             else:
                 f.write('false')
-                print('transcaroutcheck: {} got unexpected return value, transcar may not have finished the sim'.format(odir))
+                logging.warn('transcaroutcheck: {} got unexpected return value, transcar may not have finished the sim'.format(odir))
                 exit(last)
     except IOError as e:
-        exit('transcaroutcheck: problem reading transcar output.  {}'.format(e) )
+        logging.error('transcaroutcheck: problem reading transcar output.  {}'.format(e) )
 
 def setuptranscario(rodir,beamEnergy):
     inp = readTranscarInput(datcar)

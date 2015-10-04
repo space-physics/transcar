@@ -37,8 +37,13 @@ def transcaroutcheck(odir,errfn):
                 f.write('false')
                 logging.warn('transcaroutcheck: {} got unexpected return value, transcar may not have finished the sim'.format(odir))
                 raise AttributeError(last)
-    except IOError as e:
+    except (IOError) as e:
         logging.error('transcaroutcheck: problem reading transcar output.  {}'.format(e) )
+    except IndexError as e:
+        with open(fok,'w') as f:
+            f.write('false')
+            logging.warn('transcaroutcheck: {} got unexpected return value, transcar may not have finished the sim'.format(odir))
+
 
 def setuptranscario(rodir,beamEnergy):
     inp = readTranscarInput(datcar)

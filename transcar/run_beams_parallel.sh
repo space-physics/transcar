@@ -45,18 +45,18 @@ if [[ $localonly -eq 0 ]]; then
     -S $remjp --return $RODIR \
     --nice 18 --halt $hact --eta --progress --joblog parallellog --colsep ',' \
     --workdir $exedir \
-    "python3 transcar_run.py" $RODIR $flux0 :::: $BeamEnergyTableFN
-    #./beamRunner.sh $RODIR :::: $BeamEnergyTableFN
-
+    ./beamRunner.sh $RODIR :::: $BeamEnergyTableFN
+    #"python3 transcar_run.py" $RODIR $flux0 :::: $BeamEnergyTableFN
+    
   ssh-add -D #remove ssh keys from memory
 
 else #local only
   parallel \
     --nice 18 --halt $hact --eta --progress --joblog parallellog --colsep ',' \
     --workdir $exedir \
-    "python3 transcar_run.py" $RODIR $flux0 :::: $BeamEnergyTableFN
-    #./beamRunner.sh $RODIR :::: $BeamEnergyTableFN
-
+    ./beamRunner.sh $RODIR :::: $BeamEnergyTableFN
+    #"python3 transcar_run.py" $RODIR $flux0 :::: $BeamEnergyTableFN
+    
 fi
 #-- check results for proper simulation finish
 ./checkoutcome.sh $RODIR

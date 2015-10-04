@@ -1,10 +1,11 @@
 subroutine read_ini
 
 
-
-tempsconv_1=0.d0
-tempsconv=0.d0
-vparaB=0.
+! Local declares
+Double Precision tempsconv_1,tempsconv
+Real vparaB
+Integer itype,transcar_dat
+CHARACTER(len=*) chemin,lpath,data_path,lpath_data,filein
 
 
 !	machine SGI
@@ -16,7 +17,7 @@ call pwd(chemin,lpath,data_path,lpath_data)
 
 !	lecture des caracteristiques de la simulation dans le fichier DATCAR
 !	reading the characteristics of the simulation in the DATCAR file
-open(transcar_dat, file=chemin(1:lpath)//'dir.input/DATCAR')
+open(transcar_dat, file=chemin(1:lpath)//'dir.input/DATCAR', status='old')
 rewind(transcar_dat)
 
 read(transcar_dat,*)kiappel			!
@@ -199,3 +200,5 @@ ipos_o%nes=44
 ipos_o%jes=45
 ipos_o%tes=46
 ipos_o%qes=47
+
+End Subroutine read_ini

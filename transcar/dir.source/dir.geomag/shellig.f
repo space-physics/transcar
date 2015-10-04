@@ -27,6 +27,9 @@ C	   BEQU	  MAGNETIC FIELD STRENGTH AT MAGNETIC EQUATOR
 C	   RR0	  EQUATORIAL RADIUS NORMALIZED TO EARTH RADIUS
 C	   BDEL	  FINAL ACHIEVED ACCURACY
 C--------------------------------------------------------------------
+! i/o
+      real,intent(in) :: stps      
+
       DIMENSION 	P(8,4),SP(3)
       LOGICAL		VALUE
       COMMON/FIDB0/	SP
@@ -35,9 +38,9 @@ C
       IRUN=0
 7777  IRUN=IRUN+1
       IF(IRUN.GT.5) THEN
-	VALUE=.FALSE.
-	GOTO 8888
-	ENDIF
+        VALUE=.FALSE.
+        GOTO 8888
+      ENDIF
 C*********************FIRST THREE POINTS 
       P(1,2)=SP(1)
       P(2,2)=SP(2)
@@ -84,28 +87,28 @@ C******************PREDICTOR (FIELD LINE TRACING)
 	DO 1111 I=1,8
 1111	P(I,J)=P(I,J+1)
 	B=SQRT(BQ3)
-	IF(B.LT.BMIN) BMIN=B
-	IF(B.LE.BOLD) THEN
-		BOLD=B
-		ROLD=1./R3
-		SP(1)=P(1,4)
-		SP(2)=P(2,4)
-		SP(3)=P(3,4)
-		GOTO 5555
-		ENDIF
-	IF(BOLD.NE.BMIN) THEN
-		VALUE=.FALSE.
-		ENDIF
-	BDELTA=(B-BOLD)/BOLD
-	IF(BDELTA.GT.BDEL) THEN
-		STEP=STEP/10.
-		GOTO 7777
-		ENDIF
+      IF(B.LT.BMIN) BMIN=B
+        IF(B.LE.BOLD) THEN
+          BOLD=B
+          ROLD=1./R3
+          SP(1)=P(1,4)
+          SP(2)=P(2,4)
+          SP(3)=P(3,4)
+          GOTO 5555
+        ENDIF
+      IF(BOLD.NE.BMIN) THEN
+        VALUE=.FALSE.
+      ENDIF
+      BDELTA=(B-BOLD)/BOLD
+      IF(BDELTA.GT.BDEL) THEN
+        STEP=STEP/10.
+        GOTO 7777
+      ENDIF
 8888	RR0=ROLD
 	BEQU=BOLD
 	BDEL=BDELTA
-	RETURN
-	END
+
+	END SUBROUTINE FINDB0
 C
 C
       SUBROUTINE SHELLG(GLAT,GLON,ALT,DIMO,FL,ICODE,B0)
@@ -357,7 +360,7 @@ C*****TRANSFORM TO GEOGRAPHIC CO-ORDINATE SYSTEM                        SHEL1620
       XI(2)=XM*U(2,1)+YM*U(2,2)+ZM*U(2,3)                               SHEL1670
       XI(3)=XM*U(3,1)          +ZM*U(3,3)                               SHEL1680
 C*****COMPUTE DERIVATIVES                                               SHEL1690
-      CALL FELDI(XI,H)                                                  SHEL1700
+      CALL FELDI!(XI,H)                                                  SHEL1700
       Q=H(1)/RQ                                                         SHEL1710
       DX=H(3)+H(3)+Q*XI(1)                                              SHEL1720
       DY=H(4)+H(4)+Q*XI(2)                                              SHEL1730
@@ -815,14 +818,13 @@ C ---------------------------------------------------------------
 	    NMAX = NMAX2                                               
 	ENDIF                                                          
                                                                                 
-	DO 1177 I = 1, K                                                    
+      DO 1177 I = 1, K                                                    
 1177	    GH(I) = GH1(I) + FACTOR * GH2(I)                           
-                                                                                
-	RETURN                                                         
-	END                                                            
+                                                                                                                                        
+      END SUBROUTINE EXTRASHC
 C
 C
-	SUBROUTINE INITIZE
+        SUBROUTINE INITIZE
 C----------------------------------------------------------------
 C Initializes the parameters in COMMON/GENER/
 C
@@ -838,11 +840,11 @@ C ERA, EREQU and ERPOL as recommended by the INTERNATIONAL
 C ASTRONOMICAL UNION .
 C-----------------------------------------------------------------
       	COMMON/GENER/	UMR,ERA,AQUAD,BQUAD
-	ERA=6371.2
-	EREQU=6378.16
-	ERPOL=6356.775
-	AQUAD=EREQU*EREQU
-	BQUAD=ERPOL*ERPOL
-	UMR=ATAN(1.0)*4./180.
-	RETURN
-	END
+        ERA=6371.2
+        EREQU=6378.16
+        ERPOL=6356.775
+        AQUAD=EREQU*EREQU
+        BQUAD=ERPOL*ERPOL
+        UMR=ATAN(1.0)*4./180.
+
+        END SUBROUTINE INITIZE

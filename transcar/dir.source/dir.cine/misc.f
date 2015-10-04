@@ -737,21 +737,30 @@ c
 c------------------------------------------------------------------
 c
       subroutine xline(nbline,ijfile)                   
-c    
+      implicit none
+      integer,intent(in) :: nbline,ijfile  
+
       character nc*30
-      do 10 i=1,nbline        
+      integer i
+
+      do i=1,nbline        
         read(ijfile,1000) nc    
-10    continue
-c
+      end do
+
  1000 format(a1)              
-c
-      return                  
-      end                     
+              
+      end subroutine xline                   
 c
 c---------------------------------------------------------------
 c
       SUBROUTINE NUOION (XNUTOT,XNUO,XNUN2,XNUO2, TI,TN,DENO,DENN2,
-     2 DENO2,burnside)
+     &                   DENO2,burnside)
+      implicit None
+
+      Real,Intent(In) :: TI, TN,deno,denn2,deno2,burnside
+      Real,Intent(out):: XNUTOT,XNUO,XNUN2,XNUO2
+
+      Real TM,XLOG
 C
 C     ROUTINE BY VINCENT WICKWAR, SRI, MAY 1975.
 C
@@ -766,6 +775,7 @@ C	  XNUTOT TOTAL (COLLISIONS/SEC)
 C	  XNUO   WITH O (COLLISIONS/SEC)
 C	  XNUN2  WITH N2 (COLLISIONS/SEC)
 C	  XNUO2  WITH O2 (COLLISIONS/SEC)
+
 C     INPUTS:
 C	  TI	   ION TEMPERATURE (DEG)
 C	  TN	   NEUTRAL TEMPERATURE (DEG)
@@ -776,7 +786,8 @@ C
 !      ALOG10(X) = 0.43429448 * ALOG(X)
 C
       TM = (TI + TN) / 2.0
-      XLOG = ALOG10(TM)
+      XLOG = LOG10(TM)
+
 c       Formule de Schunk et Walker (1973), abandonnee pour Salah.
 c     XNUO = 3.67E-11 * DENO * SQRT(TM) *
 c    *   (1.0 - 0.064 * XLOG)**2
@@ -785,17 +796,22 @@ c	qui inclut le facteur de Burnside:1.7 (Chantal, 1993)
 c 	On s'autorise quand meme de pouvoir jouer sur ce facteur 
 c 	"burnside" devient un parametre libre (jl, 1994)
 c	equation 5, Salah, GRL 93, vol 20, p1543-1546
+
       xnuo =2.3e-11 * deno * tm**.5 *burnside
       XNUN2 = 6.82E-10 * DENN2
       XNUO2 = 6.64E-10 * DENO2
       XNUTOT = XNUO + XNUN2 + XNUO2
-      RETURN
-      END
+
+      END SUBROUTINE NUOION
 C    
 c----------------------------------------------------------------------
 c
-      	SUBROUTINE NOION (XNUTOT,XNUO, XNUN2,XNUO2,TI,TN,DENO,DENN2,
-     . 			 DENO2)
+      	SUBROUTINE NOION (XNUTOT,XNUO, XNUN2,XNUO2,DENO,DENN2,
+     & 			 DENO2)
+      implicit None
+
+      Real,Intent(In) :: deno,denn2,deno2
+      Real,Intent(out):: XNUTOT,XNUO,XNUN2,XNUO2
 C
 C     	ROUTINE BY VINCENT WICKWAR, SRI, MAY 1975.
 C
@@ -810,9 +826,8 @@ C	  XNUTOT TOTAL (COLLISIONS/SEC)
 C	  XNUO   WITH O (COLLISIONS/SEC)
 C	  XNUN2  WITH N2 (COLLISIONS/SEC)
 C	  XNUO2  WITH O2 (COLLISIONS/SEC)
+
 C     INPUTS:
-C	  TI	   ION TEMPERATURE (DEG)
-C	  TN	   NEUTRAL TEMPERATURE (DEG)
 C	  DENO   DENSITY OF ATOMIC OXYGEN (NB/CM**3)
 C	  DENN2  DENSITY OF MOLECULAR NITROGEN (NB/CM**3)
 C	  DENO2  DENSITY OF MOLECULAR OXYGEN (NB/CM**3)
@@ -821,8 +836,8 @@ C
       XNUN2 = 4.34E-10 * DENN2
       XNUO2 = 4.27E-10 * DENO2
       XNUTOT = XNUO + XNUN2 + XNUO2
-      RETURN
-      END
+
+      END SUBROUTINE NOION
 C    
 c----------------------------------------------------------------------
 c
@@ -860,12 +875,12 @@ C
     3 XNUO2 = 2.59E-11 * DENO2 * SQRT(TM) * 
      *   (1.0 - 0.073 * XLOG)**2
     5 XNUTOT = XNUO + XNUN2 + XNUO2
-      RETURN
-      END
+
+      END SUBROUTINE O2ION
 c
 c---------------------------- compos -------------------------------
 c
- 	subroutine compos(timeloc,nalt,alt,comp,z50)
+      subroutine compos(timeloc,nalt,alt,comp,z50)
 c
 c 	This subroutine computes the O+ rate [%] (i.e [O+]/Ne)
 c 	using the "all season" coefficients fitted by Chantal
@@ -873,39 +888,39 @@ c 	Lathuillere (Personnal communication, 1991).
 c 	These formulas have been calculated for a time which is
 c 	local time + 1
 c
-	integer nalt
- 	real*4 comp(nalt),alt(nalt)
-	real*4 timeloc,z50
+      integer nalt
+      real*4 comp(nalt),alt(nalt)
+      real*4 timeloc,z50
 c
- 	a = 218.3
- 	b = 8.2
- 	c = -117.1
- 	d = 108.9
- 	e = -26.2
- 	phitrom=19.21
+      a = 218.3
+      b = 8.2
+      c = -117.1
+      d = 108.9
+      e = -26.2
+      phitrom=19.21
 c
 c 	Computes the altitude at which [O+]=50%
 c
- 	hr = timeloc-phitrom/15.
- 	x = hr/12.
- 	x2= x*x
- 	x3= x2*x
- 	x4= x3*x
- 	z50 = a + b*x + c*x2+ d*x3 + e*x4
+        hr = timeloc-phitrom/15.
+        x = hr/12.
+        x2= x*x
+        x3= x2*x
+        x4= x3*x
+        z50 = a + b*x + c*x2+ d*x3 + e*x4
 c
 c 	computes the standard deviation
 c
- 	deltaz = 0.72 * z50 - 104.
+        deltaz = 0.72 * z50 - 104.
 c
 c 	computes [O+] rate.
 c
- 	do 10 ialt = 1,nalt
- 	  comp(ialt) = 0.5*(1.+ tanh((alt(ialt)-z50)/deltaz))
- 	  if(comp(ialt).lt.0.)comp(ialt)=0.
-10 	continue
+        do ialt = 1,nalt
+          comp(ialt) = 0.5*(1.+ tanh((alt(ialt)-z50)/deltaz))
+         if(comp(ialt).lt.0.) comp(ialt)=0.
+        end do
 c
- 	return
- 	end
+
+        end subroutine compos
 c
 c----------------------------------------------------------------
 c
@@ -916,7 +931,7 @@ c    result is yout(i) at the x points given by xout(i)
 c
       dimension yin(*),xin(*),xout(*),yout(*)
 c
-      do 50 i=1,nout
+      do i=1,nout
         nl=2
         nu=nin-1
         x=xout(i)
@@ -936,10 +951,9 @@ c
      .          (yin(nm-1)*(x-xin(nm+1))/(xin(nm-1)-xin(nm))+
      .          yin(nm+1)*(x-xin(nm-1))/ (xin(nm)-xin(nm+1)))*
      .          (x-xin(nm))/(xin(nm-1)-xin(nm+1))
-   50 continue
-c
-      return
-      end
+      end do
+
+      end subroutine intquad
 c
 c----------------------------------------------------------------------
 c
@@ -959,7 +973,7 @@ c
          ENDIF
       ENDDO
       LENC = 0
-      END
+      END function lenc
 c
 c----------------------------------------------------------------------
 c
@@ -1005,8 +1019,8 @@ c
  	  tab(itab) = trav(index(itab))
  	enddo
 c
- 	return
- 	end
+
+ 	end subroutine clasdesc
 c
 c----------------------- gridcst ---------------------------------
 c 
@@ -1132,16 +1146,20 @@ c
 c
 c----------------------------------------------------------------------
 c
-        function entab(ntab,spfac,tmin)
+        pure real function entab(ntab,spfac,tmin)
+        implicit none
+        real,intent(in) :: spfac,tmin
+        integer,intent(in) :: ntab
+        real x,summ
+        integer i
 c
         x = 1.
-        sum = 0.
+        summ = 0.
         do i =1,ntab-1
-          sum = sum + x
+          summ = summ + x
           x = x*spfac
         enddo
-c
-        entab = tmin*(1.+2.*sum)
-c
-        return
-        end 
+
+        entab = tmin*(1.+2.*summ)
+
+        end function entab

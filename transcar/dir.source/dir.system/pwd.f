@@ -1,8 +1,8 @@
 	  subroutine pwd(file_dir,len_file,data_dir,len_data)
 
-	  integer len_file,len_data
-	  character*(*) file_dir,data_dir
-	  character*5 archi,architecture
+	  integer,intent(out):: len_file,len_data
+	  character(len=*),intent(inout):: file_dir,data_dir
+	  character(len=5) archi,architecture
 
 	  call getcwd(file_dir)
 	  len_file=lenc(file_dir)
@@ -17,6 +17,5 @@
         len_data=lenc(data_dir)
 	  data_dir=data_dir(1:len_data)//'/'
 	  len_data=len_data+1
-	
-	  return
-	  end
+
+	  end subroutine pwd

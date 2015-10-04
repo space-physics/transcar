@@ -3,12 +3,11 @@
  
 
 
-
         include 'TRANSPORT.INC'
 
-        logical isnan,isnant,flgnan
+        logical isnant,flgnan
         common/nan/flgnan
-        external isnan,isnant
+        external isnant
 
 C	SIGNIFICATION DES VARIABLES DE CE SOUS-PROGRAMME
 
@@ -335,7 +334,7 @@ C       Added in to account for RBR electron precipitation
         common /RBR/ Eprec,Fprec
         real tstartprec,tstopprec
         common /prectimes/ tstartprec,tstopprec
-C       --Z
+C       --MZ
 
 
 	    sec=ces
@@ -567,57 +566,57 @@ c 	Transport cinetique. Kinetic transport
 	    if (flgini) then
 	    flgnan=.true.
                if (isnan(glat)) then
-                 print*,'probleme avec glat'
+                 print*,'problem with glat'
                  print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'erreur NaN'
+                 stop 'NaN detected in array'
                elseif (isnan(glong)) then
-                 print*,'probleme avec glong'
+                 print*,'problem with glong'
                  print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'erreur NaN'
+                 stop 'NaN detected in array'
                elseif (isnan(sec)) then
-                 print*,'probleme avec sec'
+                 print*,'problem with sec'
                  print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'erreur NaN'
+                 stop 'NaN detected in array'
                elseif (isnan(stl)) then
-                 print*,'probleme avec stl'
+                 print*,'problem with stl'
                  print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'erreur NaN'
+                 stop 'NaN detected in array'
                elseif (isnant(ne,nx)) then
-                 print*,'probleme avec ne'
+                 print*,'problem with ne'
                  print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'erreur NaN'
+                 stop 'NaN detected in array'
                elseif (isnant(te,nx)) then
-                 print*,'probleme avec te'
+                 print*,'problem with te'
                  print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'erreur NaN'
+                 stop 'NaN detected in array'
                elseif (isnant(tj,nx)) then
-                 print*,'probleme avec tj'
+                 print*,'problem with tj'
                  print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'erreur NaN'
+                 stop 'NaN detected in array'
                elseif (isnant(nh,nx)) then
-                 print*,'probleme avec nh'
+                 print*,'problem with nh'
                  print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'erreur NaN'
+                 stop 'NaN detected in array'
                elseif (isnant(no,nx)) then
-                 print*,'probleme avec no'
+                 print*,'problem with no'
                  print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'erreur NaN'
+                 stop 'NaN detected in array'
                elseif (isnant(no2,nx)) then
-                 print*,'probleme avec no2'
+                 print*,'problem with no2'
                  print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'erreur NaN'
+                 stop 'NaN detected in array'
                elseif (isnant(nn2,nx)) then
-                 print*,'probleme avec nn2'
+                 print*,'problem with nn2'
                  print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'erreur NaN'
+                 stop 'NaN detected in array'
                elseif (isnant(nn,nx)) then
-                 print*,'probleme avec nn'
+                 print*,'problem with nn'
                  print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'erreur NaN'
+                 stop 'NaN detected in array'
                elseif (isnant(tn,nx)) then
-                 print*,'probleme avec tn'
+                 print*,'problem with tn'
                  print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'erreur NaN'
+                 stop 'NaN detected in array'
                endif
                flgnan=.false.
                flg_err=.false.
@@ -650,5 +649,4 @@ c 		endif
 
 c	if (flgini) flgini=.false.
 
-	    return
-	    end
+      End Subroutine atmos

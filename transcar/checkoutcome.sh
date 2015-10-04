@@ -10,7 +10,14 @@ normal=0
 
 for f in $(find $RODIR -mindepth 1 -maxdepth 2 -type f -name "transcarError.log"); do
   outcome=$(tail -n1 $f)
-  [[ $outcome == *fin\ normale* ]] && ((normal++)) || { echo "abnormal completion in $f"; ((abnormal++)); }
+
+#don't do this if as one-liner, gives impossible good and bad at same time for first file
+  if [[ $outcome == *fin\ normale* ]]; then
+     ((normal++)) 
+  else 
+     echo "abnormal completion in $f"
+     ((abnormal++))
+  fi
 done
 
 echo "in directory $RODIR, we detected"

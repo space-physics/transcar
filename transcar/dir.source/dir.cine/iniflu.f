@@ -229,7 +229,8 @@ c         ... msis90
             print*,iyd,UTsec,ztrav(ialt),glat,glong,
      &    stl,f107(3),f107(2),ap
             endif
-      
+          
+       print*,'iniflux call gtd6'
           call gtd6(iyd,UTsec,ztrav(ialt),glat,glong,stl,
      .            f107(3),f107(2),ap,48,d,t)
 c
@@ -242,6 +243,7 @@ c
        endif
 c
 c     Calcul de la densite colonne (cm-2).
+        print*,'call column'
         call column(nbralt,nalt,altcm,nspec,densneut,colden)
 c
 c
@@ -282,6 +284,8 @@ c       vers la grille exp de calcul :
        do ialt = 1,nziri
          traviri(ialt) = outiri1(1,ialt)/1.e+06
        enddo
+
+       print*,'call intlin'
        call intlin(nziri,ziri,traviri,ndelta,ztrav,Neiri)
        do ialt = 2,ndelta
         denelc(indlim+ialt-1)=Neiri(ndelta+2-ialt)
@@ -314,11 +318,12 @@ c     S'il y a des precipitations, elles sont isotropes
          isotro = 1
      
 c     Si il n'y a pas de precipitations, on garde la 1ere grille.
-         if (jpreci.eq.0)then
+       if (jpreci.eq.0)then
            Emax = 300.
+           print*,'call quelle_grille'          
            call quelle_grille(Emax,nen,centE,botE,ddeng,
      .        nang,nango2,gmu,gwt,angzb)
-        else
+       else
 c
 c       Il faut connaitre l'energie caracteristique des precipitations
 c       pour definir sur quelle grille il faut travailler. On  
@@ -342,6 +347,7 @@ CME      correction CME
         Emax=10000.
 c
 c       write(6,*)'Flux_ener_int,Eave',Flux_ener_int,Eave
+       print*,'quelle_grille'
        call quelle_grille(Emax,nen,centE,botE,ddeng,
      .        nang,nango2,gmu,gwt,angzb)
 c
@@ -356,13 +362,14 @@ c       le flux est maxwellien
 c    if (latmag.ge.0.) then
 c    if (latmag.le.0.) then
 c      isotro=1
+         print*,'fluxkappa'
          call fluxkappa(nango2,nen,centE,isotro,
      .                  gmu,fluxdown,fluxup,Eave,Flux_ener_int)
 
 !          open(44,file='fluxtop.dat',status='replace')
 !          write(44,*) ((fluxdown(ien,iang),ien=1,nen),iang=1,nango2)
 !          close(44)
-          
+          print*,'flux_integre'
           call flux_integre(nango2,nen,centE,ddeng,
      .                    gmu,gwt,fluxdown,fluxup,
      .            Eave,Flux_ener_int)

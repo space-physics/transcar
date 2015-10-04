@@ -388,6 +388,8 @@ C       --MZ
 	    dlon=dble(15.*tmag)
 	    dlat=dble(latmag)
 	    tu=dble(sec)
+
+        print*,'call courant'
 	    call courant(iyd,tu,kp,dlon,dlat,Jtop)
 
 	
@@ -445,6 +447,8 @@ C       --MZ
 	    if(flagOHot) then
 	     !Find the reference hot O density
 	     secOHot=sec
+
+         print*,'call gtd6, hot O'
 	     call gtd6(iyd,secOHot,zNOHotRef,glat,glong,stl,
      &		f107(3),f107(2),ap,48,d,t)
 	     NOHotRef=pctOHot*0.01*d(2)
@@ -489,6 +493,7 @@ C       --MZ
 	  if (z(i).le.zcira) then
 	    icira=i
 c 	    ... msis90
+!        print*,'call gtd6, neutral heatflow check'
  	    call gtd6(iyd,sec,z(i),glat,glong,stl,
      &		f107(3),f107(2),ap,48,d,t)
 	    Nh(i)=d(7)*cofh
@@ -623,7 +628,7 @@ c 	Transport cinetique. Kinetic transport
 c               if (sec.ge.280..and.sec.lt.3000.) then
 c                 flg_err=.true.
 c 		endif
-
+               print*,'call transelec'
                call transelec(npt,iyd,sec,glat,glong,stl,f107,
      .          ap,chi,Ne,Te,Tj,nx,Nh,No,No2,Nn2,Nn,Tn,indlim,jpreci,
      .          N_0,T_0,kiappel,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,

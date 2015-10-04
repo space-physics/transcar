@@ -14,35 +14,31 @@
 
 	real*8 temps,tempsdeb,tempsfin,xt,xtd,xtf
 	logical flgini
-	
+
 	data iyddeb    ,tempsdeb  ,iydfin    ,tempsfin  ,flgini
      &	    /3000365.d0,24.d0     ,1980001.d0,0.d0      ,.true./
 
 	if (flgini) then
-	  ierr=1	
+	  ierr=1
 	  flgini=.false.
-	  open(77,file=data_path(1:lpath_data)
-     &                 //'dir.projection/varenerg.dat',
+	  open(77,file='dir.data/dir.linux/dir.projection/varenerg.dat',
      &		form='formatted',status='old',iostat=ierr,err=999)
-	  open(78,file=data_path(1:lpath_data)
-     &                 //'dir.projection/varfluxe.dat',
+	  open(78,file='dir.data/dir.linux/dir.projection/varfluxe.dat',
      &		form='formatted',status='old',iostat=ierr,err=999)
 	endif
 
 999	continue
 	close(77)
 	close(78)
-	
+
 
         ndeg=0
         mdeg=0
 	if (ierr.eq.0) then
 
-	  open(77,file=data_path(1:lpath_data)
-     &                 //'dir.projection/varenerg.dat',
+	  open(77,file='dir.data/dir.linux/dir.projection/varenerg.dat',
      &		form='formatted',status='old',iostat=ierr,err=999)
-	  open(78,file=data_path(1:lpath_data)
-     &                 //'dir.projection/varfluxe.dat',
+	  open(78,file='dir.data/dir.linux/dir.projection/varfluxe.dat',
      &		form='formatted',status='old',iostat=ierr,err=999)
 
 	  xt=iyd+tu/360000.d0

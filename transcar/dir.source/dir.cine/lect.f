@@ -30,7 +30,7 @@ c
  	real pi
 c
  	pi = 4.*atan(1.)
-c 
+c
 c-------------------- lecture NEUTRAL ------------------------
 c
 c   	read neutral atmosphere parameters.
@@ -38,8 +38,7 @@ c     	nalt: # altitude grid points.
 c     	zbot: minimum altitude.
 c     	ztop: maximum altitude.
 c
-        open (ineutr,file= data_path(1:lpath_data)
-     &                           //'dir.cine/NEUTRAL')
+        open (ineutr,file='dir.data/dir.linux/dir.cine/NEUTRAL')
  	rewind(ineutr)
       	call xline(2,ineutr)
       	read (ineutr,*) nspec,knmneutral
@@ -85,8 +84,8 @@ c
 c----------------------------------------------------------------
 c------------------- Lecture ELEC ---------------------
 c
-     	open (unit=ielec,file =data_path(1:lpath_data)
-     &                               //'dir.cine/ELEC')
+     	open (unit=ielec,file ='dir.data/dir.linux/dir.cine/ELEC',
+     &        status='old')
       	call xline(4,ielec)
       	read (ielec,*) knm,ezero
  	if (knmneutral.ne.knm)then
@@ -105,9 +104,9 @@ c 	Center energies
       	call xline(1,ielec)
       	read (ielec,*) (ddeng(nen+1-i),i=1,nen)
 c
-c 	Lecture des angles. Les angles descendants vont de 0 a 
+c 	Lecture des angles. Les angles descendants vont de 0 a
 c 	90 degres et les angles montant de 90 a 180 degres.
-c	gwt : gaussian weigths (         1 ...    nango2 : up, 
+c	gwt : gaussian weigths (         1 ...    nango2 : up,
 c				nbrango2+1 ...  2*nango2 : down)
 c	gmu : gaussian angles
 c
@@ -117,11 +116,11 @@ c	of the direction of the magnetic field and thus a bit arbitrary.
 c	On the northern hemisphere the field is pointing down, and
 c	thus a pitch angle of 0 degrees (mu=1) would be down and a pitch
 c	angle of 180 degrees (mu=-1) would be pointing up.  However, I
-c	define the pitch angle 90-180 (mu=[0,-1]) to be down, and the 
+c	define the pitch angle 90-180 (mu=[0,-1]) to be down, and the
 c	pitch angle of 0-90 (mu=[0,+1]) up.  This way the transport code
 c	doesn't care about the hemisphere anymore.
 c 	The ELEC file is built after the Northern hemisphere assumption,
-c 	i.e. {0,90} degrees --> downward, and {90,180} degrees --> 
+c 	i.e. {0,90} degrees --> downward, and {90,180} degrees -->
 c 	upward. So that the angle must be inverted for DISORT.
 c
       	call xline(1,ielec)
@@ -138,8 +137,8 @@ c
         call xline(1,ielec)
       	read(ielec,*) (gwt(iang),iang=1,nang)
 c
-c 	fluxdown (1--->nango2)=flux down 
-c 	fluxup   (1--->nango2)=flux up 
+c 	fluxdown (1--->nango2)=flux down
+c 	fluxup   (1--->nango2)=flux up
 c
         call xline(2,ielec)
         do iang=1,nango2

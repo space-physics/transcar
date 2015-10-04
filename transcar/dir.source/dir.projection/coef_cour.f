@@ -11,7 +11,7 @@
 	real kp,ddp
 	real*8 latequi,Lmin,Lmax
 	complex*16 phicour(1)
-	
+
 	real*8 temps,tempsdeb,tempsfin,xt,xtd,xtf
 	logical flgini
 
@@ -20,22 +20,20 @@
 
 
 	if (flgini) then
-	  ierr=1	
+	  ierr=1
 	  flgini=.false.
-	  open(67,file=data_path(1:lpath_data)
-     &                 //'dir.projection/varcourant.dat',
+	  open(67,file='dir.data/dir.linux/dir.projection/varcourant.dat',
      &		form='formatted',status='old',iostat=ierr,err=999)
 	endif
 
 999	continue
 	  close(67)
-	
+
         ndeg=0
         mdeg=0
 	if (ierr.eq.0) then
 
-	  open(67,file=data_path(1:lpath_data)
-     &                 //'dir.projection/varcourant.dat',
+	  open(67,file='dir.data/dir.linux/dir.projection/varcourant.dat',
      &		form='formatted',status='old',iostat=ierr)
 
 	  xt=iyd+tu/360000.d0

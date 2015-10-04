@@ -1,6 +1,6 @@
 c
 c--------------------------- prot ---------------------------------
-c 
+c
         subroutine prot(centE,Ebot,ddeng,alt,altkm,
      &        iprt,nspec,nen,nang,nango2,nalt,jpreci,mcount,
      &        prodprotelec,primprotelec,fluxprimprot,qprimprot,
@@ -144,12 +144,12 @@ c
           Flux_ener_int=10.**Flux_ener_int
 c
 c         On assume que la forme du flux est une maxwellienne, bien que
-c         hardy et al,(JGR Mai90, p4229-4248, 1985) ont publie des 
-c         formes de flux dont ils precisent autant que faire se peut 
-c         qu'elles ne sont justement pas maxwelliennes. Helas, ils ne 
-c         donnent pas une loi generale de representation de leurs 
+c         hardy et al,(JGR Mai90, p4229-4248, 1985) ont publie des
+c         formes de flux dont ils precisent autant que faire se peut
+c         qu'elles ne sont justement pas maxwelliennes. Helas, ils ne
+c         donnent pas une loi generale de representation de leurs
 c         precipitations.
-c         Pour une maxwellienne F = k E exp(-E/Eo), on a 
+c         Pour une maxwellienne F = k E exp(-E/Eo), on a
 c         Flux de particules = integrale de  k F(E) dE
 c         Flux d'energie     = integrale de  k E F(E) dE
 c         Le rapport des 2 donne l'energie moyenne
@@ -162,8 +162,8 @@ c
           Ei0= en_moy_eV
 c
 c	  1 Erg.cm-2.s-1 = 1 mW.m-2
-c 	  Pour avoir le flux d'energie en mW.m-2 a partir de 
-c 	  eV.cm-2.s-1.sr-1 il faut multiplier par 
+c 	  Pour avoir le flux d'energie en mW.m-2 a partir de
+c 	  eV.cm-2.s-1.sr-1 il faut multiplier par
 c 	  1e4(cm2/m2)*1.602 e-19(J/eV)*1 (W.s/J)*1e3(mW/W)
 c 	  *4 pi (sr)* eflux (eV.cm-2.s-1.sr-1)
 c 	  Le 4 pi vient de l'isotropie du flux dans Hardy. Est-ce
@@ -173,7 +173,7 @@ c
 c
 c ----------------
 cc 	  Valeurs test :
-cc 	  Attention ! l'energie moyenne est 2 fois l'energie 
+cc 	  Attention ! l'energie moyenne est 2 fois l'energie
 cc 	  caracteristique de la maxwellienne.
 c 	  eflux_init  = 1.         		! mW.m-2 (=erg.cm-2.s-1)
 c         Flux_ener_int=eflux_init/20.131e-12	! keV.cm-2.s-1.sr-1
@@ -182,26 +182,26 @@ c 	  en_moy_keV = 2.* Echar_protons
 c 	  en_moy_eV = 1000.* en_moy_keV
 c ----------------
 c
-c 	  On veut des productions par electron volt. Le programme de 
-c 	  Marina les donne en global. On va donc calculer dans chaque 
+c 	  On veut des productions par electron volt. Le programme de
+c 	  Marina les donne en global. On va donc calculer dans chaque
 c 	  energie de la grille combien on a de particules,
-c 	  puis faire comme si elles se repartissaient de facon 
-c 	  maxwellienne dans chaque element de la grille. On appellera 
-c 	  lowflux pour chacune de ces valeurs, et on divisera par 
+c 	  puis faire comme si elles se repartissaient de facon
+c 	  maxwellienne dans chaque element de la grille. On appellera
+c 	  lowflux pour chacune de ces valeurs, et on divisera par
 c 	  la largeur du pas de grille.
 c
           isotro=2		! tout va vers le bas
           call inmaxwl(Flux_ener_int,en_moy_eV,nango2,nen,centE,
-     .                  isotro,gmu,fluxdown,fluxup)     
+     .                  isotro,gmu,fluxdown,fluxup)
           call normflux(Flux_ener_int,nango2,nen,centE,ddeng,gmu,gwt,
      .                  fluxdown,fluxup)
 c
-c 	  A partir de maintenant, on fait comme si chaque flux etait 
+c 	  A partir de maintenant, on fait comme si chaque flux etait
 c 	  repartit dans sa case suivant une maxwellienne
 c
  	  do ien = nen,1,-1
-c 	    Calcul de l'energie de l'electron ejecte. Je fais une 
-c 	    approximation honteuse : suivant la these de MG, quelque 
+c 	    Calcul de l'energie de l'electron ejecte. Je fais une
+c 	    approximation honteuse : suivant la these de MG, quelque
 c 	    soit la particule incidente de haute energie, l'energie
 c 	    perdue est 1/alpha *sqrt(seuil*centE(ien)/1836)
 c 	    Le seuil vaut 17,15,16 pour N2,O2,O, soit ... 16 (j'ai
@@ -213,12 +213,12 @@ c
 c           search in which box iener to put the created electron.
             call search (nen,Ebot,ddeng,Eprotelec,iener)
 
-c 	    Il faut calculer le flux d'energie integree dans 
+c 	    Il faut calculer le flux d'energie integree dans
 c 	    chaque boite [eV.cm-2.s-1.sr-1]
  	    eflux = centE(ien)*ddeng(ien)*fluxdown(ien,1)
 
-c 	    comme on est completement forward, il n'y a pas de 
-c 	    multiplication par 2pi, car on est directement en 
+c 	    comme on est completement forward, il n'y a pas de
+c 	    multiplication par 2pi, car on est directement en
 c 	    eV.cm-2.s-1
             eflux = eflux*1.602e-12		! mW.m-2
  	    alp = centE(ien)*1.e-3		! keV
@@ -243,14 +243,14 @@ c
 c         On passe en flux.
  	  do ialt = 1,nz
  	    do ien = 1,nen
-              fluxprimprot(ialt,ien)= 
-     .               primprotelec(ialt,ien)/densig(ialt,ien) 
+              fluxprimprot(ialt,ien)=
+     .               primprotelec(ialt,ien)/densig(ialt,ien)
               do iang=-nango2,nango2
-                qprimprot(ien,ialt,iang)=primprotelec(ialt,ien)/4./pi 
+                qprimprot(ien,ialt,iang)=primprotelec(ialt,ien)/4./pi
               enddo
             enddo
- 	  enddo	
-c 	   
+ 	  enddo
+c
 c 	  Cette facon de faire a sans doute change la production qu'
 c 	  on aurait eue normalement. On va renormaliser
 c
@@ -286,8 +286,8 @@ c
 c 	  Il faut maintenant revenir aux altitudes de transelec
 c
  	else if(lit.eq.1) then
-          open (58,file= data_path(1:lpath_data)
-     &                         //'dir.cine/SOURCE_OUT_V')
+          open (58,file='dir.data/dir.linux/dir.cine/SOURCE_OUT_V',
+     &             status='old')
           rewind(58)
 c
 c  *      read in primary protoelectron flux data
@@ -323,7 +323,7 @@ c         production de H+ et H en cm-3s-1eV-1
  	    do ialt = 1,nz
               proprotion_init(ien,1,ialt)=
      .			.75*proprotion_init(ien,1,ialt)
-              proprotion_init(ien,2,ialt)= 
+              proprotion_init(ien,2,ialt)=
      .			.75*proprotion_init(ien,2,ialt)
  	    enddo
  	  enddo
@@ -334,7 +334,7 @@ c         La somme vaut la production des protoelec. en cm-3s-1eV-1
      .		proprotion_init(ien,1,ialt)+proprotion_init(ien,2,ialt)
             enddo
           enddo
-c         Production des protoelectrons en cm-3.s-1  (prion) 
+c         Production des protoelectrons en cm-3.s-1  (prion)
  	  call xline(1,58)
           read  (58,*) (proelec_init(ialt), ialt = 1,nz)
  	  do ialt = 1,nz
@@ -344,7 +344,7 @@ c         Production des protoelectrons en cm-3.s-1  (prion)
 c
  	  call mnmx(z,nz,zmin,zmax,0)
  	  call mnmx(eprot,nnen,eprotmin,eprotmax,0)
-c 
+c
       	  if(iprt(22).eq.1)then
       	    write (fic_transout,1000)
             write (fic_transout,*) 'Altitudes (z)'
@@ -354,7 +354,7 @@ c
             write (fic_transout,1040)
             do ialt=1,nz
               write(fic_transout,920)  z(ialt)
-              write (fic_transout,910)(proprotel_init(ialt,ien), 
+              write (fic_transout,910)(proprotel_init(ialt,ien),
      .					ien = 1,nnen)
 c             [proprotel_init]=cm-3.s-1.eV-1
  	    enddo
@@ -410,17 +410,17 @@ c
 c 	  On passe en flux.
  	  do ien = 1,nen
 	    do ialt=1,nalt
-  	      fluxprimprot(ialt,ien)= 
-     .		primprotelec(ialt,ien)/densig(ialt,ien) 
+  	      fluxprimprot(ialt,ien)=
+     .		primprotelec(ialt,ien)/densig(ialt,ien)
               do iang=-nango2,nango2
 c 	        La division par 2 pi vient de l'integration polaire
                 qprimprot(ien,ialt,iang)= fluxprimprot(ialt,ien)* r2pi
-c 	        On redivise par 2 parce que le flux primaire est 
+c 	        On redivise par 2 parce que le flux primaire est
 c 	        isotrope (la moitie vers le haut et la moitie vers le
 c 	        bas)
-                qprimprot(ien,ialt,iang)= qprimprot(ien,ialt,iang)/2. 
+                qprimprot(ien,ialt,iang)= qprimprot(ien,ialt,iang)/2.
 c 	        On redivise par 2 pour avoir 0,5 erg et pas 1
-                qprimprot(ien,ialt,iang)= qprimprot(ien,ialt,iang)/2. 
+                qprimprot(ien,ialt,iang)= qprimprot(ien,ialt,iang)/2.
  	      enddo
  	    enddo
  	  enddo

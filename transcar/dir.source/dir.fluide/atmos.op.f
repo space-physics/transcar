@@ -1,6 +1,6 @@
-	   subroutine atmos(iyd,ces,stl,z,glat,glong,jpreci,f107,              
+	   subroutine atmos(iyd,ces,stl,z,glat,glong,jpreci,f107,
      &			ap,Ne,Te,Tj,nx,kiappel,file_cond)
- 
+
 
 
         include 'TRANSPORT.INC'
@@ -13,7 +13,7 @@ C	SIGNIFICATION DES VARIABLES DE CE SOUS-PROGRAMME
 
 C	liste d'appel
 c       -------------
-C	IYD	jour de l'annee sous la forme YYJJJ, 
+C	IYD	jour de l'annee sous la forme YYJJJ,
 c 		avec YY=annee et JJJ=jour dans l'annee
 C	SEC	temps universel 				(s)
 C	STL	temps local	 				(heure)
@@ -25,16 +25,16 @@ C	F107	flux solaire instantane de la veille
 C	AP	tableau des ap (convention MSIS86)
 C	Ne	tableau des concentrations electroniques
 c 		(unites normalisees)
-C	Te	tableau des temperatures electroniques			
+C	Te	tableau des temperatures electroniques
 c 		(unites normalisees)
-C	Tj	tableau des temperatures de l'ion O+			
+C	Tj	tableau des temperatures de l'ion O+
 c 		(unites normalisees)
 C	NX	nombre d'altitudes resolues
 c     jpreci = 0 if sun only, 1 if prec. only, 2 if both of them
 
 c
 C	atmosphere neutre
-c       ----------------- 
+c       -----------------
 C	NH	concentration de l'hydrogene atomique		(cm-3)
 C	NO	concentration de l'oxygene atomique		(cm-3)
 C	NO2	concentration de l'oxygene moleculaire		(cm-3)
@@ -66,7 +66,7 @@ C	ZCIRA	altitude limite pour le calcul par extrapolation
 C	ICIRA	indice de l'altitude limite zcira
 
 C	perturbations externes
-c       ----------------------- 
+c       -----------------------
 C	PERTURB	routine decrivant la perturbation
 C	PERT	coefficient de la perturbation		(0<pert<1)
 
@@ -99,14 +99,14 @@ C	QETOPMIN	valeur minimale du flux de chaleur
 c			electronique a l'altitude superieure
 c			(erg.cm-2.s-1)
 C	QETOPMAX	valeur maximale du flux de chaleur
-c			electronique a l'altitude superieure		
+c			electronique a l'altitude superieure
 c			(erg.cm-2.s-1)
 C	QETOP	valeur du flux de chaleur
-c		electronique a l'altitude superieure			
+c		electronique a l'altitude superieure
 c			(erg.cm-2.s-1)
 
 C	variables liees a l'evolution en temps
-c       -------------------------------------- 
+c       --------------------------------------
 C	CHI	angle zenithal					(rad)
 C	NHEU	heure universelle
 C	MIN	minute universelle
@@ -115,7 +115,7 @@ C	ajour	jour dans l'annee
 
 C	parametres
 
-C	INDLIM		indice de l'altitude limite utilisee pour les 
+C	INDLIM		indice de l'altitude limite utilisee pour les
 c 			calcul de Jean
 C	INDLIM_1	indice de l'altitude avant l'altitude limite
 C	ZLIM		valeur de l'altitude limite
@@ -128,23 +128,23 @@ C	T0	coefficient de normalisation du temps		(s)
 C	N_0	coefficient de normalisation des concentrations	(cm-3)
 C	T_0	coefficient de normalisation des temperatures	(K)
 C	P_0	coefficient de normalisation des pressions    (erg.cm-3)
-C	CI0	coefficient de normalisation de la vitesse de H+ 	
+C	CI0	coefficient de normalisation de la vitesse de H+
 c		(cm.s-1)
-C	CJ0	coefficient de normalisation de la vitesse de O+ 	
+C	CJ0	coefficient de normalisation de la vitesse de O+
 c		(cm.s-1)
-C	CK0	coefficient de normalisation de la vitesse de N2+ 	
+C	CK0	coefficient de normalisation de la vitesse de N2+
 c		(cm.s-1)
-C	CL0	coefficient de normalisation de la vitesse de O2+ 	
+C	CL0	coefficient de normalisation de la vitesse de O2+
 c		(cm.s-1)
-C	CM0	coefficient de normalisation de la vitesse de NO+	
+C	CM0	coefficient de normalisation de la vitesse de NO+
 c		(cm.s-1)
-C	CE0	coefficient de normalisation de la vitesse de e- 	
+C	CE0	coefficient de normalisation de la vitesse de e-
 c		(cm.s-1)
-C	QI0	coefficient de normalisation du flux de chaleur de H+   
+C	QI0	coefficient de normalisation du flux de chaleur de H+
 c		(erg.cm-2.-s1)
-C	QJ0	coefficient de normalisation du flux de chaleur de O+   
+C	QJ0	coefficient de normalisation du flux de chaleur de O+
 c		(erg.cm-2.-s1)
-C	QE0	coefficient de normalisation du flux de chaleur de e-	
+C	QE0	coefficient de normalisation du flux de chaleur de e-
 c		(erg.cm-2.-s1)
 
 C	RE	rayon de la terre				(km)
@@ -152,12 +152,12 @@ C	M0	masse de H+ (amu)				(g)
 C	ME	masse de le electron				(g)
 C	KB	constante de Boltzmann			    (erg.K-1)
 
-C	SRCFIC	repertoire ou se trouvent les fichiers temporaires de 
+C	SRCFIC	repertoire ou se trouvent les fichiers temporaires de
 c		transport cinetique
 
-C	PRECIPITATION	routine determinant les electrons precipitants 
+C	PRECIPITATION	routine determinant les electrons precipitants
 c		        (+ les ions precipitants)
-C	TRANSPORT	routine calculant le transport des electrons 
+C	TRANSPORT	routine calculant le transport des electrons
 c 			suprathermaux
 
 C       Added to simulate an assumed neutral Hot O profile
@@ -175,7 +175,7 @@ C	ZTNOHOTREF Reference Hot O altitude for temperature
 C	TNOHTOREF Reference Hot O temperature
 C	TNOHOTDECAY Decay rate for bates temperature profile
 C       FLAGOHOT False to omit Hot O, True to simulate Hot O
-C   
+C
 C       --MZ
 
 
@@ -216,10 +216,10 @@ C       --MZ
 	real N_0,T_0,Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,Pi0,Pj0,Pe0,Qi0,Qj0,Qe0
         common/param/	N_0,T_0,P_0,Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,
      &			Qi0,Qj0,Qe0
-     &			
+     &
         real R0,g0,t0
         common/adim/R0,t0,G0
-  
+
         real dt
         common/temps/dt
 
@@ -253,7 +253,7 @@ C       --MZ
 c
         real Ph(npt),Po(npt),Po2(npt),Pn2(npt),Pn(npt)
         common/prodion/Ph,Po,Po2,Pn2,Pn
-        
+
         real Nes(npt),Jes(npt),Tes(npt),qes(npt)
         common /supra/Nes,Jes,Tes,qes
 
@@ -274,7 +274,7 @@ C       PAS DE ME RENVOYER LE CODE MODIFIE.
         common/burn/burnside
 
         real temps,En,Ee,Eno,Eeo
-cc 	 
+cc
         logical flag,flagatmos,flgini,flgread
         common /atm/flagatmos
 
@@ -310,11 +310,11 @@ cc
 
 	    real*8 a0,c0,s0,x0,y0,xpos,ypos,pos0
 
-	
-	    logical flg_err
-	    common/err/flg_err	
 
-            
+	    logical flg_err
+	    common/err/flg_err
+
+
 C       Added to simulate an assumed neutral Hot O profile
 C       Matt Zettergren, 13/09/2004
         logical chkOHot,flagOHot
@@ -328,7 +328,7 @@ C       Matt Zettergren, 13/09/2004
 	    common /OHotParams/ zNOHotref,pctOHot,NOHotRef,zTnOHotRef,
      &		TnOHotRef,TnOHotDecay,TnOHotInf
 C       --MZ
-	
+
 C       Added in to account for RBR electron precipitation
         real Eprec,Fprec
         common /RBR/ Eprec,Fprec
@@ -347,13 +347,12 @@ C       --MZ
 
 	    rap=1.
 !	if (njour.eq.48) then
-!	  open(83,file=data_path(1:lpath_data)
-!     &                       //'dir.fluide/var_rap.dat',
-!     &		form='formatted',status='unknown',iostat=ierr)
-    
+!	  open(83,file='dir.data/dir.linux/dir.fluide/var_rap.dat',
+!     &		form='formatted',status='old',iostat=ierr)
+
 !	  if (ierr.eq.0) then
 !	    tf=0.
-!	    do while(ces.ge.tf) 
+!	    do while(ces.ge.tf)
 !	      read(83,*)td,tf,rd,rf
 !	    enddo
 !	    close(83)
@@ -369,7 +368,7 @@ C       --MZ
 	    J0=0.
 !	    Qetop  = -5.e-4-4.e-3*exp(-(chi0-91.)**2/30.)
 !	    Qetop=-2.e-3
-	
+
 	  vmerid_inf=0.
 	  vzonal_inf=0.
 	  vmerid_200=0.
@@ -382,7 +381,7 @@ C       --MZ
 !	  cofh=1.
         goto 987
 
-987	  continue	
+987	  continue
 
 
 	    dlon=dble(15.*tmag)
@@ -392,7 +391,7 @@ C       --MZ
         print*,'call courant'
 	    call courant(iyd,tu,kp,dlon,dlat,Jtop)
 
-	
+
 !       Added for simulation of electron precpitation
         if(sec.ge.tstartprec.and.sec.le.tstopprec) then
           precflag=.true.
@@ -462,9 +461,9 @@ C       --MZ
             TnOHot(i)=4000.
 
 	    !Diffusive equilibrium profile
-	    NOHot(i)=NOHotRef*exp(-16.*m0*g0*1.e5/kb/TnOHot(i)*             
+	    NOHot(i)=NOHotRef*exp(-16.*m0*g0*1.e5/kb/TnOHot(i)*
      &			(z(i)-zNOHotRef) / (z(i)/Re+1.)**2.)
-            
+
 	    !Heat Flow is negligible
 	    q_NOHot(i)=0.
 	    fluxhot(i)=0.!sqrt(TnOHot(i)/T_0)
@@ -475,7 +474,7 @@ C       --MZ
 
 	    do i=1,nx
 
-     
+
 	  if (flagatmos) then
 c	if (flgini) then
 
@@ -562,7 +561,7 @@ c	J0 est en �/m-2
           indlim_1=indlim-1
           zlim=z(indlim)
           zlim_1=z(indlim_1)
-          
+
 c
 c
 c 	Transport cinetique. Kinetic transport

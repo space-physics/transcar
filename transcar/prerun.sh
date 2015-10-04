@@ -3,7 +3,7 @@
 # tasks to do before running the sim
 
 remotes=(labHST0 labHST1 irs4 irs3 swoboj)
-exedir=code/transcar/dir.transcar.server
+exedir=code/transcar/transcar
 
 freshenout()
 {

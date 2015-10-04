@@ -104,15 +104,15 @@ c
        	real proelec(nbralt),
      .		  prodion(nbralt,nbrsp*2),proneut(nbralt,nbrsp),
      . 	  	  prophel(nbralt,nbren),produc(nbralt,nbrsp,nbren)
- 	real prodcont(nbralt),prodraie(nbralt)
+        real prodcont(nbralt),prodraie(nbralt)
       	real seffion(2000,7),sefftot(2000,5),eVseff(2000),wnmseff(2000)
       	real sigi(39,7),sigt(39,5)         ! Seff sur les en(Torr)
       	real pflux(39),wave(39)
- 	real pfluxmin(39),pfluxmax(39)
- 	real altregE(nbralt),denselregE(nbralt)
- 	real xchap(nbralt,nbrsp)
- 	integer iprt(12),idess(9),kiappel
- 	real trav(nbren),sum,year
+        real pfluxmin(39),pfluxmax(39)
+        real altregE(nbralt),denselregE(nbralt)
+        real xchap(nbralt,nbrsp)
+        integer iprt(12),idess(9),kiappel
+        real trav(nbren),sum,year
         real sflux(nbralt,nbren),phdisso2(500),sigsro2(8),lambdasr(9)
         real lineflux(7),sigabso2(7),qyield(7)
         real Isr(8),pfluxsr(8,nbralt),chapsp(8)
@@ -1002,7 +1002,8 @@ c
 c
       	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
      .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
-     .		      nwave,ns,nns, f107min,f107max,iseff,wnmseff
+     .		      nwave,ns,nns, f107min,f107max,iseff,wnmseff, lambdasr,
+     .                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
  	common /const/ pi,re,recm,bolt,gzero,amu
  	real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
  	integer index(39)
@@ -1499,14 +1500,17 @@ c
 c
       	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
      .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
-     .		      nwave,ns,nns,f107min,f107max,iseff,wnmseff
+     .		      nwave,ns,nns,f107min,f107max,iseff,wnmseff,lambdasr,
+     .                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
       	real seffion(2000,7),sefftot(2000,5),eVseff(2000),threshold(7)
- 	real wnmseff(2000)
- 	real eV(39),wave(39),pfluxmin(39),pfluxmax(39)
- 	real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
- 	real f107min,f107max,ener,sefint
- 	integer ns,nns,isp,nwave,nbseff,type,iseff
-c
+        real wnmseff(2000)
+        real eV(39),wave(39),pfluxmin(39),pfluxmax(39)
+        real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
+        real f107min,f107max,ener,sefint
+        integer ns,nns,isp,nwave,nbseff,type,iseff
+        real sigsro2(8),lambdasr(9),Isr(8)
+        real lineflux(7),sigabso2(7),qyield(7),Isr2(8)
+
  	real tabin(2000),tabeV(2000),tabout(1),seffout(1)
  	integer i
 c 	type = 1 --> total
@@ -1535,7 +1539,9 @@ c
 c
 c------------------------ Function sperfc ---------------------------
 c
-      function sperfc(dummy) 
+      pure real function sperfc(dummy)
+      implicit none
+      real,intent(in) :: dummy
 c
 c 	Used to compute the Chapman function.
 c
@@ -1545,26 +1551,25 @@ c
         else
           sperfc=0.56498823/(0.06651874+dummy) 
         endif 
-c
-        return 
+
         end 
 c
 c----------------------------------------------------------------------
 c
- 	subroutine reord(tab,ntab,index,trav)
-c
- 	integer index(ntab)
- 	real tab(ntab),trav(ntab)
-c 
- 	do itab = 1,ntab
- 	  trav(itab) = tab(index(itab))
- 	enddo
- 	do itab = 1,ntab
- 	  tab(itab) = trav(itab)
- 	enddo
-c
- 	return
- 	end
+        subroutine reord(tab,ntab,indx,trav)
+        implicit none
+        integer,intent(in) :: indx(ntab),ntab
+        real,intent(inout)   :: tab(ntab),trav(ntab)
+        integer i
+
+        do i = 1,ntab
+            trav(i) = tab(indx(i))
+        enddo
+        do i = 1,ntab
+           tab(i) = trav(i)
+        enddo
+
+        end subroutine reord
 c
 c-------------------- donnees -------------------------------
 c

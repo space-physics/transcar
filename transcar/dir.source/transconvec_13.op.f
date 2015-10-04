@@ -5,8 +5,8 @@
 !
 
         parameter (npt=500,xcoeffno=1.,ncol0=50,intemps0=300,nb_ion=6)
-        logical isnan,isnant
-        external isnan,isnant
+        logical isnant
+        external isnant
 !
         parameter (nb_position_max=100)         ! Modif DA 02/02 2001
         logical multi_position                  ! Modif DA 02/02 2001
@@ -402,20 +402,20 @@
 !-------Read TRANSCAR input file and grab initial conditions information
 
         itype=4                         !machine IBM
-        call pwd(chemin,lpath,data_path,lpath_data)
-        open(transcar_dat, file=chemin(1:lpath)//'dir.input/DATCAR')
+!        call pwd(chemin,lpath,data_path,lpath_data)
+        open(transcar_dat, file='dir.input/DATCAR', status='old')
         rewind(transcar_dat)
         read(transcar_dat,*)kiappel
         read(transcar_dat,1010)filein
         if (filein(1:1).ne.'/') then
-          filein=chemin(1:lpath)//'dir.input/'//filein(1:lenc(filein))
+          filein='dir.input/'//filein(1:lenc(filein))
         endif
 1010    format(a)
         filein = filein(1:lenc(filein))
 !-------MZ
         print *, 'reading parameters from file: ',filein
         open(unfic_in_transcar,file=filein,form='unformatted',          
-     &                access='direct',status='unknown',recl=4*2*ncol0)
+     &                access='direct',status='old',recl=4*2*ncol0)
 
 
         flgne=.false.
@@ -555,7 +555,7 @@
         longrec=itype*longbuf
 
         open(unfic_in_transcar,file=filein,form='unformatted',              
-     &                  access='direct',status='unknown',recl=longrec)
+     &                  access='direct',status='old',recl=longrec)
 
         N_0=1.e4
         T_0=1000.
@@ -785,12 +785,11 @@
 
 !-------Read file containing electron precipitation information, this is messy
 !and should be rewritten at some point.
-        prec_fname=chemin(1:lpath)//'dir.input/'                       
-     &                  //prec_fname(1:lenc(prec_fname))
+        prec_fname='dir.input/'//prec_fname(1:lenc(prec_fname))
         prec_fname=prec_fname(1:lenc(prec_fname))
        print *, 'reading PRECIPITATION parameters from file: ',
      &   prec_fname
-        open(313,file=prec_fname)
+        open(313,file=prec_fname,status='old')
  
         ioerr=1; ntimeser=1; timestat=1;
         do while(timestat .ge. 0 .and. ioerr>-1 .and.                  
@@ -843,10 +842,9 @@
               longbuf1=nligne*ncol1
           longrec1=itype*longbuf
 
-          open(unfic_out_transcar,file=chemin(1:lpath)
-     &                       //'dir.output/transcar_output',
+          open(unfic_out_transcar,file='dir.output/transcar_output',
      &         form='unformatted',access='direct',recl=longrec1,
-     &           status='unknown')
+     &           status='replace')
 
 
         else
@@ -1331,7 +1329,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
           buffer(ipos+ipos_no1d)=N_0*No1dnew(i)*1.e6
           buffer(ipos+ipos_uo1d)=Cj0*Uo1dnew(i)/1.e2
        enddo
-       open(fid_temp,file=chemin(1:lpath)//filetemps,
+       open(fid_temp,file=filetemps,
      &           form='unformatted',access='direct',recl=longrec,
      &           status='unknown')
        write(fid_temp,rec=nrectemps)(buffer(i),i=1,longbuf)
@@ -1469,7 +1467,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
              buffer(ipos+ipos_no1d)=N_0*No1dnew(i)*1.e6
              buffer(ipos+ipos_uo1d)=Cj0*Uo1dnew(i)/1.e2
            enddo
-           open(fid_temp,file=chemin(1:lpath)//filetemps,
+           open(fid_temp,file=filetemps,
      &           form='unformatted',access='direct',recl=longrec,
      &           status='unknown')
            write(fid_temp,rec=nrectemps)(buffer(i),i=1,longbuf)
@@ -8084,9 +8082,9 @@ C    on a debranche ici a cause d'un probleme de NaN
         close(unfic_in_transcar)
         close(fid_temp)
         fid_NaN=unfic_out_transcar
-        open(fid_NaN,file=chemin(1:lpath)//'dir.output/transcar.dump',
+        open(fid_NaN,file='dir.output/transcar.dump',
      &            form='unformatted',
-     &                  access='direct',status='unknown',recl=longrec)
+     &                  access='direct',status='replace',recl=longrec)
 
       do i=1,longbuf
           buffer(i)=0.
@@ -8182,12 +8180,12 @@ C    on a debranche ici a cause d'un probleme de NaN
         enddo
         write(fid_NaN,rec=1)(buffer(i),i=1,longbuf)
         close(fid_NaN)
-        stop 'erreur NaN'
+        stop 'NaN detected'
         end
 C-----------------------------------------------------------------------
-        real function signe(x)
-
-        real x
+        pure real function signe(x)
+        implicit none
+        real,intent(in) :: x
 
         if (x.ge.0.) then
           signe=1.
@@ -8195,6 +8193,5 @@ C-----------------------------------------------------------------------
           signe=-1.
         endif
 
-        return
-        end
+        end function signe
 C-----------------------------------------------------------------------

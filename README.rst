@@ -14,6 +14,6 @@ Installation
 
 .. code:: bash
 
-  git clone --depth 1 https://github.com/scienceopen/transcar
+  git clone https://github.com/scienceopen/transcar
   cd transcar
   ./setup.sh

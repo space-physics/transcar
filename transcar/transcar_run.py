@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from __future__ import division
+from __future__ import division,absolute_import
 import logging
 from collections import deque
 from os.path import join,abspath
@@ -19,12 +19,11 @@ def runTranscar(odir,errfn,msgfn):
     with open(join(odir,errfn),'w')  as ferr, open(join(odir,msgfn),'w') as fout:
     #we need cwd feature of Popen that call() doesn't have
         exe = abspath(join(odir,transcarexe))
-        try:
-            proc = Popen(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
-            out,err = proc.communicate() #this makes popen block (we want this)
-            #print(out,err) #will be none since we didn't use PIPE
-        except IOError as e:
-            exit(e)
+
+        proc = Popen(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
+        out,err = proc.communicate() #this makes popen block (we want this)
+        #print(out,err) #will be none since we didn't use PIPE
+
 
 def transcaroutcheck(odir,errfn):
     fok = join(odir,fileok)
@@ -37,7 +36,7 @@ def transcaroutcheck(odir,errfn):
             else:
                 f.write('false')
                 logging.warn('transcaroutcheck: {} got unexpected return value, transcar may not have finished the sim'.format(odir))
-                exit(last)
+                raise AttributeError(last)
     except IOError as e:
         logging.error('transcaroutcheck: problem reading transcar output.  {}'.format(e) )
 
@@ -49,7 +48,7 @@ def setuptranscario(rodir,beamEnergy):
     try:
         makedirs(join(odir,'dir.output'))
     except OSError:
-        exit('{} directory already existed, aborting'.format(beamEnergy))
+        raise ValueError('{} directory already existed, aborting'.format(beamEnergy))
 
     flist = [datcar, join('dir.input',inp['precfile']), 'dir.data/type',transcarexe]
     flist.extend(['dir.data/dir.linux/dir.geomag/' +s  for s in ['data_geom.bin','igrf90.dat','igrf90s.dat']])
@@ -64,11 +63,11 @@ def setuptranscario(rodir,beamEnergy):
     return inp,odir
 
 def setupPrecipitation(odir,inp,E1,E2,pr1,pr2, flux0):
-    dE = E2-E1
+    dE =   E2-E1
     Esum = E2+E1
     flux = flux0 / 0.5 / Esum / dE
     Elow = E1 - 0.5*(E1 - pr1)
-    Ehigh =E2 - 0.5*(E2 - pr2)
+    Ehigh= E2 - 0.5*(E2 - pr2)
 
     precout = '\n'.join(('{}','{} {}','{} -1.0','{}','-1.0 -1.0')).format(
               inp['precipstartsec'], Elow, flux, Ehigh, inp['precipendsec'])
@@ -79,14 +78,14 @@ def setupPrecipitation(odir,inp,E1,E2,pr1,pr2, flux0):
 if __name__ == '__main__':
     from argparse import ArgumentParser
     p = ArgumentParser(description='parallel instance transcar runner')
-    p.add_argument('rodir',help='root of beam directory',type=str)
+    p.add_argument('rodir',help='root of beam directory')
     p.add_argument('flux0',help='flux0',type=float)
     p.add_argument('E1',help='energy in eV',type=float)
     p.add_argument('E2',help='energy in eV',type=float)
     p.add_argument('pr1',help='pr1',type=float)
     p.add_argument('pr2',help='pr2',type=float)
-    p.add_argument('--msgfn',help='file to write transcar messages to',type=str,default='transcar.log')
-    p.add_argument('--errfn',help='file to write transcar Errors to',type=str,default='transcarError.log')
+    p.add_argument('--msgfn',help='file to write transcar messages to',default='transcar.log')
+    p.add_argument('--errfn',help='file to write transcar Errors to',default='transcarError.log')
     p = p.parse_args()
 
     datinp,odir = setuptranscario(p.rodir,p.E1)

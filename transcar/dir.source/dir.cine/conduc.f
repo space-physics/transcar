@@ -306,8 +306,7 @@ c
  	burnside = 1.7
  	call nuoion(fcOp,fcOpO,fcOpN2,fcOpO2,ti,tn,denO1,denN2,denO2,
      .			burnside)
- 	call noion(fcNOp,fcNOpO,fcNOpN2,fcNOpO2,ti,tn,denO1,denN2,
-     .		 	denO2)
+ 	call noion(fcNOp,fcNOpO,fcNOpN2,fcNOpO2,denO1,denN2,denO2)
  	call o2ion(fcO2p,fcO2pO,fcO2pN2,fcO2pO2,ti,tn,denO1,denN2,
      .		 	denO2)
 c 	On passe de frequences reduites aux frequences reelles.

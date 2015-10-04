@@ -6,7 +6,8 @@
 
 (
 cd transcar/dir.source
-make
+make --quiet
 )
 
+conda install --file requirements.txt
 python setup.py develop

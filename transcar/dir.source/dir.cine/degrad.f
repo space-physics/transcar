@@ -6,11 +6,11 @@ c 	(C) Copyright by D.Lummerzheim, (1984,...      		       !
 c 	(C)          and J.Lilensten (1992...        		       !
 c 	This is a pre-TRANS code which prepares the cross-section data !
 c 	for the main TRANS code					       !
-c 	Les sections efficaces sont lues espece par espece, et dans 
+c 	Les sections efficaces sont lues espece par espece, et dans
 c 	chaque cas, les grilles d'energie peuvent etre differents.
 c	Cross sections are read species by species, and in each case, the energy grids can be different.
 c----------------------------------------------------------------------!
-c 
+c
 c e(n)			= Energy grid, increasing order (e(1) = min)
 c engdd 		= Total width of each cell
 c cel(isp,ien)		= elastic cross section (not used here)
@@ -20,16 +20,16 @@ c 			  STATE IS FOR IONIZATION.
 c			  (ex jsg(isp))
 c nionst(isp) 		= actual number of excited ion states
 c 		 	  (ex jsp(isp))
-c cinex(isp,js,ien) 	= inelastic cross section for each state. 
+c cinex(isp,js,ien) 	= inelastic cross section for each state.
 c			  CINEX(isp,JSG,ien) --> ionization.
-c omdeg(E1,E2,isp)	= redist. matrix. 
+c omdeg(E1,E2,isp)	= redist. matrix.
 c			  E1 > E2 ==> degraded
 c			  E2 > E1 ==> secondary
 ********************* Single precision ! *******************************
- 
+
 	    implicit logical (l)
 	    include 'TRANSPORT.INC'
-c 
+c
         real e(nbren),engdd(nbren)
         real esig(nbren),bsig(nbren),delta(nbren)
         integer nen
@@ -50,21 +50,21 @@ c 	Il faut donc le laisser...!!!...
 c
 	    common /rdist_/ omdeg(nbren,nbren,nbrsp)
 	    common /distfct_/lopal
- 
+
 *	The redistribution function as calculated by the SWARTZ
 *	code.
 *	OMDEG(N1,N2,J) : cross-section for inelastic scattering
 *			  from energy N1 to N2
 *	OMDEG(N2,N1,J)  : cross-section for the production of a
 *			  secondary with energy N2
- 
+
 	character*8 istdate,isttime
 	character*9 title(nbrexc,nbrsp)
  	character*9 excion(nbrionst,nbrsp)
-	character*80 crsin,crsout,rdtout,preout
-	character*80 line
+	character(len=80) crsin,crsout,rdtout,preout
+	character(len=80) line
  	integer idess(2),lenc,kiappel,i1,i2
-c 
+c
 1000    format(a)
 1010	format(' Pre-electron transport code version 3 ',/,a8,3x,a8/)
 1020	format(' The maximum input parameter authorized are:',/,
@@ -130,10 +130,10 @@ c 	Met les energies en ordre croissant
  	       engdd(nen+1-ien) = ddeng(ien)
  	     enddo
  	    endif
- 	  
+
 c 	Input control parameters
-     	open(fic_datdeg,file= data_path(1:lpath_data)
-     &                              //'dir.cine/DATDEG')
+     	open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
+     &           status='old')
      	read(fic_datdeg,*)ibid
      	read(fic_datdeg,1000)crsin
      	crsin = crsin(1:lenc(crsin))
@@ -151,26 +151,26 @@ c 				             cross sections
      	read(fic_datdeg,1000)lt2           ! lt2   : only with ioniz.
      	read(fic_datdeg,1000)lt3           ! lt3   : without degradation
      	read(fic_datdeg,1000)lt4           ! lt4   : without excitation
-     	read(fic_datdeg,1000)lopal    ! Opal'sec. distrib. (Rees sinon)
+     	read(fic_datdeg,1000)lopal    ! Opal sec. distrib. (Rees sinon)
 	    close (fic_datdeg)
 c
 c	Check for old computation
 c
 	    open(unfic_crsout_degrad,
-     .	     	file=data_path(1:lpath_data)
+     &	     	file='dir.data/dir.linux/'
      &                     //crsout,status='OLD',form='UNFORMATTED',
-     .		iostat=iost)
+     &		iostat=iost)
  	    if (iost.ne.0)then
-   	  print*,' No old differential cross section file'
- 	  print*,' Cross sections therefore computed'
+   	    print*,' No old differential cross section file'
+ 	      print*,' Cross sections therefore computed'
 c 	  Puisqu'il n'existe pas, cree le fichier de sortie
-	  open(unfic_crsout_degrad,
-     .	     	file=data_path(1:lpath_data)
+	      open(unfic_crsout_degrad,
+     .	     	file='dir.data/dir.linux/'
      &                     //crsout,status='new',form='UNFORMATTED',
      .		iostat=iost)
- 	  rewind(unfic_crsout_degrad)
-  	  close(unfic_crsout_degrad)
- 	  go to 10
+ 	      rewind(unfic_crsout_degrad)
+  	    close(unfic_crsout_degrad)
+ 	      go to 10
  	    endif
 c
 c 	Teste si les sections efficaces ont deja ete calculees sur cette
@@ -204,7 +204,7 @@ c
      	    endif
       	    close(unfic_crsout_degrad)
      	    go to 10
-     	  endif 
+     	  endif
      	enddo
 c
 c 	On teste si les sections efficaces sont vraiment calculees
@@ -230,34 +230,34 @@ c 	Puisque ce fichier contient quelque chose, on le rembobine
 
 10 	continue	! cross sections not yet computed
 c
-c----  	Open input files : seff file 
-	open(fic_crsin_degrad,file=data_path(1:lpath_data)
+c----  	Open input files : seff file
+	open(fic_crsin_degrad,file='dir.data/dir.linux/'
      &                                   //crsin,status='old')
  	rewind fic_crsin_degrad
 c
 c----  	Open formatted output files
- 	open(fic_degout,file= data_path(1:lpath_data)
+ 	open(fic_degout,file= 'dir.data/dir.linux/'
      &                              //'dir.cine/DEGOUT',
-     .			status='unknown') 	
+     .			status='unknown')
  	rewind fic_degout
 
 c 	Open unformatted output cross section files
 	open(unfic_crsout_degrad,
-     .		file=data_path(1:lpath_data)
+     .		file='dir.data/dir.linux/'
      &                     //crsout,status='old',form='UNFORMATTED')
  	rewind unfic_crsout_degrad
 c
 	write(fic_degout,1010) istdate,isttime
 	write(fic_degout,1020) nbren,nbrango2,nbrsp,nbrexc,nbrionst
 	write(fic_degout,1030) crsin,crsout,rdtout
-	if(lt1.or.lt2.or.lt3.or.lt4) 
+	if(lt1.or.lt2.or.lt3.or.lt4)
      .		write(fic_degout,1040) lt1,lt2,lt3,lt4
- 
+
 c----   Read cross section file, generate energy grid and interpolate
 	call sigma(nspec,logint,title,excion,cel,cin,cinex,
      .  	         ethres,bratio,nexcst,nionst,e,nen)
 	write(6,1210)nen,e(1),e(nen),nspec
- 
+
 	write(unfic_crsout_degrad) nen,nspec,nbrexc,nbrionst
 	write(unfic_crsout_degrad) (centE(n),n=1,nen)
 	write(unfic_crsout_degrad) (botE(n),n=1,nen)
@@ -268,7 +268,7 @@ c----   Read cross section file, generate energy grid and interpolate
 	e1=max(e(1)-engdd(1)/2.,0.)
 	e2=e(nen)+engdd(nen)/2.
 	write(fic_degout,1070) e1,e2
- 
+
 	if(iprint1.eq.1) then
 	  write(fic_degout,1080) (specie(isp),isp=1,nspec)
 	  write(fic_degout,1090)
@@ -277,7 +277,7 @@ c----   Read cross section file, generate energy grid and interpolate
  	  enddo
 	end if
 	print*,' Elastic cross-sections done'
- 
+
 	lfstr=.true.			! O-fine-structure
 c
 c----	Inelastic cross-sections
@@ -287,7 +287,7 @@ c----	Inelastic cross-sections
 	  do isp=1,nspec
 	    write(fic_degout,1110) specie(isp),(title(i,isp),i=1,5)
 	    do ien=1,nen
-	      write(fic_degout,1130) 
+	      write(fic_degout,1130)
      .		e(ien),cin(isp,ien),(cinex(isp,js,ien),js=1,5)
  	    enddo
  	    if(nexcst(isp).gt.5)then
@@ -335,9 +335,9 @@ c----	degradation cross-sections and adjustment with the Swartz method
  	enddo
 	print*,' Degradation cross-sections done'
 c	print*,line
-	
+
 c----	Test for the differential cross-sections
-	
+
 	do isp=1,nspec
 	  if(iprint4.eq.1) write(fic_degout,1160) specie(isp)
 	  do ien=1,nen
@@ -349,34 +349,34 @@ c----	Test for the differential cross-sections
 	      tomdeg=tomdeg+omdeg(ien,iens,isp)*engdd(iens)
    	      tomsec=tomsec+omdeg(iens,ien,isp)*engdd(iens)
  	    enddo
-	    if(cin(isp,ien).ne.0.) 
+	    if(cin(isp,ien).ne.0.)
      .		rdeg=(tomdeg-cin(isp,ien))/cin(isp,ien)
-	    if(cinex(isp,nexcst(isp),ien).ne.0.) 
+	    if(cinex(isp,nexcst(isp),ien).ne.0.)
      .	        rsec= (tomsec-cinex(isp,nexcst(isp),ien))
      .		      / cinex(isp,nexcst(isp),ien)
 	    if(iprint4.eq.1) write(fic_degout,1170) e(ien),tomdeg,
      .		cin(isp,ien),rdeg,tomsec,cinex(isp,nexcst(isp),ien),rsec
  	  enddo
   	enddo
- 
-	write(unfic_crsout_degrad) 
+
+	write(unfic_crsout_degrad)
      .		(nexcst(isp),isp=1,nspec),(nionst(isp),isp=1,nspec)
-	write(unfic_crsout_degrad) 
+	write(unfic_crsout_degrad)
      .		((title(js,isp),isp=1,nspec),js=1,nbrexc)
-	write(unfic_crsout_degrad) 
+	write(unfic_crsout_degrad)
      .	   (((ethres(isp,js,jp),isp=1,nspec),js=1,nbrexc),jp=1,nbrionst)
-	write(unfic_crsout_degrad) 
+	write(unfic_crsout_degrad)
      .		((bratio(jp,isp),jp=1,nbrionst),isp=1,nspec)
 	write(unfic_crsout_degrad) ((cel(j,n),j=1,nspec),n=1,nen)
 	write(unfic_crsout_degrad) ((cin(j,n),j=1,nspec),n=1,nen)
-	write(unfic_crsout_degrad) 
+	write(unfic_crsout_degrad)
      .		(((cinex(j,js,n),j=1,nspec),js=1,nbrexc),n=1,nen)
-	write(unfic_crsout_degrad) 
+	write(unfic_crsout_degrad)
      .		(((cinex(j,js,n),j=1,nspec),js=1,nbrexc),n=1,nen)
 	close (unfic_crsout_degrad)
 c
 c 	Open unformatted output differential cross section files
-	open(unfic_rdtout_degrad,file=data_path(1:lpath_data)
+	open(unfic_rdtout_degrad,file='dir.data/dir.linux/'
      &                                      //rdtout,form='UNFORMATTED')
  	rewind unfic_rdtout_degrad
 	write(unfic_rdtout_degrad) line
@@ -384,9 +384,9 @@ c 	Open unformatted output differential cross section files
 c
 	do nfix=nen,1,-1
 	  nend=nfix
-	  write(unfic_rdtout_degrad) 
+	  write(unfic_rdtout_degrad)
      .		((omdeg(n,nfix,isp),n=nen,nend,-1),isp=1,nspec)
-	  write(unfic_rdtout_degrad) 
+	  write(unfic_rdtout_degrad)
      .		((omdeg(nfix,n,isp),n=nen,nend,-1),isp=1,nspec)
    	enddo
 	close (unfic_rdtout_degrad)
@@ -407,43 +407,47 @@ c	    enddo
  	endif
 c
 	close (fic_degout)
-c 
+c
  	return
 	end
- 
+
 *-----------------------------------------------------------------------
- 
-        function terplin(xs,f,mxloi,xval)
-*
+
+        pure real function terplin(xs,f,mxloi,xval)
+				implicit none
 *	TERPLIN performs a linear interpolation
 *	of the function F(XS). MXLOI is the length
 *	of the arrays F and XS, XVAL is the
 *	X-value to where the interpolation is required
 *
-      	dimension xs(mxloi),f(mxloi)
+			  integer, intent(in) :: mxloi
+      	real,intent(in) :: xs(mxloi),f(mxloi),xval
+				integer n
+
       	if(xs(1).gt.xs(mxloi)) goto 1
       	do n=2,mxloi
           if(xval.gt.xs(n-1).and.xval.le.xs(n)) go to 3
- 	enddo
+ 	      end do
         if(xval.ge.xs(mxloi)) goto 3
+
 1       continue
         do n=mxloi,2,-1
           if(xval.lt.xs(n-1).and.xval.ge.xs(n)) goto 3
- 	enddo
+ 	      end do
+
 3       continue
         terplin=f(n-1)+ (xval - xs(n-1))*(f(n) - f(n-1))/(xs(n)-xs(n-1))
-c
-        return
-        end
+
+        end function terplin
 c
 *-----------------------------------------------------------------------
 c
-	function avf(n,np,w,emax)
+	real function avf(n,np,w,emax)
 *	calculates averages over energy
- 
+
 	include 'TRANSPORT.INC'
 	common /eng_/ e(nbren),engdd(nbren),nen
- 
+
 *	secondary production  (ionization collision)
 	dde=engdd(n)/2.
 	e1=e(n)-dde
@@ -466,18 +470,17 @@ C       (this is F backwards)
 	  return
 	end if
 	avg=fnorm(e(np)-e2-w,e(np)-e1-w,e(np),w)/(e2-e1)
-c
-	return
-	end
- 
+
+	end function avf
+
 *-----------------------------------------------------------------------
- 
+
 	subroutine crosin(lfstr,lt1,lt2,title,jspec)
- 
+
 C	Generates inelastic cross-sections by reading a	data file
- 
+
 ***********************  Single precision  ****************************
- 
+
 	implicit logical (l)
 	include 'TRANSPORT.INC'
 c
@@ -495,7 +498,7 @@ c
 	character*9 title(nbrexc,nbrsp)
 C       Thresholds for different states of the produced ion
 c 	are ethresh(nbrsp,nbrexc,nbrionst),bratio(nbrionst,nbrsp)
-c 
+c
 	do isp=1,jspec
 	  do n=1,nen
 	    if(12.0.le.e(n).and.e(n).le.23.1) then
@@ -514,14 +517,14 @@ c
  	      enddo
 	    end if
  	  enddo
-c 
+c
  	enddo
- 
+
 C	inelastic cross-section is the sum over all states
 	if(.not.lfstr.or.lt2) goto 506
 C	include O-fine-structure in inelastic cross-sections
 C	move all other cross-sections one index up
- 
+
 	do js=nexcst(3),1,-1
  	  title(js+1,3)=title(js,3)
 	  do jp=1,nbrionst
@@ -542,7 +545,7 @@ C	move all other cross-sections one index up
 	end if
  	enddo
 506	continue
- 
+
 	do isp=1,jspec
 	  do n=1,nen
 	    cin(isp,n)=0.
@@ -551,30 +554,30 @@ C	move all other cross-sections one index up
  	    enddo
  	  enddo
    	enddo
- 
+
 	return
 	end
- 
+
 *-----------------------------------------------------------------------
- 
+
 	subroutine redist(ltst,isp,kiappel)
- 
+
 *	This subroutine uses the formula given in Rees, Steward and
 *	Walker, PSS, 17, 1997-2008, 1969 for calculating the cross-
-* 	sections for the production of secondary electrons in 
+* 	sections for the production of secondary electrons in
 *	ionization processes
-*	Note that these cross-sections have the units cm**2/eV 
-*	normalized so that the integral over all secondary energies 
-*	reproduces the original cross-section (ionization as well as 
-*	exitation). The method used to calculate the degradation 
-*	cross-sections differs slightly from the Swartz method. 
+*	Note that these cross-sections have the units cm**2/eV
+*	normalized so that the integral over all secondary energies
+*	reproduces the original cross-section (ionization as well as
+*	exitation). The method used to calculate the degradation
+*	cross-sections differs slightly from the Swartz method.
 * 	The Rees-formula is used directly instead.
 *	If LTST=.TRUE. do only degradation due to ionization.
 *	If LSEC=.TRUE., the secondary production cross section is not
 *		Swartz adjusted.
- 
+
 ******************** Single precision **********************************
- 
+
 	implicit logical (l)
 	include 'TRANSPORT.INC'
 c
@@ -590,7 +593,7 @@ c
         common /cros_/ cel,cin,cinex
 c
 	common /rdist_/ omdeg(nbren,nbren,nbrsp)
- 
+
 !	First treat ionization: loss of primaries and production
 !	of secondaries
 c
@@ -611,7 +614,7 @@ c	We start from the highest energy (nen) to the lowest.
 c 	  On examine tous les ions excites
 c	  All excited ions were examined
 	   do jp=1,nionst(isp)
-c 	    On regarde le seuil pour l'ionisation excitative. 
+c 	    On regarde le seuil pour l'ionisation excitative.
 c	    We look at the ionization threshold for the excitative
 	    seuil=ethres(isp,nexcst(isp),jp)
 c 	    Ce seuil doit etre plus petit que l'energie de depart !
@@ -637,7 +640,7 @@ c 	      the energy loss goes almost away.
 	      es=max(0.,e(np)-seuil)
 	      wi=e(np)-ek         ! de facto min. energy loss of primary
 c 	      adjust if necessary
-	      cros=cinex(isp,nexcst(isp),np)*bratio(jp,isp)*seuil/wi	
+	      cros=cinex(isp,nexcst(isp),np)*bratio(jp,isp)*seuil/wi
 	      crosp=crosp+cros
 	      if(lsec) crosec=cinex(isp,nexcst(isp),np)*bratio(jp,isp)
 	      fac=fnorm(0.,ek,e(np),wi)
@@ -666,7 +669,7 @@ c 	         print*,'NP,E(NP),WI,NK,EK',np,e(np),wi,nk,ek
 	        if(lsec) then
 c 	          Secondaries :
 	          omdeg(ns,np,isp)=omdeg(ns,np,isp)+
-     .				  avf(ns,np,seuil,es)*facs	
+     .				  avf(ns,np,seuil,es)*facs
 	        else
 c 	          Secondaries :
 	          omdeg(ns,np,isp)=omdeg(ns,np,isp)+avf(ns,np,wi,ek)*fac
@@ -681,9 +684,9 @@ c
 	  cinex(isp,nexcst(isp),np)=crosp
 	  cin(isp,np)=crosp
  	 enddo
- 
+
 	 if(ltst) return
- 
+
 *	Degrade primaries due to exitation. For reference see Swartz
 *	"Optimization of discrete energy degradation", JGR 1985, p.6587
 c
@@ -695,7 +698,7 @@ c 	(0.01eV = 100 K)
  	einit = max(e(1) - engdd(1)/2.,0.01)
 	do n=2,nen
   	  dde=engdd(n)			   ! source cellwidth
-	  dde2=dde/2.  
+	  dde2=dde/2.
  	  do js=1,jsend
 	    seuil=ethres(isp,js,1)	   ! energyloss
  	    ew=max(seuil,dde)
@@ -715,7 +718,7 @@ c
 	      do i=nbot+1,ntop-1,1
    	        omdeg(n,i,isp)=omdeg(n,i,isp)+cros/dde
  	      enddo
-	      fac=(emax-e(ntop)+engdd(ntop)/2.)/engdd(ntop)
+         fac=(emax-e(ntop)+engdd(ntop)/2.)/engdd(ntop)
 	      omdeg(n,ntop,isp)=omdeg(n,ntop,isp)+cros*fac/dde
 	      fac=(-emin+e(nbot)+engdd(nbot)/2.)/engdd(nbot)
 	      omdeg(n,nbot,isp)=omdeg(n,nbot,isp)+cros*fac/dde
@@ -728,21 +731,21 @@ c
 c ----	Fin de modif
 	return
 	end
- 
+
 *-----------------------------------------------------------------------
- 
+
 	function finestr(e)
 *
 *	This function returns the cross-section for the oxygene 3P2,1,0
 *	fine structure excitation. The collision strengths are taken
-*	from Dourneuf and Nesbet, J.Phys.B,Vol.9,No.9,L241,1976 
+*	from Dourneuf and Nesbet, J.Phys.B,Vol.9,No.9,L241,1976
 *	(formula 2)
 * 	The cross-section is then calculated using Hoegy,GRL,Vol.8,541,
 *	1976 (formula 1). The cross-sections for the several levels is
 *	then added to give a total cross-section
 *
 **************************  Single precision  **************************
- 
+
 	g2=5.
 	g1=3.
 	pia=8.7974e-17
@@ -760,18 +763,18 @@ c ----	Fin de modif
 	finestr=sig21+sig20+sig10
 	return
 	end
- 
+
 *-----------------------------------------------------------------------
- 
+
 	integer function nlev(eng,ntop,isp,imod)
- 
+
 *	Function to find the grid number to which a given energy belongs
 *	input 	ENG : energy 	,	ntop : guess for an upper limit
 *	output 	NLEV : cell that contains energy ENG
 c 	imod = 1 pour ionisation, 2 pour excitation (juste pour info).
- 
+
 *************************  Single precision  ***************************
- 
+
 	include 'TRANSPORT.INC'
 	common /eng_/e(nbren),engdd(nbren),nen
 c
@@ -815,14 +818,14 @@ c
         stop 'arret dans nlev'
 c
 	end
- 
+
 *-----------------------------------------------------------------------
- 
-	function fnorm(a,b,yy,z)
- 
+
+	real function fnorm(a,b,yy,z)
+
 *	Integration with Takahashi's method to find normalization
 *	for secondary electron distribution function
- 
+
 	real ww(-17:17),xx(-17:17)
 	data ww
      .	/1.36435219e-07, 1.64996788e-06, 1.40066322e-05, 8.77183047e-05,
@@ -845,7 +848,7 @@ c
      .	 9.99006689e-01, 9.99728441e-01, 9.99938786e-01, 9.99988973e-01,
      .	 9.99998450e-01, 9.99999821e-01, 1.00000000e+00/
         data h/ 2.30999470e-01/zero/0./
- 
+
 	t(x)=((bb-aa)*x + aa+bb)/2.	! transformation [a,b] to [-1,1]
 	data nw/0/
 c
@@ -872,52 +875,50 @@ c
 	  fn=d/2.*h*fn
 	  fnorm=fnorm+fn
  	enddo
-c
-	return
-	end
+
+	end function fnorm
 
 *-----------------------------------------------------------------------
 
-	function f(x,y,z)
-*	secondary electron distribution function 
+      real function f(x,y,z)
+*	secondary electron distribution function
 *	select from various sources (Rees et al, Opal et al, etc)
-	logical lopal
-	common /distfct_/lopal
-	data zero/0./elimit/5600./
-	if(x.le.0..or.x.ge.y-z) then
-	  f=0.
-	  return
-	end if
-	if(lopal) then					! Opal et al
-	  f=1.+(x/18.)**2.1
-	  f=1./f
-	  if(x.gt.(y-z)/2.) f=0.
-	  return
-	else						! Rees et al
-	  if((x+z)/2.49.le.elimit) then
-	      f=exp(-(x+z)/31.5-339.*exp(-(x+z)/2.49))/(x+z)
+			logical lopal
+			common /distfct_/lopal
+			data zero/0./elimit/5600./
+			if(x.le.0..or.x.ge.y-z) then
+			  f=0.
+			  return
+			end if
+			if(lopal) then					! Opal et al
+			  f=1.+(x/18.)**2.1
+			  f=1./f
+			  if(x.gt.(y-z)/2.) f=0.
+			  return
+			else						! Rees et al
+			  if((x+z)/2.49.le.elimit) then
+			      f=exp(-(x+z)/31.5-339.*exp(-(x+z)/2.49))/(x+z)
      .	            *log((sqrt(y)+sqrt(max(zero,y-x-z)))
      .	              /(sqrt(y)-sqrt(max(zero,y-x-z))))
-	  else
-	    f=0.
-	  end if
-	end if
-c
-	return
-	end
+			  else
+			    f=0.
+			  end if
+			end if
+
+      end function f
 c
 c---------------------- sigma ---------------------------------------
 c
-	subroutine sigma(nspec,logint,title,excion,cel,cin,cinex,
+      subroutine sigma(nspec,logint,title,excion,cel,cin,cinex,
      .  	         ethres,bratio,nexcst,nionst,e,nen)
-c 
+c
 c	This program reads the datafile with the cross-section data
 c	and converts it to the format required by the electron transport
 c	code.
 c	The variable CRSIN contains the name of this input data file.
-c 
-        implicit none
-	include 'TRANSPORT.INC'
+c
+         implicit none
+	     include 'TRANSPORT.INC'
 
 c 	INPUTS
  	real e(nbren)
@@ -1006,7 +1007,7 @@ c
 	      cel(3,ien)=cel(2,ien)*0.5
 	    enddo
 	  endif
-c  
+c
 *	  elastic cross sections above 2200 eV are proportional to E^-1
  	  if(e(nen).ge.2200.)then
    	    fac=e(n2200)
@@ -1017,7 +1018,7 @@ c
 	    enddo
  	  endif
 c ---- 	  End of changes 05/05/92
-c 
+c
 c	  Read input inelastic cross-sections, interpolate, extrapolate
 c 	  at high energies
  	  call xline(1,fic_crsin_degrad)
@@ -1073,15 +1074,14 @@ c 	  L'etat ionise est l'etat inelastique nexcst(isp)
 	  read(fic_crsin_degrad,*)
      .		(ethres(isp,nexcst(isp),ionst),ionst=1,nionst(isp))
 c 	  branching ratio
-	  read(fic_crsin_degrad,*) 
+	  read(fic_crsin_degrad,*)
      .		(bratio(ionst,isp),ionst=1,nionst(isp))
- 	  
+
  	enddo			! fin boucle sur especes.
-c 
+c
 	close (fic_crsin_degrad)
- 
-	return
-	end
+
+	end subroutine sigma
 c
 c------------------------------------------------------------------
 c

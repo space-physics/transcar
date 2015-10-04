@@ -7,26 +7,28 @@ subroutine lec_indices(ian,imois,ijour,tu,ap,f107)
 ! chemin  path
 
 implicit none
+integer,intent(in) :: ian,imois,ijour
+real,intent(in)  :: tu
+real,intent(out) :: ap(7),f107(3)
 
-integer   :: size=2*62,offset
-integer   :: ian,imois,ijour,i,ihe
+integer   :: recsize=2*62,offset
+integer i,ihe
 integer   :: ian_deb,iday_deb,km,kj,k,num_rec
-real      :: tu,ap(7),f107(3)
+
 integer*2 :: idat(6),kdat(7,8)
 integer*4 :: ftell,num,max_num
 integer*8 :: ftelli8
 integer*2 ::tempo(124)
 
 include 'CHEMIN.INC'
-!include '../dir.include/CHEMIN.INC' !MH inserted for f2py
 
-print*,'size=',size
+print*,'record size=',recsize
 
-open(59,file=data_path(1:lpath_data)//'dir.geomag/data_geom.bin', &
-        access='direct',recl=size,form='unformatted',status='unknown')
+open(59,file='dir.data/dir.linux/dir.geomag/data_geom.bin', &
+        access='direct',recl=recsize,form='unformatted',status='old')
 
 call fseek(59,0,2)
-max_num=(ftell(59)-8)/size
+max_num=(ftell(59)-8)/recsize
 
 
 

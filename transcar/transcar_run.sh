@@ -8,10 +8,11 @@ copyTranscarFiles()
 {
 [[ -z $1 ]] && { echo "error: must specify root directory"; exit 1; }  #no log yet
 ODIR=$1
-TClog=$ODIR/transcarErrors.log
+TClog=$ODIR/transcarError.log
 TCout=$ODIR/transcar.log
 [[ ! -d $ODIR ]] && { echo "Beam dir. $ODIR does not exist" | tee -a $TClog; exit 98; }
-
+>$TClog
+>$TCout
 
 TCconfig=dir.input/DATCAR #this is hard-coded in transcar
 

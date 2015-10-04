@@ -2,7 +2,7 @@
 !
 !     Ce programme demarre le couple de programmes de transports.
 !     Anciennement : eiscat.f
-!
+        character(len=80) split,gridfn
 
         parameter (npt=500,xcoeffno=1.,ncol0=50,intemps0=300,nb_ion=6)
         logical isnant
@@ -13,6 +13,7 @@
         real longeo_position(nb_position_max)   ! Modif DA 02/02 2001
         real latgeo_position(nb_position_max)   ! Modif DA 02/02 2001
         character lecture_lat_lon*80            ! Modif DA 02/02 2001
+
 
 !       indice des ions 
 !       ---------------
@@ -200,7 +201,7 @@
 
         real qen
 
-        character*80 filein,filetemps
+        character(len=80) filetemps
         logical flgne,flgnorm
         real N2old(npt),N1old(npt),Neold(npt)
         real N4old(npt),N6old(npt),N5old(npt)
@@ -404,17 +405,16 @@
         itype=4                         !machine IBM
 !        call pwd(chemin,lpath,data_path,lpath_data)
         open(transcar_dat, file='dir.input/DATCAR', status='old')
-        rewind(transcar_dat)
-        read(transcar_dat,*)kiappel
-        read(transcar_dat,1010)filein
-        if (filein(1:1).ne.'/') then
-          filein='dir.input/'//filein(1:lenc(filein))
-        endif
-1010    format(a)
-        filein = filein(1:lenc(filein))
+            rewind(transcar_dat)
+            read(transcar_dat,*)kiappel
+            read(transcar_dat,1010) gridfn
+1010        format(a)
+            gridfn = split(gridfn,' ')
+
 !-------MZ
-        print *, 'reading parameters from file: ',filein
-        open(unfic_in_transcar,file=filein,form='unformatted',          
+        print *, 'reading parameters from file: ',gridfn
+        open(unfic_in_transcar,file='dir.input/'//gridfn,
+     &        form='unformatted',          
      &                access='direct',status='old',recl=4*2*ncol0)
 
 
@@ -554,7 +554,8 @@
         longbuf=nligne*ncol
         longrec=itype*longbuf
 
-        open(unfic_in_transcar,file=filein,form='unformatted',              
+        open(unfic_in_transcar,file='dir.input/'//gridfn,
+     &        form='unformatted',              
      &                  access='direct',status='old',recl=longrec)
 
         N_0=1.e4
@@ -773,6 +774,8 @@
         Qetop=Qetop/Qe0                         !normalize topside heat flux
 
         read(transcar_dat,1010) prec_fname
+        prec_fname = split(prec_fname,' ')
+        
         read(transcar_dat,*) precint
         read(transcar_dat,*) precext
 !        read(transcar_dat,*) tstartprec
@@ -785,8 +788,8 @@
 
 !-------Read file containing electron precipitation information, this is messy
 !and should be rewritten at some point.
-        prec_fname='dir.input/'//prec_fname(1:lenc(prec_fname))
-        prec_fname=prec_fname(1:lenc(prec_fname))
+        prec_fname='dir.input/'//prec_fname
+
        print *, 'reading PRECIPITATION parameters from file: ',
      &   prec_fname
         open(313,file=prec_fname,status='old')
@@ -8195,3 +8198,14 @@ C-----------------------------------------------------------------------
 
         end function signe
 C-----------------------------------------------------------------------
+      ! split a string into 2 either side of a delimiter token
+      character(len=80) function split(instr,  delm)
+        implicit none
+        CHARACTER(len=80),intent(in) :: instr
+        character,intent(in) :: delm
+        INTEGER :: idx
+
+        idx = scan(instr,delm)
+        split = instr(1:idx-1)
+
+      END function split

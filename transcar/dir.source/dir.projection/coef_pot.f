@@ -2,7 +2,7 @@
      &		            Lmin,Lmax,latequi,ddp,ierr)
 Cf2py intent(in) iyd,tu,kp
 Cf2py intent(out) ndeg,mdeg,phipot,Lmin,Lmax,latequi,ddp,ierr
-	
+
 	implicit none
 
         include '../dir.include/TRANSPORT.INC'
@@ -15,7 +15,7 @@ Cf2py intent(out) ndeg,mdeg,phipot,Lmin,Lmax,latequi,ddp,ierr
 	real kp,ddp,buffer(1000)
 	real*8 latequi,Lmin,Lmax
 	real*8 phipot(1),phi(3*npt)
-	
+
 	real*8 tempsdeb,tempsfin,xt,xtd,xtf
 	real*8 latlim,Linf,Lsup
 	logical flgini
@@ -84,10 +84,9 @@ c        4<=Kp<=6-
        data Linf,Lsup,latlim /61.5d0,72.5d0,55.d0/
 
 	if (flgini) then
-	  ierr=1	
+	  ierr=1
 	  flgini=.false.
-	  open(87,file=data_path(1:lpath_data)
-     &                 //'dir.projection/varpot.dat',
+	  open(87,file='dir.data/dir.linux/dir.projection/varpot.dat',
      &       form='unformatted',access='direct',status='old',recl=40,
      &	     iostat=ierr,err=999)
 c     &		form='formatted',status='old',iostat=ierr,err=999)
@@ -122,12 +121,11 @@ c     &		form='formatted',status='old',iostat=ierr,err=999)
 	    enddo
 	  endif
 	else
-	  open(87,file=data_path(1:lpath_data)
-     &                 //'dir.projection/varpot.dat',
+	  open(87,file='dir.data/dir.linux/dir.projection/varpot.dat',
      &        form='unformatted',access='direct',status='old',
      &	     recl=len_rec,iostat=ierr)
 c     &		form='formatted',status='old',iostat=ierr)
-	
+
 	  xt=iyd+tu*1.d-6
           if (iyd.lt.1900000) xt=xt+1900000.d0
 
@@ -156,8 +154,7 @@ c	    read(87,*) (phipot(i),i=1,(2*mdeg+1)*(ndeg+1))
 	    enddo
 	  enddo
 	  close(87)
-	
+
 	endif
-	
-	return
-	end
+
+      end subroutine coeff_pot

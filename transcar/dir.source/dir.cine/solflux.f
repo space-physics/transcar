@@ -3,11 +3,11 @@ c----------------------------------------------------------------------
 c
  	subroutine solarflux (iout,yyddd,nen,e,Pflx,Eflx,impress)
 c
-c 	Cette subroutine calcule un flux solaire a une date donnee 
+c 	Cette subroutine calcule un flux solaire a une date donnee
 c 	sur une grille d'energie e.
 c 	La source est :
-c     	Tobiska, W.K., Revised solar extreme ultraviolet flux 
-c       model, JATP, (accepted) 1991. The preprint was XXVIII 
+c     	Tobiska, W.K., Revised solar extreme ultraviolet flux
+c       model, JATP, (accepted) 1991. The preprint was XXVIII
 c       COSPAR, The Hague, paper STP I.2-P1, 1990.
 c 	Le modele Tobiska est appele, puis les energies sont re-
 c 	ordonnees et le flux est interpole sur la grille d'entree.
@@ -99,15 +99,15 @@ c 	Interpolation en log/log du flux solaire sur les energies
  	  PflxE(ien) = 10.**PflxE(ien)
  	enddo
 c
-c 	Quelle est la meilleure interpolation? En lin/log sur les 
+c 	Quelle est la meilleure interpolation? En lin/log sur les
 c 	longueurs d'onde ou en log/log sur les energies?
-c 	Mystere... 
+c 	Mystere...
  	do ien = 1,nen
  	  Pflx(ien) = PflxW(ien)
  	enddo
 c
 c 	Que faut-il conserver? L'energie dans chaque boite, l'energie
-c 	totale, le nombre de photons dans chaque boite, le nombre 
+c 	totale, le nombre de photons dans chaque boite, le nombre
 c	de photons total?
 c 	Conservation du nombre de photons total:
  	totin = 0.
@@ -120,25 +120,25 @@ c 	Conservation du nombre de photons total:
  	enddo
  	if (totout.ne.0.)then
  	  rapp = totin/totout
- 	  write(6,*)'rapport de normalisation : ',rapp
- 	  write(iout,*)'rapport de normalisation : ',rapp
+ 	  write(6,*)'standard report : ',rapp
+ 	  write(iout,*)'standard report : ',rapp
  	  do ien = 1,nen
  	    Pflx(ien) = Pflx(ien)*rapp
  	  enddo
  	endif
-c 	
+c
  	write(iout,*)
- 	write(iout,*)'Apres interpolation et normalisation du nombre',
-     . 	 	     ' total de particules'
+ 	write(iout,*)'After interpolation and normalization of the total',
+     . 	 	     ' number of particles'
  	write(iout,*)'Energies [eV]'
  	write(iout,1040)(e(ien),ien=1,nen)
- 	write(iout,*)'Longueurs d''ondes [nm]'
+ 	write(iout,*)'wavelength [nm]'
  	write(iout,1040)(ondenm(ien),ien=1,nen)
  	write(iout,*)'Flux [Photons.cm-2.s-1.nm-1]'
  	write(iout,1040)(Pflx(ien),ien=1,nen)
 1040 	format(7(1pe10.2))
 c
- 	end
+ 	end subroutine solarflux
 c
 c-----------------------------------------------------------------------
 c
@@ -146,15 +146,15 @@ c
      .			eVmid,wmid,Pflx,Eflx,impress)
 c
 c 	Re-ecrit en subroutine 07/93 (jl)
-c 	PARAMETRES D'ENTREE : 
+c 	PARAMETRES D'ENTREE :
 c	yyddd :  Enter YYDDD date between 68172 - 88366: '
 c	numday
 c 	PARAMETRES DE SORTIE
 c 		TABLEAUX REELS DE 39 ELEMENTS
-c 	w1nm : borne inf de la boite de longueur d'onde [nm] pour le 
+c 	w1nm : borne inf de la boite de longueur d'onde [nm] pour le
 c 		flux
 c 	eVinf : borne inf de la boite d'energie [eV] pour le flux
-c 	w2nm : borne sup de la boite de longueur d'onde [nm] pour le 
+c 	w2nm : borne sup de la boite de longueur d'onde [nm] pour le
 c 		flux
 c 	eVsup : borne inf de la boite d'energie [eV] pour le flux
 c 	eVmid : milieu de la boite d'energie [eV].
@@ -165,15 +165,15 @@ c
 c	program euv91
 C********1*********2*********3*********4*********5*********6*********7**
 C     This program creates the solar EUV irradiance for 18-1050 A based
-C     on a multiple linear regression model for solar EUV flux. 
-C     Reference: Tobiska, W.K., Revised solar extreme ultraviolet flux 
-C     model, JATP, (accepted) 1991. The preprint was XXVIII 
-C     COSPAR, The Hague, paper STP I.2-P1, 1990. (See accompanying file 
+C     on a multiple linear regression model for solar EUV flux.
+C     Reference: Tobiska, W.K., Revised solar extreme ultraviolet flux
+C     model, JATP, (accepted) 1991. The preprint was XXVIII
+C     COSPAR, The Hague, paper STP I.2-P1, 1990. (See accompanying file
 C     EUV91.TXT)
 C     Files required for model to run:
 C	     euv91coef.txt	= ASCII file of model coefficients
 C	     euv91index2.dat	= ASCII file of proxy values
-C     The model values produced in this program include: energy and 
+C     The model values produced in this program include: energy and
 C	photon flux for 39 EUV wavelength intervals or lines
 C     Files created by running this model: fyyddd.dat (ASCII)
 C      Note: DEC equipment requires IDINT function to be JINT
@@ -211,7 +211,7 @@ C	temp		temporary vector (6)
 C	row		loop control for indices row number on a date
 C	colum		loop control for indices column number on a date
 C********1*********2*********3*********4*********5*********6*********7**
-C	implicit	none	
+C	implicit	none
 	include 'TRANSPORT.INC'
 	integer		yyddd,i,j,numday,num
 	real		c(12,52),indice(10,3750),S(4),w1(39),w2(39)
@@ -237,7 +237,7 @@ c		read  (*,'(I10)') numday
  	date = real(yyddd)
 
 C********1*********2*********3*********4*********5*********6*********7**
-C	Calculate the flux for each day by first determining the date 
+C	Calculate the flux for each day by first determining the date
 C	and proxy values for that date then calculating the flux.
 C********1*********2*********3*********4*********5*********6*********7**
 	do 10 i=0,numday-1
@@ -265,8 +265,8 @@ C********1*********2*********3*********4*********5*********6*********7**
      .	    (2(1F8.1,1x),1f8.1,1x,2(1F7.2,1x),1f7.2,6x,2(1p1E9.3,3x))
 c
  	  if (impress.eq.1)then
-	    write (iout,1000)yyddd+i 
-	    write (iout,1010) 
+	    write (iout,1000)yyddd+i
+	    write (iout,1010)
  	  endif
 c 	  w1 et w2 sont en angstrom. On multiplie par 10 pour avoir des
 c 	  nm.
@@ -278,7 +278,7 @@ c 	  nm.
  	    eVinf(j)= 12400./w2(j)
  	    Pflx(j) = Pflux(j)
 c
-c 	    wave(j) est defini par Tobiska comme le milieu de la 
+c 	    wave(j) est defini par Tobiska comme le milieu de la
 c 	    boite en longueur d'onde. Le flux d'energie est alors
 c 	    calcule selon pflux*12400/wave. Dans ce cas, on a :
 c 	    eVmid(j)= 12400./wave(j)
@@ -299,12 +299,12 @@ c-----------------------------------------------------------------------
 c
 	subroutine rddata
 C********1*********2*********3*********4*********5*********6*********7**
-C	This subroutine reads in the coefficients and indices into the 
-C	common block COEFF. It may seem awkward; however, it is useful 
-C	to keep the coefficient and indices ASCII files in their 
+C	This subroutine reads in the coefficients and indices into the
+C	common block COEFF. It may seem awkward; however, it is useful
+C	to keep the coefficient and indices ASCII files in their
 C	present format for easy transfer to other users.
 C********1*********2*********3*********4*********5*********6*********7**
-C	implicit	none	
+C	implicit	none
 	include 'TRANSPORT.INC'
 	integer		i,j,num,sign,itemp(6)
 	integer		expsin,expnum,frcsin,frcnum
@@ -339,17 +339,16 @@ c
  	enddo
 
 C********1*********2*********3*********4*********5*********6*********7**
-C	Get average wavelength and read in the coefficients 
+C	Get average wavelength and read in the coefficients
 C********1*********2*********3*********4*********5*********6*********7**
 	do 10 i = 1,39
 	  wave(i) = (w1(i)+w2(i))/2.
 10	continue
 
 	open (unit=fic_euvcoeff,
-     .		file=data_path(1:lpath_data)
-     &                     //'euv91coef.txt',
+     .		file='dir.data/dir.linux/euv91coef.txt',
      .		status='old',form='formatted')
-	do 20 i = 1,3 
+	do 20 i = 1,3
 	  read(fic_euvcoeff,'(A)') line1
 20	continue
 	do 30 i = 1,52
@@ -361,25 +360,25 @@ C********1*********2*********3*********4*********5*********6*********7**
 	  num = 0
 	  number = 0.
 	  sign = 1
-  	  read (fic_euvcoeff,'(2(I4,1x),I1,1x,G12.5E4,1x,A51)') 
+  	  read (fic_euvcoeff,'(2(I4,1x),I1,1x,G12.5E4,1x,A51)')
      1		itemp(1),itemp(2),itemp(3),c(4,i),line2
 	  c(1,i) = dble(itemp(1))
 	  c(2,i) = dble(itemp(2))
 	  c(3,i) = dble(itemp(3))
 	  do 40 j = 1,51
-	    if (line2(j:j) .ne. ' ') then 
-	      if (line2(j:j) .eq. '-') then 
-		if (j .eq. 1) then 
+	    if (line2(j:j) .ne. ' ') then
+	      if (line2(j:j) .eq. '-') then
+		if (j .eq. 1) then
 		  sign = -1
 		else if (line2(j-1:j-1) .eq. ' ') then
 		  sign = -1
 		else if (expont .eq. 'y') then
 		  expsin = -1
 		endif
-	      else if (line2(j:j) .eq. '.') then 
+	      else if (line2(j:j) .eq. '.') then
 		frcsin = -1
 	        frcnum = 1
-	      else if (expont .eq. 'y') then 
+	      else if (expont .eq. 'y') then
 		if (line2(j:j) .eq. '+') then
 		  expsin = 1
 		else if (line2(j:j) .eq. '0') then
@@ -389,13 +388,13 @@ C********1*********2*********3*********4*********5*********6*********7**
 		endif
 	      else if (line2(j:j) .eq. 'e') then
 		expont = 'y'
-	      else 
-		if (frcsin .eq. -1) then 
+	      else
+		if (frcsin .eq. -1) then
 		  number = (ichar(line2(j:j))-ichar('0')) *
      1			(10.**(frcsin*frcnum)) + number
 		  frcnum = frcnum+1
-		else if (frcsin .eq. 1) then 
-		  number = (ichar(line2(j:j))-ichar('0')) + 
+		else if (frcsin .eq. 1) then
+		  number = (ichar(line2(j:j))-ichar('0')) +
      1			(10.**(frcsin*frcnum)) * number
 		  frcnum = 1
 	        endif
@@ -418,9 +417,7 @@ C********1*********2*********3*********4*********5*********6*********7**
 C********1*********2*********3*********4*********5*********6*********7**
 C	Read in the indices
 C********1*********2*********3*********4*********5*********6*********7**
-	open(unit=fic_euvindex,file=
-     .	data_path(1:lpath_data)
-     &        //'euv91index2.dat'
+	open(unit=fic_euvindex,file='dir.data/dir.linux/euv91index2.dat'
      .		,status='old',form='formatted')
   	do 50 i = 1,2
 	  read(fic_euvindex,'(A)') line1
@@ -447,14 +444,14 @@ c
 
 	subroutine flux
 C********1*********2*********3*********4*********5*********6*********7**
-C	This subroutine uses the coefficients and indices in the 
+C	This subroutine uses the coefficients and indices in the
 C	common block COEFF to calculate the EUV energy flux for a date.
-C	For mid 1968 through early 1977 when neither Lyman alpha nor 
+C	For mid 1968 through early 1977 when neither Lyman alpha nor
 C	He I 10830 were present, the model calculates the chromospheric
 C	emission using F10.7 linear relationship with Lyman alpha based
 C	upon Barth et al., GRL, 17, 571-574, 1990.
 C********1*********2*********3*********4*********5*********6*********7**
-C	implicit	none	
+C	implicit	none
 	integer		i,j
 	real		c(12,52),indice(10,3750),sumflx,Eflux(39)
 	real		Pflux(39),wave(39),w1(39),w2(39)
@@ -470,8 +467,8 @@ C********1*********2*********3*********4*********5*********6*********7**
 	if  (S(2) .lt. near0) S(2) = S(1)
 
 C********1*********2*********3*********4*********5*********6*********7**
-C	Create the empirically modeled flux from Equations 3, 4, 5 in 
-C	JATP paper. Note that the "W" scaling function is now unused 
+C	Create the empirically modeled flux from Equations 3, 4, 5 in
+C	JATP paper. Note that the "W" scaling function is now unused
 C	and all elements are set to 1. in this version.
 C********1*********2*********3*********4*********5*********6*********7**
 	do 10 j=1,52
@@ -547,7 +544,7 @@ C********1*********2*********3*********4*********5*********6*********7**
 C	This subroutine gets the row and column indicators for a given
 C	date.
 C********1*********2*********3*********4*********5*********6*********7**
-C	implicit	none	
+C	implicit	none
 	integer		i,row,colum
 	real		c(12,52),indice(10,3750),Eflux(39)
 	real		Pflux(39),wave(39),w1(39),w2(39),date,S(4)
@@ -555,7 +552,7 @@ C	implicit	none
 
 C********1*********2*********3*********4*********5*********6*********7**
 C	Find the row and column numbers for indices on a given date then
-C	place the proxy values for that date into "S" variable. Stop on 
+C	place the proxy values for that date into "S" variable. Stop on
 C	invalid date.
 C********1*********2*********3*********4*********5*********6*********7**
 	do 10 i=1,3750

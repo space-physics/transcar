@@ -32,9 +32,9 @@ C         RZ12 (-COV)   12-MONTHS-RUNNING MEAN OF SOLAR SUNSPOT NUMBER
 C                          (OR EQUIVALENT F10.7 SOLAR RADIO FLUX AS
 C                          NEGATIVE NUMBER)
 C         MMDD (-DDD)   DATE (OR DAY OF YEAR AS A NEGATIVE NUMBER)
-C         DHOUR         LOCAL TIME (OR UNIVERSAL TIME + 25) IN DECIMAL 
+C         DHOUR         LOCAL TIME (OR UNIVERSAL TIME + 25) IN DECIMAL
 C                          HOURS
-C         HEIBEG,       BEGIN, END, AND STEPWIDTH OF HEIGHT RANGE  
+C         HEIBEG,       BEGIN, END, AND STEPWIDTH OF HEIGHT RANGE
 C          HEIEND,HEISTP   IN KM (MAXIMUM NUMBER OF STEPS IS 50 !!)
 C         JF(1:12)      TRUE/FALSE FLAGS FOR SEVERAL OPTIONS
 C          JF(1)=.TRUE.[.FALSE.]   ELECTRON DENSITY IS [NOT] CALCULATED
@@ -74,7 +74,7 @@ C                 AND, IF JF(6)=.FALSE.:
 C              OUTF(10,*)  PERCENTAGE OF CLUSTER IONS IN %
 C              OUTF(11,*)  PERCENTAGE OF N+ IONS IN %
 C
-C            OARR(1:30)   ADDITIONAL OUTPUT PARAMETERS         
+C            OARR(1:30)   ADDITIONAL OUTPUT PARAMETERS
 C              OARR(1) = NMF2/M-3        OARR(2) = HMF2/KM
 C              OARR(3) = NMF1/M-3        OARR(4) = HMF1/KM
 C              OARR(5) = NME/M-3         OARR(6) = HME/KM
@@ -129,7 +129,7 @@ C* MONTH "mm" IS EXPECTED IN THE BINARY FILE "CCIRmm.BIN" AND    *
 C* THE URSI SET IN "URSImm.BIN". IF YOU USE THE ASCII CODED      *
 C* FILES "CCIRmm.ASC", YOU HAVE TO INCORPORATE THE CHANGES       *
 C* INDICTED IN PROGRAM SECTION ENTITLED "READ CCIR COEFFICIENT   *
-C* SET FOR CHOSEN MONTH."                                        * 
+C* SET FOR CHOSEN MONTH."                                        *
 C*****************************************************************
 C*****************************************************************
 C*****************************************************************
@@ -159,11 +159,11 @@ C*****************************************************************
      &		/BLOCK2/B0,B1,C1      /BLOCK3/HZ,T,HST,STR
      &  	/BLOCK4/HME,NME,HEF   /BLOCK5/NIGHT,E
      &		/BLOCK6/HMD,NMD,HDX   /BLOCK7/D1,XKK,FP30,FP3U,FP1,FP2
-     &  	/BLOCK8/HS,TNHS,XSM,MM,DTI,MXSM    	
+     &  	/BLOCK8/HS,TNHS,XSM,MM,DTI,MXSM
      &  	/BLOTN/XSM1,TEXOS,TLBDH,SIGMA /BLOTE/AHH,ATE1,STTE,DTE
      &		/BLO10/BETA,ETA,DELTA,ZETA	 /ARGEXP/ARGMAX
       EXTERNAL 		XE1,XE2,XE3,XE4,XE5,XE6,TEDER
-      DATA  HOA  /300.,400.,600./,   XNAR       /3*0.0/,   
+      DATA  HOA  /300.,400.,600./,   XNAR       /3*0.0/,
      &      XDELS   /3*5.,10./,      DNDS   /.016,.01,2*.016/,
      &      DDO	  /9,5,5,25/,        DO2        /5,5/,
      &      B0B1  /.755566,.778596,.797332,.812928,.826146/
@@ -240,8 +240,8 @@ C
         IF(TENEOP) THEN
            DO 8154 JXNAR=1,3
               XNAR(JXNAR)=OARR(JXNAR+2)
-	      TCON(JXNAR)=.FALSE. 
-8154	      IF(XNAR(JXNAR).GT.0.) TCON(JXNAR)=.TRUE. 
+	      TCON(JXNAR)=.FALSE.
+8154	      IF(XNAR(JXNAR).GT.0.) TCON(JXNAR)=.TRUE.
            ENDIF
 
       if(icalls.gt.1) goto 8201
@@ -263,7 +263,7 @@ c	  write(*,*) 'Ne, foF2: URSI model is used.'
 c	else
 c	  write(*,*) 'Ne, foF2: CCIR model is used.'
 c	endif
-2889  if((.not.NOION).and.(DY)) 
+2889  if((.not.NOION).and.(DY))
      &	   write(*,*) 'Ion Com.: Using Danilov-Yaichnikov-1985.'
       if((.not.NOTEM).and.(TENEOP))
      &     write(*,*) 'Te: Temperature-density correlation is used.'
@@ -364,7 +364,7 @@ C!!!!!!! F-REGION PARAMETERS AND E-PEAK !!!!!!!!!!!!!!!!!!!!!!!!!!
       NME=1.24E10*FOE*FOE
       HME=105.0
       IF((FOF2IN).AND.(HMF2IN)) GOTO 501
-      IF(URSIF2.NEqv.URSIFO) GOTO 7797 
+      IF(URSIF2.NEqv.URSIFO) GOTO 7797
       IF((MONTH.EQ.MONTHO).AND.(RG.EQ.RGO)) GOTO 4292
       IF(MONTH.EQ.MONTHO) GOTO 4291
 C
@@ -372,7 +372,7 @@ C READ CCIR COEFFICIENT SET FOR CHOSEN MONTH....................
 C
 7797    WRITE(FILNAM,104) MONTH+10
 104     FORMAT('dir.cine/dir.iri/CCIR',I2,'.BIN')
- 1344    OPEN(IUCCIR,FILE=data_path(1:lpath_data)
+ 1344    OPEN(IUCCIR,FILE='dir.data/dir.linux/'
      &		          //FILNAM(1:lenc(filnam)),STATUS='OLD',
      &		ERR=8448,FORM='UNFORMATTED')
 	lread=1
@@ -392,7 +392,7 @@ C
 	if(URSIF2) then
 	  WRITE(FILNAM,1144) MONTH+10
 1144      FORMAT('dir.cine/dir.iri/URSI',I2,'.BIN')
-1244      OPEN(IUCCIR,FILE=data_path(1:lpath_data)
+1244      OPEN(IUCCIR,FILE='dir.data/dir.linux/'
      &		          //FILNAM(1:lenc(filnam)),STATUS='OLD',
      &		ERR=8448,FORM='UNFORMATTED')
 	  lread=2
@@ -480,7 +480,7 @@ C
 1501    HMF1=HMF2
 	HZ=HMF2
 	HEF=HME
-	IF(.not.BOTTO) GOTO 2727  
+	IF(.not.BOTTO) GOTO 2727
 	B1=3.0
 C!!!!!!! INTERPOLATION FOR B0 OUT OF ARRAY B0F !!!!!!!!!!!!!!!!!!!!!
 	if(GULB0) then
@@ -495,7 +495,7 @@ C!!!!!!! F1-REGION PARAMETERS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       F1REG=.FALSE.
       HMF1=0.
       PNMF1=0.
-      C1=0.  
+      C1=0.
       IF(NIGHT.OR.(SEASON.EQ.4)) GOTO 150
         FOF1=FOF1ED(ABSMBR,R,XHI)
         IF(FOF1.LT.1.E-3) GOTO 150
@@ -749,7 +749,7 @@ C !!!!!!!!!! TN < TI < TE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         IF(TIN1.LT.TNN1) TIN1=TNN1
 
 C !!!!!!!!!! TI(430KM,LT) FROM STEP FUNCTION !!!!!!!!!!!!!!!!!!
-	TI1=TIN1  
+	TI1=TIN1
  	IF(TID1.GT.TIN1) TI1=HPOL(HOUR,TID1,TIN1,SAX,SUX,1.,1.)
 
 C !!!!!!!!!! TANGENT ON TN DETERMINES HS !!!!!!!!!!!!!!!!!!!!!!
@@ -861,7 +861,7 @@ c
       ELSE
       	YMAXX=Y
       ENDIF
-      GOTO 7102 
+      GOTO 7102
 7104  H0O=X-DELX/2.
 7101	if(y.lt.100.0) goto 7103
           rdomax=rdomax-0.01
@@ -873,7 +873,7 @@ c
 c calculate parameters for O2+ profile
 c
 	hfixo2  = pf3o(1)
-	rdo2mx = pf3o(2) 
+	rdo2mx = pf3o(2)
       DO 7105 L=1,2
 		I = L * 2
       		HO2(L)=PF3O(1+I)+PF3O(2+I)*ZZZ1

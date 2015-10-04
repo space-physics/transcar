@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from __future__ import division
 import logging
 from collections import deque
@@ -5,12 +6,9 @@ from os.path import join,abspath
 from os import makedirs
 from subprocess import Popen
 #
-import sys
-sys.path.append('../../transcar-utils')
-from parseTranscar import readTranscarInput
-#
+from transcarread.parseTranscar import readTranscarInput
 from histutils.cp_parents import cp_parents
-
+#
 transcarexe = 'transconvec_13.op.out'
 fileok = 'finish.status'
 # hard-coded in Fortran
@@ -22,7 +20,7 @@ def runTranscar(odir,errfn,msgfn):
     #we need cwd feature of Popen that call() doesn't have
         exe = abspath(join(odir,transcarexe))
         try:
-            proc = Popen(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell = False)
+            proc = Popen(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
             out,err = proc.communicate() #this makes popen block (we want this)
             #print(out,err) #will be none since we didn't use PIPE
         except IOError as e:

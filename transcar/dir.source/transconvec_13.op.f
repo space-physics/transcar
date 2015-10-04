@@ -1130,8 +1130,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
       tempstube=tempsfin
       endif
 
-
+!------------
 ! initialisation du temps et ouverture du fichier "initialization time and opening the file"
+      print*,"initialization time and opening the file"
 
       tempsint=0.d0
       tempsort=0.d0
@@ -1154,11 +1155,14 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
       call lec_indices(iannee,imois,ijour,tu,ap,f107)
       kp=ap2kp(ap(2))
       ikp=kp*3.
+
+      print*,'call convec'
+
       call convec(iyd,temps,kp,dlongeo,dlatgeo,
      &              dlonmag,dlatmag,dlonref,dx0,pot,flgpot)
           longeo=dlongeo
           latgeo=dlatgeo
-
+      print*,'done convec, longeo,latgeo',longeo,latgeo
 
       chi=acos(coskhi(latgeo,longeo,temps/3600.,iannee,ijour,i1))
       chideg=chi*180./3.14159265
@@ -1208,7 +1212,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 !
 ! definitions des parametres initiaux et sauvegarde initiale "definitions of initial parameters and initial backup"
 !
-
+        print*,"definitions of initial parameters and initial backup"
         flagatmos=.true.
 
         do i=1,nx
@@ -1229,6 +1233,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
           goto 246
         endif
     
+        print*,'call atmos'
         call atmos(iyd,sngl(temps),stl,alt,latgeo,longeo,jpreci,f107,
      &           ap,Nenew,Tenew,T1new,nx,kiappel,file_cond)
 
@@ -1351,6 +1356,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
         enddo
         dt_max=5.*dt_max/R0
     
+       print*,'call pas_de_temps'
        call pas_de_temps(iyd,temps,dt,postint,dto,postinto)
        tempsint=postint
        tempsort=sortie
@@ -2660,7 +2666,7 @@ CCCCC                                                                           
 ![[[    H+ momentum equation resolution
 
       call velocity(Velim,Ipos1,Iposnp,deltat_2)
-    
+      print*,'H+ momentum equation resolution'
       do i=1,nx
 
           Tr1=T_0*T2new(i)
@@ -2768,6 +2774,7 @@ CCCCC                                                                           
       call sources(Ipos1,Iposn,deltat_2,7,zero,D7,0.,0.)
           lbc=1.
           rbc=1.
+      print*,'call lcpfct'
       call lcpfct(U2old,U2new,Ipos1,Iposn,
      &              lbc,0.,0.,U2new(np),.false.,0)
           do i=1,nx
@@ -3096,7 +3103,7 @@ CCCCC                                                                           
 ![[[    N+ momentum equation resolution
     
       call velocity(Velnm,Ipos1,Iposnp,deltat_2)
-    
+      print*,'N+ momentum equation resolution'
       do i=1,nx
 
           nunH (i)=0.145e-9*Nh(i)                               *t0
@@ -3236,7 +3243,7 @@ CCCCC                                                                           
 
 
 ![[[    H+ heat flow equation resolution
-
+      print*,'H+ heat flow equation resolution'
       do i=1,nx
 
         C2a(i)=-2.2*q2new(i)
@@ -3393,7 +3400,7 @@ CCCCC                                                                           
       call velocity(Veljq,Ipos1,Iposnp,deltat_2)
 
 ![[[    O+ heat flow equation resolution
-
+      print*,'O+ heat flow equation resolution'
       do i=1,nx
 
         C2a(i)=-2.2*Cji*q1new(i)
@@ -3520,7 +3527,7 @@ CCCCC                                                                           
 
 
 !]]]
-
+      print*,'call velocity'
       call velocity(Velnq,Ipos1,Iposnp,deltat_2)
 
 ![[[    N+ heat flow equation resolution
@@ -3653,7 +3660,7 @@ CCCCC                                                                           
     
 
 ![[[    Electron energy and heat flow equation resolution (1)
-
+      print*,'Electron energy and heat flow equation resolution (1)'
     
       do i=1,nx
 

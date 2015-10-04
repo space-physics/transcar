@@ -1,10 +1,6 @@
-c
-c----------------------------------------------------------------------
-c
         subroutine quelle_grille(emax,nen,centE,botE,ddeng,
      &                          nang,nango2,gmu,gwt,angzb)
 
-c
  	    implicit none
 
         include 'TRANSPORT.INC'
@@ -29,16 +25,17 @@ c 	degrad.f
  	    integer type_de_grille,lenc,idess(2),iprint1,iprint2,iprint3,
      &		iprint4
  	    logical logint,lt1,lt2,lt3,lt4,lopal
-        character*80 crsin,crs,rdt
+        character*80 crsin,crs,rdt,crsfn
 c
  	    real pideg
         data pideg/57.29578/
 c
 c 	On stoke les parametres de calcul de degrad.
-        open(fic_datdeg,file=data_path(1:lpath_data)
-     &                             //'dir.cine/DATDEG')
+        open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
+     &       status='old')
+
         rewind(fic_datdeg)
-     	read(fic_datdeg,*)type_de_grille
+     	read(fic_datdeg,*) type_de_grille
      	if(type_de_grille .eq.0) then
      	  close(fic_datdeg)
      	  return
@@ -150,8 +147,10 @@ c           Calcul des energies de bas de grille         :
 c
 c       Lecture des grilles d'energie.
 c	goto 314
-        open(icrsin,file=data_path(1:lpath_data)
-     &                         //crs,status='OLD',form='UNFORMATTED',
+        crsfn = 'dir.data/dir.linux/'//crs
+        print*,'attempting to open ',crsfn
+        open(icrsin,file=crsfn,
+     &       status='OLD',form='UNFORMATTED',
      &          iostat=iost,err=992)
         rewind icrsin
         read(icrsin) nen,i1,i2,i3
@@ -175,9 +174,10 @@ c            enddo
 c
 c 	On previent maintenant degrad de ou il faut lire les sections
 c 	efficaces.
-        open(fic_datdeg,file= data_path(1:lpath_data)
-     &                              //'dir.cine/DATDEG')
-        rewind(fic_datdeg)
+        print*,'attempting to open DATDEG file'
+        open(fic_datdeg,file='/dir.data/dir.linux/dir.cine/DATDEG',
+     &       status='replace',err=993)
+!        rewind(fic_datdeg)
      	write(fic_datdeg,1010)type_de_grille
         write(fic_datdeg,1020) crsin
         write(fic_datdeg,1030) crs
@@ -282,6 +282,11 @@ c
         enddo
 c
  	    return
+
 992     print*,' Cross-section file is in error. Status=',iost
      	stop
-        end
+
+993     print*,' trouble writing crs file'
+        stop
+
+        end subroutine quelle_grille

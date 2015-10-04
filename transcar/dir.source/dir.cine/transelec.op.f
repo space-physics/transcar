@@ -1,26 +1,38 @@
-c
-        subroutine transelec(npt,iyd,UTsec,glat,glong,stl,f107,
+      subroutine transelec(npt,iyd,UTsec,glat,glong,stl,f107,
      .          ap,chi,Ne,Te,Tj,nx,Nh,No,No2,Nn2,Nn,Tn,indlim,jpreci0,
      .          N_0,T_0,kiappel,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
      .          Ne_sup,courant_sup,Te_sup,Chaleur_sup)
 c
 c 	Ce programme est un driver. 
+c       This program is a driver.
 c
-c 	- Lit toutes les donnees necessaires a une execution
-c		--> si kiappel = 1, ce sont les donnees 
-c 		    contenue dans ELEC et NEUTRAL pour un run unique
-c 		    du programme.
-c 		--> si kiappel = 2, ce sont les donnees necessaires
-c		    au transport fluide
+c 	- Lit toutes les donnees necessaires a une execution. 
+c         Reads all the required data to an execution.
 c
-c 	- appelle le programme de degradation d'energie
+c		--> si kiappel = 1, ce sont les donnees contenue dans ELEC et NEUTRAL pour un run unique du programme. 
+c		    if kiappel = 1, the data are contained in ELEC and NEUTRAL for a single run of the program.
 c
-c 	- appelle si necessaire celui de calcul de la photoionisation
-c 		--> si jpreci = 0, 2, 5 ou 6
+c 		--> si kiappel = 2, ce sont les donnees necessaires au transport fluide. 
+c		    if kiappel = 2, these are the necessary data transmission fluid 
+c
+c 	- appelle le programme de degradation d'energie. 
+c	  program called Energy degradation.
+c
+c 	- appelle si necessaire celui de calcul de la photoionisation. 
+c         call if necessary the calculation photoionization
+c 		--> si jpreci = 0, 2, 5 ou 6. if jpreci = 0, 2, 5 or 6.
 c
 c 	- appelle le code de transport
+c	  called the transport code
 c
 c 	- eventuellement, interpolle sur les grilles du transfluide
+c	  possibly interpolated on the fence transfluide	
+c
+c       The necessary data for a code to another by the intermediary are non-formatted files.
+c       This method is costly in time MAYBE, but very practical.
+c	Each program runs with its own data files that says what to print, draw, or find the data of cross sections, solar flux ...
+c	Again, this way of proceeding can be costly in time, but more comfortable to use than go through commons which regulate the switches.
+c	DO NOT MODIFY THIS WAY TO MAKE if you want an easy followed this 'black box' of transport (in particular releases).
 c
 c 	Les donnees necessaires d'un code a l'autre se font par l'inter
 c 	mediaire de fichiers non formattes. Cette methode est peut
@@ -75,36 +87,36 @@ c       upward.
 c
 c ====================================================================
 c
- 	implicit none
+        implicit none
 c
         integer npt
 c
         include 'TRANSPORT.INC'
 c
- 	integer nspec,nalt,jpreci0,jpreci,modatmos,neutspe
- 	real zbot,ztop,hrloc,ut,year,tempexo,f107(3),Apind,day,
+        integer nspec,nalt,jpreci0,jpreci,modatmos,neutspe
+        real zbot,ztop,hrloc,ut,year,tempexo,f107(3),Apind,day,
      . 	 	glat,glong,albedo,altcm(nbralt),altkm(nbralt),
      .		tneutre(nbralt),densneut(8,nbralt),
      .     	colden(8,nbralt)
- 	integer knm,nang,nango2,nen
- 	real botE(nbren),centE(nbren),ddeng(nbren)
- 	real angzb(2*nbrango2),gmu(2*nbrango2),gwt(2*nbrango2)
- 	real fluxdown(nbren,nbrango2),fluxup(nbren,nbrango2)
- 	real denelc(nbralt),temelc(nbralt),dipang(nbralt),
+      integer knm,nang,nango2,nen
+      real botE(nbren),centE(nbren),ddeng(nbren)
+      real angzb(2*nbrango2),gmu(2*nbrango2),gwt(2*nbrango2)
+      real fluxdown(nbren,nbrango2),fluxup(nbren,nbrango2)
+      real denelc(nbralt),temelc(nbralt),dipang(nbralt),
      .	       smgdpa(nbralt),temion(nbralt),chideg
         real prodiontot(nbrsp*2,nbralt),chaufelec(nbralt)
         real Ne_supra(nbralt),courant_supra(nbralt),Te_supra(nbralt),
      .          Chaleur_supra(nbralt)
 c
-	integer i,j,iyd,nx
+           integer i,j,iyd,nx
         real z(npt),Ne(npt),Te(npt),ap(7),stl
         real Tj(npt),chi,pideg,dTinf,stepnrj,anormnrj
-	real UTsec,dz
-	real HQe_1,HPo_1,HPo2_1,HPn2_1,HPh_1,flux
-	real Eave
- 	real zlim,zlim_1
+        real UTsec,dz
+        real HQe_1,HPo_1,HPo2_1,HPn2_1,HPh_1,flux
+        real Eave
+         real zlim,zlim_1
 
-	real Nh(npt),No(npt),No2(npt),Nn2(npt),Nn(npt),Tn(npt)
+        real Nh(npt),No(npt),No2(npt),Nn2(npt),Nn(npt),Tn(npt)
         real Ne_sup(npt),courant_sup(npt),Te_sup(npt),Chaleur_sup(npt)
 
         !Variables for photodissociation of O2
@@ -116,23 +128,23 @@ c
         common/kininds/nalt,nspec,nen
         !-----MZ
         
- 	integer kiappel
+         integer kiappel
         integer ien,ialt,iang,isp
 
-	real coef
+        real coef
 c
         integer indlim
 c
-	real Ph(npt),Po(npt),Po2(npt),Pn2(npt),Pn(npt)
-	real Heat(npt)
+        real Ph(npt),Po(npt),Po2(npt),Pn2(npt),Pn(npt)
+        real Heat(npt)
 
-	real N_0,T_0
-	common/exo/dTinf
+        real N_0,T_0
+        common/exo/dTinf
 
 c
-	data pideg/57.29578/
+       data pideg/57.29578/
 c
-1000	format (a)
+1000   format (a)
 c
 c ====================================================================
 c 	Lecture des parametres d'entree pour le transport
@@ -248,18 +260,20 @@ c 	Initialisation des entrees (selon qui appelle)
 c ====================================================================
 c
 c
-c	if(kiappel.eq.1)write(6,*)'transelec, appele par transsolo'
-c	if(kiappel.eq.2)write(6,*)'transelec, appele par transcar'
+c	if(kiappel.eq.1)write(6,*)'transelec, appele par transsolo' 'transelec called by transsolo'
+c	if(kiappel.eq.2)write(6,*)'transelec, appele par transcar'  'transelec called by transcar'
 c	write(6,*)
 c
- 	if (kiappel.eq.1) then
+       if (kiappel.eq.1) then
 c
 c 	  On est appele par un transsolo.f. Les entrees sont lues dans 
 c 	  ELEC et NEUTRAL
-          write(6,*)
-          write(6,*)'lect.f : lecture des entrees de transport.f'
-          write(6,*)'-------'
+c	  It is called by transsolo.f. The entries are read and ELEC NEUTRAL.
 
+          write(6,*)
+          write(6,*)'lect.f : reading the inflow of transport.f'
+          write(6,*)'-------'
+          print*,'call lect'
           call lect (nspec,knm,nen,nalt,zbot,ztop,hrloc,UT,day,year,
      .     jpreci,tempexo,f107(2),f107(3),Apind,chi,chideg,glat,glong,
      .          albedo,altkm,altcm,tneutre,densneut,colden,botE,centE,
@@ -267,9 +281,10 @@ c 	  ELEC et NEUTRAL
      .          denelc,temelc,temion,dipang,smgdpa)
          ap(1)=Apind
 c
- 	elseif (kiappel.eq.2) then
+       elseif (kiappel.eq.2) then
 c 	  On est appele par le transport fluide
- 	    jpreci = jpreci0
+         jpreci = jpreci0
+            print*,'call iniflu'
             call iniflu(npt,iyd,UTsec,z,glat,glong,stl,f107,
      .                ap,chi,Ne,Te,Tj,indlim,jpreci,
      .                Nh,No,No2,Nn2,Nn,Tn,N_0,T_0,Po,Po2,Pn2,Ph,Pn,Heat,
@@ -282,30 +297,33 @@ c 	  On est appele par le transport fluide
      .                  ztop,zbot,colden,day,year)
 c
         else
-          write(6,*)'kiappel est faux'
+          write(6,*)'kiappel is false'
           stop
 c
-	endif			! fin du si kiappel
+      endif            ! endif kiappel
 
 c
 c ====================================================================
 c 	Calcul de la degradation en energie
+c	Calculation of degradation in energy
 c ====================================================================
-c 
-  	  call degrad(knm,nen,centE,botE,ddeng,nspec,kiappel)
+      print*,'call degrad'
+        call degrad(knm,nen,centE,botE,ddeng,nspec,kiappel)
 c
 c ====================================================================
 c 	Calcul de la photoproduction primaire
+c	Calculation of primary photoproduction
 c ====================================================================
 c
- 	if(jpreci.ne.1 .and. jpreci.ne.3 .and. jpreci.ne.4) 
-     .		call felin(knm,nspec,hrloc,day,year,UT,
-     .		tempexo,f107,ap,glat,glong,nen,botE,centE,
-     .		ddeng,nalt,altkm,tneutre,densneut,colden,chi,chideg,
+       if(jpreci.ne.1 .and. jpreci.ne.3 .and. jpreci.ne.4) 
+     .  call felin(knm,nspec,hrloc,day,year,UT,
+     .  tempexo,f107,ap,glat,glong,nen,botE,centE,
+     .  ddeng,nalt,altkm,tneutre,densneut,colden,chi,chideg,
      .          kiappel,phdisso2,pfluxsr,Po1sdisso2)
 c
 c ====================================================================
 c 	Transport : calcul du flux stationnaire d'electrons
+c	Transport: Calculation of the steady flow of electrons
 c ====================================================================
 c
 c
@@ -318,14 +336,17 @@ c
 c
 c ====================================================================
 c 	Integration des productions et flux chaleur
+c	Integration of production and heat flow
 c ====================================================================
 c
 c 	Uniquement pour le transport fluide
- 	if (kiappel.eq.2) 
-     .      call cineout(nalt,chaufelec,denelc,prodiontot,
+c	Solely for fluid transportation
+      if (kiappel.eq.2) then
+            print*,'call cineout'
+           call cineout(nalt,chaufelec,denelc,prodiontot,
      .          Ne_supra,courant_supra,Te_supra,Chaleur_supra,
      .      	Ne,npt,indlim,nx,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
      .          Ne_sup,courant_sup,Te_sup,Chaleur_sup)
-c
-	return
- 	end
+
+      end if
+      end subroutine transelec

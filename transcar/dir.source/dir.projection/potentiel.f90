@@ -8,12 +8,11 @@ implicit none
 integer,parameter :: npt=10000
 
 integer:: iyd,ndeg,mdeg,ierr,i,j
-real*8 :: tu
+double precision :: tu
 real   :: kp,ddp
-real*8 :: lon,lat
-real*8 :: phipot(npt)
-real*8 :: latequi,Lmin,Lmax
-real*8 :: fit(3),Enord,Eest,pot
+double precision :: lon,lat, phipot(npt), &
+ latequi,Lmin,Lmax, &
+ fit(3),Enord,Eest,pot
 
 save ierr
 
@@ -31,10 +30,13 @@ end interface
 
 !Lmin=0.d0
 !Lmax=0.d0
+
+print*,'call coef_pot'
 call coef_pot(iyd,tu,kp,ndeg,mdeg,phipot,	&
 	      Lmin,Lmax,latequi,ddp,ierr)
 !call IMM_POT(ndeg,mdeg,phipot,Lmin,Lmax,latequi)
 if (Lmin.lt.Lmax) then
+  print*,'call val_fit'
   call val_fit(lon,lat,ndeg,mdeg,phipot,Lmin,Lmax,latequi,pot,Eest,Enord)
   ddp=pot
 else

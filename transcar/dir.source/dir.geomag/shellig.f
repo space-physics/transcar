@@ -509,7 +509,7 @@ C*****ENTRY POINT  FELDI  USED FOR L COMPUTATION                        SHEL2190
       END                                                               SHEL2640
 C
 C
-	SUBROUTINE FELDCOF(YEAR,DIMO)
+       SUBROUTINE FELDCOF(YEAR,DIMO)
 C------------------------------------------------------------------------
 C  DETERMINES COEFFICIENTS AND DIPOL MOMENT FROM IGRF MODELS
 C
@@ -520,102 +520,105 @@ C			TO EARTH'S RADIUS) AT THE TIME (YEAR)
 C  D. BILITZA, NSSDC, GSFC, CODE 633, GREENBELT, MD 20771, 
 C	(301)286-9536   NOV 1987.
 C-----------------------------------------------------------------------
- 	CHARACTER*12	FILMOD, FIL1, FIL2
+        CHARACTER*12	FILMOD, FIL1, FIL2
 
-	DIMENSION	GH1(144),GH2(120),GHA(144),FILMOD(11),DTEMOD(11)
-	DOUBLE PRECISION X,F0,F 
-	COMMON/MODEL/	FIL1,NMAX,TIME,GH1
-	COMMON/GENER/	UMR,ERAD,AQUAD,BQUAD
-	DATA		FILMOD /'dgrf45.dat', 'dgrf50.dat',            
+       DIMENSION	GH1(144),GH2(120),GHA(144),FILMOD(11),DTEMOD(11)
+       DOUBLE PRECISION X,F0,F 
+       COMMON/MODEL/	FIL1,NMAX,TIME,GH1
+       COMMON/GENER/	UMR,ERAD,AQUAD,BQUAD
+       DATA		FILMOD /'dgrf45.dat', 'dgrf50.dat',            
      1			'dgrf55.dat', 'dgrf60.dat', 'dgrf65.dat',      
      2			'dgrf70.dat', 'dgrf75.dat', 'dgrf80.dat',      
      3			'dgrf85.dat', 'igrf90.dat','igrf90s.dat'/
-	DATA		DTEMOD / 1945., 1950., 1955., 1960., 1965.,           
+       DATA		DTEMOD / 1945., 1950., 1955., 1960., 1965.,           
      1			1970., 1975., 1980., 1985., 1990., 1995./      
 c
 c  numye is number of years represented by IGRF models
 c
-	NUMYE=10
+       NUMYE=10
 C
 C  IS=0 FOR SCHMIDT NORMALIZATION   IS=1 GAUSS NORMALIZATION
 C  IU  IS INPUT UNIT NUMBER FOR IGRF COEFFICIENT SETS
 C
-	IU = 10
-	IS = 0
+       IU = 10
+       IS = 0
 C-- DETERMINE IGRF-YEARS FOR INPUT-YEAR
-	TIME = YEAR
-	IYEA = INT(YEAR/5.)*5
-	L = (IYEA - 1945)/5 + 1
-	IF(L.LT.1) L=1
-	IF(L.GT.NUMYE) L=NUMYE         
-	DTE1 = DTEMOD(L)   
-	FIL1 = FILMOD(L)
-	DTE2 = DTEMOD(L+1) 
-	FIL2 = FILMOD(L+1)
+       TIME = YEAR
+       IYEA = INT(YEAR/5.)*5
+       L = (IYEA - 1945)/5 + 1
+       IF(L.LT.1) L=1
+       IF(L.GT.NUMYE) L=NUMYE         
+       DTE1 = DTEMOD(L)   
+       FIL1 = FILMOD(L)
+       DTE2 = DTEMOD(L+1) 
+       FIL2 = FILMOD(L+1)
 
 C-- GET IGRF COEFFICIENTS FOR THE BOUNDARY YEARS
-	CALL GETSHC (IU, FIL1, NMAX1, ERAD, GH1, IER)  
-	    IF (IER .NE. 0) STOP                           
-	CALL GETSHC (IU, FIL2, NMAX2, ERAD, GH2, IER)  
-	    IF (IER .NE. 0) STOP                    
+       print*,'call GETSHC'
+       CALL GETSHC (IU, FIL1, NMAX1, ERAD, GH1, IER)  
+           IF (IER .NE. 0) STOP                           
+       CALL GETSHC (IU, FIL2, NMAX2, ERAD, GH2, IER)  
+           IF (IER .NE. 0) STOP                    
 C-- DETERMINE IGRF COEFFICIENTS FOR YEAR
-	IF (L .LE. NUMYE-1) THEN                        
-	  CALL INTERSHC (YEAR, DTE1, NMAX1, GH1, DTE2, 
-     1		NMAX2, GH2, NMAX, GHA)                        
-	ELSE               
-	  CALL EXTRASHC (YEAR, DTE1, NMAX1, GH1, NMAX2,     
-     1		GH2, NMAX, GHA)                                    
-	ENDIF 
+       IF (L .LE. NUMYE-1) THEN
+      print*,'call INTERSHC'                        
+         CALL INTERSHC (YEAR, DTE1, NMAX1, GH1, DTE2, 
+     1              NMAX2, GH2, NMAX, GHA)                        
+       ELSE
+      print*,'call EXTRASHC'
+         CALL EXTRASHC (YEAR, DTE1, NMAX1, GH1, NMAX2,     
+     1              GH2, NMAX, GHA)                                    
+       ENDIF 
 C-- DETERMINE MAGNETIC DIPOL MOMENT AND COEFFIECIENTS G
-	F0=0.D0
-	DO 1234 J=1,3
-	   F = GHA(J) * 1.D-5
-	   F0 = F0 + F * F
-1234	CONTINUE
-	DIMO = DSQRT(F0)
+       F0=0.D0
+       DO 1234 J=1,3
+          F = GHA(J) * 1.D-5
+          F0 = F0 + F * F
+1234       CONTINUE
+       DIMO = DSQRT(F0)
 
-	GH1(1) =  0.0
-	I=2          
-      	F0=1.D-5                
-      	IF(IS.EQ.0) F0=-F0 
-      	SQRT2=SQRT(2.)      
+       GH1(1) =  0.0
+       I=2          
+      F0=1.D-5                
+      IF(IS.EQ.0) F0=-F0 
+      SQRT2=SQRT(2.)      
 
       DO 9 N=1,NMAX           
-	X = N
-      	F0 = F0 * X * X / (4.D0 * X - 2.D0)               
-      	IF(IS.EQ.0) F0 = F0 * (2.D0 * X - 1.D0) / X
-	F = F0 * 0.5D0                                    
-      	IF(IS.EQ.0) F = F * SQRT2
-	GH1(I) = GHA(I-1) * F0
-	I = I+1                                         
+       X = N
+             F0 = F0 * X * X / (4.D0 * X - 2.D0)               
+             IF(IS.EQ.0) F0 = F0 * (2.D0 * X - 1.D0) / X
+       F = F0 * 0.5D0                                    
+             IF(IS.EQ.0) F = F * SQRT2
+       GH1(I) = GHA(I-1) * F0
+       I = I+1                                         
       DO 9 M=1,N                                    
-      	F = F * (X + M) / (X - M + 1.D0)                 
-	IF(IS.EQ.0) F = F * DSQRT((X - M + 1.D0) / (X + M))      	
-	GH1(I) = GHA(I-1) * F
-	GH1(I+1) = GHA(I) * F
+             F = F * (X + M) / (X - M + 1.D0)                 
+       IF(IS.EQ.0) F = F * DSQRT((X - M + 1.D0) / (X + M))             
+       GH1(I) = GHA(I-1) * F
+       GH1(I+1) = GHA(I) * F
         I=I+2
 9     CONTINUE                                          
-	RETURN
-	END
+
+       END SUBROUTINE FELDCOF
 C
 C
-	SUBROUTINE GETSHC (IU, FSPEC, NMAX, ERAD, GH, IER)           
+       SUBROUTINE GETSHC (IU, FSPEC, NMAX, ERAD, GH, IER)           
                                                                                 
 C ===============================================================               
 C                                                                               
-C	Version 1.01                                                 
+C       Version 1.01                                                 
 C                                                                               
-C	Reads spherical harmonic coefficients from the specified     
-C	file into an array.                                          
+C       Reads spherical harmonic coefficients from the specified     
+C       file into an array.                                          
 C                                                                               
-C	Input:                                                       
-C	    IU    - Logical unit number                              
-C	    FSPEC - File specification                               
+C       Input:                                                       
+C           IU    - Logical unit number                              
+C           FSPEC - File specification                               
 C                                                                               
-C	Output:                                                      
-C	    NMAX  - Maximum degree and order of model                
-C	    ERAD  - Earth's radius associated with the spherical     
-C		    harmonic coefficients, in the same units as      
+C       Output:                                                      
+C           NMAX  - Maximum degree and order of model                
+C           ERAD  - Earth's radius associated with the spherical     
+C       	    harmonic coefficients, in the same units as      
 C		    elevation                                        
 C	    GH    - Schmidt quasi-normal internal spherical          
 C		    harmonic coefficients                            
@@ -628,25 +631,28 @@ C	USGS, MS 964, Box 25046 Federal Center, Denver, CO  80225
 C                                                                               
 C ===============================================================               
 
-	include '../dir.include/CHEMIN.INC'
+       include '../dir.include/CHEMIN.INC'
 
 
-	CHARACTER	FSPEC*(*),FILEIN*80,FILEIN1*80
-	DIMENSION	GH(*)                                        
+       CHARACTER(len=*) FSPEC
+       character(len=80) FILEIN,FILEIN1 !warning, this can cause chopped filenames for long path!
+       Integer,Intent(in):: IU
+       Real,Intent(out) :: GH(*),erad
+       Integer,Intent(out):: ier,nmax
                                                                                 
 C ---------------------------------------------------------------               
 C	Open coefficient file. Read past first header record.        
 C	Read degree and order of model and Earth's radius.           
 C ---------------------------------------------------------------               
 
-	FILEIN=FSPEC
-	FILEIN1='dir.geomag/'//FILEIN
-c	FILEIN1=FILEIN
+       FILEIN=FSPEC
+       FILEIN1='dir.data/dir.linux/dir.geomag/'//FILEIN
+c       FILEIN1=FILEIN
 
-	OPEN (IU, FILE=data_path(1:lpath_data)
-     &		       //FILEIN1, STATUS='OLD',IOSTAT=IER, ERR=999)
-	READ (IU, *, IOSTAT=IER, ERR=999)                            
-	READ (IU, *, IOSTAT=IER, ERR=999) NMAX, ERAD                 
+       print*,'opening for reading: ',filein1
+       OPEN (IU, FILE=FILEIN1, STATUS='OLD',IOSTAT=IER, ERR=999)
+       READ (IU, *, IOSTAT=IER, ERR=999)                            
+       READ (IU, *, IOSTAT=IER, ERR=999) NMAX, ERAD                 
                                                                                 
 C ---------------------------------------------------------------               
 C	Read the coefficient file, arranged as follows:              
@@ -668,27 +674,28 @@ C	N and M are, respectively, the degree and order of the
 C	coefficient.                                                 
 C ---------------------------------------------------------------               
                                                                                 
-	I = 0                                                        
-	DO 2211 NN = 1, NMAX                                              
-	    DO 2233 MM = 0, NN                                            
-		READ (IU, *, IOSTAT=IER, ERR=999) N, M, G, H         
-		IF (NN .NE. N .OR. MM .NE. M) THEN                   
-		    IER = -2                                         
-		    GOTO 999                                         
-		ENDIF                                                
-		I = I + 1                                            
-		GH(I) = G                                            
-		IF (M .NE. 0) THEN                                   
-		    I = I + 1                                        
-		    GH(I) = H                                        
-		ENDIF                                                
-2233   	    CONTINUE                                                    
-2211	CONTINUE                                                        
+      I = 0                                                        
+      DO NN = 1, NMAX                                              
+           DO MM = 0, NN                                            
+              READ (IU, *, IOSTAT=IER, ERR=999) N, M, G, H      
+   
+              IF (NN .NE. N .OR. MM .NE. M) THEN                   
+                  IER = -2                                         
+                  GOTO 999                                         
+              ENDIF       
+                                         
+              I = I + 1                                            
+              GH(I) = G                                            
+              IF (M .NE. 0) THEN                                   
+                  I = I + 1                                        
+                  GH(I) = H                                        
+              ENDIF                                                
+          End DO                                                    
+      End Do                                                      
                                                                                 
-999	CLOSE (IU)                                                   
+999   CLOSE (IU)                                                   
 
-	RETURN                                                       
-	END                                                          
+      END SUBROUTINE GETSHC                                                    
 C
 C
 	SUBROUTINE INTERSHC (DATE, DTE1, NMAX1, GH1, DTE2,          
@@ -721,7 +728,10 @@ C	USGS, MS 964, Box 25046 Federal Center, Denver, CO  80225
 C                                                                               
 C ===============================================================               
                                                                                 
-	DIMENSION	GH1(*), GH2(*), GH(*)                        
+	  Real,Intent(in) ::   date,GH1(*), GH2(*),dte1,dte2
+      Integer,Intent(in) :: nmax1,nmax2
+      Real,Intent(out) ::  GH(*)  
+      Integer,intent(out) :: nmax                      
                                                                                 
 C ---------------------------------------------------------------               
 C	The coefficients (GH) of the resulting model, at date        
@@ -753,9 +763,8 @@ C ---------------------------------------------------------------
                                                                                 
 	DO 1144 I = 1, K                                                  
 1144	    GH(I) = GH1(I) + FACTOR * (GH2(I) - GH1(I))              
-                                                                                
-	RETURN                                                       
-	END                                                          
+                                      
+	END SUBROUTINE INTERSHC
 C
 C
 	SUBROUTINE EXTRASHC (DATE, DTE1, NMAX1, GH1, NMAX2,           

@@ -3,10 +3,10 @@
 # using GNU parallel 20130922
 # this script for loops transcar, making a new precinput.dat each time for the
 # respective beam energies.
-# this program is meant to be run from dir.transcar.server directory- cd there first
+# this program is meant to be run from transcar/transcar directory- cd there first
 #
 # USAGE HINTS:
-# 0) be sure the remotes have the appropriate directory structure for dir.transcar.server (use git)
+# 0) be sure the remotes have the appropriate directory structure for transcar/transcar (use git)
 # 1) consider using ssh-add with -t more than long enough to complete your calculation,
 # since a new SSH login is emitted for each beam. The simulation process will not
 # continue for new beams if your ssh-add -t has expired.
@@ -19,7 +19,7 @@ remotes=(labHST0 labHST1 irs4 irs3 swoboj)
 BeamEnergyTableFN=BT_E1E2prev.csv
 RODIR=$1
 [[ -z $RODIR ]] && { echo "you must specify an output directory"; exit 1; }
-exedir=code/transcar/dir.transcar.server
+exedir=code/transcar/transcar
 
 flux0=70114000000.0
 

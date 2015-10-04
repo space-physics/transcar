@@ -1,0 +1,12 @@
+h5py
+scipy
+pandas
+pytz
+numpy
+nose
+six
+astropy
+scikit-image
+python-dateutil
+matplotlib
+setuptools

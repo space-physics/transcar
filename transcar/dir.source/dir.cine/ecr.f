@@ -54,7 +54,7 @@ c	write(6,*)'Writting NEUTRAL                             [A'
      &'3     hrloc: Local hour angle, UT:Universal time',/,
      &'4     day: julian day (1 to 365); Annee.',/,
      &'5     jpreci=0sol,1el,2sol/el,3prot,4prot/el,5sol/prot,6tout',/,
-     &'6     tempexo: exospheric temperature (calculee si =1.)',/, 
+     &'6     tempexo: exospheric temperature (calculee si =1.)',/,
      &'7     f107/bar: solar 10.7-cm line output (this day/average).',/,
      &'8     chideg : solar zenith angle (degrees)',/,
      &'9     Ap: Magnetic index')
@@ -82,8 +82,8 @@ c	write(6,*)'Writting NEUTRAL                             [A'
 3066    format (a5,' Column density (Warning! non divided by ',
      &    'sin(magn.dip angle) ')
 c
-      open (ineutr, file=data_path(1:lpath_data)
-     &                         //'dir.cine/NEUTRAL_VERIF')
+      open (ineutr, file='dir.data/dir.linux/dir.cine/NEUTRAL_VERIF',
+     & status='replace')
       rewind ineutr
       write (ineutr,3000)nspec,knm
       write (ineutr,3016)
@@ -102,9 +102,9 @@ c
       write(ineutr,3055)(tneutre(i),i=1,nalt)
       write(ineutr,3057)nspec
       do jsp=1,nspec
- 	  write(ineutr,3060)specie(jsp)
+ 	      write(ineutr,3060)specie(jsp)
         write(ineutr,3065)(densneut(jsp,ialt),ialt=1,nalt)
- 	  write(ineutr,3066)specie(jsp)
+ 	      write(ineutr,3066)specie(jsp)
         write(ineutr,3065)(colden(jsp,ialt),ialt=1,nalt)
       enddo
 c
@@ -130,13 +130,13 @@ c 	write(6,*)'Writting ELEC'
      &      /,'3     ne: number of alt.',
      &      /,'4     alt: altitudes. (km)       ',
      &      /,'5     denelc: number densities.(/cm3)',
-     &      /,'6 ') 
+     &      /,'6 ')
  4009 format ('1  ------ densite electronique ',
      &      /,'2     ambient electron parameters ',
      &      /,'3     ne: number of alt.',
      &      /,'4     alt: altitudes. (km)       ',
      &      /,'5     denelc: number densities.(/cm3) (from IRI)',
-     &      /,'6 ') 
+     &      /,'6 ')
  4010 format(5f14.6)
  4011 format(5(1pe14.6))
  4012 format(i10)
@@ -158,8 +158,8 @@ c 	write(6,*)'Writting ELEC'
      &  f7.2,'km')
  4025 format ('% O+/Ne Modele Millestone')
 c
-      open (ielec,file=data_path(1:lpath_data)
-     &                       //'dir.cine/ELEC_VERIF')
+      open(ielec,file='dir.data/dir.linux/dir.cine/ELEC_VERIF',
+     & status='replace')
       rewind ielec
       write (ielec,4000)
       write (ielec,4017)knm,eave,alpha
@@ -179,20 +179,20 @@ c
       write (ielec,4016)
       write (ielec,4004)nang
       write (ielec,4022) (angzb(iang),iang=1,nang)
-      write (ielec,4020) 
+      write (ielec,4020)
       write (ielec,4019) (gmu(iang),iang=1,nang)
-      write (ielec,4021) 
+      write (ielec,4021)
       write (ielec,4019) (gwt(iang),iang=1,nang)
       write (ielec,4003)
       do iang=1,md2
-	  write (ielec,4015) angzb(iang),gmu(iang),gwt(iang)
+	     write (ielec,4015) angzb(iang),gmu(iang),gwt(iang)
         write (ielec,4002) (fluxdown(nen+1-ien,iang), ien = 1,nen)
-      enddo
+      end do
       write (ielec,4013)
       do iang=1,md2
         write (ielec,4015)angzb(md2+iang),gmu(md2+iang),gwt(md2+iang)
         write (ielec,4002) (fluxup(nen+1-ien,iang), ien = 1,nen)
-      enddo
+      end do
       if(moddene.eq.2)then
  	  write (ielec,4009)
       else
@@ -236,9 +236,9 @@ c     write (ielec,4011) (dti(i), i = 1,nalt)
       write (ielec,4023) (mgdpa(i)/pio180,i=1,nalt)
       write(ielec,*)'sin{Magnetic deep angle (mgdpa)}'
       write (ielec,4023) (smgdpa(i),i=1,nalt)
- 
+
       close(ielec)
- 	  endif
+ 	    endif
 c
       	return
       	end
@@ -254,7 +254,7 @@ c
 c 	Le but de ce sous programme est de palier le probleme suivant :
 c 	lorsqu'on appelle transcar, il laisse dans DATDEG la trace du
 c 	fichier d'entree des sections efficaces utilise. Si (comme ca
-c 	arrive souvent), on appelle transsolo ensuite, avec des 
+c 	arrive souvent), on appelle transsolo ensuite, avec des
 c 	conditions qui n'ont rien a voir, on ecrase les sections
 c 	efficaces pour en recalculer d'autres. Pour eviter ca, ce
 c 	sous programme, a n'appeler qu'apres transsolo (ce serait meme
@@ -265,8 +265,8 @@ c 	fichier de sections efficaces differents.
         character*70 chaine(18),crs,rdt
 1000 	format(a)
 c
-        open(fic_datdeg,file=data_path(1:lpath_data)
-     &                             //'dir.cine/DATDEG')
+        open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
+     &       status='old')
 	    rewind(fic_datdeg)
      	do i = 1,18
      	  read(fic_datdeg,1000)chaine(i)
@@ -276,13 +276,12 @@ c
      	chaine(3) = 'dir.cine/dir.seff/crs'
      	chaine(4) = 'dir.cine/dir.seff/rdt'
 c
-        open(fic_datdeg,file=data_path(1:lpath_data)
-     &                             //'dir.cine/DATDEG')
+      open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
+     &        status='old')
 	    rewind(fic_datdeg)
      	do i = 1,18
      	  write(fic_datdeg,1000)chaine(i)
      	enddo
      	close(fic_datdeg)
-c
- 	    return
-    	end
+
+    	end subroutine ecrit_DATDEG

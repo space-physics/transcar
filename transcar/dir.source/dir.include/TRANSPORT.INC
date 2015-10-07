@@ -26,13 +26,8 @@
 !
         character*5 specie(8)
 !
-     
-         integer unfic_in_transcar,unfic_out_transcar
-         integer fic_datdeg,fic_degout,fic_transout,fic_dattrans
-         integer fic_crsin_degrad
          integer unfic_crsout_degrad,unfic_rdtout_degrad
          integer icrsin,irdtin,icrsphot
-         integer ineutr,ielec,iindat,transcar_dat
         integer ifeldat,ifelprt,ifeltrans
         integer fic_euvcoeff,fic_euvindex
 !
@@ -46,10 +41,10 @@
      &             39.948,30.0061/
        data specie/'[N2]','[O2]','[O]','[H]','[He]','[N]','[A]','[NO]'/
      
-        data ineutr/10/,ielec/12/,iindat /14/,transcar_dat/15/
-         data unfic_in_transcar/16/,unfic_out_transcar/18/
-         data fic_datdeg/20/,fic_degout/22/,fic_transout/24/
-         data fic_crsin_degrad/26/,fic_dattrans/28/
+      integer,parameter :: ineutr=10,ielec=12,iindat=14,transcar_dat=15,
+     &  unfic_in_transcar=16,unfic_out_transcar=18,
+     &  fic_datdeg=20,fic_degout=22,fic_transout=24,
+     &  fic_crsin_degrad=26,fic_dattrans=28
          data unfic_crsout_degrad/30/,unfic_rdtout_degrad/32/
          data icrsin/34/,irdtin/36/,icrsphot/38/
         data ifeldat/40/,ifelprt/50/,ifeltrans/52/

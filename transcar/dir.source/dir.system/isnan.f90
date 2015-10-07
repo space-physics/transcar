@@ -12,7 +12,6 @@
 !
 !end function isnan
 
-
 pure logical function isnant(x,nx)
 implicit none
 !
@@ -22,7 +21,7 @@ real,intent(in) :: x(nx)
 integer i
 
 isnant=.false.
-	
+
 do i=1,nx
   !if (exponent(x(i))==129.and.fraction(x(i))/=0.) then
   if (isnan(x(i))) then
@@ -32,6 +31,3 @@ do i=1,nx
 enddo
 
 end function isnant
-	
-	
-

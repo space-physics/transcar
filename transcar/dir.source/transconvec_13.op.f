@@ -403,7 +403,7 @@
 !-------Read TRANSCAR input file and grab initial conditions information
 
         itype=4                         !machine IBM
-!        call pwd(chemin,lpath,data_path,lpath_data)
+
         open(transcar_dat, file='dir.input/DATCAR', status='old')
             rewind(transcar_dat)
             read(transcar_dat,*)kiappel
@@ -544,12 +544,6 @@
       close(unfic_in_transcar)
 
 
-
-!
-!EIS    latgeo=69.6
-!EIS    longeo=19.2
-        latgeo=78.15
-        longeo=16.03
         nligne=nx+2
         longbuf=nligne*ncol
         longrec=itype*longbuf
@@ -847,7 +841,7 @@
 
           open(unfic_out_transcar,file='dir.output/transcar_output',
      &         form='unformatted',access='direct',recl=longrec1,
-     &           status='replace')
+     &           status='new')
 
 
         else
@@ -1233,7 +1227,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
           goto 246
         endif
     
-        print*,'call atmos'
+        print*,'transconvec: call atmos  latgeo=',latgeo
         call atmos(iyd,sngl(temps),stl,alt,latgeo,longeo,jpreci,f107,
      &           ap,Nenew,Tenew,T1new,nx,kiappel,file_cond)
 
@@ -1481,7 +1475,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
      &           status='unknown')
            write(fid_temp,rec=nrectemps)(buffer(i),i=1,longbuf)
            close(fid_temp)
-1000       format(' temps ecoule:  ',i8,' tube numero: ',i3)
+1000       format(' utc second:  ',i8,' tube number: ',i3)
            write(*,1000) int(temps),itube
        tempsort=tempsort+sortie
 
@@ -1920,10 +1914,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 !          veljq(np)=max(veljq(np),0.)
 !          veleq(np)=max(veleq(np),0.)
 !          velnq(np)=max(velnq(np),0.)
-
-
-
-
 
 ![[[[
 
@@ -3103,7 +3093,7 @@ CCCCC                                                                           
 ![[[    N+ momentum equation resolution
     
       call velocity(Velnm,Ipos1,Iposnp,deltat_2)
-      print*,'N+ momentum equation resolution'
+!      print*,'N+ momentum equation resolution'
       do i=1,nx
 
           nunH (i)=0.145e-9*Nh(i)                               *t0
@@ -3214,7 +3204,7 @@ CCCCC                                                                           
 !    enddo
 
           if (isnant(U3new,nx)) then
-            print*,'probleme lors du calcul de U3new dans la boucle 1'
+            print*,'problem when calculating U3new in loop 1'
             goto 246
           endif
 
@@ -3243,7 +3233,7 @@ CCCCC                                                                           
 
 
 ![[[    H+ heat flow equation resolution
-      print*,'H+ heat flow equation resolution'
+!      print*,'H+ heat flow equation resolution'
       do i=1,nx
 
         C2a(i)=-2.2*q2new(i)
@@ -3400,7 +3390,7 @@ CCCCC                                                                           
       call velocity(Veljq,Ipos1,Iposnp,deltat_2)
 
 ![[[    O+ heat flow equation resolution
-      print*,'O+ heat flow equation resolution'
+!      print*,'O+ heat flow equation resolution'
       do i=1,nx
 
         C2a(i)=-2.2*Cji*q1new(i)
@@ -3521,13 +3511,13 @@ CCCCC                                                                           
           q1new(np)=q1new(nx)
 
           if (isnant(q1new,nx)) then
-            print*,'probleme lors du calcul de q1new dans la boucle 1'
+            print*,'problem when calculating q1new in loop 1'
             goto 246
           endif
 
 
 !]]]
-      print*,'call velocity'
+!      print*,'call velocity'
       call velocity(Velnq,Ipos1,Iposnp,deltat_2)
 
 ![[[    N+ heat flow equation resolution
@@ -3649,7 +3639,7 @@ CCCCC                                                                           
           q3new(np)=q3new(nx)
 
           if (isnant(q3new,nx)) then
-            print*,'probleme lors du calcul de q3new dans la boucle 1'
+            print*,'problem when calculating q3new in loop 1'
             goto 246
           endif
 
@@ -3660,7 +3650,7 @@ CCCCC                                                                           
     
 
 ![[[    Electron energy and heat flow equation resolution (1)
-      print*,'Electron energy and heat flow equation resolution (1)'
+!      print*,'Electron energy and heat flow equation resolution (1)'
     
       do i=1,nx
 
@@ -6615,7 +6605,7 @@ C[[[   Boundaries conditions
           q3new(np)=q3new(nx)
 
           if (isnant(q3new,nx)) then
-            print*,'probleme lors du calcul de q3new dans la boucle 2'
+            print*,'problem when calculating q3new in loop 2'
             goto 246
           endif
 

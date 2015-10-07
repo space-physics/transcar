@@ -35,14 +35,13 @@
      &			vperpnord,vperpest,vhorizon,vpara,ddp,Jtop
 
 
-
-	call pwd(chemin,lpath,data_path,lpath_data)
-        open(transcar_dat, file=chemin(1:lpath)
-     &			        //'dir.input/DATCAR.tube')
+        open(transcar_dat, 
+     &       file='dir.input/DATCAR.tube',
+     &       status='old')
         rewind(transcar_dat)
 
 	open(31,file='trace.dat',form='unformatted',
-     &                access='direct',status='unknown',recl=4*nbuf)
+     &                access='direct',status='new',recl=4*nbuf)
      	
      	irec=0
 

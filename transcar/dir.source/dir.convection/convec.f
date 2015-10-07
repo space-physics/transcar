@@ -5,6 +5,8 @@ C Michael Hirsch, these intents have NOT been verified!
 Cf2py intent(in) iyd, tu, kp, dlongeo, dlatgeo, dlonmag, dlatmag, dlonref, dt, flgpot
 Cf2py intent(out) psi0
 
+       real*8,intent(inout) :: dlonmag
+
        real*8 dlonmlt,lat,lon,dlat,dlon,dlon1,dlat1
        real*8 tu,dt
        real kp
@@ -16,7 +18,7 @@ Cf2py intent(out) psi0
        real*8 psi,psi0,psi1,psi2,dlon0,dlat0
        real*8 cor_cnv
        real*8 dt1,dt2,pideg
-       real*8 vh,vp,vpnord,vpest,dlonmag,dlatmag
+       real*8 vh,vp,vpnord,vpest,dlatmag
        real*8 loc(2,2),dpot(2)
        complex*16 cpsi
        real zref,year
@@ -69,12 +71,13 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
        tmag=dtmag
        dlonmlt=dtmag*15.d0
 
-       print*,'call potentiel'
+       print*,'convec.f: call potentiel, dlonmag,dlonmlt',
+     &   dlonmag,dlonmlt
        call potentiel(iyd,tu,kp,dlonmlt,dlatmag ,EE(1),EE(2),psi,ddp)
        
        if (flgpot) psi0=psi
        
-       print*,'call magfild'  
+       print*,'convec.f: call magfild'  
        call magfild(latgeo,longeo,zref,year,Bmag,dipangle,orient)
        pot=psi0
        Enord=EE(2)
@@ -83,21 +86,23 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
        vperpest=vpest
        vpnord= EE(1)/Bmag*10.d0
        vperpnord=vpnord
-       vh =vpnord/dcos(dipangle*deg2rad)
+       vh =vpnord/cos(dipangle*deg2rad)
        vhorizon=vh
-       vp    =vpnord*dtan(dipangle*deg2rad)*orient
+       vp    =vpnord*tan(dipangle*deg2rad)*orient
        vpara=vp
        
-        dlon = vpest*dt/re/dcos(min(dlatmag,lat_top)*deg2rad)
+        dlon = vpest*dt/re/cos(min(dlatmag,lat_top)*deg2rad)
         dlat =  vh*dt/re
-       if (dlon.ne.0.d0.and.dlat.ne.0.d0) then
+       if (dlon.ne.0.d0 .and. dlat.ne.0.d0) then
 
          dtheta=cor_cnv(iyd,tu,kp,dlonmlt,dlatmag,
      &			   dlat,dlon,psi0)
          dlonmag=dlonmlt-(tu+dt)/240.d0-dlonref
          dlonmag=mod(dlonmag+360.d0,360.d0)
-         print*,'call mag2geo'
+         print*,'convec.f: call mag2geo, inputs:',
+     &                   dlatmag,dlonmag,dlatgeo,dlongeo
          call mag2geo(dlatmag,dlonmag,dlatgeo,dlongeo)
+         print*,'mag2geo outputs:',dlatmag,dlonmag,dlatgeo,dlongeo
        endif
 
 
@@ -116,20 +121,22 @@ c     &dlatmag,dlonmlt,dlatgeo,dlongeo
 
 c       print*,tu,dlonmlt,dlatmag,dlon*rad2deg,dlat*rad2deg,
 c     &dtheta,psi0
-       print*,'attempting trace_conv write'
+!       print*,'attempting trace_conv write'
        write(56,*) tu,dlonmlt,dlatmag,psi0,dlo0,dla0
 c100       format(a2,10(1x,g15.8))
 100       format(9(1x,g15.8))
-       print*,'done convec longeo,latgeo',longeo,latgeo
 
        end Subroutine convec
 
 
         subroutine integ(lat,lon,dlat,dlon)
         implicit none
-        double precision lat,lon,x,y,z,
+        double precision,intent(inout) :: lat,lon
+        double precision,intent(in) :: dlat,dlon
+
+        double precision x,y,z,
      & clon,slon,clat,slat,
-     & dlat,dx,dlon,dy,ca,sa,cb,sb,
+     & dx,dy,ca,sa,cb,sb,
      & rad2deg,deg2rad,pi
         data rad2deg/57.2957795130823229d0/ 
         data deg2rad/0.174532925199432955d-01/

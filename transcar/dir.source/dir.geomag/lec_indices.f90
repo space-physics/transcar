@@ -1,5 +1,4 @@
 subroutine lec_indices(ian,imois,ijour,tu,ap,f107)
-! edited by Michael Hirsch for English translation
 ! French->English:
 ! an      year
 ! mois    month
@@ -80,7 +79,6 @@ if (num<=max_num) then
 
 else
 
-!  print*,'il y a erreur de lecture de data_geom.bin: ',num
   print*,'Error reading file data_geom.bin for record: ',num
   print*,ian,imois,ijour,ihe
   f107(1)=150.
@@ -100,39 +98,40 @@ end
 
 
 
+pure integer function num_rec(ian_deb,iday_deb,ian,imois,ijour)
+    implicit none
+    integer,intent(in):: ian_deb,iday_deb,ian,imois,ijour
+
+    !day of year for non-leap and leap years month ends
+    integer,parameter :: m1(12)=(/31,59,90,120,151,181,212,243,273,304,334,365/),	&
+                         m2(12)=(/31,60,91,121,152,182,213,244,274,305,335,366/)
+
+    integer nj_an,kd
+
+    nj_an = 1 - iday_deb
+
+    do i = ian_deb+1,ian
+       kd = m1(12)
+       if(mod(i-1,4).eq.0) kd = kd+1
+       nj_an = nj_an + kd
+    enddo
 
 
+    if (imois .eq. 1) then
+       num_rec = nj_an + ijour
+       return
+    else if (imois .eq. 2) then
+       num_rec = nj_an + ijour + 31
+       return
+    endif
 
-integer function num_rec(ian_deb,iday_deb,ian,imois,ijour)
+    njour=mod(ian,4)
+    if (njour .eq. 0) then
+       num_rec = nj_an + m2(imois-1) + ijour
+    else
+       num_rec = nj_an + m1(imois-1) + ijour
+    endif
 
-integer,dimension(12) :: m1=(/31,59,90,120,151,181,212,243,273,304,334,365/),	&
-                         m2=(/31,60,91,121,152,182,213,244,274,305,335,366/)
-
-
-nj_an = 1 - iday_deb
-
-do i = ian_deb+1,ian
-   kd = m1(12)
-   if(mod(i-1,4).eq.0) kd = kd+1
-   nj_an = nj_an + kd
-enddo
-
-
-if (imois .eq. 1) then
-   num_rec = nj_an + ijour
-   return
-else if (imois .eq. 2) then
-   num_rec = nj_an + ijour + 31
-   return
-endif
-
-njour=mod(ian,4)
-if (njour .eq. 0) then
-   num_rec = nj_an + m2(imois-1) + ijour
-else
-   num_rec = nj_an + m1(imois-1) + ijour
-endif
-
-num_rec=max(num_rec,1)
+    num_rec=max(num_rec,1)
 
 end function num_rec

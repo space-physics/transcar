@@ -2,20 +2,20 @@ subroutine val_fit(lon,lat,ndeg,mdeg,coef_psi,latmin,latmax,latequi,psi,psi_est,
 
 implicit none
 
-!f2py intent(in) :: lon,lat,ndeg,mdeg,coef_psi,latmin,latmax,latequi
-!f2py intent(out):: psi,psi_est,psi_nord
-
+real*8,intent(in) :: lon,lat,coef_psi(:),latmin,latmax,latequi
+integer,intent(in) :: ndeg,mdeg
+Real*8,intent(out), optional :: psi,psi_est,psi_nord
+!
 Integer,parameter::	npt=100000
 Real*8,parameter ::	pi=3.14159265358979d0,deg2rad=1.745329251994330d-2,	&
 			rad2deg=57.295779513082320d0
 Real*8,parameter ::     coeffc=6.d0,re=6.378d0,lat_top=89.9d0
-Integer	::	i,j,k,l,ndeg,mdeg,rang
+Integer	::	i,j,k,l,rang
 
 Logical :: mode
-Real*8	::	latmin,latmax,latequi,LM,DL
-Real*8	::	lon,lat,coef_psi(:),coef_est,coef_nord
-Real*8	::	psi,psi0
-Real*8, optional :: psi_est,psi_nord
+Real*8	::  LM,DL
+Real*8	::	coef_est,coef_nord
+Real*8	::	psi0
 Real*8  ::      alpha,xmin,xequi,coslinf,dxmin,d12,d11,d210,d21,d22,det_1,xmax,coslsup
 Real*8  ::      anm,bnm,cnm(0:npt),cosphi,sinphi
 Real*8  ::	A(npt),A_est(npt),A_nord(npt),Pn(0:npt),dPn(0:npt)
@@ -32,7 +32,7 @@ alpha=-DL*rad2deg
 
 phi=deg2rad*lon
 
-coef_est=-1.d0/re/dcos(deg2rad*min(lat,lat_top))
+coef_est=-1.d0/re/cos(deg2rad*min(lat,lat_top))
 
 
 
@@ -162,8 +162,8 @@ elseif(lat>latmax) then
     endif
   enddo
   do j=1,mdeg
-    cosphi=dcos(j*phi)
-    sinphi=dsin(j*phi)
+    cosphi=cos(j*phi)
+    sinphi=sin(j*phi)
     expjdx=expdx*expjdx
     do i=0,ndeg
       k=k+1

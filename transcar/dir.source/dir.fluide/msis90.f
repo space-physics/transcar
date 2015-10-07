@@ -74,7 +74,9 @@ C              22 - ALL TN3 VAR           23 - TURBO SCALE HEIGHT VAR
 C
 C              To get current values of SW: CALL TRETRV(SW)
 C
-      DIMENSION D(8),T(2),AP(7),D6(8),T6(2)
+      real,intent(out) :: D(8),T(2)
+      real,intent(in) :: AP(7)
+      real D6(8),T6(2)
       DIMENSION ZN3(5),ZN2(4),SV(25)
       COMMON/GTS3C/TLB,S,DB04,DB16,DB28,DB32,DB40,DB48,DB01,ZA,T0,Z0
      & ,G0,RL,DD,DB14,TR12
@@ -125,9 +127,9 @@ C         metric adjustment
       T(1)=T6(1)
       T(2)=T6(2)
       IF(ALT.GE.ZN2(1)) THEN
-        DO 5 J=1,8
+        DO J=1,8
           D(J)=D6(J)
-    5   CONTINUE
+        end do
         GOTO 10
       ENDIF
 C
@@ -171,6 +173,9 @@ C      ***** N2 DENSITY ****
         DMR=D6(3)/DM28M-1.
         D(3)=DENSM(ALT,DM28M,XMM,TZ,MN3,ZN3,TN3,TGN3,MN2,ZN2,TN2,TGN2)
         D(3)=D(3)*(1.+DMR*DMC)
+        if (isnan(d(3))) 
+     &    print*,'gtd6: nan d3:',
+     &     ALT,DM28M,XMM,TZ,MN3,ZN3,TN3,TGN3,MN2,ZN2,TN2,TGN2
 C      ***** HE DENSITY ****
         D(1)=0
         IF(MASS.NE.4.AND.MASS.NE.48) GOTO 204
@@ -212,8 +217,8 @@ C
       T(2)=TZ
    90 CONTINUE
       ALAST=ALT
-      RETURN
-      END
+
+      END subroutine gtd6
 C-----------------------------------------------------------------------
       SUBROUTINE GHP6(IYD,SEC,ALT,GLAT,GLONG,STL,F107A,F107,AP,
      $  D,T,PRESS)
@@ -302,25 +307,35 @@ C         New altitude estimate using scale height
       END
 C-----------------------------------------------------------------------
       SUBROUTINE GLATF(LAT,GV,REFF)
+      implicit none
 C      CALCULATE LATITUDE VARIABLE GRAVITY (GV) AND EFFECTIVE
 C      RADIUS (REFF)
-      REAL LAT,LATL
+      REAL,intent(in) :: LAT
+      real,intent(out) :: gv,reff
+      real LATL,dgtr,c2
       SAVE
       DATA DGTR/1.74533E-2/,LATL/-999./
       IF(LAT.NE.LATL) C2 = COS(2.*DGTR*LAT)
       LATL=LAT
       GV = 980.616*(1.-.0026373*C2)
       REFF = 2.*GV/(3.085462E-6 + 2.27E-9*C2)*1.E-5
-      RETURN
-      END
+
+      END SUBROUTINE GLATF
 C-----------------------------------------------------------------------
-      FUNCTION VTST(IYD,SEC,GLAT,GLONG,STL,F107A,F107,AP,IC)
+      real FUNCTION VTST(IYD,SEC,GLAT,GLONG,STL,F107A,F107,AP,IC)
+      implicit none
+
+      real,intent(in) :: sec,glat,glong,stl,f107a,f107,ap(7)
+      integer,intent(in) :: iyd,ic
 C       Test if geophysical variables or switches changed and save
 C       Return 0 if unchanged and 1 if changed
-      DIMENSION AP(7),IYDL(2),SECL(2),GLATL(2),GLL(2),STLL(2)
-      DIMENSION FAL(2),FL(2),APL(7,2),SWL(25,2),SWCL(25,2),dtf(2)
+      real IYDL(2),SECL(2),GLATL(2),GLL(2),STLL(2),
+     & FAL(2),FL(2),APL(7,2),SWL(25,2),SWCL(25,2),dtf(2)
+      real sw(25),isw,swc(25),dTinf
+      integer i
+
       common/exo/dTinf
-      COMMON/CSW/SW(25),ISW,SWC(25)
+      COMMON/CSW/SW,ISW,SWC
       SAVE
       DATA IYDL/2*-999/,SECL/2*-999./,GLATL/2*-999./,GLL/2*-999./
       DATA STLL/2*-999./,FAL/2*-999./,FL/2*-999./,APL/14*-999./
@@ -361,8 +376,8 @@ C       Return 0 if unchanged and 1 if changed
         SWCL(I,IC)=SWC(I)
    16 CONTINUE
    20 CONTINUE
-      RETURN
-      END
+
+      END FUNCTION VTST
 C-----------------------------------------------------------------------
       SUBROUTINE GTS6(IYD,SEC,ALT,GLAT,GLONG,STL,F107A,F107,AP,MASS,D,T)
 C        Neutral Thermosphere Model above 72.5 km for MSISE-90
@@ -434,12 +449,16 @@ C              22 - ALL TN3 VAR           23 - TURBO SCALE HEIGHT VAR
 C
 C              To get current values of SW: CALL TRETRV(SW)
 C
+      real,intent(out) :: D(8),T(2)
+      integer,intent(in) :: iyd
+      real,intent(in) :: sec,glat,glong,stl,f107a,f107,ap
+
       LOGICAL METER
       DIMENSION ZN1(5)
       COMMON/GTS3C/TLB,S,DB04,DB16,DB28,DB32,DB40,DB48,DB01,ZA,T0,Z0
      & ,G0,RL,DD,DB14,TR12
       COMMON/MESO6/TN1(5),TN2(4),TN3(5),TGN1(2),TGN2(2),TGN3(2)
-      DIMENSION D(8),T(2),MT(10),AP(7),ALTL(8)
+      DIMENSION MT(10),AP(7),ALTL(8)
       COMMON/LOWER6/PTM(10),PDM(10,8)
       COMMON/PARM6/PT(150),PD(150,9),PS(150),PDL(25,2),PTL(100,4),
      $ PMA(100,10)
@@ -447,7 +466,7 @@ C
       COMMON/TTEST/TINFG,GB,ROUT,TT(15)
       COMMON/DMIX/DM04,DM16,DM28,DM32,DM40,DM01,DM14
       COMMON/METSEL/IMR
-	real dTinf
+      real dTinf
         common/exo/dTinf
       SAVE
       DATA MT/48,0,4,16,28,32,40,1,49,14/
@@ -470,7 +489,7 @@ Ce       TINF VARIATIONS NOT IMPORTANT BELOW ZA OR ZN1(1)
 	  TINF=PTM(1)*PT(1)
      $  *(1.+GLOBE6(YRD,SEC,GLAT,GLONG,STL,F107A,F107,AP,PT)*SW(16))
           TINF=TINF+dTinf
-	ENDIF
+      ENDIF
 c	print *,'TINF,dTinf = ',TINF,dTinf,alt
       ELSE
         TINF=PTM(1)*PT(1)
@@ -533,7 +552,7 @@ C
 c
       WRITE(6,100) MASS
       GO TO 90
-   15 IF(ALT.GT.ALTL(6).AND.MASS.NE.28.AND.MASS.NE.48) GO TO 17
+   15 IF(ALT.GT.ALTL(6) .AND. MASS.NE.28 .AND. MASS.NE.48) GO TO 17
 C
 C       **** N2 DENSITY ****
 C
@@ -542,6 +561,8 @@ C      Diffusive density at Zlb
 C      Diffusive density at Alt
       D(3)=DENSU(ALT,DB28,TINF,TLB, 28.,0.,T(2),ZLB,S,MN1,ZN1,TN1,TGN1)
       DD=D(3)
+      if (isnan(dd)) print*,'gtd6: DD is NaN from DENSU',
+     & ALT,DB28,TINF,TLB, 28.,0.,T(2),ZLB,S,MN1,ZN1,TN1,TGN1
 C      Turbopause
       ZH28=PDM(3,3)*ZHF
       ZHM28=PDM(4,3)*PDL(6,2)
@@ -1002,16 +1023,20 @@ C        UT,LONGITUDE MAGNETIC ACTIVITY
       DO 50 I = 1,NSW
    50 TINF = TINF + ABS(SW(I))*T(I)
       GLOBE6 = TINF
-      RETURN
+
       END
 C-----------------------------------------------------------------------
       SUBROUTINE TSELEC(SV)
+      implicit none
+      real,intent(in) :: sv(1)
 C        SET SWITCHES
 C        SW FOR MAIN TERMS, SWC FOR CROSS TERMS
-      DIMENSION SV(1),SAV(25),SVV(1)
-      COMMON/CSW/SW(25),ISW,SWC(25)
+      real SAV(25),SVV(1),sw(25),isw,swc(25)
+      integer i
+      COMMON/CSW/SW,ISW,SWC
       SAVE
-      DO 100 I = 1,25
+
+      DO I = 1,25
         SAV(I)=SV(I)
         SW(I)=AMOD(SV(I),2.)
         IF(ABS(SV(I)).EQ.1.OR.ABS(SV(I)).EQ.2.) THEN
@@ -1019,14 +1044,16 @@ C        SW FOR MAIN TERMS, SWC FOR CROSS TERMS
         ELSE
           SWC(I)=0.
         ENDIF
-  100 CONTINUE
+      end do
+
       ISW=64999
       RETURN
+
       ENTRY TRETRV(SVV)
-      DO 200 I=1,25
+      DO I=1,25
         SVV(I)=SAV(I)
-  200 CONTINUE
-      END
+      end do
+      END SUBROUTINE TSELEC
 C-----------------------------------------------------------------------
       FUNCTION GLOB6S(P)
 C      VERSION OF GLOBE FOR LOWER ATMOSPHERE 1/17/90
@@ -1114,15 +1141,21 @@ C        LONGITUDINAL
       RETURN
       END
 C--------------------------------------------------------------------
-      FUNCTION DENSU(ALT,DLB,TINF,TLB,XM,ALPHA,TZ,ZLB,S2,
+      real FUNCTION DENSU(ALT,DLB,TINF,TLB,XM,ALPHA,TZ,ZLB,S2,
      $  MN1,ZN1,TN1,TGN1)
+
+      real,intent(in) :: alt,dlb,tinf,tlb,xm,alpha,zlb,s2,ZN1(MN1)
+      real,intent(inout) :: tz,TN1(MN1),TGN1(2)
+      integer,intent(in) :: mn1
+
 C       Calculate Temperature and Density Profiles for MSIS models
 C       New lower thermo polynomial 10/30/89
-      DIMENSION ZN1(MN1),TN1(MN1),TGN1(2),XS(5),YS(5),Y2OUT(5)
+      DIMENSION XS(5),YS(5),Y2OUT(5)
       COMMON/PARMB/GSURF,RE
       COMMON/LSQV/MP,II,JG,LT,QPB(50),IERR,IFUN,N,J,DV(60)
       SAVE
       DATA RGAS/831.4/
+
       ZETA(ZZ,ZL)=(ZZ-ZL)*(RE+ZL)/(RE+ZZ)
 CCCCCCWRITE(6,*) 'DB',ALT,DLB,TINF,TLB,XM,ALPHA,ZLB,S2,MN1,ZN1,TN1
       DENSU=1.
@@ -1193,13 +1226,20 @@ C       integrate spline temperatures
 C       Density at altitude
       DENSU=DENSU*(T1/TZ)**(1.+ALPHA)*EXP(-EXPL)
    50 CONTINUE
-      RETURN
-      END
+
+      END function densu
 C--------------------------------------------------------------------
-      FUNCTION DENSM(ALT,D0,XM,TZ,MN3,ZN3,TN3,TGN3,MN2,ZN2,TN2,TGN2)
+      real FUNCTION DENSM(ALT,D0,XM,TZ,MN3,ZN3,TN3,TGN3,MN2,ZN2,TN2,
+     & TGN2)
+
+      real,intent(in) :: alt,d0,xm,ZN3(MN3),TN3(MN3),TGN3(2),ZN2(MN2),
+     &        TN2(MN2),TGN2(2)
+      real,intent(inout) :: tz !yes tz is used outside the function
+      integer,intent(in) :: mn3,mn2
+
 C       Calculate Temperature and Density Profiles for lower atmos.
-      DIMENSION ZN3(MN3),TN3(MN3),TGN3(2),XS(10),YS(10),Y2OUT(10)
-      DIMENSION ZN2(MN2),TN2(MN2),TGN2(2)
+      real XS(10),YS(10),Y2OUT(10)
+
       COMMON/PARMB/GSURF,RE
       COMMON/FIT/TAF
       COMMON/LSQV/MP,II,JG,LT,QPB(50),IERR,IFUN,N,J,DV(60)
@@ -1218,10 +1258,10 @@ C      STRATOSPHERE/MESOSPHERE TEMPERATURE
       ZG=ZETA(Z,Z1)
       ZGDIF=ZETA(Z2,Z1)
 C       Set up spline nodes
-      DO 210 K=1,MN
+      DO K=1,MN
         XS(K)=ZETA(ZN2(K),Z1)/ZGDIF
         YS(K)=1./TN2(K)
-  210 CONTINUE
+      end do
       YD1=-TGN2(1)/(T1*T1)*ZGDIF
       YD2=-TGN2(2)/(T2*T2)*ZGDIF*((RE+Z2)/(RE+Z1))**2
 C       Calculate spline coefficients
@@ -1254,10 +1294,10 @@ C      TROPOSPHERE/STRATOSPHERE TEMPERATURE
       ZG=ZETA(Z,Z1)
       ZGDIF=ZETA(Z2,Z1)
 C       Set up spline nodes
-      DO 220 K=1,MN
+      DO K=1,MN
         XS(K)=ZETA(ZN3(K),Z1)/ZGDIF
         YS(K)=1./TN3(K)
-  220 CONTINUE
+      end do
       YD1=-TGN3(1)/(T1*T1)*ZGDIF
       YD2=-TGN3(2)/(T2*T2)*ZGDIF*((RE+Z2)/(RE+Z1))**2
 C       Calculate spline coefficients
@@ -1270,19 +1310,19 @@ C       temperature at altitude
 C
 C      CALCULATE TROPOSPHERIC/STRATOSPHERE DENSITY
 C
-      GLB=GSURF/(1.+Z1/RE)**2
-      GAMM=XM*GLB*ZGDIF/RGAS
+          GLB=GSURF/(1.+Z1/RE)**2
+          GAMM=XM*GLB*ZGDIF/RGAS
 C        Integrate temperature profile
-      CALL SPLINI(XS,YS,Y2OUT,MN,X,YI)
-      EXPL=GAMM*YI
-      IF(EXPL.GT.50.) EXPL=50.
+          CALL SPLINI(XS,YS,Y2OUT,MN,X,YI)
+          EXPL=GAMM*YI
+          IF(EXPL.GT.50.) EXPL=50.
 C        Density at altitude
-      DENSM=DENSM*(T1/TZ)*EXP(-EXPL)
+          DENSM=DENSM*(T1/TZ)*EXP(-EXPL)
    30 CONTINUE
    50 CONTINUE
       IF(XM.EQ.0) DENSM=TZ
-      RETURN
-      END
+
+      END function densm
 C-----------------------------------------------------------------------
       SUBROUTINE SPLINE(X,Y,N,YP1,YPN,Y2)
 C        CALCULATE 2ND DERIVATIVES OF CUBIC SPLINE INTERP FUNCTION
@@ -1385,7 +1425,12 @@ C        Y: OUTPUT VALUE
       RETURN
       END
 C-----------------------------------------------------------------------
-      FUNCTION DNET(DD,DM,ZHM,XMM,XM)
+      real FUNCTION DNET(DD,DM,ZHM,XMM,XM)
+      implicit none
+      real,intent(inout) :: dd
+      real,intent(in) :: dm,zhm,xmm,xm
+      real a,ylog
+
 C       TURBOPAUSE CORRECTION FOR MSIS MODELS
 C         Root mean density
 C       8/20/80
@@ -1398,7 +1443,7 @@ C          DNET - combined density
       SAVE
       A=ZHM/(XMM-XM)
       IF(DM.GT.0.AND.DD.GT.0) GOTO 5
-        WRITE(6,*) 'DNET LOG ERROR',DM,DD,XM
+        WRITE(6,*) 'DNET LOG ERROR',DM,DD,XM,ZHM,XMM,XM
         IF(DD.EQ.0.AND.DM.EQ.0) DD=1.
         IF(DM.EQ.0) GOTO 10
         IF(DD.EQ.0) GOTO 20
@@ -1415,10 +1460,13 @@ C          DNET - combined density
         DNET=DM
         GO TO 50
    50 CONTINUE
-      RETURN
-      END
+
+      END Function DNET
 C-----------------------------------------------------------------------
-      FUNCTION  CCOR(ALT, R,H1,ZH)
+      real FUNCTION  CCOR(ALT, R,H1,ZH)
+      implicit none
+      real,intent(in) :: alt,r,h1,zh
+      real e,ex
 C        CHEMISTRY/DISSOCIATION CORRECTION FOR MSIS MODELS
 C        ALT - altitude
 C        R - target ratio
@@ -1437,8 +1485,8 @@ C        ZH - altitude of 1/2 R
         GO TO 50
    50 CONTINUE
       CCOR=EXP(CCOR)
-       RETURN
-      END
+
+      END FUNCTION  CCOR
 C-----------------------------------------------------------------------
       BLOCK DATA GTD6BK
 C          MSISE 90 12-MAR-90
@@ -2197,4 +2245,4 @@ C         MIDDLE ATMOSPHERE AVERAGES
       DATA PAVGM/
      M  2.61000E+02, 2.64000E+02, 2.29000E+02, 2.17000E+02, 2.17000E+02,
      M  2.23000E+02, 2.86760E+02,-2.93940E+00, 2.50000E+00, 0.00000E+00/
-      END
+      END block data GTD6BK

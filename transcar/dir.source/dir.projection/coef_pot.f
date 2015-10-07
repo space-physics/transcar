@@ -1,30 +1,37 @@
-	subroutine coef_pot(iyd,tu,kp,ndeg,mdeg,phipot,
-     &		            Lmin,Lmax,latequi,ddp,ierr)
-Cf2py intent(in) iyd,tu,kp
-Cf2py intent(out) ndeg,mdeg,phipot,Lmin,Lmax,latequi,ddp,ierr
+      subroutine coef_pot(iyd,tu,kp,ndeg,
+     & mdeg,phipot,Lmin,Lmax,latequi,ddp,ierr)
 
-	implicit none
+      implicit none
 
-        include '../dir.include/TRANSPORT.INC'
+      include '../dir.include/TRANSPORT.INC'
 
-        integer npt,ndeg0,mdeg0,ikp,len_coef,len_rec,len_buf,irec
-        parameter(ndeg0=5,mdeg0=5,npt=(ndeg0+1)*(2*mdeg0+1))
-        integer ndeg,mdeg,ierr,i
-	integer iyddeb,iydfin,iyd
-	real*8 tu
-	real kp,ddp,buffer(1000)
-	real*8 latequi,Lmin,Lmax
-	real*8 phipot(1),phi(3*npt)
+      real*8,intent(in) :: tu
+      real,intent(in) :: kp
+      integer,intent(in) :: iyd
+      integer,intent(inout) :: ndeg,ierr 
+! FIXME does ierr need to be saved in calling module?
+      integer,intent(out) :: mdeg
+      real*8,intent(out) :: phipot(1),Lmin,Lmax,latequi
+      real,intent(out) :: ddp
 
-	real*8 tempsdeb,tempsfin,xt,xtd,xtf
-	real*8 latlim,Linf,Lsup
-	logical flgini
-
-	data iyddeb    ,tempsdeb  ,iydfin    ,tempsfin  ,irec,flgini
-     &	    /3000365.d0,86400.d0  ,1980001.d0,0.d0      ,0   ,.true./
+      integer, parameter :: ndeg0=5, mdeg0=5, npt=(ndeg0+1)*(2*mdeg0+1)
+      real*8,parameter :: Linf=61.5d0,Lsup=72.5d0,latlim=55.d0
 
 
-        data phi/
+      integer ikp,len_coef,len_rec,len_buf,irec
+      
+      integer iyddeb,iydfin,i
+      real buffer(1000)
+      real*8 phi(3*npt)
+
+      real*8 tempsdeb,tempsfin,xt,xtd,xtf
+      logical flgini
+
+      data iyddeb    ,tempsdeb  ,iydfin    ,tempsfin  ,irec,flgini
+     &        /3000365.d0,86400.d0  ,1980001.d0,0.d0      ,0   ,.true./
+
+
+      data phi/
 c        0<=Kp<=2-
      &   -2.930d-01,  2.260d-01,  9.700d-02, -2.600d-02,
      &    1.400d-02, -1.700d-02,  8.100d-01,  1.432d+00,
@@ -81,80 +88,82 @@ c        4<=Kp<=6-
      &    5.900d-02,  1.520d-01/
 
 
-       data Linf,Lsup,latlim /61.5d0,72.5d0,55.d0/
-
-	if (flgini) then
-	  ierr=1
-	  flgini=.false.
-	  open(87,file='dir.data/dir.linux/dir.projection/varpot.dat',
+      if (flgini) then
+          ierr=1
+          flgini=.false.
+          open(87,file='dir.data/dir.linux/dir.projection/varpot.dat',
      &       form='unformatted',access='direct',status='old',recl=40,
-     &	     iostat=ierr,err=999)
-c     &		form='formatted',status='old',iostat=ierr,err=999)
-	read(87,rec=1)(buffer(i),i=1,10)
-	ndeg=buffer(5)
-	mdeg=buffer(6)
-	len_coef=(2*mdeg+1)*(ndeg+1)
-	len_buf=len_coef+10
-	len_rec=4*len_buf
-	endif
+     &         iostat=ierr,err=999)
+c     &        form='formatted',status='old',iostat=ierr,err=999)
+          read(87,rec=1)(buffer(i),i=1,10)
+          ndeg=buffer(5)
+          mdeg=buffer(6)
+          len_coef=(2*mdeg+1)*(ndeg+1)
+          len_buf=len_coef+10
+          len_rec=4*len_buf
+      endif
 
-999	continue
-	close(87)
-	if (ierr.gt.0) then
-	  ndeg=ndeg0
-	  mdeg=mdeg0
-	  Lmin=Linf
-	  Lmax=Lsup
-	  latequi=latlim
-	  ikp=kp
-	  if(ikp.le.1.) then
-	    do i=1,(ndeg+1)*(mdeg+1)
-	      phipot(i)=phi(i)
-	    enddo
-	  else if(ikp.le.3.) then
-	    do i=1,(ndeg+1)*(mdeg+1)
-	      phipot(i)=phi(i+npt)
-	    enddo
-	  else
-	    do i=1,(ndeg+1)*(mdeg+1)
-	      phipot(i)=phi(i+2*npt)
-	    enddo
-	  endif
-	else
-	  open(87,file='dir.data/dir.linux/dir.projection/varpot.dat',
+999    continue
+      close(87)
+      if (ierr.gt.0) then 
+      print*,'WARNING: Error reading varpot.dat, fallback to defaults'
+!if there was an error reading varpot.dat, fallback to default param
+      ndeg=ndeg0
+      mdeg=mdeg0
+      Lmin=Linf
+      Lmax=Lsup
+      latequi=latlim
+      ikp=kp
+          if(ikp.le.1.) then
+            do i=1,(ndeg+1)*(mdeg+1)
+              phipot(i)=phi(i)
+            enddo
+          else if(ikp.le.3.) then
+            do i=1,(ndeg+1)*(mdeg+1)
+              phipot(i)=phi(i+npt)
+            enddo
+          else
+            do i=1,(ndeg+1)*(mdeg+1)
+              phipot(i)=phi(i+2*npt)
+            enddo
+          endif
+      else
+! continue to read varpot.dat
+       open(87,file='dir.data/dir.linux/dir.projection/varpot.dat',
      &        form='unformatted',access='direct',status='old',
-     &	     recl=len_rec,iostat=ierr)
-c     &		form='formatted',status='old',iostat=ierr)
+     &         recl=len_rec,iostat=ierr)
+c     &        form='formatted',status='old',iostat=ierr)
 
-	  xt=iyd+tu*1.d-6
+       xt=iyd+tu*1.d-6
           if (iyd.lt.1900000) xt=xt+1900000.d0
 
-	  xtd=iyddeb+tempsdeb*1.d-6
-	  xtf=iydfin+tempsfin*1.d-6
-	  dowhile (xtd.gt.xt.or.xtf.le.xt)
-	    if (xtf.gt.xt) irec=max(irec-1,1)
-	    if (xtf.le.xt) irec=irec+1
-	    read(87,rec=irec) (buffer(i),i=1,len_buf)
-	    iyddeb=buffer(1)
-	    tempsdeb=buffer(2)
-	    iydfin=buffer(3)
-	    tempsfin=buffer(4)
-	    Lmin=buffer(7)
-	    Lmax=buffer(8)
-	    latequi=buffer(9)
-	    ddp=buffer(10)
-c	     read(87,*) iyddeb,tempsdeb,iydfin,tempsfin,
+       xtd=iyddeb+tempsdeb*1.d-6
+       xtf=iydfin+tempsfin*1.d-6
+       do while (xtd.gt.xt.or.xtf.le.xt)
+            if (xtf.gt.xt) irec=max(irec-1,1)
+            if (xtf.le.xt) irec=irec+1
+
+            read(87,rec=irec) (buffer(i),i=1,len_buf)
+            iyddeb=buffer(1)
+            tempsdeb=buffer(2)
+            iydfin=buffer(3)
+            tempsfin=buffer(4)
+            Lmin=buffer(7)
+            Lmax=buffer(8)
+            latequi=buffer(9)
+            ddp=buffer(10)
+c         read(87,*) iyddeb,tempsdeb,iydfin,tempsfin,
 c     &                 ndeg,mdeg,Lmin,Lmax,latequi,ddp
-	    xtd=iyddeb+tempsdeb*1.d-6
-	    xtf=iydfin+tempsfin*1.d-6
+            xtd=iyddeb+tempsdeb*1.d-6
+            xtf=iydfin+tempsfin*1.d-6
 
-c	    read(87,*) (phipot(i),i=1,(2*mdeg+1)*(ndeg+1))
-	    do i=1,len_coef
-	      phipot(i)=buffer(10+i)
-	    enddo
-	  enddo
-	  close(87)
+c        read(87,*) (phipot(i),i=1,(2*mdeg+1)*(ndeg+1))
+            do i=1,len_coef
+              phipot(i)=buffer(10+i)
+            end do
+       end do
+       close(87)
 
-	endif
+      End If
 
-      end subroutine coeff_pot
+      end subroutine coef_pot

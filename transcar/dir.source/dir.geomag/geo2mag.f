@@ -1,38 +1,36 @@
-	subroutine geo2mag(latgeo,longeo,latmag,lonmag,dlon)
+        subroutine geo2mag(latgeo,longeo,latmag,lonmag)
 
-	implicit none
-Cf2py intent(in) latgeo, longeo
-Cf2py intent(out) latmag, lonmag, dlon
+        implicit none
 
- 
-c	routine de conversion des coordonnees geographiques
-c	aux coordonnees magnetiques dipolaires avec pole
-c	de centre (lat = (90-8.56) deg, lon = 277.31 deg)
+c    geographic coordinate conversion routine with the
+c    dipole magnetic pole center
+c    (lat = (90-8.56) deg, lon = 277.31 deg)
 
-c	latgeo = latitude  geographique en degres decimaux
-c	longeo = longitude geographique en degres decimaux
-c	latmag = latitude  magnetique   en degres decimaux
-c	lonmag = longitude magnetique   en degres decimaux
+c    latgeo = latitude  geographic en degres decimal
+c    longeo = longitude geographic en degres decimal
+c    latmag = latitude  magnetic   en degres decimal
+c    lonmag = longitude magnetic   en degres decimal
 
-c	Baker and Wing, JGR, 94, 9139-9143, 1989
-c	coordonnees dipolaires de Gustafsson
+c    Baker and Wing, JGR, 94, 9139-9143, 1989
+c    coordonnees dipolaires de Gustafsson
+        real*8,intent(inout) :: latgeo,longeo,latmag,lonmag
 
-	real*8 latgeo,longeo,latmag,lonmag,omega(3,3)
+        real*8 omega(3,3)
         real*8 dlongeo,dlatgeo,dlonmag,dlatmag
-	real*8 lat,lon,deg2rad,rad2deg,coordgeo(3),coordmag(3)
-	real*8 lonref,dlon
-	real*8 ca,cb,sa,sb
-	integer i,j,k
-	integer ndeg,mdeg
-	parameter(ndeg=8,mdeg=8)
+        real*8 coordgeo(3),coordmag(3)
+        real*8 ca,cb,sa,sb
+        integer i,j,k
+        integer ndeg,mdeg
+        parameter(ndeg=8,mdeg=8)
 
-	real*8 x(0:ndeg),y(0:mdeg),xm,ym
-	real*8 cx_geo2cgm(0:ndeg,0:mdeg),cy_geo2cgm(0:ndeg,0:mdeg)
-	real*8 cx_cgm2geo(0:ndeg,0:mdeg),cy_cgm2geo(0:ndeg,0:mdeg)
+        real*8 x(0:ndeg),y(0:mdeg),xm,ym
+        real*8 cx_geo2cgm(0:ndeg,0:mdeg),cy_geo2cgm(0:ndeg,0:mdeg)
+        real*8 cx_cgm2geo(0:ndeg,0:mdeg),cy_cgm2geo(0:ndeg,0:mdeg)
 
-	data lat,lon,lonref/7.48d0,171.01d0,261.36d0/
+        real*8,parameter :: lat=7.48d0,lon=171.01d0,lonref=261.36d0
 
-	data deg2rad,rad2deg/0.01745329251994d0,57.29577951308232d0/
+        real*8,parameter :: deg2rad=0.01745329251994d0,
+     &                      rad2deg=57.29577951308232d0
 
         data cx_geo2cgm/
      &   -1.7362173467106497d-02,8.1292551988288747d-02 ,
@@ -206,53 +204,53 @@ c	coordonnees dipolaires de Gustafsson
      &   -2.3072229800309287d+00,1.0257990504942427d+00 ,
      &   -8.9571300047100522d-01/
 
-	dlon=292.d0
+!        dlon=292.d0
 
 
-	dlatgeo=latgeo*deg2rad
-	dlongeo=(longeo+lonref)*deg2rad
+        dlatgeo=latgeo*deg2rad
+        dlongeo=(longeo+lonref)*deg2rad
 
-	ca=dcos(lat*deg2rad)
-	sa=dsin(lat*deg2rad)
-	cb=dcos(lon*deg2rad)
-	sb=dsin(lon*deg2rad)
+        ca=cos(lat*deg2rad)
+        sa=sin(lat*deg2rad)
+        cb=cos(lon*deg2rad)
+        sb=sin(lon*deg2rad)
 
-	omega(1,1)=ca*cb
-	omega(2,1)=ca*sb
-	omega(3,1)=-sa
-	omega(1,2)=-sb
-	omega(2,2)=cb
-	omega(3,2)=0.
-	omega(1,3)=cb*sa
-	omega(2,3)=sa*sb
-	omega(3,3)=ca
+        omega(1,1)=ca*cb
+        omega(2,1)=ca*sb
+        omega(3,1)=-sa
+        omega(1,2)=-sb
+        omega(2,2)=cb
+        omega(3,2)=0.
+        omega(1,3)=cb*sa
+        omega(2,3)=sa*sb
+        omega(3,3)=ca
 
-        ca=dcos(dlatgeo)
-        cb=dcos(dlongeo)
-        sb=dsin(dlongeo)
-        sa=dsin(dlatgeo)
+        ca=cos(dlatgeo)
+        cb=cos(dlongeo)
+        sb=sin(dlongeo)
+        sa=sin(dlatgeo)
 
-	coordgeo(1)=ca*cb
-	coordgeo(2)=ca*sb
-	coordgeo(3)=sa
+        coordgeo(1)=ca*cb
+        coordgeo(2)=ca*sb
+        coordgeo(3)=sa
 
-	do i=1,3
-	  coordmag(i)=0.
-	  do j=1,3
-	    coordmag(i)=coordmag(i)+omega(i,j)*coordgeo(j)
-	  enddo
-	enddo
+        do i=1,3
+          coordmag(i)=0.
+          do j=1,3
+            coordmag(i)=coordmag(i)+omega(i,j)*coordgeo(j)
+          enddo
+        enddo
 
-	latmag=dasin(coordmag(3))
+        latmag=asin(coordmag(3))
 
-	if (dabs(latmag-90.).lt.1.e-4) then
-	  lonmag=0.
-	else
-	  lonmag=datan2(coordmag(2),coordmag(1))
-	endif
+        if (abs(latmag-90.).lt.1.e-4) then
+          lonmag=0.
+        else
+          lonmag=atan2(coordmag(2),coordmag(1))
+        endif
 
-	x(0)=1.d0
-	y(0)=1.d0
+        x(0)=1.d0
+        y(0)=1.d0
         x(1)=cos(lonmag)*cos(latmag)
         y(1)=sin(lonmag)*cos(latmag)
         
@@ -263,8 +261,8 @@ c	coordonnees dipolaires de Gustafsson
         y(j)=y(j-1)*y(1)
         enddo
         
-	xm=0.
-	ym=0.
+        xm=0.
+        ym=0.
         do i=0,ndeg
           do j=0,ndeg
             xm=xm+cx_geo2cgm(j,i)*x(i)*y(j)
@@ -272,24 +270,24 @@ c	coordonnees dipolaires de Gustafsson
           enddo
         enddo
         
-        latmag=dacos(sqrt(xm*xm+ym*ym))*rad2deg
+        latmag=acos(sqrt(xm*xm+ym*ym))*rad2deg
         if(ym*xm.ne.0.) then
-          lonmag=datan2(ym,xm)*rad2deg
+          lonmag=atan2(ym,xm)*rad2deg
           lonmag=mod(lonmag+360.d0,360.d0)
         else
           lonmag=lonref
         endif 
 
 
-	return
+        return
 
-	entry mag2geo(latmag,lonmag,latgeo,longeo)
+        entry mag2geo(latmag,lonmag,latgeo,longeo)
 
-	dlatmag=latmag*deg2rad
-	dlonmag=lonmag*deg2rad
+        dlatmag=latmag*deg2rad
+        dlonmag=lonmag*deg2rad
 
-	x(0)=1.
-	y(0)=1.
+        x(0)=1.
+        y(0)=1.
         x(1)=cos(dlonmag)*cos(dlatmag)
         y(1)=sin(dlonmag)*cos(dlatmag)
         
@@ -300,8 +298,8 @@ c	coordonnees dipolaires de Gustafsson
         y(j)=y(j-1)*y(1)
         enddo
         
-	xm=0.
-	ym=0.
+        xm=0.
+        ym=0.
         do i=0,ndeg
           do j=0,ndeg
             xm=xm+cx_cgm2geo(j,i)*x(i)*y(j)
@@ -312,38 +310,36 @@ c	coordonnees dipolaires de Gustafsson
         ca=sqrt(xm*xm+ym*ym)
         sa=sqrt(1-ca*ca)
         if(ym*xm.ne.0.) then
-          dlonmag=datan2(ym,xm)
+          dlonmag=atan2(ym,xm)
         else
           dlonmag=lonref
         endif 
 
-        cb=dcos(dlonmag)
-        sb=dsin(dlonmag)
+        cb=cos(dlonmag)
+        sb=sin(dlonmag)
 
-	coordmag(1)=ca*cb
-	coordmag(2)=ca*sb
-	coordmag(3)=sa
+        coordmag(1)=ca*cb
+        coordmag(2)=ca*sb
+        coordmag(3)=sa
 
 
-	do i=1,3
-	  coordgeo(i)=0.
-	  do j=1,3
-	    coordgeo(i)=coordgeo(i)+omega(j,i)*coordmag(j)
-	  enddo
-	enddo
+        do i=1,3
+          coordgeo(i)=0.
+          do j=1,3
+            coordgeo(i)=coordgeo(i)+omega(j,i)*coordmag(j)
+          enddo
+        enddo
 
-	latgeo=dasin(coordgeo(3))*rad2deg
+        latgeo=asin(coordgeo(3))*rad2deg
 
-	if (dabs(latgeo-90).lt.1.e-4) then
-	  longeo=0.
-	else
-	  longeo=datan2(coordgeo(2),coordgeo(1))
-	endif
+        if (abs(latgeo-90).lt.1.e-4) then
+          longeo=0.
+        else
+          longeo=atan2(coordgeo(2),coordgeo(1))
+        endif
 
-	longeo=longeo*rad2deg
+        longeo=longeo*rad2deg
 
-	longeo=mod(longeo-lonref+360.d0,360.d0)
+        longeo=mod(longeo-lonref+360.d0,360.d0)
 
-	return
-
-	end
+        end subroutine geo2mag

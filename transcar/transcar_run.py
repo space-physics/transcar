@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 from __future__ import division,absolute_import
+from pathdir2 import Path
 import logging
 from collections import deque
-from os.path import join,abspath
-from os import makedirs
 from subprocess import Popen
 #
 from transcarread.parseTranscar import readTranscarInput
@@ -16,9 +15,10 @@ datcar = 'dir.input/DATCAR'
 precfn = 'dir.input/precinput.dat'
 
 def runTranscar(odir,errfn,msgfn):
-    with open(join(odir,errfn),'w')  as ferr, open(join(odir,msgfn),'w') as fout:
+    odir = Path(odir).expanduser()
+    with (odir/errfn).open('w')  as ferr, (odir/msgfn).open('w') as fout:
     #we need cwd feature of Popen that call() doesn't have
-        exe = abspath(join(odir,transcarexe))
+        exe = (odir/transcarexe).resolve()
 
         proc = Popen(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
         out,err = proc.communicate() #this makes popen block (we want this)
@@ -26,9 +26,9 @@ def runTranscar(odir,errfn,msgfn):
 
 
 def transcaroutcheck(odir,errfn):
-    fok = join(odir,fileok)
+    fok = odir/fileok
     try:
-      with open(join(odir,errfn),'r') as ferr:
+      with (odir/errfn).open('r') as ferr:
         last = deque(ferr,1)[0].rstrip('\n')
         with open(fok,'w') as f:
             if last == 'STOP fin normale':
@@ -48,14 +48,14 @@ def transcaroutcheck(odir,errfn):
 def setuptranscario(rodir,beamEnergy):
     inp = readTranscarInput(datcar)
 
-    odir = join(rodir,'beam{:.1f}'.format(beamEnergy))
+    odir = rodir/'beam{:.1f}'.format(beamEnergy)
 
     try:
-        makedirs(join(odir,'dir.output'))
+        (odir/'dir.output').mkdir(parents=True,exist_ok=True)
     except OSError:
         raise ValueError('{} directory already existed, aborting'.format(beamEnergy))
 
-    flist = [datcar, join('dir.input',inp['precfile']), 'dir.data/type',transcarexe]
+    flist = [datcar, 'dir.input'/inp['precfile'], 'dir.data/type',transcarexe]
     flist.extend(['dir.data/dir.linux/dir.geomag/' +s  for s in ['data_geom.bin','igrf90.dat','igrf90s.dat']])
     flist.append('dir.data/dir.linux/dir.projection/varpot.dat')
     #transcar sigsegv on val_fit_ if FELTRANS is blank!
@@ -77,7 +77,7 @@ def setupPrecipitation(odir,inp,E1,E2,pr1,pr2, flux0):
     precout = '\n'.join(('{}','{} {}','{} -1.0','{}','-1.0 -1.0')).format(
               inp['precipstartsec'], Elow, flux, Ehigh, inp['precipendsec'])
 
-    with open(join(odir,precfn),'w') as f:
+    with (odir/precfn).open('w') as f:
         f.write(precout)
 #%%
 if __name__ == '__main__':

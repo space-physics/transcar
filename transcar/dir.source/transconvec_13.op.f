@@ -1241,7 +1241,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
      &  .or.isnant(Tenew,nx)
      &  .or.isnant(T1new,nx)) then
           write(stderr,*),'problem before calling atmos'
-          goto 246
+          if (halt) goto 246
         endif
     
         if (debug) then
@@ -1689,7 +1689,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
      &  .or.isnant(Tenew,nx)
      &  .or.isnant(T1new,nx)) then
           write(stderr,*),'problem before calling atmos'
-          goto 246
+          if (halt) goto 246
         endif
          call atmos(iyd,real(temps,sp),stl,alt,latgeo,longeo,jpreci,f107,
      &            ap,Nenew,Tenew,T1new,nx,kiappel,file_cond)
@@ -2046,7 +2046,7 @@ CCCCC                                                                           
           if (isnant(Nnonew,nx)) then
             call cpu_time(tic)
         write(stderr,*),tic,'problem when calculating Tenew in loop 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 !]]]
@@ -2108,7 +2108,7 @@ CCCCC                                                                           
           enddo
           if (isnant(Unonew,nx)) then
             print*,'probleme lors du calcul de Unonew'
-            goto 246
+            if (halt) goto 246
           endif
 
          do i=indno+1,nx
@@ -2532,27 +2532,27 @@ CCCCC                                                                           
 
           if (isnant(N1new,nx)) then
             print*,'probleme lors du calcul de N1new dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
           if (isnant(N2new,nx)) then
             print*,'probleme lors du calcul de N2new dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
           if (isnant(N3new,nx)) then
             print*,'probleme lors du calcul de N3new dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
           if (isnant(N4new,nx)) then
             print*,'probleme lors du calcul de N4new dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
           if (isnant(N5new,nx)) then
             print*,'probleme lors du calcul de N5new dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
           if (isnant(N6new,nx)) then
             print*,'probleme lors du calcul de N6new dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
     
     
@@ -2812,7 +2812,7 @@ CCCCC                                                                           
           if (isnant(U2new,nx)) then
             call cpu_time(tic)
             write(stderr,*),tic,'problem calc U2new loop  1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -2941,7 +2941,7 @@ CCCCC                                                                           
           if (isnant(U1new,nx)) then
           call cpu_time(tic)
          write(stderr,*),tic,'problem calc U1new loop 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -3121,7 +3121,7 @@ CCCCC                                                                           
           if (isnant(Umnew,nx)) then
           call cpu_time(tic)
        write(stderr,*),tic,'Heavy Ions problem calc  Umnew loop 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -3246,7 +3246,7 @@ CCCCC                                                                           
           if (isnant(U3new,nx)) then
           call cpu_time(tic)
        write(stderr,*),tic,'N+ mom. problem calc U3new in loop 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -3423,7 +3423,7 @@ CCCCC                                                                           
           if (isnant(q2new,nx)) then
           call cpu_time(tic)
       write(stderr,*),tic,'H+ heatflow problem calc q2new loop 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -3557,7 +3557,7 @@ CCCCC                                                                           
           if (isnant(q1new,nx)) then
           call cpu_time(tic)
       write(stderr,*),tic,'L3557: problem calc q1new in loop 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -3686,7 +3686,7 @@ CCCCC                                                                           
 
           if (isnant(q3new,nx)) then
             print*,'problem when calculating q3new in loop 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -3951,7 +3951,7 @@ CCCCC                                                                           
           if (isnant(qenew,nx)) then
             call cpu_time(tic)
         write(stderr,*),tic,'problem when calculating qenew in loop 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -3989,7 +3989,7 @@ CCCCC                                                                           
           if (isnant(Tenew,nx)) then
             call cpu_time(tic)
         write(stderr,*),tic,'problem when calculating Tenew in loop 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -4000,12 +4000,12 @@ CCCCC                                                                           
           if (isnant(qenew,nx)) then
             call cpu_time(tic)
         write(stderr,*),tic,'problem in stabenerg with qe in loop 1'
-            goto 246
+            if (halt) goto 246
           endif
           if (isnant(Tenew,nx)) then
             call cpu_time(tic)
         write(stderr,*),tic,'problem in stabenerg with Te in loop 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 ! deuxieme demi-boucle
@@ -4059,7 +4059,7 @@ CCCCC                                                                           
 
           if (isnant(qenew,nx)) then
             print*,'probleme lors du calcul de qenew dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -4094,7 +4094,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
           if (isnant(Tenew,nx)) then
             call cpu_time(tic)
       write(stderr,*),tic,'L4076: problem when calc Tenew in loop 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -4105,11 +4105,11 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
           if (isnant(qenew,nx)) then
             call cpu_time(tic)
          write(stderr,*),tic,'problem in stabenerg with qe in loop 1'
-            goto 246
+            if (halt) goto 246
           endif
           if (isnant(Tenew,nx)) then
             print*,'probleme dans stabenerg avec Te dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
               
 
@@ -4225,7 +4225,7 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
 
           if (isnant(T2pnew,nx)) then
             print*,'probleme lors du calcul de T2pnew dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -4330,7 +4330,7 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
 
           if (isnant(T2tnew,nx)) then
             print*,'probleme lors du calcul de T2tnew dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -4436,7 +4436,7 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
 
           if (isnant(T1pnew,nx)) then
             print*,'probleme lors du calcul de T1pnew dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -4538,7 +4538,7 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
 
           if (isnant(T1tnew,nx)) then
             print*,'probleme lors du calcul de T1tnew dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -4693,7 +4693,7 @@ c    flag=.false.
 
           if (isnant(Tmpnew,nx)) then
             print*,'probleme lors du calcul de Tmpnew dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -4822,7 +4822,7 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
 
           if (isnant(Tmtnew,nx)) then
             print*,'probleme lors du calcul de Tmtnew dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -4923,7 +4923,7 @@ c            T3pnew(i)=T1pnew(i)
 
           if (isnant(T3pnew,nx)) then
             print*,'probleme lors du calcul de T3pnew dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -5020,7 +5020,7 @@ c            T3tnew(i)=T1tnew(i)
 
           if (isnant(T3tnew,nx)) then
             print*,'probleme lors du calcul de T3tnew dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 123    continue
@@ -5537,27 +5537,27 @@ c****************************************
 
           if (isnant(N1new,nx)) then
             print*,'probleme lors du calcul de N1new dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
           if (isnant(N2new,nx)) then
             print*,'probleme lors du calcul de N2new dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
           if (isnant(N3new,nx)) then
             print*,'probleme lors du calcul de N3new dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
           if (isnant(N4new,nx)) then
             print*,'probleme lors du calcul de N4new dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
           if (isnant(N5new,nx)) then
             print*,'probleme lors du calcul de N5new dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
           if (isnant(N6new,nx)) then
             print*,'probleme lors du calcul de N6new dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
 
           do  i=1,nx
@@ -5809,7 +5809,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
 
           if (isnant(U2new,nx)) then
             print*,'probleme lors du calcul de U2new dans la boucle 2'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -5930,7 +5930,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
 
           if (isnant(U1new,nx)) then
             print*,'probleme lors du calcul de U1new dans la boucle 2'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -6109,7 +6109,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
 
           if (isnant(Umnew,nx)) then
             print*,'probleme lors du calcul de Umnew dans la boucle 2'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -6225,7 +6225,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
 
           if (isnant(U3new,nx)) then
             print*,'probleme lors du calcul de U3new dans la boucle 2'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -6397,7 +6397,7 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
 
           if (isnant(q2new,nx)) then
             print*,'probleme lors du calcul de q2new dans la boucle 2'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -6531,7 +6531,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
 
           if (isnant(q1new,nx)) then
             print*,'probleme lors du calcul de q1new dans la boucle 2'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -6659,7 +6659,7 @@ C[[[   Boundaries conditions
 
           if (isnant(q3new,nx)) then
             print*,'problem when calculating q3new in loop 2'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -6928,7 +6928,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3q,0.,0.)
           if (isnant(qenew,nx)) then
           call cpu_time(tic)
         write(stderr,*),tic,'L6910: problem calc  qenew in loop 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -6966,7 +6966,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
           if (isnant(Tenew,nx)) then
             call cpu_time(tic)
         write(stderr,*),tic,'L6966: problem when calc Tenew in loop 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -6976,11 +6976,11 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
 
           if (isnant(qenew,nx)) then
             print*,'problem in stabenerg with qe in loop 1'
-            goto 246
+            if (halt) goto 246
           endif
           if (isnant(Tenew,nx)) then
             print*,'probleme dans stabenerg avec Te dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 c deuxieme demi-boucle
@@ -7035,7 +7035,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3q,0.,0.)
           if (isnant(qenew,nx)) then
             call cpu_time(tic)
         write(stderr,*),tic,'L7014: problem when calc qenew in loop 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -7070,7 +7070,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
           if (isnant(Tenew,nx)) then
             call cpu_time(tic)
         write(stderr,*),tic,'L7049: problem when calc Tenew in loop 1'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -7080,11 +7080,11 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
 
           if (isnant(qenew,nx)) then
             print*,'probleme dans stabenerg avec qe dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
           if (isnant(Tenew,nx)) then
             print*,'probleme dans stabenerg avec Te dans la boucle 1'
-            goto 246
+            if (halt) goto 246
           endif
               
 
@@ -7205,7 +7205,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
 
           if (isnant(T2pnew,nx)) then
             print*,'probleme lors du calcul de T2pnew dans la boucle 2'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -7311,7 +7311,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
 
           if (isnant(T2tnew,nx)) then
             print*,'probleme lors du calcul de T2tnew dans la boucle 2'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -7421,7 +7421,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
 
           if (isnant(T1pnew,nx)) then
             print*,'probleme lors du calcul de T1pnew dans la boucle 2'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -7525,7 +7525,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
           if (isnant(T1tnew,nx)) then
             call cpu_time(tic)
         write(stderr,*),tic,'problem when calculating T1tnew in loop 2'
-            goto 246
+           if (halt) goto 246
           endif
 
 
@@ -7681,7 +7681,7 @@ c    flag=.false.
           if (isnant(Tmpnew,nx)) then
             call cpu_time(tic)
         write(stderr,*),tic,'problem when calculating Tmpnew in loop 2'
-            goto 246
+           if (halt) goto 246
           endif
 
 c    temperature perpendiculaire
@@ -7808,7 +7808,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
 
           if (isnant(Tmtnew,nx)) then
             print*,'problem calc Tmtnew loop 2'
-            goto 246
+           if (halt)  goto 246
           endif
 
 
@@ -7911,7 +7911,7 @@ c            T3pnew(i)=T1pnew(i)
           if (isnant(T3pnew,nx)) then
             call cpu_time(tic)
         write(stderr,*),tic,'problem when calculating T3pnew in loop 2'
-            goto 246
+            if (halt) goto 246
           endif
 
 
@@ -8009,7 +8009,7 @@ c            T3tnew(i)=T1tnew(i)
           if (isnant(T3tnew,nx)) then
             call cpu_time(tic)
         write(stderr,*),tic,'problem when calculating T3tnew in loop 2'
-            goto 246
+            if (halt) goto 246
           endif
 456    continue
 

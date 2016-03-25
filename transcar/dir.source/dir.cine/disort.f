@@ -299,6 +299,7 @@ C
 c
       DOUBLE PRECISION   AAD( MI,MI ), EVALD( MI ) , EVECCD( MI,MI ),
      $                   WKD( MXCMU )
+      real UMU0a(1)
 C
       SAVE  PASS1, pi, epsil, rpd, exptest
       DATA  PASS1 / .TRUE. /pass2/.true./
@@ -399,8 +400,10 @@ C
       IF ( MAZ.GT.0 )  DELM0 = 0.0
 C                                  ** GET NORMALIZED ASSOCIATED LEGENDRE
 C                          ** POLYNOMIALS FOR INCIDENT BEAM ANGLE COSINE
-      IF ( FBEAM.GT.0.0 )
-     $     CALL  LEPOLY( 1, MAZ, MXCMU, NSTR-1, -UMU0, YLM0, iounit )
+      IF ( FBEAM.GT.0.0 ) then
+       UMU0a(1) = UMU0
+       CALL  LEPOLY( 1, MAZ, MXCMU, NSTR-1, -UMU0a, YLM0, iounit )
+      endif
 C
 C                                  ** GET NORMALIZED ASSOCIATED LEGENDRE
 C                                      ** POLYNOMIALS FOR COMPUTATIONAL
@@ -1749,7 +1752,7 @@ C
 *
 *----------------------------------------------------------------------
 *
-      SUBROUTINE  LEPOLY( NMU, M, MAXMU, TWONM1, MU, YLM, iounit )
+      SUBROUTINE LEPOLY( NMU, M, MAXMU, TWONM1, MU, YLM, iounit )
 C
 C       COMPUTES THE NORMALIZED ASSOCIATED LEGENDRE POLYNOMIAL,
 C       DEFINED IN TERMS OF THE ASSOCIATED LEGENDRE POLYNOMIAL
@@ -1788,20 +1791,25 @@ C
 C       YLM(L,I) :  L = M TO TWONM1, NORMALIZED ASSOCIATED LEGENDRE
 C                   POLYNOMIALS EVALUATED AT ARGUMENT -MU(I)-
 C+---------------------------------------------------------------------+
-      REAL     MU(*), YLM( 0:MAXMU,* )
-      INTEGER  M, NMU, TWONM1
-      PARAMETER  ( MAXSQT = 1000 )
-      REAL     SQT( MAXSQT )
+        implicit none
+      REAL,intent(in) ::     MU(*)
+      INTEGER,intent(in) ::  M, NMU, TWONM1,MAXMU,iounit
+      real, intent(out) :: YLM( 0:MAXMU,* )
+      
+      integer,parameter :: MAXSQT = 1000
+      REAL     SQT( MAXSQT ),tmp1,tmp2
       LOGICAL  PASS1
+      integer i,ns,l
+      
       SAVE  SQT, PASS1
       DATA  PASS1 / .TRUE. /
 C
 C
       IF ( PASS1 )  THEN
          PASS1 = .FALSE.
-         DO 1  NS = 1, MAXSQT
+         DO NS = 1, MAXSQT
             SQT( NS ) = SQRT( FLOAT(NS) )
-    1    CONTINUE
+         enddo
       ENDIF
 C
       IF ( 2*TWONM1 .GT. MAXSQT )
@@ -1811,15 +1819,17 @@ C
       IF ( M .EQ. 0 )  THEN
 C                             ** UPWARD RECURRENCE FOR ORDINARY
 C                             ** LEGENDRE POLYNOMIALS
-         DO  10  I = 1, NMU
+         DO  I = 1, NMU
             YLM( 0,I ) = 1.
             YLM( 1,I ) = MU( I )
-10       CONTINUE
-         DO  20  L = 2, TWONM1
-            DO  20  I = 1, NMU
+         enddo
+         
+         DO  L = 2, TWONM1
+            DO   I = 1, NMU
                YLM( L,I ) = ( ( 2*L-1 ) * MU(I) * YLM( L-1,I )
      $                      - ( L-1 ) * YLM( L-2,I ) ) / L
-20       CONTINUE
+            enddo
+         enddo
 C
       ELSE
 C
@@ -1845,13 +1855,12 @@ C                                   ** UPWARD RECURRENCE; D/A EQ. (10)
 40       CONTINUE
 C
       END IF
-C
-      RETURN
-      END
+
+      END subroutine lepoly
 *
 *----------------------------------------------------------------------
 *
-      SUBROUTINE  PRAVIN( UMU, NUMU, MAXUMU, UTAU, NTAU, U0U, iounit )
+      SUBROUTINE PRAVIN( UMU, NUMU, MAXUMU, UTAU, NTAU, U0U, iounit )
 C
 C        PRINT AZIMUTHALLY AVERAGED INTENSITIES AT USER ANGLES
 C
@@ -1877,7 +1886,7 @@ C
 101   FORMAT( /, 3X,'OPTICAL   POLAR ANGLE COSINES',
      $        /, 3X,'  DEPTH', 8F14.5 )
 102   FORMAT( 0P,F10.4, 1P,8E14.4 )
-      END
+      END SUBROUTINE PRAVIN
 *
 *----------------------------------------------------------------------
 *
@@ -3800,7 +3809,7 @@ C
 *
 *----------------------------------------------------------------------
 *
-      SUBROUTINE  ERRMSG( MESSAG, FATAL, iounit )
+      SUBROUTINE ERRMSG( MESSAG, FATAL, iounit )
 C
 C        PRINT OUT A WARNING OR ERROR MESSAGE;  ABORT IF ERROR
 C

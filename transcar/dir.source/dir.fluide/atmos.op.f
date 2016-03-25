@@ -551,6 +551,7 @@ c    J0 est en �/m-2
       JJ(i)=J0/1.6e-9*((800.+Re)/(z(i)+Re))**3
 
           nu_omega=1.e-9*Nn2(i)*t0/omega(i)*30.5
+          write(stdout,*),nu_omega
           coef_cour=1./(1.+nu_omega**2)
 
           JJ(i)=JJ(i)*coef_cour

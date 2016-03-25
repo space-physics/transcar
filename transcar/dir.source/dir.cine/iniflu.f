@@ -2,7 +2,7 @@
      .                ap,chi,Ne,Te,Tj,indlim,jpreci,
      .             Nh,No,No2,Nn2,Nn,Tn,N_0,T_0,Po,Po2,Pn2,Ph,Pn,Heat,
      .
-     .                  nspec,knm,nen,nang,nango2,nalt,
+     .                  nspec,knm,nang,nango2,nalt,
      .                  ddeng,botE,centE,gmu,gwt,angzb,altkm,altcm,
      .                  dipang,smgdpa,
      .            fluxup,fluxdown,densneut,tneutre,tempexo,
@@ -76,7 +76,7 @@ c    UT, hrloc, year, nan, day, Apind, chideg, jpreci,
 c    Flux_elec_int = Flux d'electrons integre (cm-2.s-1.sr-1)
 c     Flux_ener_int = Flux d'energie integre (kev.cm-2.s-1.sr-1)
 c           par liste d'appel
-c
+        include 'comm.f'
         implicit none
 c
         logical flg_err
@@ -90,7 +90,7 @@ c
         include 'TRANSPORT.INC'
 c
          integer npt,ind,indref,i
-         integer nspec,knm,nen,nang,nango2,nalt,indlim,index(7)
+         integer nspec,knm,nang,nango2,nalt,indlim,index(7)
         data index/3,4,2,7,1,8,5/
         integer in
         data in/1/
@@ -320,9 +320,9 @@ c     S'il y a des precipitations, elles sont isotropes
 c     Si il n'y a pas de precipitations, on garde la 1ere grille.
        if (jpreci.eq.0)then
            Emax = 300.
-           print*,'call quelle_grille'          
-           call quelle_grille(Emax,nen,centE,botE,ddeng,
-     .        nang,nango2,gmu,gwt,angzb)
+           write(stdout,*),'call quelle_grille'          
+           call quelle_grille(Emax,centE,botE,ddeng,
+     &                              nang,nango2,gmu,gwt,angzb)
        else
 c
 c       Il faut connaitre l'energie caracteristique des precipitations
@@ -348,7 +348,7 @@ CME      correction CME
 c
 c       write(6,*)'Flux_ener_int,Eave',Flux_ener_int,Eave
        print*,'quelle_grille'
-       call quelle_grille(Emax,nen,centE,botE,ddeng,
+       call quelle_grille(Emax,centE,botE,ddeng,
      .        nang,nango2,gmu,gwt,angzb)
 c
 c
@@ -524,15 +524,14 @@ c     0 dans la ligne data en debut de ce sous programme
        enddo
           call ecr(nspec,nalt,zbot,ztop,UT,hrloc,day,nan,
      .      jpreci,tempexo,f107(2),f107(3),ap(1),fctemp,fcdens,glat,
-     .      glong,modatmos,albedo,altkm,nen,botE,centE,ddeng,knm,eave,
+     .      glong,modatmos,albedo,altkm,botE,centE,ddeng,knm,eave,
      .      alpha,nang,angzb,gmu,gwt,fluxdown,fluxup,denelc,dne,
      .      temelc,dte,temion,dti,derivte,comp,z50,densneut,tneutre,
      .      xmasdens,colden,mgdpa,smgdpa,chideg,icont,iprt,spfac,
      .      moddene,modtemp,modcomp)
       endif
-c
-      return
-      end
+
+      end subroutine iniflu
 c
 c------------------------ column -------------------------------
 c 

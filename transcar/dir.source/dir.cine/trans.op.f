@@ -1,7 +1,7 @@
        subroutine trans(knm,nspec,nalt,zbot,ztop,hrloc,day,year,jpreci,
      &   tempexo,f107,ap,chideg,glat,glong,albedo,
      &   altkm,alt,tneutre,densneut,colden,nang,nango2,
-     &   angzb,gmu,gwt,nen,centE,botE,ddeng,fluxdown,fluxup,denelc,
+     &   angzb,gmu,gwt,centE,botE,ddeng,fluxdown,fluxup,denelc,
      &   temelc,temion,smgdpa,prodiontot,chaufelec,kiappel,
      &   Ne_supra,courant_supra,Te_supra,Chaleur_supra,ut)
 
@@ -520,16 +520,20 @@
 *           apower exp.)
 !
         logical onlyfl,usrang,exsorc,usrtau
+        
+        real qpreceV 
+        qpreceV = 0.
+        
         data lruther/.true./iphase/0/gphase/.5/
 !
-*    switches for turning on/off different options (these should
-*        generally left at the default setting):
-*    LRUTHER : sceening selection (Wedde-Strand vs. Rutherford)
-*    LDELTA  : Wiscombe's delta-M method applied
-*    IPHASE,GPHASE    : phase function selection
-*    LMONO,KMONO    : monodirectional input spectrum
-*    lporter : low energy phase function from Porter et al., 1987
-*    albedo   : particle albedo at bottom of atmosphere
+!    switches for turning on/off different options (these should
+!        generally left at the default setting):
+!    LRUTHER : sceening selection (Wedde-Strand vs. Rutherford)
+!    LDELTA  : Wiscombe's delta-M method applied
+!    IPHASE,GPHASE    : phase function selection
+!    LMONO,KMONO    : monodirectional input spectrum
+!    lporter : low energy phase function from Porter et al., 1987
+!    albedo   : particle albedo at bottom of atmosphere
 !
         data lt1/.true./lt3/.true./lt4/.true./consto/0.d0/
      &        constb/0.d0/lt5/.true./etest/100./nstop/0/
@@ -700,7 +704,7 @@
         call zeroit(chaufelec,nbralt)
         call zeroit(engdd,nbren)
         call reed (iprt,idess,mcount,ncountE,ncountA,
-     &    linear,ldeltam,lporter,nspec,e,Ebot,engdd,nen,
+     &    linear,ldeltam,lporter,nspec,e,Ebot,engdd,
      &    nang,nango2,pitchang,cosang,weitang,angzb,gmu,gwt,
      &    f107(3),f107(1),smgdpa,day,year,glong,alt,altkm,nalt,
      &    tneutre,densneut,denelc,colden,title,jpreci,
@@ -835,7 +839,7 @@
 !         fluxprim(z,E)        : cm-2.s-1.eV-1
 !         qprimpHot(E,z,A)    : cm-2.s-1.eV-1.sr-1
         call phel(e,alt,altkm,iprt,fluxprim,
-     &         primelec,qprimpHot,photelec,nspec,nen,nang,nango2,nalt,
+     &         primelec,qprimpHot,photelec,nspec,nang,nango2,nalt,
      &          jpreci,mcount,prodionphot,densig)
 
 !
@@ -847,7 +851,7 @@
 !
 
         call prot(e,Ebot,ddeng,alt,altkm,iprt,
-     &        nspec,nen,nang,nango2,nalt,jpreci,mcount,
+     &        nspec,nang,nango2,nalt,jpreci,mcount,
      &        protelec,primprotelec,fluxprimprot,qprimpRot,
      &          prodionprot,gmu,gwt,densig,densneut)
 
@@ -1246,11 +1250,11 @@ c
       do ialt=1,nalt
         etherm=temelc(ialt)*boltz    ! start at thermal energy
         ntherm(ialt)=
-     &        ncross(e,engdd,qntsty,ialt,etherm,denelc(ialt),nen)
+     &        ncross(e,engdd,qntsty,ialt,etherm,denelc(ialt))
 c      cross over of thermal/streaming electrons
         estart=e(ntherm(ialt))
-        call intgrl(estart,engmax,fhemd,e,engdd,partdwn,edwn,nen,ialt)
-        call intgrl(estart,engmax,fhemu,e,engdd,partup,eup,nen,ialt)
+        call intgrl(estart,engmax,fhemd,e,engdd,partdwn,edwn,ialt)
+        call intgrl(estart,engmax,fhemu,e,engdd,partup,eup,ialt)
         feup(ialt) = eup
         fedwn(ialt) = edwn
         fpartup(ialt) = partup
@@ -1284,9 +1288,9 @@ c      cross over of thermal/streaming electrons
        write(6,7019)
       endif
       e1=50.
-      call intgrl(e1,engmax,fhemu,e,engdd,sumf,sume,nen,1)
+      call intgrl(e1,engmax,fhemu,e,engdd,sumf,sume,1)
       echarp2=sume/sumf/2000.
-      call intgrl(e1,engmax,fhemd,e,engdd,sumf,sume,nen,1)
+      call intgrl(e1,engmax,fhemd,e,engdd,sumf,sume,1)
 c     Bob Robinson's definition of E_char
       if(iprt(12).eq.1) then
         s1=0.
@@ -1298,13 +1302,13 @@ c     Bob Robinson's definition of E_char
         do m=1,nalt
           if(m.ge.2) dz=(alt(m-1)-alt(m))/2./smgdpa(m)
           su1=sum1
-          call intgrl(e1,e2,fhemd,e,engdd,sum1,sum,nen,m)
-          call intgrl(e1,e2,fhemu,e,engdd,sum2,sum,nen,m)
+          call intgrl(e1,e2,fhemd,e,engdd,sum1,sum,m)
+          call intgrl(e1,e2,fhemu,e,engdd,sum2,sum,m)
           sum1=sum1+sum2
           s1=s1+(su1+sum1)*dz
           su2=sum2
-          call intgrl(e2,engmax,fhemd,e,engdd,sum2,sum,nen,m)
-          call intgrl(e2,engmax,fhemu,e,engdd,sum3,sum,nen,m)
+          call intgrl(e2,engmax,fhemd,e,engdd,sum2,sum,m)
+          call intgrl(e2,engmax,fhemu,e,engdd,sum3,sum,m)
           sum2=sum2+sum3
           s2=s2+(su2+sum2)*dz
           if(mod(m,mcount(1)).eq.1)write(fic_transout,7015) alt(m),
@@ -1316,14 +1320,13 @@ c
 c    Calculate production and energy deposition profiles
 c
       call endep(nspec,nalt,e,cinex,engdd,ethres,bratio,qntsty,
-     &        alt,smgdpa,densneut,jsg,jsp,shsum,enrate,prate,ntherm,
-     &        nen)
+     &        alt,smgdpa,densneut,jsg,jsp,shsum,enrate,prate,ntherm)
 
 
 c
 c     Calcul des moments suprathermiques
 c
-        call moments(nalt,alt,altkm,nen,e,engdd,
+        call moments(nalt,alt,altkm,e,engdd,
      &          nang,nango2,weitang,cosang,intensite,iprt,ntherm,
      &          Ne_supra,courant_supra,Te_supra,Chaleur_supra)
 
@@ -1770,8 +1773,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !--------------------------------------------------------------------
 !
       subroutine endep(nspec,nalt,e,cinex,engdd,ethres,bratio,qntsty,
-     &        alt,smgdpa,densneut,jsg,jsp,shsum,enrate,prate,ntherm,
-     &        nen)
+     &        alt,smgdpa,densneut,jsg,jsp,shsum,enrate,prate,ntherm)
 
 !
       include 'TRANSPORT.INC'
@@ -1874,11 +1876,16 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 
 !----------------------------------------------------------------------
 
-        subroutine intgrl(e1,e2,f,e,de,sum,sume,nen,m)
-!
+        subroutine intgrl(e1,e2,f,e,de,sum,sume,m)
+        implicit none
         include 'TRANSPORT.INC'
-        real f(nbren,nbralt),e(nbren),de(nbren)
-!
+        
+        real,intent(in) :: e1,e2,f(nbren,nbralt),e(nbren),de(nbren)
+        real,intent(out):: sum,sume
+        integer,intent(in) :: m
+        
+        integer n,n1,n2,nlevtrans
+     
         n2=nlevtrans(e,de,e2,nen)
         n1=nlevtrans(e,de,e1,n2)
         sum=0.
@@ -1891,7 +1898,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
       end subroutine intgrl
 !----------------------------------------------------------------------
 !
-         subroutine moments(nalt,alt,altkm,nen,e,engdd,
+         subroutine moments(nalt,alt,altkm,e,engdd,
      &        nang,nango2,weitang,cosang,intensite,iprt,ntherm,
      &        Ne_supra,courant_supra,Te_supra,Chaleur_supra)
 !
@@ -1906,7 +1913,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
         real engdd(nbren),alt(nbralt),altkm(nbralt),e(nbren)
         real weitang(2*nbrango2),cosang(2*nbrango2)
         real intensite(nbren,nbralt,-nbrango2:nbrango2)
-        integer nalt,nen,iprt(40),nang,nango2
+        integer nalt,iprt(40),nang,nango2
         integer ntherm(nbralt)
         logical flux_flg
 
@@ -2237,7 +2244,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !--------------------------- phel ---------------------------------
 !
         subroutine phel(e,alt,altkm,iprt,fluxprim,
-     &          primelec,qprim,photelec,nspec,nen,nang,nango2,nalt,
+     &          primelec,qprim,photelec,nspec,nang,nango2,nalt,
      &          jpreci,mcount,prodionprim,densig)
 !
         include 'TRANSPORT.INC'
@@ -2265,7 +2272,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
       integer iprt(40),mcount(5)
         real e(nbren),alt(nbralt),altkm(nbralt),densneut(8,nbralt)
        real  cel(nbrsp,nbren),cin(nbrsp,nbren)
-        integer nen,nang,nalt,nango2
+        integer nang,nalt,nango2
 !     INTERNAL PARAMETERS
         real pi,densig(nbralt,nbren)
            real ephel(nbren),prophel(nbralt,nbren),z(nbralt)
@@ -2535,7 +2542,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 
 !----------------------------------------------------------------------
 
-      function ncross(e,engdd,qntsty,ialt,Etherm,denelc,nen)
+      function ncross(e,engdd,qntsty,ialt,Etherm,denelc)
 !
 !    calculates the crossover energy of the thermal and streaming
 !    electrons
@@ -2547,7 +2554,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
         include 'TRANSPORT.INC'
 !
         real etherm,emass
-        integer ialt,nen,nmax,nn,nlevtrans,n,ncross
+        integer ialt,nmax,nn,nlevtrans,n,ncross
         real qntsty(nbren,2*nbralt-1,-nbrango2:nbrango2),e(nbren)
         real engdd(nbren),denelc
         real pi,a,b,c,flx
@@ -2813,7 +2820,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !-------------------------- reed ----------------------------
 !
       subroutine reed (iprt,idess,mcount,ncountE,ncountA,
-     &    linear,ldeltam,lporter,nspec,e,Ebot,engdd,nen,
+     &    linear,ldeltam,lporter,nspec,e,Ebot,engdd,
      &    nang,nango2,pitchang,cosang,weitang,angzb,gmu,gwt,
      &    f107a,f107,smgdpa,day,year,glong,alt,altkm,nalt,
      &    tneutre,densneut,denelc,colden,title,jpreci,
@@ -2843,7 +2850,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !
       character headline*80,rtext*20,phasfct*6
 !
-      integer iopal,nen,knmsig
+      integer iopal,knmsig
       real centE(nbren),botE(nbren),ddeng(nbren)
       real e(nbren),Ebot(nbren),engdd(nbren),esig(nbren),bsig(nbren),
      &      ethres(nbrsp,nbrexc,nbrionst),bratio(nbrionst,nbrsp),

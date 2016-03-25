@@ -114,7 +114,7 @@
       if (ierr.gt.0) then 
       
           call cpu_time(tic)
-          write(stderr,*),tic,
+          write(stdout,*),tic,
      &  ' WARNING: Error reading varpot.dat, fallback to defaults  kp=',
      &  kp
     !if there was an error reading varpot.dat, fallback to default param

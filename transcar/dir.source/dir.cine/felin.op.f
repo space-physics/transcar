@@ -1,6 +1,6 @@
 c
         subroutine felin(knm,nspec,hrloc,day,year,UT,
-     .          tempexo,f107,ap,glat,glong,nen,botE,centE,
+     .          tempexo,f107,ap,glat,glong,botE,centE,
      .          ddeng,nalt,altkm,tneutre,densneut,colden,chi,chideg,
      .		kiappel,phdisso2,pfluxsr,Po1sdisso2)
 
@@ -75,23 +75,22 @@ c                   contenue dans ELEC et NEUTRAL pour un run unique
 c                   du programme.
 c               --> si kiappel = 2, ce sont les donnees necessaires
 c                   au transport fluide
-
-c
-	include 'TRANSPORT.INC'
-c
+        include 'comm.f'
+        include 'TRANSPORT.INC'
+	
       	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
      .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
      .               nwave,ns,nns,f107min,f107max,iseff,wnmseff,
      .               lambdasr,sigsro2,Isr,lineflux,sigabso2,qyield,
      .               Isr2
- 	integer nalt,ns,nns,nwave,nen
- 	real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
+        integer nalt,ns,nns,nwave
+        real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
       	real f107(3),day,ap(7),hrloc,UT,glat,chi,chideg
        	dimension altkm(nbralt),densneut(8,nbralt),colden(8,nbralt),
      .		  tneutre(nbralt)
 c 	wwt (specie, excit, energy) = branching ratio
        	real threshold(7),wwt(7,6,39)
- 	integer number(7)
+        integer number(7)
 c     	Ecent = energy boxes (eV).
 c     	Ebot  = lower boundary of energy boxes (eV).
 c     	engdd = energy boxes width(eV).
@@ -120,13 +119,15 @@ c
         real Po1sdisso2(500)
         integer iz,iwave
         real maxchi
-c
+
+        write(stdout,*),'felin.f: nen=',nen
+
 c ---	Open up files to be used in this program.
         open (unit=ifeldat,file= 'dir.data/dir.linux/dir.cine/DATFEL',
      &          status='old')
         rewind(ifeldat)
         open (unit=ifelprt,file= 'dir.data/dir.linux/dir.cine/FELOUT',
-     &          status='replace')
+     &          status='new')
         rewind(ifelprt)
         open (unit=ifeltrans,
      .		file='dir.data/dir.linux/dir.cine/FELTRANS',
@@ -147,18 +148,18 @@ c
 c
 c --- 	Set the input parameters.
 c
-        call setpar(imod,nspec,idess,hrloc,UT,day,nan,tempexo,
+        call setpar(kiappel,imod,nspec,idess,hrloc,UT,day,nan,tempexo,
      .	   f107,ap,glat,glong,nalt,year,
-     .	   altkm,nen,centE,botE,ddeng,Ecent,Ebot,engdd,iprt,pflux,knm,
+     .	   altkm,centE,botE,ddeng,Ecent,Ebot,engdd,iprt,pflux,knm,
      .	   tneutre,densneut,colden,iflux,wwt,number,xchap,chi,chideg,
      .	   sigi,sigt,ichapman)
 c
 c --- 	Calculates primary photoelectron production.
-   	call depo(nalt,ns,nns,nwave,nen,chi,densneut,colden,altkm,
-     .		  threshold,eV,Ecent,Ebot,engdd,produc,
-     .		  proelec,prodion,proneut,prophel,prodcont,prodraie,
-     .    	  sigi,sigt,pflux,tneutre,iprt,number,wwt,xchap,
-     .		  eVmin,eVmax,imod,nspec,sflux)
+        call depo(kiappel,nalt,ns,nns,nwave,chi,densneut,colden,altkm,
+     &		  threshold,eV,Ecent,Ebot,engdd,produc,
+     &		  proelec,prodion,proneut,prophel,prodcont,prodraie,
+     &    	  sigi,sigt,pflux,tneutre,iprt,number,wwt,xchap,
+     &		  eVmin,eVmax,imod,nspec,sflux)
 
 !       Compute production of O(1D) from photodissociation of O2
         maxchi=1.7453
@@ -223,11 +224,11 @@ c --- 	Calculates electron density.
      .		    densneut)
 c
 c ---	Writes the different productions.
- 	call prodprt(ns,nalt,altkm,nen,Ecent,engdd,produc,proelec,
+        write(stdout,*),'felin.f: call prodprt nen=',nen
+        call prodprt(ns,nalt,altkm,Ecent,engdd,produc,proelec,
      .  	      prodion,proneut,prophel,iprt,ichapman)
-c
-      return
-      end
+
+      end subroutine felin
 c
 c---------------------- function chap ---------------------------------
 c
@@ -291,24 +292,30 @@ c
 c
 c----------------------------------------------------------------------
 c
- 	subroutine branchratio(nwave,eV,threshold,number,wwt)
+        subroutine branchratio(nwave,eV,threshold,num,wwt)
 c
- 	implicit none
- 	include 'TRANSPORT.INC'
+        implicit none
+        include 'TRANSPORT.INC'
+
+        integer, intent(in) :: nwave
+        real, intent(in) :: eV(nwave),threshold(7)
+        integer,intent(out) :: num(7)
+        real,intent(out)::wwt(7,6,39)
+ 	
 c
 c 	Calcule les branching ratio sur les energies des ondes
 c 	d'entree.
 c
 c 	INPUTS
 c
- 	real eVbrO(10),brO(5,10),eVbrN2(13),brN2(5,13),
+        real eVbrO(10),brO(5,10),eVbrN2(13),brN2(5,13),
      .  	eVbrO2(20),brO2(3,20),eVbrO2dis(14),brO2dis(6,14),
      .		eVbrN2dis(2),brN2dis(1,2),eVbrH(2),brH(1,2),
      .		eVbrHe(2),brHe(1,2)
- 	integer neVbrO,nstO,neVbrN2,nstN2,
+        integer neVbrO,nstO,neVbrN2,nstN2,
      .  	neVbrO2,nstO2,neVbrO2dis,nstO2dis,neVbrN2dis,nstN2dis,
      .  	neVbrH,nstH,neVbrHe,nstHe
- 	common /branching/
+        common /branching/
      .		eVbrN2,    brN2,    neVbrN2,    nstN2,
      .		eVbrO2,    brO2,    neVbrO2,    nstO2,
      .		eVbrO,     brO,     neVbrO,     nstO,
@@ -316,16 +323,13 @@ c
      .		eVbrN2dis, brN2dis, neVbrN2dis, nstN2dis,
      .		eVbrH,     brH,     neVbrH,     nstH,
      .		eVbrHe,    brHe,    neVbrHe,    nstHe
-c
- 	integer iprt(12),nwave
- 	real eV(500),threshold(7)
-c
+
+        integer iprt(12)
+
 c 	OUTPUTS
 c 	wwt (iontype,state,energy) is the normalized branching ratio
 c 	array.
- 	real wwt(7,6,39)
- 	integer number(7)
-c
+
 c 	INTERNAL
  	integer ist,iwave,iontype
  	real tabin(500),tabout(500),xnorm
@@ -355,7 +359,7 @@ c 	Normalization
  	    enddo
  	  endif
  	enddo
- 	number(iontype) = nstN2
+ 	num(iontype) = nstN2
 c
 c ---- 	O2 -->O2+
 c
@@ -382,7 +386,7 @@ c 	Normalization
  	    enddo
  	  endif
  	enddo
- 	number(iontype) = nstO2
+ 	num(iontype) = nstO2
 c
 c ---- 	O -->O+
 c
@@ -409,7 +413,7 @@ c 	Normalization
  	    enddo
  	  endif
  	enddo
- 	number(iontype) = nstO
+ 	num(iontype) = nstO
 c
 c ---- 	N2 -->N+ + N
 c
@@ -436,7 +440,7 @@ c 	Normalization
  	    enddo
  	  endif
  	enddo
- 	number(iontype) = nstN2dis
+ 	num(iontype) = nstN2dis
 c
 c ---- 	O2 -->O+ + O
 c
@@ -463,7 +467,7 @@ c 	Normalization
  	    enddo
  	  endif
  	enddo
- 	number(iontype) = nstO2dis
+ 	num(iontype) = nstO2dis
 c
 c ---- 	H -->H+
 c
@@ -490,7 +494,7 @@ c 	Normalization
  	    enddo
  	  endif
  	enddo
- 	number(iontype) = nstH
+ 	num(iontype) = nstH
 c
 c ---- 	He -->He+
 c
@@ -517,10 +521,9 @@ c 	Normalization
  	    enddo
  	  endif
  	enddo
- 	number(iontype) = nstHe
+ 	num(iontype) = nstHe
 c
- 	return
- 	end
+ 	end subroutine branchratio
 c
 c---------------------------- densout1 -------------------------------
 c
@@ -564,13 +567,17 @@ c
 c
 c------------------------- depo ----------------------------------
 c
-      subroutine depo(nalt,ns,nns,nwave,nen,chi,densneut,colden,altkm,
-     .        threshold,eV,Ecent,Ebot,engdd,produc,
+      subroutine depo(kiappel,nalt,ns,nns,nwave,chi,densneut,colden,
+     .        altkm,threshold,eV,Ecent,Ebot,engdd,produc,
      .	      proelec,prodion,proneut,prophel,prodcont,prodraie,
-     .        sigi,sigt,pflux,tneutre,iprt,number,wwt,xchap,
+     .        sigi,sigt,pflux,tneutre,iprt,num,wwt,xchap,
      .	      eVmin,eVmax,imod,nspec,sflux)
-c
-	include 'TRANSPORT.INC'
+        include 'comm.f'
+        implicit none
+
+        include 'TRANSPORT.INC'
+	
+
 c
 c 	Computes the different productions :
 c     	produc  = electron prod. at alt no iz,neutral specie j,
@@ -615,24 +622,28 @@ c     	prodraie= electron prod. at alt no iz due to discrete
 c     	        lines [cm-3.s-1]
 c     	prodcont = electron prod. at alt no iz due to the
 c     	        solar continuum [cm-3.s-1]
-c
+
+       integer,intent(in) :: kiappel,nalt,ns,nns,nwave
+       real,intent(out) :: sflux(nbralt,nbren)        !I(z,lambda)
+
        	real chi,altkm(nbralt)
-       	dimension colden(8,nbralt),densneut(8,nbralt),tneutre(nbralt),
+       	real colden(8,nbralt),densneut(8,nbralt),tneutre(nbralt),
      . 	 	threshold(7),proelec(nbralt),prodion(nbralt,nbrsp*2),
      . 		proneut(nbralt,nbrsp),prophel(nbralt,nbren)
- 	real prodcont(nbralt),prodraie(nbralt)
-       	dimension produc(nbralt,nbrsp,nbren),pflux(39),
-     .            sigi(39,7),sigt(39,5),eV(39),eVmin(39),eVmax(39)
- 	real Ecent(nbren),engdd(nbren),Ebot(nbren)
+        real prodcont(nbralt),prodraie(nbralt)
+       	real produc(nbralt,nbrsp,nbren),pflux(nwave),
+     .            sigi(nwave,7),eV(nwave),eVmin(nwave),eVmax(nwave)
+        real Ecent(nbren),engdd(nbren),Ebot(nbren)
 c 	wwt = branching ratio sur les energies de Torr
-       	real wwt(7,6,39)
+       	real wwt(7,6,nwave)
 c 	wt = branching ratio sur les energies des petites boites
-       	real wt(6)
- 	integer number(7),imod
-       	integer nalt,ns,nns,nwave,nen,iprt(12)
-      	real xchap(nbralt,nbrsp)
+       	real wt(6),dev,flux,exa
+        integer num(7),imod,iontype,nexcit
+       	integer iprt(12),iwave,iz,isp,ist,ninter,ne,ionspe,nspec,i
+      real xchap(nbralt,nbrsp),sigt(nwave,5),dele,deltae,amu,gzero,bolt,
+     &  recm,re,pi,sefint,energy
+     
 
-        real sflux(nbralt,39)        !I(z,lambda)
 
  	common /const/ pi,re,recm,bolt,gzero,amu
 c
@@ -641,38 +652,43 @@ c 	FELTRANS = Result file to be used by trans.f (unformatted).
 c 	FELOUT   = Result file to be read by user (formatted).
  	real sigtot(5),sigion(7)
 c
-c	write(6,*)'Computes the primary photoelectron production.'
-c	write(6,*)
-c
+!	write(6,*)'Computes the primary photoelectron production.'
+!      write(stdout,*),'felin.f:depo   nen,nwave,nalt,ns,nns',
+!     & nen,nwave,nalt,ns,nns
+     
+      !write(stdout,*),shape(sflux),sizeof(sflux)
+
         do iwave=1,nwave
-          if (kiappel.eq.1)
-     .		write(6,*)'Wavelength ',iwave,'/',nwave,'  [A'
+!     .		write(6,*)'Wavelength ',iwave,'/',nwave
  	  deV = eVmax(iwave)-eVmin(iwave)
  	  if(deV .le. 1. .or. imod.eq.1)then
 c 	    On est sur une ligne discrete .ou. on ne coupe pas les
 c 	    intervalles en petite boites.
  	    flux = pflux(iwave)
-      	    do 10 iz = 1,nalt
+      	do iz = 1,nalt
  	      exa = 0.
  	      do isp = 1,ns
                 exa = exa + xchap(iz,isp)*sigt(iwave,isp)*colden(isp,iz)
  	      enddo
-              if (exa.gt.35.0) go to 10
+              if (exa.gt.35.0) cycle
  	      do iontype = 1,nns
-c               Computes the productions :
+!               Computes the productions :
  	        sigion(iontype) = sigi(iwave,iontype)
- 	        nexcit = number(iontype)
+ 	        nexcit = num(iontype)
  	        dele = eV(iwave)-threshold(iontype)
- 	 	do ist = 1,number(iontype)
- 	  	  wt(ist) = wwt(iontype,ist,iwave)
- 		enddo
+     	 	do ist = 1,num(iontype)
+     	  	  wt(ist) = wwt(iontype,ist,iwave)
+     		enddo
+!       write(stdout,*),'felin.f:depo iwave,iontype,iz,nen',
+!     & iwave,iontype,iz,nen
        	        call eval (dev,dele,flux,iontype,sigion(iontype),
-     .		           nexcit,wt,nen,Ecent,Ebot,engdd,densneut,exa,
-     .	                   iz,proelec,prodion,produc,proneut,prophel,
-     .			   prodcont,prodraie)
+     &		           nexcit,wt,Ebot,engdd,densneut,exa,
+     &	                   iz,proelec,prodion,produc,proneut,prophel,
+     &			   prodcont,prodraie)
  	      enddo		! boucle sur les especes
-              sflux(iz,iwave)=pflux(iwave)*exp(-exa)
-10     	    continue        	! boucle sur les altitudes
+              sflux(iz,iwave) = pflux(iwave)*exp(-exa)
+!              write(stdout,*),exa,sflux(iz,iwave)
+       end do !iz
  	  else
 c	    On est sur un continuum. On divise la boite en plusieurs
 c 	    petits intervalles de largeur a peu pres egale a 1 eV
@@ -701,39 +717,41 @@ c 		non) a cette energie.
  	        sigion(iontype) = sefint(energy,iontype,2)
 c 	        Le rapport de branchement a cette energie est (en
 c 	        gros) celui de l'energie iwave
- 	 	do ist = 1,number(iontype)
+ 	 	do ist = 1,num(iontype)
  	  	  wt(ist) = wwt(iontype,ist,iwave)
  		enddo
  	      enddo
-      	      do 20 iz = 1,nalt
- 	        exa = 0.
- 	        do isp = 1,ns
+ 	      
+ 	   ! write(stdout,*),'felin.f:depo "else" eval  nen=',nen
+      	      do iz = 1,nalt
+ 	            exa = 0.
+ 	            do isp = 1,ns
                   exa = exa + xchap(iz,isp)*sigtot(isp)*colden(isp,iz)
- 	        enddo
-                if (exa.gt.35.0) go to 20
- 	        do iontype = 1,nns
+ 	            enddo
+                if (exa.gt.35.0) cycle
+                
+ 	           do iontype = 1,nns
 c                 Computes the productions :
- 	          nexcit = number(iontype)
- 	          dele = energy-threshold(iontype)
+ 	            nexcit = num(iontype)
+ 	            dele = energy-threshold(iontype)
        	          call eval (dev,dele,flux,iontype,sigion(iontype),
-     .		           nexcit,wt,nen,Ecent,Ebot,engdd,densneut,exa,
+     .		           nexcit,wt,Ebot,engdd,densneut,exa,
      .		           iz,proelec,prodion,produc,proneut,prophel,
      .			   prodcont,prodraie)
- 	        enddo		! boucle sur les especes
+ 	           enddo		! iontype species
                 sflux(iz,iwave)=pflux(iwave)*exp(-exa)
-20     	      continue     	! boucle sur les altitudes
+             enddo  !iz
  	    enddo		! boucle sur les intervalles
  	  endif
 c
- 	enddo 			! boucle sur les longueurs d'onde
-c
-      	return
-      	end
+      enddo ! iwave
+
+      	end subroutine depo
 c
 c--------------------------- eval -----------------------------------
 c
       subroutine eval (deV,dele,flux,iontype,sigion,nexcit,wt,
-     .	      nen,Ecent,Ebot,engdd,densneut,exa,iz,
+     .	      Ebot,engdd,densneut,exa,iz,
      .	      proelec,prodion,produc,proneut,prophel,
      .	      prodcont,prodraie)
 c
@@ -762,27 +780,30 @@ c                         = ---------dflx------------.wt
 c                         = -------------depr-----------
 c 	wt = Normalized weight factors. Determine which ion state is
 c 	excited.
- 	implicit none
-	include 'TRANSPORT.INC'
-c
+        include 'comm.f'
+        implicit none
+        include 'TRANSPORT.INC'
+        
+        integer,intent(in) :: nexcit,iontype
+        real,intent(in) :: deV,dele,exa,wt(6),sigion,flux
+        
        	real densneut(8,nbralt)
-     	real Ecent(nbren),engdd(nbren),Ebot(nbren)
-	real exa,wt(6),sigion
- 	real flux
-       	integer nen,nexcit
-c
+     	real engdd(nbren),Ebot(nbren)
+
+
       	real proelec(nbralt),prodion(nbralt,nbrsp*2),
      .		produc(nbralt,nbrsp,nbren),proneut(nbralt,nbrsp),
      .		prophel(nbralt,nbren),prodstion(nbralt,7,6)
- 	real prodcont(nbralt),prodraie(nbralt)
+        real prodcont(nbralt),prodraie(nbralt)
 c       nbrelec = nbre d'electrons crees dans l'ionisation
         real nbrelec
 c
- 	integer iz,ist,neutspe,ionspe,iener,iontype
- 	real psurde,depr
- 	real dele,deV
-c
- 	if(dele.gt.0.)then
+        integer iz,ist,neutspe,ionspe,iener
+        real psurde,depr
+
+        !write(stdout,*),'felin.f:eval   nen=',nen
+
+        if(dele.gt.0.)then
           depr = flux*exp(-exa)
           if(iontype.eq.1) then
 c           case N2 --> N2+  (neutral 1 -->ion 1)
@@ -835,29 +856,38 @@ c           Case He --> He+  (neutral 5 -->ion 6)
  	  endif
 c
 c         search in which box iener to put the created electron.
-          call search (nen,Ebot,engdd,dele,iener)
+          call search (Ebot,engdd,dele,iener)
 c 	  Makes it in [cm-3.s-1.ev-1].
  	  psurde = depr*nbrelec/engdd(iener)
           produc(iz,neutspe,iener)=produc(iz,neutspe,iener) + psurde
           prophel(iz,iener) = prophel(iz,iener) + psurde
         endif
-c
-      	return
-      	end
+
+      	end subroutine eval
 c
 c ---------------------------- prodprt -----------------------------
 c
-	subroutine prodprt(ns,nalt,altkm,nen,Ecent,engdd,produc,proelec,
+        subroutine prodprt(ns,nalt,altkm,Ecent,engdd,produc,proelec,
      .  	      prodion,proneut,prophel,iprt,ichapman)
-c
- 	include 'TRANSPORT.INC'
-c
-       	dimension Ecent(nbren),altkm(nbralt),engdd(nbren)
-       	dimension proneut(nbralt,nbrsp),proelec(nbralt),
-     .		prodion(nbralt,nbrsp*2),prophel(nbralt,nbren),
+
+        include 'comm.f'
+        implicit none
+
+
+        include 'TRANSPORT.INC'
+
+
+        integer,intent(in) :: ns,nalt,iprt(12)
+       	real,intent(in) :: altkm(nbralt),Ecent(nbren),engdd(nbren),
+     & prophel(nbralt,nbren)
+       	
+       	real proneut(nbralt,nbrsp),proelec(nbralt),
+     .		prodion(nbralt,nbrsp*2),
      .		produc(nbralt,nbrsp,nbren)
-	integer iprt(12)
- 	real zwork(nbralt)
+        real zwork(nbralt),qphelev,qphelerg
+        
+        integer :: ien1,ien2,neutspe,naltO6,ialt1,ialt2,ii,ialt,i,isp,
+     &  ichapman,ien,iz,m,nnz,nalt06,j
 
 c
 1000  	format(/,'Electron and ion production(/cm3.s)',/)
@@ -878,20 +908,22 @@ c
      .    ' (proneut(iz,neutspe))',/,
      .    5x,'alt',7x,'Ne',9x,'Nn2',7x,'No2 ',6x,'No1 ',
      .    7x,'H ',7x,'He')
-c
-c	write(6,*)'Writting                                            '
- 	if(iprt(8).eq.1)then
+
+        write(stdout,*),'felin.f:prodprt  nen=',nen
+
+
+        if(iprt(8).eq.1)then
       	  write(ifelprt,1000)
       	  write(ifelprt,1010)
       	  do iz=1,nalt
            write(ifelprt,1020)altkm(iz),proelec(iz),
      .		(prodion(iz,m),m=1,4)
- 	  enddo
+          enddo
       	  write(ifelprt,1015)
       	  do iz=1,nalt
            write(ifelprt,1020)altkm(iz),(prodion(iz,m),m=5,6)
- 	  enddo
- 	endif
+          enddo
+        endif
 c
 c 	Different productions
 c     	produc  (alt,neutral specie,energy box)
@@ -910,22 +942,22 @@ c     	proelec (alt)
 c     	        = prod. at alt no iz, all species mixed.
 c     	        [cm-3.s-1]
 c
- 	if (iprt(9).eq.1)then
+        if (iprt(9).eq.1)then
       	  write(ifelprt,1040)nen
 	  nnz=(nalt-1)/4
 	  iz=1
-      	  do 180 i=1,5
+      	  do i=1,5
             write(ifelprt,1050) altkm(iz)
-            do 170 ien1=1,nen,2
+            do ien1=1,nen,2
               ien2=ien1+1
               write(ifelprt,1060)ien1,(produc(iz,neutspe,ien1),
-     .         neutspe=1,3 ),ien2,(produc(iz,neutspe,ien2),neutspe=1,3)
-170         continue
+     &         neutspe=1,3 ),ien2,(produc(iz,neutspe,ien2),neutspe=1,3)
+            enddo
             iz=iz+nnz
-180   	  continue
- 	endif
-c
- 	if(iprt(10).eq.1)then
+          enddo
+        endif
+
+        if(iprt(10).eq.1)then
           nalto6 = (nalt+1)/6
           ialt1 = 1
           ialt2 = ialt1 + 5
@@ -933,7 +965,7 @@ c
             write(ifelprt, 1070) (altkm(ialt),ialt = ialt1,ialt2)
             do ien = 1,nen
               write(ifelprt,1080)Ecent(ien),
-     .		(prophel(ialt,ien),ialt=ialt1,ialt2)
+     &		(prophel(ialt,ien),ialt=ialt1,ialt2)
  	    enddo
             ialt1 = ialt1 + 6
             ialt2 = ialt2 + 6
@@ -944,27 +976,27 @@ c
       	  write(ifelprt, 1070) (altkm(ialt), ialt = ialt2,nalt)
       	  do ien = 1,nen
        	    write(ifelprt,1080) Ecent(ien),
-     .		(prophel(ialt,ien),ialt=ialt2,nalt)
+     &		(prophel(ialt,ien),ialt=ialt2,nalt)
  	  enddo
- 	endif
+        endif
 c
- 	if(iprt(11).eq.1)then
+        if(iprt(11).eq.1)then
       	  write(ifelprt,1110)
-      	  do 270 iz=1,nalt
+      	  do iz=1,nalt
       	   write(ifelprt,1100)altkm(iz),proelec(iz),
-     .			      (proneut(iz,m),m=1,5)
-270   	  continue
- 	endif
+     &			      (proneut(iz,m),m=1,5)
+          enddo
+        endif
 c
 c 	calculates and prints the energy through primary production
 c 	Integration over the energies
- 	    do ialt = 1,nalt
- 	      zwork(ialt) = 0.
-	      do ien=1,nen
- 	        zwork(ialt) = zwork(ialt)+
-     .		    Ecent(ien)*prophel(ialt,ien)*engdd(ien)
- 	      enddo
+      do ialt = 1,nalt
+ 	    zwork(ialt) = 0.
+	    do ien=1,nen
+ 	      zwork(ialt) = zwork(ialt)+
+     &		                     Ecent(ien)*prophel(ialt,ien)*engdd(ien)
  	    enddo
+      enddo
 c
  	    call hint(nalt,altkm,zwork,qpheleV)
 c
@@ -986,25 +1018,28 @@ c     	write in file ifeltrans for transport program.
       	write(ifeltrans) ((prodion(ialt,isp),ialt=1,nalt),isp=1,ns+1)
       	close(ifeltrans)
       	close(ifelprt)
-c
- 	    return
-	    end
+
+	  end subroutine prodprt
 c
 c------------------------ setpar ------------------------------
 c
-	subroutine setpar(imod,nspec,idess,hrloc,UT,day,nan,tempexo,
-     .	   f107,ap,glat,glong,nalt,year,
-     .	   altkm,nen,centE,botE,ddeng,Ecent,Ebot,engdd,iprt,pflux,knm,
+      subroutine setpar(kiappel,imod,nspec,idess,hrloc,UT,day,nan,
+     .	   tempexo,f107,ap,glat,glong,nalt,year,
+     .	   altkm,centE,botE,ddeng,Ecent,Ebot,engdd,iprt,pflux,knm,
      .	   tneutre,densneut,colden,iflux,wwt,number,xchap,chi,chideg,
      .	   sigi,sigt,ichapman)
-c
-	include 'TRANSPORT.INC'
-c
+
+      include 'comm.f'
+
+        include 'TRANSPORT.INC'
+
+        real, intent(in) :: f107(3),ap(7)
+
       	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
      .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
      .		      nwave,ns,nns, f107min,f107max,iseff,wnmseff, lambdasr,
      .                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
- 	common /const/ pi,re,recm,bolt,gzero,amu
+        common /const/ pi,re,recm,bolt,gzero,amu
  	real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
  	integer index(39)
        	real altkm(nbralt),Ecent(nbren),engdd(nbren),Ebot(nbren)
@@ -1021,7 +1056,7 @@ c
  	real trav(39),eVmid(39),work(39),place,year
  	integer yyddd
  	real enflux
-        real chapesp(8),f107(3),ap(7)
+        real chapesp(8)
 c
 1000    format (1x,/,'hour=',f6.2, 8x,'chi =',f6.2, 3x,'degrees',
      .    6x,'exo temp =',f8.2,/)
@@ -1070,12 +1105,11 @@ c     	ns is Number of neutral Species in atmosphere
 c     	nns = ns+2 allows for diss ioniz of o2 and n2
  	    ns  = nspec
  	    nns = ns + 2
-c
-c 	set pi
- 	    pi = 4.*atan(1.)
+
  	    nan = ifix(year)
 c
 c       Met les energies en ordre decroissant
+        write(stdout,*),'felin:setpar: nen=',nen
         if(centE(1).gt.centE(nen))then
           do ien = 1,nen
             Ebot(ien)  = botE(ien)
@@ -1242,7 +1276,7 @@ c 	Prend en compte la distance au soleil
  	enddo
 c
       	write(6,1010)chideg
-  	write(ifelprt, 1000) hr, chideg, tempexo
+  	write(ifelprt, 1000) hrloc, chideg, tempexo 
 c
 c ---- 	Computes the energy at which to put the solar flux
 c   	eV = energy of uv line [eV]  . eV=(hc)/(q.line.1E-9)
@@ -1464,32 +1498,36 @@ c       Comparison:
             write(ifelprt, 1070) altkm(iz),xcos,(xchap(iz,j), j = 1,ns)
  	  enddo
  	endif
-c
-  	return
-	end
-c
-c------------------------ search ------------------------------
-c
-        subroutine search (nen,Ebot,engdd,dele,iener)
-c
-	include 'TRANSPORT.INC'
-c       Search in which box ll to put the created electron.
-       	dimension Ebot(nbren),engdd(nbren)
- 	real sup,inf
-c
-     	do ien=1,nen
- 	  inf = Ebot(ien)
- 	  sup = Ebot(ien)+engdd(ien)
-          if(dele.ge.inf .and. dele.lt.sup) then
-	    iener=ien
-	    return
- 	  endif
- 	enddo
-      	if (dele.ge.Ebot(1)+engdd(1)) iener = 1
-      	if (dele.lt.Ebot(nen)) iener = nen
 
-      	return
-      	end
+	end subroutine setpar
+
+c------------------------ search ------------------------------
+
+        subroutine search (Ebot,engdd,dele,iener)
+        implicit none
+        
+        include 'TRANSPORT.INC'
+	
+!       Search in which box ll to put the created electron.
+        real,intent(in) :: Ebot(nbren),engdd(nbren),dele
+        integer, intent(out) :: iener
+
+        real sup,inf
+        integer ien
+
+      do ien=1,nen
+         inf = Ebot(ien)
+         sup = Ebot(ien)+engdd(ien)
+         if(dele.ge.inf .and. dele.lt.sup) then
+            iener=ien
+            return
+         endif
+      enddo
+      
+      if (dele.ge.Ebot(1)+engdd(1)) iener = 1
+      if (dele.lt.Ebot(nen)) iener = nen
+
+      end subroutine search
 c
 c------------------------ Function sefint ---------------------------
 c
@@ -1574,9 +1612,7 @@ c
 c-------------------- donnees -------------------------------
 c
  	block data
-c
-c	include 'TRANSPORT.INC'
-c
+
       	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
      .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
      .		      nwave,ns,nns,f107min,f107max,iseff,wnmseff,lambdasr,
@@ -1793,4 +1829,4 @@ c
  	data brHe / 1.,1./
 c
 
- 	end
+ 	end block data

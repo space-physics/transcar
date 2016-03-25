@@ -1,9 +1,12 @@
 c
 c--------------------------------------------------------------------
 c
-	SUBROUTINE LOW_PROTON(Eflux,Emoy_keV,nalt,ZPHT_,
+        SUBROUTINE LOW_PROTON(Eflux,Emoy_keV,nalt,ZPHT_,
      .		XNN2_,XNO2_,XNO_,QTI_,QIA_)
-c
+
+      include 'comm.f'
+      implicit none
+
 c  Computation of the electron and ion production rates
 c  induced by a proton beam of a given mean energy 
 c  and a given energy flux.
@@ -42,42 +45,42 @@ c  Journal of Geophysical Research, 104, 27973-27989, 1999.
 c--------------------------------------------------------------------
 
 c Parameters
-	integer nk,nbrz
-	real*4 tab_EL(6),tab_KL(6),tab_E0(6)
-	real*4 EminV,Mean_mass
-	real*4 P_W1(7),P_W2(7),P_W3(7),P_W4(7),P_W5(7),P_W6(7)
-	real*4 tab_shape(9)
-	real*4 P_Kd1(3),P_Kd2(3),P_Kd3(3),P_Kd4(3)
-	real*4 E_Kd(4)
-	real*4 Mass(3)
+	    integer,parameter :: nk=1,nbrz=201
+	    integer isp
+	    real tab_EL(6),tab_KL(6),tab_E0(6)
+	    real EminV,Mean_mass
+	    real P_W1(7),P_W2(7),P_W3(7),P_W4(7),P_W5(7),P_W6(7)
+	    real tab_shape(9)
+	    real P_Kd1(3),P_Kd2(3),P_Kd3(3),P_Kd4(3)
+	    real E_Kd(4)
+	    real Mass(3)
 
-	parameter(nk=1,nbrz=201)
         DATA tab_EL/0.87,   0.84,  0.883,   0.9,    0.92,   0.92/
-	DATA tab_KL/4.5e-18,8.1e-18,7.0e-18,7.0e-18,7.0e-18,8.e-18/
-	DATA tab_E0/13.5,   6.5,   3.5,    2.5,    1.5,    0/
-	DATA EminV/100/
-	DATA Mean_mass/4.23e-23/
-c 	N2/H+
-	DATA P_W1/37.90,  2.95e-1,2.03e-1, -1.57e-2,3.44e-4, 0,    0/
-c 	N2/H
-	DATA P_W2/156.68,-63.86,17.33,-2.32,1.64e-1,-5.83e-3,8.21e-5/
-c 	O2/H+
-	DATA P_W3/8.01e-1,2.09,  -2.91e-2,  1.58e-4,  0,     0,    0/
+	    DATA tab_KL/4.5e-18,8.1e-18,7.0e-18,7.0e-18,7.0e-18,8.e-18/
+	    DATA tab_E0/13.5,   6.5,   3.5,    2.5,    1.5,    0/
+	    DATA EminV/100/
+	    DATA Mean_mass/4.23e-23/
+! 	N2/H+
+        DATA P_W1/37.90,  2.95e-1,2.03e-1, -1.57e-2,3.44e-4, 0,    0/
+! 	N2/H
+        DATA P_W2/156.68,-63.86,17.33,-2.32,1.64e-1,-5.83e-3,8.21e-5/
+! 	O2/H+
+        DATA P_W3/8.01e-1,2.09,  -2.91e-2,  1.58e-4,  0,     0,    0/
 c 	O2/H
-	DATA P_W4/14.26,  2.73,  -8.55e-2,  2.93e-3,  0,     0,    0/
+        DATA P_W4/14.26,  2.73,  -8.55e-2,  2.93e-3,  0,     0,    0/
 c 	O/H+ ou O/H
-	DATA P_W5/28.81, 32.69,  -1.83,     4.02e-2,  0,     0,    0/
+        DATA P_W5/28.81, 32.69,  -1.83,     4.02e-2,  0,     0,    0/
 c 	electrons
-	DATA P_W6/18.94, 1.32,   -8.25e-2, 3.80e-3,-7.06e-5, 0    ,0/
-	DATA tab_shape/1,0,0, 0,0.1,1, 0,0.7,1/
-	DATA P_Kd1/3.85e-2,   3.03e-2,   -4.74e-4/
-	DATA P_Kd2/4.56e-2,   1.27e-2,   -1.15e-4/
-	DATA P_Kd3/8.90e-2,   3.95e-2,   -4.21e-4/
-	DATA P_Kd4/3.15e-1,   2.19e-2,   -3.92e-4/
-	DATA E_Kd/30, 50, 40, 30/
+        DATA P_W6/18.94, 1.32,   -8.25e-2, 3.80e-3,-7.06e-5, 0    ,0/
+	    DATA tab_shape/1,0,0, 0,0.1,1, 0,0.7,1/
+	    DATA P_Kd1/3.85e-2,   3.03e-2,   -4.74e-4/
+	    DATA P_Kd2/4.56e-2,   1.27e-2,   -1.15e-4/
+	    DATA P_Kd3/8.90e-2,   3.95e-2,   -4.21e-4/
+	    DATA P_Kd4/3.15e-1,   2.19e-2,   -3.92e-4/
+	    DATA E_Kd/30, 50, 40, 30/
 c Mass in g
 c	DATA Mass/2*2.34*1.e-23,2*2.67*1.e-23,2.67*1.e-23/
-	DATA Mass/4.68e-23,5.34e-23,2.67e-23/
+        DATA Mass/4.68e-23,5.34e-23,2.67e-23/
 
 
 c Input data
@@ -85,16 +88,16 @@ c Input data
 
 c Complete set of input/output data (MG) 
 	integer nalt,nz
-	real*4 ZPHT_(nalt),XNN2_(nalt),XNO2_(nalt),XNO_(nalt)
-	real*4 QTI_(nalt),QIA_(4,nalt)
+	real ZPHT_(nalt),XNN2_(nalt),XNO2_(nalt),XNO_(nalt)
+	real QTI_(nalt),QIA_(4,nalt)
 	
 c Local variables
 	integer i,j,K,ik,iz
-	real*4 ZPHT(nbrz),XNN2(nbrz),XNO2(nbrz),XNO(nbrz)
-	real*4 QTI(nbrz),QIA(4,nbrz)
-	real*4 RHO(nbrz)
-	real*4 Emoy_eV,EL,KL,RANGE,F_E,R_norm,LAMBDA,ETA,W(6),shape(3)
-	real*4 Kd(4),E,QIA_TOT
+	real ZPHT(nbrz),XNN2(nbrz),XNO2(nbrz),XNO(nbrz)
+	real QTI(nbrz),QIA(4,nbrz)
+	real RHO(nbrz)
+	real Emoy_eV,EL,KL,RANGE,F_E,R_norm,LAMBDA,ETA,W(6),shape(3)
+	real Kd(4),E,QIA_TOT
 
 c INITIALISATION
 c --------------
@@ -111,10 +114,10 @@ c 	Passage en eV
 
 c Increase number of altitude levels
 	nz=nk*(nalt-1)+nalt
-c	write(*,*)nz
+!	write(stdout,*),' low_proton:  nz,nalt',nz,nalt
 	if (nz.gt.nbrz) then
-		write(*,*)'Increase nbrz'
-c		write(*,*)nz
+		write(stderr,*)'Increase nbrz'
+		write(stderr,*)nbrz
 		stop
 	endif
 	if (nk.ge.1) then

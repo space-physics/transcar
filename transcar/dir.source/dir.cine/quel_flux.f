@@ -1,7 +1,7 @@
 c
 c------------------------- fluxkappa ----------------------------
 c
-        subroutine fluxkappa (nango2,nen,centE,isotro,
+        subroutine fluxkappa (nango2,centE,isotro,
      .                  gmu,fluxdown,fluxup,E0,FE)
 c
 c
@@ -11,7 +11,7 @@ c
 c
         real centE(nbren),gmu(nbrang),flux_val
         real fluxup(nbren,nbrango2),fluxdown(nbren,nbrango2)
- 	integer nen,isotro,nango2,ind
+ 	integer isotro,nango2,ind
  	real x(4),kappa,Ecutoff,xE,E0,FE
 c
  	real phi0,fludesc
@@ -47,14 +47,13 @@ c               The integral is over mu**2.dmu =1/3.
 !          write(44,*) centE(ien),fludesc
         enddo
 !        close(44)
-c
-        return
-        end
+
+        end subroutine fluxkappa
 
 c
 c------------------------- inmaxwl ------------------------------
 c
-        subroutine inmaxwl (Fe,Eave,nango2,nen,centE,isotro,
+        subroutine inmaxwl (Fe,Eave,nango2,centE,isotro,
      .                  gmu,fluxdown,fluxup)
 c
 c       Calcul du flux maxwellien
@@ -68,7 +67,7 @@ c
 c
         real centE(nbren),gmu(nbrang)
         real fluxup(nbren,nbrango2),fluxdown(nbren,nbrango2)
- 	integer nen,isotro,nango2
+ 	integer isotro,nango2
  	real Eave,Fe
 c
  	real phi0,fludesc
@@ -109,7 +108,7 @@ c
 c
 c------------------------- indirac ------------------------------
 c
- 	subroutine indirac (Fe,Eave,nango2,nen,centE,isotro,
+ 	subroutine indirac (Fe,Eave,nango2,centE,isotro,
      .			gmu,fluxdown,fluxup)
 c
 c 	Calcul du flux monoenergetique
@@ -123,7 +122,7 @@ c
 c
         real centE(nbren),gmu(nbrang)
         real fluxup(nbren,nbrango2),fluxdown(nbren,nbrango2)
- 	integer nen,isotro,nango2
+ 	integer isotro,nango2
  	real Eave,Fe
 c
         real phi0,fludesc
@@ -170,7 +169,7 @@ c
 c
 c------------------------- ingauss ------------------------------
 c
- 	subroutine ingauss (Fe,Eave,nango2,nen,centE,isotro,
+ 	subroutine ingauss (Fe,Eave,nango2,centE,isotro,
      .			gmu,fluxdown,fluxup)
 c
 c 	Calcul du flux gaussien
@@ -186,7 +185,7 @@ c       2 = dirac
 c
         real centE(nbren),gmu(nbrang)
         real fluxup(nbren,nbrango2),fluxdown(nbren,nbrango2)
- 	integer nen,isotro,nango2
+ 	integer isotro,nango2
  	real Eave,Fe
 c
         real phi0,fludesc,ehalf
@@ -219,67 +218,72 @@ c 	        On se sert des poids gaussiens.
  	        fluxup(ien,iang)=abs(fludesc*gmu(iang+nango2))
 	      endif
             enddo
- 	  endif
- 	enddo
-c
- 	return
- 	end
+        endif
+        enddo
+
+        end
 c
 c ------------------------ normflux ---------------------------------
 c
- 	subroutine normflux(Fe,nango2,nen,centE,ddeng,
+        subroutine normflux(Fe,nango2,centE,ddeng,
      .			gmu,gwt,fluxdown,fluxup)
 c
 c 	Normalise le flux d'entree a une valeur en energie Fe donnee.
-c
+        include 'comm.f'
         implicit none
+
         include 'TRANSPORT.INC'
 c
         real centE(nbren),ddeng(nbren),gmu(nbrang),gwt(nbrang)
         real fluxup(nbren,nbrango2),fluxdown(nbren,nbrango2)
-        integer nen,isotro,nango2,iang,ien
+        integer isotro,nango2,iang,ien
         real Fe,qsum,qtot,xnorm
-c
+
+        include 'comm_sp.f'
+        
 c 	Compute input energy in eV/cm2/sec/sr
- 	qsum = Fe*1.00e+03	! total energy in eV/cm2/sec/sr
-	qtot = 0.		! total flux energy in eV/cm2/sec/sr
- 	do iang=1,nango2
- 	  do ien=1,nen
- 	    qtot=qtot+fluxdown(ien,iang)*gwt(iang)*
+        qsum = Fe*1.00e+03	! total energy in eV/cm2/sec/sr
+        qtot = 0.		! total flux energy in eV/cm2/sec/sr
+        do iang=1,nango2
+          do ien=1,nen
+            qtot=qtot+fluxdown(ien,iang)*gwt(iang)*
      .		gmu(iang)*centE(ien)*ddeng(ien)
- 	  enddo
-  	enddo
+          enddo
+        enddo
  
- 	xnorm = qsum/qtot
+        !if (abs(qtot).le.epsilon(1.)) then
+        !    xnorm = 0.
+        !else
+            xnorm = qsum/qtot
+        !endif
 c 
-	do iang=1,nango2
-	  do ien=1,nen
-	    fluxdown(ien,iang) = fluxdown(ien,iang)*xnorm
-	    fluxup(ien,iang)   = fluxup(ien,iang)*xnorm
- 	  enddo
- 	enddo
+        do iang=1,nango2
+	      do ien=1,nen
+	        fluxdown(ien,iang) = fluxdown(ien,iang)*xnorm
+	        fluxup(ien,iang)   = fluxup(ien,iang)*xnorm
+     	  enddo
+        enddo
 c 	Initialisation des flux trop petits a 1.e-05
-	do iang=1,nango2
-	  do ien=1,nen
-	    fluxdown(ien,iang) = max(fluxdown(ien,iang),1.e-05)
-	    fluxup(ien,iang)   = max(fluxup(ien,iang),1.e-05)
- 	  enddo
- 	enddo
+       do iang=1,nango2
+        do ien=1,nen
+        fluxdown(ien,iang) = max(fluxdown(ien,iang),1.e-05)
+        fluxup(ien,iang)   = max(fluxup(ien,iang),1.e-05)
+        enddo
+       enddo
 c
 c 	Verification ...
-	qtot = 0.
- 	do iang=1,nango2
- 	  do ien=1,nen
- 	    qtot=qtot+fluxdown(ien,iang)*gwt(iang)*
+        qtot = 0.
+        do iang=1,nango2
+         do ien=1,nen
+            qtot=qtot+fluxdown(ien,iang)*gwt(iang)*
      .		gmu(iang)*centE(ien)*ddeng(ien)
- 	  enddo
-  	enddo
- 	qtot=qtot            ! total energy input in eV/cm2/sec/sr
-	write(6,1000)Fe,qtot/1.00e+03,xnorm
+         enddo
+        enddo
+        qtot=qtot            ! total energy input in eV/cm2/sec/sr
+        write(6,1000)Fe,qtot/1.00e+03,xnorm
 1000 	format ('Energie integree :',/,9x,1pe10.2,'keV/cm2/s/sr desire',
      &    /,9x,1pe10.2,' keV/cm2/s/sr calcule  ',
      &    '(facteur de normalisation :',0p1f10.6,')')
 c
-c
- 	return
- 	end
+
+        end subroutine normflux

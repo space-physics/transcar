@@ -1,4 +1,4 @@
-	   subroutine degrad(knm,neninit,centE,botE,ddeng,nspec,kiappel)
+	   subroutine degrad(knm,centE,botE,ddeng,nspec,kiappel)
 c
 c----------------------------------------------------------------------!
 c 	version degrad3.f					       !
@@ -26,14 +26,16 @@ c omdeg(E1,E2,isp)	= redist. matrix.
 c			  E1 > E2 ==> degraded
 c			  E2 > E1 ==> secondary
 ********************* Single precision ! *******************************
-
+	    include 'comm.f'
 	    implicit logical (l)
+
 	    include 'TRANSPORT.INC'
+	    
 c
         real e(nbren),engdd(nbren)
         real esig(nbren),bsig(nbren),delta(nbren)
-        integer nen
-        common /eng_/ e,engdd,nen
+
+        common /eng_/ e,engdd
 c
         real ethres(nbrsp,nbrexc,nbrionst),bratio(nbrionst,nbrsp)
         integer nexcst(nbrsp),nionst(nbrsp)
@@ -110,15 +112,12 @@ c
 1200 	format(1pe9.2,'-->',1pe9.2,4x,1pe8.1,1x,2(1pe11.2))
 1210    format('E # = ',i3,'  emin=',1pe10.2,'   emax=',1pe10.2,
      .    '  Number of species=',i3)
-c
-c
-c       write(6,*)
+
         write(6,*)'    degrad.f : computation of the cross sections'
-c       write(6,*)'    ---------'
-c       write(6,*)
+
 
 c 	Met les energies en ordre croissant
- 	    nen = neninit
+
  	    if(centE(1).lt.centE(nen))then
  	      do ien = 1,nen
  	        e(ien) = centE(ien)
@@ -182,11 +181,10 @@ c 	end=20 renvoie a l'etiquette 20 en cas de non lecture
 
 c
      	if(ien.ne.nen .or. isp.lt.nspec)then
-     	  if(kiappel.eq.1)then
+     	  write(stdout,*),ien,nen,isp,nspec
        	    print*,'Old cross section file does not match new energy'
      	    print*,'grid requirement for nen and nspec'
      	    print*,'Cross sections therefore computed'
-     	  endif
       	  close(unfic_crsout_degrad)
      	  go to 10
      	endif
@@ -197,11 +195,10 @@ c
 c
      	do ien = 1,nen
      	  if (e(ien).ne.esig(ien) .or. ddeng(ien).ne.delta(ien)) then
-     	    if(kiappel.eq.1)then
-       	      print*,'Old cross section file does not match new energy'
-     .		,' grid requirement'
+            write(stdout,*),e(ien),esig(ien),'   ',ddeng(ien),delta(ien)
+       	      print*,'degrad.f: Old cross section file does not '
+     .		,'match new energy grid requirement'
      	      print*,'Cross sections therefore computed'
-     	    endif
       	    close(unfic_crsout_degrad)
      	    go to 10
      	  endif
@@ -213,33 +210,30 @@ c 	end=20 renvoie a l'etiquette 20 en cas de non lecture
      .		(nionst(iisp),iisp=1,nspec)
 
 c
-     	if(kiappel.eq.1)then
-       	  print*,' Old cross section file matches new energy',
-     . 	       ' grid requirement'
-         	  print*,'No new cross sections computed'
-         	  print*
-     	endif
+ 	  print*,' Old cross section file matches new energy',
+     .       ' grid requirement'
+      print*,'No new cross sections computed'
+      print*
+ 
 c
       	close(unfic_crsout_degrad)
      	return 		! cross sections already computed
 c
-20 	print*,'Old cross section file not complete'
- 	print*,'Cross sections therefore computed'
+20 	    print*,'Old cross section file not complete'
+        print*,'Cross sections therefore computed'
 c 	Puisque ce fichier contient quelque chose, on le rembobine
- 	rewind(unfic_crsout_degrad)
+        rewind(unfic_crsout_degrad)
 
-10 	continue	! cross sections not yet computed
+10      continue	! cross sections not yet computed
 c
 c----  	Open input files : seff file
-	open(fic_crsin_degrad,file='dir.data/dir.linux/'
+        open(fic_crsin_degrad,file='dir.data/dir.linux/'
      &                                   //crsin,status='old')
- 	rewind fic_crsin_degrad
+        rewind(fic_crsin_degrad)
 c
 c----  	Open formatted output files
- 	open(fic_degout,file= 'dir.data/dir.linux/'
-     &                              //'dir.cine/DEGOUT',
-     .			status='unknown')
- 	rewind fic_degout
+        open(fic_degout,file= 'dir.data/dir.linux/dir.cine/DEGOUT',
+     &			status='new')
 
 c 	Open unformatted output cross section files
 	open(unfic_crsout_degrad,
@@ -255,7 +249,7 @@ c
 
 c----   Read cross section file, generate energy grid and interpolate
 	call sigma(nspec,logint,title,excion,cel,cin,cinex,
-     .  	         ethres,bratio,nexcst,nionst,e,nen)
+     .  	         ethres,bratio,nexcst,nionst,e)
 	write(6,1210)nen,e(1),e(nen),nspec
 
 	write(unfic_crsout_degrad) nen,nspec,nbrexc,nbrionst
@@ -407,19 +401,18 @@ c	    enddo
  	endif
 c
 	close (fic_degout)
-c
- 	return
-	end
 
-*-----------------------------------------------------------------------
+	end subroutine degrad
+
+!-----------------------------------------------------------------------
 
         pure real function terplin(xs,f,mxloi,xval)
 				implicit none
-*	TERPLIN performs a linear interpolation
-*	of the function F(XS). MXLOI is the length
-*	of the arrays F and XS, XVAL is the
-*	X-value to where the interpolation is required
-*
+!	TERPLIN performs a linear interpolation
+!	of the function F(XS). MXLOI is the length
+!	of the arrays F and XS, XVAL is the
+!	X-value to where the interpolation is required
+
 			  integer, intent(in) :: mxloi
       	real,intent(in) :: xs(mxloi),f(mxloi),xval
 				integer n
@@ -446,7 +439,7 @@ c
 *	calculates averages over energy
 
 	include 'TRANSPORT.INC'
-	common /eng_/ e(nbren),engdd(nbren),nen
+	common /eng_/ e(nbren),engdd(nbren)
 
 *	secondary production  (ionization collision)
 	dde=engdd(n)/2.
@@ -475,27 +468,26 @@ C       (this is F backwards)
 
 *-----------------------------------------------------------------------
 
-	subroutine crosin(lfstr,lt1,lt2,title,jspec)
+        subroutine crosin(lfstr,lt1,lt2,title,jspec)
 
-C	Generates inelastic cross-sections by reading a	data file
+!	Generates inelastic cross-sections by reading a	data file
+!***********************  Single precision  ****************************
 
-***********************  Single precision  ****************************
+        implicit logical (l)
+        include 'TRANSPORT.INC'
 
-	implicit logical (l)
-	include 'TRANSPORT.INC'
-c
         real e(nbren),engdd(nbren)
-        integer nen
-        common /eng_/ e,engdd,nen
-c
+
+        common /eng_/ e,engdd
+
         real ethres(nbrsp,nbrexc,nbrionst),bratio(nbrionst,nbrsp)
         integer nexcst(nbrsp),nionst(nbrsp)
         common /eng2_/ ethres,bratio,nexcst,nionst
-c
+
         real cel(nbrsp,nbren),cin(nbrsp,nbren),cinex(nbrsp,nbrexc,nbren)
         common /cros_/ cel,cin,cinex
-c
-	character*9 title(nbrexc,nbrsp)
+
+        character*9 title(nbrexc,nbrsp)
 C       Thresholds for different states of the produced ion
 c 	are ethresh(nbrsp,nbrexc,nbrionst),bratio(nbrionst,nbrsp)
 c
@@ -555,8 +547,7 @@ C	move all other cross-sections one index up
  	  enddo
    	enddo
 
-	return
-	end
+	end subroutine crosin
 
 *-----------------------------------------------------------------------
 
@@ -582,8 +573,7 @@ C	move all other cross-sections one index up
 	include 'TRANSPORT.INC'
 c
         real e(nbren),engdd(nbren)
-        integer nen
-        common /eng_/ e,engdd,nen
+        common /eng_/ e,engdd
 c
         real ethres(nbrsp,nbrexc,nbrionst),bratio(nbrionst,nbrsp)
         integer nexcst(nbrsp),nionst(nbrsp)
@@ -776,7 +766,8 @@ c 	imod = 1 pour ionisation, 2 pour excitation (juste pour info).
 *************************  Single precision  ***************************
 
 	include 'TRANSPORT.INC'
-	common /eng_/e(nbren),engdd(nbren),nen
+	
+	common /eng_/e(nbren),engdd(nbren)
 c
 	if(eng.le.0..or.ntop.le.1) then
 	  nlev=1
@@ -910,7 +901,7 @@ c
 c---------------------- sigma ---------------------------------------
 c
       subroutine sigma(nspec,logint,title,excion,cel,cin,cinex,
-     .  	         ethres,bratio,nexcst,nionst,e,nen)
+     .  	         ethres,bratio,nexcst,nionst,e)
 c
 c	This program reads the datafile with the cross-section data
 c	and converts it to the format required by the electron transport
@@ -922,7 +913,7 @@ c
 
 c 	INPUTS
  	real e(nbren)
- 	integer nen,nspec
+ 	integer nspec
  	logical logint
 c
 c 	OUTPUTS

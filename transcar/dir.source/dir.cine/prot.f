@@ -2,12 +2,14 @@ c
 c--------------------------- prot ---------------------------------
 c
         subroutine prot(centE,Ebot,ddeng,alt,altkm,
-     &        iprt,nspec,nen,nang,nango2,nalt,jpreci,mcount,
+     &        iprt,nspec,nang,nango2,nalt,jpreci,mcount,
      &        prodprotelec,primprotelec,fluxprimprot,qprimprot,
      &        prodionprot,gmu,gwt,densig,densneut)
-c
+
+        include 'comm.f'
         implicit none
         include 'TRANSPORT.INC'
+    
 c
 c 	Lus dans input :
 c 	  production des proto-ions
@@ -33,7 +35,7 @@ c 	INPUTS
         real centE(nbren),Ebot(nbren),ddeng(nbren)
         real alt(nbralt),altkm(nbralt),densneut(8,nbralt)
         real gmu(2*nbrango2),gwt(2*nbrango2)
-        integer nen,nang,nalt,nango2
+        integer nang,nalt,nango2
 c
 c 	INTERNAL PARAMETERS
 c
@@ -49,8 +51,8 @@ c 	Isotropie du flux
         integer isotro
         real Bmag,dipangle,Enord,Eest,vperpnord,vperpest,vhorizon,vpara
         real ddp,Jtop
-        integer ikp,lit,iener
-        data lit/0/		! On passe par le code simplifie
+        integer ikp,iener
+        integer,parameter:: lit=0		! On passe par le code simplifie
         common/buff/lonmag,latmag,tmag,ikp,cofo,cofh,cofn,chi0,
      &                  Fe0,Ee0,Fi0,Ei0,
      &                  Bmag,dipangle,Enord,Eest,
@@ -112,14 +114,15 @@ c 	Si on est ici, c'est qu'on a des protons.
         pi=atan(1.)*4.
         r2pi = 1./(pi*2.)
 c
-c 	Si on lit les donnees protons depuis un fichier, lit = 1
-c 	Si on les calcule a partir du code low_protons, lit = 0
+c 	Read protons from a file, lit = 1
+c 	calculate via code low_proton, lit = 0
 c
 c
         if (lit.eq.0)then
 c
             iz = 0
             do ialt = 1,nalt
+              write(stdout,*),altkm(ialt)
               if(altkm(ialt).le.840.)then
                 iz = iz+1
                 z(iz) = altkm(ialt)
@@ -222,7 +225,8 @@ c 	    multiplication par 2pi, car on est directement en
 c 	    eV.cm-2.s-1
             eflux = eflux*1.602e-12		! mW.m-2
  	    alp = centE(ien)*1.e-3		! keV
-c
+
+        write(stdout,*),'low_proton: nz=',nz
   	    call low_proton(eflux,alp,nz,z,xnN2,xnO2,xnO1,
      .		qti,qia)
 c
@@ -442,6 +446,5 @@ c           print normalized source function.
           endif
 c
  	endif 			! sur calcul ou lecture
-c
-        return
-        end
+
+        end subroutine prot

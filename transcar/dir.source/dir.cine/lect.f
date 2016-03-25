@@ -1,7 +1,7 @@
 c
 c-------------------------- reed ----------------------------
 c
-      	subroutine lect (nspec,knm,nen,nalt,zbot,ztop,hrloc,ut,day,year,
+      	subroutine lect (nspec,knm,nalt,zbot,ztop,hrloc,ut,day,year,
      .		jpreci,tempexo,f107,f107a,Apind,chi,chideg,glat,glong,
      .		albedo,altkm,alt,tneutre,densneut,colden,botE,centE,
      .		ddeng,nang,nango2,angzb,gmu,gwt,fluxdown,fluxup,
@@ -12,14 +12,14 @@ c
 	include 'TRANSPORT.INC'
 c
  	integer nspec,knmneutral,nalt,jpreci,modatmos,neutspe
- 	integer isp,ialt,ien,i,iang
+ 	integer isp,ialt,ien,i,iang,nenold
  	real bid
  	real zbot,ztop,hrloc,ut,year,tempexo,f107,f107a,Apind,day,
      . 	 	fctemp,fcdens(nbrsp),glat,glong,alt(nbralt),
      .		altkm(nbralt),tneutre(nbralt),densneut(8,nbralt),
      .     	colden(8,nbralt),albedo
-c
- 	integer nen
+
+
  	real botE(nbren),centE(nbren),ddeng(nbren)
  	integer knm,ne,nang,nango2
  	real ezero,trav(nbren)
@@ -94,7 +94,7 @@ c
  	  write(6,*)'Identification number in NEUTRAL =',knmneutral
  	endif
       	call xline(1,ielec)
-      	read (ielec,*)nen
+      	read (ielec,*)nenold
 c 	Bottom energies
       	call xline(1,ielec)
       	read (ielec,*) (botE(nen+1-i),i=1,nen)

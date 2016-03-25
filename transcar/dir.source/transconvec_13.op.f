@@ -100,10 +100,11 @@
         real fhemd(400,201)
         real fhemu(400,201)
         real e(400)
-        integer nen,nspec,nalt
+        
+        integer nspec,nalt
         common/pexc/prate,fhemd,fhemu,e
         common/excinds/jsg
-        common/kininds/nalt,nspec,nen
+        common/kininds/nalt,nspec
 
         logical exval
 !-------MZ
@@ -716,7 +717,7 @@
         Rcira=(z0+Re)/R0
         Rflu=(zflu+Re)/R0
 
-        thermodiff=.6*54.5/kb*me/T_0**2.5*t0*Qe_0
+        thermodiff=.6*54.5/kb*me/T_0**2.5*t0*Qe0 !FIXME was QE_0 undefined
 
 
 

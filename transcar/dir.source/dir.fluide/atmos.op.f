@@ -2,6 +2,8 @@
      &            ap,Ne,Te,Tj,nx,kiappel,file_cond)
 
         include 'comm.f'
+        
+        include 'comm_sp.f'
 
         include 'TRANSPORT.INC'
 

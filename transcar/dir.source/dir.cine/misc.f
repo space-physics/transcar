@@ -1088,8 +1088,11 @@ c       computes an array of ntab points between tmin and tmax, with
 c       power law spacing
 c       tab outputs are in increasing order
 c       the growth factor is spfac
-c
-        dimension tab(ntab) , widthtab(ntab)
+
+        integer,intent(in) :: ntab
+        real,intent(out) :: tab(ntab),widthtab(ntab),spfac
+        real,intent(in) :: tmin,tmax
+
 c
         tab(1)=tmin
         tab(ntab) = tmax
@@ -1140,9 +1143,8 @@ c       Eventually computes the energy width.
           dd = tab(i)-ener
           widthtab(i) = 2.*dd
         enddo
-c
-        return
-        end
+
+        end subroutine gridpolo
 c
 c----------------------------------------------------------------------
 c

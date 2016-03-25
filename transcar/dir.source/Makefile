@@ -12,15 +12,16 @@ endif
 F77=$(fc)
 F90=$(fc)
 
-# -O3 gives SIGSEGV with gfortran, -O2 doesn't.
 # remember, -march=X implies -mtune=X
 ifeq ($(fc),ifort)
-OPTIONS=-assume byterecl  -O2 -march=native #-warn all #for ifort
+OPTIONS=-assume byterecl  -O3 -march=native 
+#OPTIONS+=-warn all #for ifort
+#OPTIONS += -g -C -fpe:0 -traceback 
 else ifeq ($(fc),gfortran)
 # we use std=legacy because there are deleted features used
-OPTIONS=-frecord-marker=4  -O1 -march=native  -std=legacy
-#OPTIONS+= -fno-align-commons  #-pedantic #-Wall #for gfortran 
-OPTIONS+= -g -fbounds-check -fbacktrace
+OPTIONS=-frecord-marker=4  -O3 -march=native  -std=legacy
+#OPTIONS+=   #-pedantic #-Wall #for gfortran 
+#OPTIONS+= -fno-align-commons -g -fbounds-check -fbacktrace -ffpe-trap=zero,overflow#,underflow#,denormal
 else
 $(info you must specify your compiler with fc=mycompiler.  E.g. make fc=gfortran)
 endif

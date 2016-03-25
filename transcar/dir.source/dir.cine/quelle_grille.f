@@ -1,8 +1,10 @@
-        subroutine quelle_grille(emax,nen,centE,botE,ddeng,
+        subroutine quelle_grille(emax,centE,botE,ddeng,
      &                          nang,nango2,gmu,gwt,angzb)
 
- 	    implicit none
+        include 'comm.f'
 
+ 	    implicit none
+        include 'comm_sp.f'
         include 'TRANSPORT.INC'
 c
 c 	Entree du programme : La valeur caracteristique de l'energie
@@ -12,8 +14,8 @@ c 	Sorties : nombres d'energie, d'angles
 c 	grille d'energie (centre de grille, bas, largeur)
 c 	grille d'angle (angle, cosinus, poids)
 
-     	integer nen,nang,nango2
-     	integer i1,i2,i3
+     	integer,intent(out):: nang,nango2
+     	integer i1,i2,i3,nenold
      	real centE(nbren),botE(nbren),ddeng(nbren)
      	real angzb(2*nbrango2),gmu(2*nbrango2),gwt(2*nbrango2)
 c
@@ -31,9 +33,7 @@ c 	degrad.f
      &		iprint4
  	    logical logint,lt1,lt2,lt3,lt4,lopal
         character*80 crsin,crs,rdt,crsfn
-c
- 	    real,parameter :: pideg=57.29578
-c
+
 c 	On stoke les parametres de calcul de degrad.
         open(fic_datdeg, file=datdegfn, status='old')
 
@@ -95,14 +95,14 @@ c 	  On utilise les grilles detaillees
    	    crs = 'dir.cine/dir.seff/crsa8'
    	    rdt = 'dir.cine/dir.seff/rdta8'
  	    else
-   	    nen = 400
+   	    !nen = 400
    	    crs = 'dir.cine/dir.seff/crsa'
    	    rdt = 'dir.cine/dir.seff/rdta'
    	    emin = 1.e-01
 !	    On ne va pas au dessus de 140 keV...
 !     "do not go above 140keV (?) "
    	    emax = min(emax,140000.0)
-              print*,'call gridpolo'
+             write(stdout,*),'call gridpolo'
             call gridpolo (nen,emin,emax,centE,ddeng,spfac)
 c           Calcul des energies de bas de grille
             botE(1) = max(centE(1) - ddeng(1)/2.,1.e-03)
@@ -138,7 +138,7 @@ c           Calcul des energies de bas de grille
    	    crs = 'dir.cine/dir.seff/crsb8'
    	    rdt = 'dir.cine/dir.seff/rdtb8'
    	  else
-   	    nen = 150
+   	    !nen = 150
    	    crs = 'dir.cine/dir.seff/crsb'
    	    rdt = 'dir.cine/dir.seff/rdtb'
    	    emin = 1.e-01
@@ -162,7 +162,12 @@ c	goto 314
      &       status='OLD',form='UNFORMATTED',
      &          iostat=iost,err=992)
         rewind icrsin
-        read(icrsin) nen,i1,i2,i3
+        read(icrsin) nenold,i1,i2,i3
+        
+        if (nenold .ne. nen) then
+            stop 'crsfn doesnt match the nen size'
+        endif
+        
         read(icrsin) (centE(ien),ien=1,nen)
         read(icrsin) (botE(ien),ien=1,nen)
         read(icrsin) (ddeng(ien),ien=1,nen)
@@ -187,7 +192,7 @@ c 	efficaces.
         open(fic_datdeg,file=datdegfn,
      &       status='unknown',err=993) !yes unknown in case not all values rewritten
 !        rewind(fic_datdeg)
-       print*,'beginning to rewrite',datdegfn
+       print*,'beginning to rewrite ',datdegfn
      	write(fic_datdeg,1010)type_de_grille
         write(fic_datdeg,1020) crsin
         write(fic_datdeg,1030) crs
@@ -288,15 +293,15 @@ c
         gwt(8)=.1739274263382
 
         do iang=1,nang
-          angzb(iang)=pideg*acos(gmu(iang))
+          angzb(iang)=rad2deg*acos(gmu(iang))
         enddo
 c
  	    return
 
-992     print*,' Cross-section file is in error. Status=',iost
+992     write(stderr,*),' Cross-section file is in error. Status=',iost
      	stop
 
-993     print*,' trouble writing crs file'
+993     write(stderr,*),' trouble writing crs file'
         stop
 
         end subroutine quelle_grille

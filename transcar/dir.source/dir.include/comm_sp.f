@@ -4,3 +4,7 @@
       real :: tic,toc
       
       logical,parameter :: debug=.false.
+      
+!      real(sp) :: sqnan,nan
+!      sqnan = ieee_value(sqnan,qnan)
+!      nan = transfer(sqnan,nan)

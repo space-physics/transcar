@@ -10,9 +10,11 @@
 ! nbren    =    IPN: maximum length of the energy grid
 !
 !
-         integer nbralt,nbrsp,nbrango2,nbrang,nbrexc,nbrionst,nbren
-         PARAMETER (nbralt=201,nbrsp=5,nbrango2 = 16,nbrang=32,         
-     &               nbrexc=15,nbrionst=5,nbren=400)
+         integer,parameter :: nbralt=201,nbrsp=5,nbrango2=16,nbrang=32,
+     & nbrexc=15,nbrionst=5,nbren=400
+         
+        integer,parameter :: nen=170
+
 !
 !       Nom de la planete d'application, et distance au soleil (UA)
         character*10 planete

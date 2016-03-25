@@ -2,6 +2,8 @@
      .          ap,chi,Ne,Te,Tj,nx,Nh,No,No2,Nn2,Nn,Tn,indlim,jpreci0,
      .          N_0,T_0,kiappel,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
      .          Ne_sup,courant_sup,Te_sup,Chaleur_sup)
+     
+      include 'comm.f'
 c
 c 	Ce programme est un driver. 
 c       This program is a driver.
@@ -98,7 +100,7 @@ c
      . 	 	glat,glong,albedo,altcm(nbralt),altkm(nbralt),
      .		tneutre(nbralt),densneut(8,nbralt),
      .     	colden(8,nbralt)
-      integer knm,nang,nango2,nen
+      integer knm,nang,nango2
       real botE(nbren),centE(nbren),ddeng(nbren)
       real angzb(2*nbrango2),gmu(2*nbrango2),gwt(2*nbrango2)
       real fluxdown(nbren,nbrango2),fluxup(nbren,nbrango2)
@@ -108,9 +110,9 @@ c
         real Ne_supra(nbralt),courant_supra(nbralt),Te_supra(nbralt),
      .          Chaleur_supra(nbralt)
 c
-           integer i,j,iyd,nx
+       integer i,j,iyd,nx
         real z(npt),Ne(npt),Te(npt),ap(7),stl
-        real Tj(npt),chi,pideg,dTinf,stepnrj,anormnrj
+        real Tj(npt),chi,dTinf,stepnrj,anormnrj
         real UTsec,dz
         real HQe_1,HPo_1,HPo2_1,HPn2_1,HPh_1,flux
         real Eave
@@ -125,7 +127,7 @@ c
         real phdisso2(500),pfluxsr(8,201)
         real Po1sdisso2(npt2)
         common/photodissociation/phdisso2,Po1sdisso2
-        common/kininds/nalt,nspec,nen
+        common/kininds/nalt,nspec
         !-----MZ
         
          integer kiappel
@@ -141,9 +143,6 @@ c
         real N_0,T_0
         common/exo/dTinf
 
-c
-       data pideg/57.29578/
-c
 1000   format (a)
 c
 c ====================================================================
@@ -274,7 +273,7 @@ c	  It is called by transsolo.f. The entries are read and ELEC NEUTRAL.
           write(6,*)'lect.f : reading the inflow of transport.f'
           write(6,*)'-------'
           print*,'call lect'
-          call lect (nspec,knm,nen,nalt,zbot,ztop,hrloc,UT,day,year,
+          call lect (nspec,knm,nalt,zbot,ztop,hrloc,UT,day,year,
      .     jpreci,tempexo,f107(2),f107(3),Apind,chi,chideg,glat,glong,
      .          albedo,altkm,altcm,tneutre,densneut,colden,botE,centE,
      .          ddeng,nang,nango2,angzb,gmu,gwt,fluxdown,fluxup,
@@ -284,12 +283,12 @@ c
        elseif (kiappel.eq.2) then
 c 	  On est appele par le transport fluide
          jpreci = jpreci0
-            print*,'call iniflu'
+            write(stdout,*),'call iniflu'
             call iniflu(npt,iyd,UTsec,z,glat,glong,stl,f107,
      .                ap,chi,Ne,Te,Tj,indlim,jpreci,
      .                Nh,No,No2,Nn2,Nn,Tn,N_0,T_0,Po,Po2,Pn2,Ph,Pn,Heat,
      .
-     .                  nspec,knm,nen,nang,nango2,nalt,
+     .                  nspec,knm,nang,nango2,nalt,
      .                  ddeng,botE,centE,gmu,gwt,angzb,altkm,altcm,
      .                  dipang,smgdpa,
      .                  fluxup,fluxdown,densneut,tneutre,tempexo,
@@ -307,8 +306,8 @@ c ====================================================================
 c 	Calcul de la degradation en energie
 c	Calculation of degradation in energy
 c ====================================================================
-      print*,'call degrad'
-        call degrad(knm,nen,centE,botE,ddeng,nspec,kiappel)
+      write(stdout,*),'call degrad   nen=',nen
+        call degrad(knm,centE,botE,ddeng,nspec,kiappel)
 c
 c ====================================================================
 c 	Calcul de la photoproduction primaire
@@ -317,7 +316,7 @@ c ====================================================================
 c
        if(jpreci.ne.1 .and. jpreci.ne.3 .and. jpreci.ne.4) 
      .  call felin(knm,nspec,hrloc,day,year,UT,
-     .  tempexo,f107,ap,glat,glong,nen,botE,centE,
+     .  tempexo,f107,ap,glat,glong,botE,centE,
      .  ddeng,nalt,altkm,tneutre,densneut,colden,chi,chideg,
      .          kiappel,phdisso2,pfluxsr,Po1sdisso2)
 c
@@ -330,7 +329,7 @@ c
         call trans(knm,nspec,nalt,zbot,ztop,hrloc,day,year,jpreci,
      .        tempexo,f107,ap,chideg,glat,glong,albedo,
      .        altkm,altcm,tneutre,densneut,colden,nang,nango2,
-     .        angzb,gmu,gwt,nen,centE,botE,ddeng,fluxdown,fluxup,denelc,
+     .        angzb,gmu,gwt,centE,botE,ddeng,fluxdown,fluxup,denelc,
      .        temelc,temion,smgdpa,prodiontot,chaufelec,kiappel,
      .        Ne_supra,courant_supra,Te_supra,Chaleur_supra,ut)
 c

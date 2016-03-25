@@ -91,7 +91,7 @@
 
 
 
-        subroutine flux_integre(nango2,nen,centE,ddeng,
+        subroutine flux_integre(nango2,centE,ddeng,
      .                  gmu,gwt,fluxdown,fluxup,E0,F0)
 c
 c       Normalise le flux d'entree a une valeur en energie Fe donnee.
@@ -101,7 +101,7 @@ c
 c
         real centE(nbren),ddeng(nbren),gmu(nbrang),gwt(nbrang)
         real fluxup(nbren,nbrango2),fluxdown(nbren,nbrango2)
-        integer nen,isotro,nango2,iang,ien
+        integer isotro,nango2,iang,ien
         real F0,E0,qsum,qtot,xnorm
 c
 c       Compute input energy in eV/cm2/sec/sr

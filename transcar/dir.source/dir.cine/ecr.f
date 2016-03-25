@@ -3,7 +3,7 @@ c-------------------------- ecr ---------------------------------
 c
         subroutine ecr(nspec,nalt,zbot,ztop,UT,hrloc,day,nan,
      &      jpreci,tempexo,f107,f107a,Apind,fctemp,fcdens,glat,
-     &      glong,modatmos,albedo,altkm,nen,botE,centE,ddeng,knm,eave,
+     &      glong,modatmos,albedo,altkm,botE,centE,ddeng,knm,eave,
      &      alpha,nang,angzb,gmu,gwt,fluxdown,fluxup,denelc,dne,
      &      temelc,dte,temion,dti,derivte,comp,z50,densneut,tneutre,
      &      xmasdens,colden,mgdpa,smgdpa,chideg,icont,iprt,spfac,
@@ -146,7 +146,7 @@ c 	write(6,*)'Writting ELEC'
  4015 format(1f20.4,2f20.13)
  4016 format('Angles en ordre croissant.{0->90=fd},{90->180=fu}')
  4017 format ('Id. No (knm), mean E(maxw) (0 if no),     alpha'
-     &       ,/,47('-'),/,i10,10x,f15.2,f10.2)
+     &       ,/,47('-'),/,i10,f15.2,f10.2) !10x
  4018 format ('Energie (eV)(en ordre decroissant) ')
  4030 format ('E(eV) (ordre decr.), loi de puissance')
  4019 format (4f18.13)
@@ -162,7 +162,7 @@ c
      & status='replace')
       rewind ielec
       write (ielec,4000)
-      write (ielec,4017)knm,eave,alpha
+      write (ielec,*) knm,eave,alpha !4017 FIXME
       if(icont(3).eq.5)then
  	  write(ielec,4030)
         write (ielec,4035)nen,spfac
@@ -229,7 +229,7 @@ c     write (ielec,4011) (dti(i), i = 1,nalt)
       write (ielec,*)'Derivee de la temperature electronique'
       write (ielec,4011) (derivte(i), i = 1,nalt)
       if(modcomp.eq.0)write (ielec,4014)z50
-      if(modcomp.eq.1)write (ielec,4024)z50
+      if(modcomp.eq.1)write (ielec,*) z50 !4024 FIXME
       if(modcomp.eq.2)write (ielec,4025)
       write (ielec,4002) (comp(i),i=1,nalt)
       write(ielec,*)'Magnetic deep angle (mgdpa), [degres]'

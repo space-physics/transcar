@@ -4,7 +4,7 @@
 	Implicit none
 	integer nbouclemax
 	parameter(nbouclemax=10)
-	
+
 	real temps,delai,tempsdeb,tempsfin,dtconv,deltat
 	integer iyd,iydfin,iyddeb,nboucle
 	Real longeo,latgeo,dlon,dlat,lon_ref,lat_ref
@@ -45,7 +45,7 @@
 	latmag_tro=dlatmag
 	lonmag_tro=dlonmag
 	lonref=dlonref
-	
+
 1	iyd=98001
 	print*,'jour pour la conjonction (dans le format julien AAJJJ) : '
 	read*,iyd
@@ -95,7 +95,7 @@
 	      iyd=iyd+1				!
 	    endif					!
 
-	if (mod(int(temps),300).eq.0) 
+	if (mod(int(temps),300).eq.0)
      &		 print*,longeo,latgeo,tmag,latmag,pot
 
 	    if (abs(latmag-lat_ref).le.dlat) then

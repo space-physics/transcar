@@ -1,22 +1,22 @@
 subroutine geometrie(nb_point,nb_data,ind_data,lon,lat,latmin,latmax,latequi,mode,ndeg,mdeg,rang,A,B)
 
-!	mode=0 on prend toutes les données entre latequi et 90°
-!	mode=1 on prend toutes les données entre latequi et latmax
-! 	mode=2 on prend toutes les données entre latmin et 90°
-!	mode=3 on prend toutes les données entre latmin et latmax
+!    mode=0 on prend toutes les données entre latequi et 90°
+!    mode=1 on prend toutes les données entre latequi et latmax
+!     mode=2 on prend toutes les données entre latmin et 90°
+!    mode=3 on prend toutes les données entre latmin et latmax
 
 
 implicit none
 
-Integer,parameter::	npt=100000
-Real*8,parameter ::	pi=3.14159265358979d0,deg2rad=1.745329251994330d-2,	&
-			rad2deg=57.295779513082320d0
+Integer,parameter::    npt=100000
+Real*8,parameter ::    pi=3.14159265358979d0,deg2rad=1.745329251994330d-2,    &
+            rad2deg=57.295779513082320d0
 Real*8,parameter ::     coeffc=6.d0
-Integer	::	i,j,k,l,longueur,sta_inf,end_inf,sta_fit,end_fit,sta_sup,end_sup
+Integer    ::    i,j,k,l,longueur,sta_inf,end_inf,sta_fit,end_fit,sta_sup,end_sup
 
-Integer	::	nb_point,nb_data,ind_data(npt),mode,ndeg,mdeg,rang,nb_inf,nb_fit,nb_sup
-Real*8	::	latmin,latmax,latequi,LM,DL
-Real*8	::	lon(nb_point),lat(nb_point)
+Integer    ::    nb_point,nb_data,ind_data(npt),mode,ndeg,mdeg,rang,nb_inf,nb_fit,nb_sup
+Real*8    ::    latmin,latmax,latequi,LM,DL
+Real*8    ::    lon(nb_point),lat(nb_point)
 Real*8  ::      alpha,xmin,xequi,coslinf,dxmin,d12,d11,d210,d21,d22,det_1,xmax,coslsup
 Real*8  ::      anm,bnm,cnm
 Real*8  ::  A(nb_point*rang),B(rang*nb_point),x1(1)=1.d0,x_1(1)=-1.d0
@@ -46,8 +46,8 @@ interface
     Integer ::      ndeg,mdeg,nb_data,ind_data(:)
     Real*8  ::      B(:,:)
     Real*8  ::      pot(:)
-    Real*8  ::	    coef(:)
-!    Real*8  ::	    coef_r(:),coef_i(:)
+    Real*8  ::        coef(:)
+!    Real*8  ::        coef_r(:),coef_i(:)
   end subroutine coefficient
 
   subroutine projection(nb_data,ind_data,rang,A,B,pot,pot_fit)
@@ -279,10 +279,10 @@ Subroutine polyleg(x,pn,dpn)
 implicit none
 
 integer,parameter :: npt=100000
-integer	:: n,i,nb_point,ndeg
+integer    :: n,i,nb_point,ndeg
 real*8  :: x(:),pn(:,0:),dpn(:,0:),xm
-real*8	:: x2(npt),x3(npt),x4(npt),x5(npt)
-real*8	:: pn_1(npt),pn_2(npt),dpn_1(npt),dpn_2(npt)
+real*8    :: x2(npt),x3(npt),x4(npt),x5(npt)
+real*8    :: pn_1(npt),pn_2(npt),dpn_1(npt),dpn_2(npt)
 
 
 ndeg=size(pn,2)-1

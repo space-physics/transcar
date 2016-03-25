@@ -47,9 +47,9 @@ Cf2py intent(out) psi0
         data lat_top/89.9d0/
 
        save dtmag,dlonmag0,dlatmag0
-       
+
        if (flgini) then
-       open(56,file='trace_conv',form='formatted',status='replace')
+       open(56,file='trace_conv',form='formatted',status='new')
        flgini=.false.
        endif
 
@@ -74,10 +74,10 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
        print*,'convec.f: call potentiel, dlonmag,dlonmlt',
      &   dlonmag,dlonmlt
        call potentiel(iyd,tu,kp,dlonmlt,dlatmag ,EE(1),EE(2),psi,ddp)
-       
+
        if (flgpot) psi0=psi
-       
-       print*,'convec.f: call magfild'  
+
+       print*,'convec.f: call magfild'
        call magfild(latgeo,longeo,zref,year,Bmag,dipangle,orient)
        pot=psi0
        Enord=EE(2)
@@ -90,7 +90,7 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
        vhorizon=vh
        vp    =vpnord*tan(dipangle*deg2rad)*orient
        vpara=vp
-       
+
         dlon = vpest*dt/re/cos(min(dlatmag,lat_top)*deg2rad)
         dlat =  vh*dt/re
        if (dlon.ne.0.d0 .and. dlat.ne.0.d0) then
@@ -138,7 +138,7 @@ c100       format(a2,10(1x,g15.8))
      & clon,slon,clat,slat,
      & dx,dy,ca,sa,cb,sb,
      & rad2deg,deg2rad,pi
-        data rad2deg/57.2957795130823229d0/ 
+        data rad2deg/57.2957795130823229d0/
         data deg2rad/0.174532925199432955d-01/
         data pi/3.14159265358979312d0/
 
@@ -244,7 +244,7 @@ c        lon=datan2(sb,cb)*rad2deg
           endif
           fb=potar(iyd,tu,kp,lonmlt,latmag,dlat,dlon,b,psi0)
         enddo
-       
+
        ca=dcos(b)
        sa=dsin(b)
        dlon1=dlon*ca-dlat*sa

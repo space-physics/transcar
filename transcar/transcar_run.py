@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
-from __future__ import division,absolute_import
-from pathdir2 import Path
+"""
+This file is normally called from GNU Parallel
+"""
+
+from pathlib import Path
 import logging
 from collections import deque
 from subprocess import Popen

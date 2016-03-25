@@ -12,11 +12,11 @@ c
 c     Initialisation des parametres necessaires au programme cinetique
 c     lorsque celui-ci est appele par le programme fluide.
 c
-c     ENTREES DE INIFLU ISSUES DU PROGRAMME FLUIDE 
+c     ENTREES DE INIFLU ISSUES DU PROGRAMME FLUIDE
 c     --------------------------------------------
 c     Passees par liste d'appel :
 c      ---------------------------
-C       IYD     jour de l'annee sous la forme YYJJJ, 
+C       IYD     jour de l'annee sous la forme YYJJJ,
 c               avec YY=annee et JJJ=jour dans l'annee
 C       SEC     temps universel                                 (s)
 C       Z       tableau des altitudes                           (km)
@@ -30,14 +30,14 @@ c     CHI     Angle solaire zenithal (radian)
 c
 C       Ne      tableau des concentrations electroniques
 c               (unites normalisees)
-C       Te      tableau des temperatures electroniques        
+C       Te      tableau des temperatures electroniques
 c               (unites normalisees)
-C       Tj      tableau des temperatures de l'ion O+        
+C       Tj      tableau des temperatures de l'ion O+
 c               (unites normalisees)
 C       NX      nombre d'altitudes resolues
 c     indlim     = Nombre d'altitudes de calcul du transport fluide
 c     npt     = dimension des tableaux utilises par fluide.
-c       Nh(npt),No(npt),No2(npt),Nn2(npt),Nn(npt),Tn(npt) 
+c       Nh(npt),No(npt),No2(npt),Nn2(npt),Nn(npt),Tn(npt)
 c         = densites et temperature neutres de fluide.f
 C       N_0     coefficient de normalisation des concentrations (cm-3)
 C       T_0     coefficient de normalisation des temperatures   (K)
@@ -55,7 +55,7 @@ c     ztrav     = altitudes a rajouter pour descendre jusqu'a 90 km
 c     dens(8,100),fcdens(8),Ttrav,xmasdens,fctemp
 c     modatmos, alpha (ici, param. bidon),dne(id.),dte,dti,spfac
 c     moddene,modtemp,modcomp,z50,derivte,comp
-c     
+c
 c     sw : tableau de switches pour msis95
 c
 c     SORTIES DE INIFLU INTERNES A CE SPGMME, POUR LE TRANS. CINETIQUE
@@ -80,8 +80,8 @@ c
         implicit none
 c
         logical flg_err
-        common/err/flg_err    
-        
+        common/err/flg_err
+
         integer jpreci0
         logical flgini,flgchi
         data flgini/.true./
@@ -229,7 +229,7 @@ c         ... msis90
             print*,iyd,UTsec,ztrav(ialt),glat,glong,
      &    stl,f107(3),f107(2),ap
             endif
-          
+
        print*,'iniflux call gtd6'
           call gtd6(iyd,UTsec,ztrav(ialt),glat,glong,stl,
      .            f107(3),f107(2),ap,48,d,t)
@@ -270,7 +270,7 @@ c
 c         Calcule Ne ...
           jf(1) = .true.
 c       IRI n'estime pas les Te Ti en dessous de 120 km.
-          jf(2) = .false.  
+          jf(2) = .false.
 c         Les latitudes et longitudes sont geographiques.
           jmag = 0
 c         La date est en jours : negative pour IRI
@@ -290,7 +290,7 @@ c       vers la grille exp de calcul :
        do ialt = 2,ndelta
         denelc(indlim+ialt-1)=Neiri(ndelta+2-ialt)
        enddo
-c     
+c
 c       iri ne modelise pas les temperatures en dessous de 120 km-->
 c       on prend Te=Ti=Tn
        do ialt = indlim+1,nalt
@@ -307,7 +307,7 @@ c     Initialisation a 0 des productions
          call zeroit(Pn,npt)
          call zeroit(Heat,npt)
 c
-c 
+c
 c ====================================================================
 c     definition des grilles de calcul
 c ====================================================================
@@ -316,21 +316,21 @@ c     Numero d'identification du run
         knm=ifix(UTsec)
 c     S'il y a des precipitations, elles sont isotropes
          isotro = 1
-     
+
 c     Si il n'y a pas de precipitations, on garde la 1ere grille.
        if (jpreci.eq.0)then
            Emax = 300.
-           print*,'call quelle_grille'          
+           print*,'call quelle_grille'
            call quelle_grille(Emax,nen,centE,botE,ddeng,
      .        nang,nango2,gmu,gwt,angzb)
        else
 c
 c       Il faut connaitre l'energie caracteristique des precipitations
-c       pour definir sur quelle grille il faut travailler. On  
-c       calcule le flux donne par le modele statistique de Hardy. 
-c       Ce programme donne  
-c         le flux total Flux_elec_int EN ELECTRONS/CM2.S.SR 
-c         le flux total d'energie Flux_ener_int EN KEV/CM2.S.SR 
+c       pour definir sur quelle grille il faut travailler. On
+c       calcule le flux donne par le modele statistique de Hardy.
+c       Ce programme donne
+c         le flux total Flux_elec_int EN ELECTRONS/CM2.S.SR
+c         le flux total d'energie Flux_ener_int EN KEV/CM2.S.SR
 c
 c      call prec_time(iyd,UTsec,Eave,Flux_ener_int)
           dlon=dble(15.*tmag)
@@ -379,7 +379,7 @@ c
 c    else
 c      isotro=1
 c        call inmaxwl(Flux_ener_int,Eave,nango2,nen,centE,
-c     .            isotro,gmu,fluxdown,fluxup)    
+c     .            isotro,gmu,fluxdown,fluxup)
 c          call normflux(Flux_ener_int,nango2,nen,centE,ddeng,gmu,gwt,
 c     .            fluxdown,fluxup)
 c      Fe0=Flux_ener_int*6.2832
@@ -395,15 +395,15 @@ c       Initialisation d'un flux precipite de perturbation
 c ====================================================================
 c
 c     Connaissant le flux de particules integre [cm-2.s-1.sr-1]
-c       et le flux d'energie integre [keV.cm-2.s-1.sr-1], on a le 
-c     choix entre diverses possibilites. 
-c     Il faut appeler un programme qui en fonction de ces 
-c     parametre estime un flux. En routine, il existe un flux 
+c       et le flux d'energie integre [keV.cm-2.s-1.sr-1], on a le
+c     choix entre diverses possibilites.
+c     Il faut appeler un programme qui en fonction de ces
+c     parametre estime un flux. En routine, il existe un flux
 c     maxwellien, gaussien ou un flux monoenergitique (dirac)
 c     On les appelle par
 c
 c     call inmaxwl(Flux_ener_int,Eave,nango2,nen,centE,
-c    .            isotro,gmu,fluxdown,fluxup)    
+c    .            isotro,gmu,fluxdown,fluxup)
 c
 c       call ingauss (Flux_ener_int,Eave,nango2,nen,centE,
 c    .            isotro,gmu,fluxdown,fluxup)
@@ -412,21 +412,21 @@ c       call indirac (Flux_ener_int,Eave,nango2,nen,centE,
 c    .            isotro,gmu,fluxdown,fluxup)
 c
 c       isotro = parametre d'isotropie du flux precipite :
-c       0 = distribution gaussienne 
+c       0 = distribution gaussienne
 c       1 = flux isotrope
 c       2 = dirac
 c
-c     La discretisation impose dans tous les cas de normaliser a 
+c     La discretisation impose dans tous les cas de normaliser a
 c     Flux_ener_int.
 c       call normflux(Flux_ener_int,nango2,nen,centE,ddeng,gmu,gwt,
 c    .        fluxdown,fluxup)
 c
-c     Pour mettre des perturbations, on peut changer brutalement la 
-c    forme et l'intensite du flux. Il suffit d'initialiser 
+c     Pour mettre des perturbations, on peut changer brutalement la
+c    forme et l'intensite du flux. Il suffit d'initialiser
 c     Flux_ener_int,Eave,isotro et de retirer les c de commentaire
 c     a l'appel souhaite. Il faut eventuellement redefinir la grille
 c     d'energie.
-c     
+c
 c     Remarque : 1 Erg = 6.25e+11 eV...
 c
 c ----     ICI COMMENCENT LES CHANGEMENTS EVENTUELS POUR UNE PERTURBATION
@@ -439,7 +439,7 @@ c    Flux_ener_int = 6.25e+11 * 3.
 c     Eave = 200.
 c
 c     call inmaxwl(Flux_ener_int,Eave,nango2,nen,centE,
-c    .            isotro,gmu,fluxdown,fluxup)    
+c    .            isotro,gmu,fluxdown,fluxup)
 c       call normflux(Flux_ener_int,nango2,nen,centE,ddeng,gmu,gwt,
 c    .            fluxdown,fluxup)
 c
@@ -513,7 +513,7 @@ c ====================================================================
 c     Eventuellement, ecriture pour verifications.
 c ====================================================================
 c
-c     Pour mettre off ces ecritures, mettre iprt(1) et iprt (2) a 
+c     Pour mettre off ces ecritures, mettre iprt(1) et iprt (2) a
 c     0 dans la ligne data en debut de ce sous programme
       if (iprt(1).eq.1 .or. iprt(2).eq.1) then
        fanion = fanion + 1
@@ -535,7 +535,7 @@ c
       end
 c
 c------------------------ column -------------------------------
-c 
+c
         subroutine column(nbralt,nalt,altcm,nspec,densneut,colden)
 *
 *    Calculates the column density HTAU
@@ -565,7 +565,7 @@ c
           d=0.
           if(densneut(isp,i2).gt.0..and.densneut(isp,i1).gt.0.)
      .        d=abs(log(densneut(isp,i2)/densneut(isp,i1)))
-        if(abs(d).ge.epsilon) 
+        if(abs(d).ge.epsilon)
      .        colden(isp,i1)=densneut(isp,i1)/d*(altcm(i1)-altcm(i2))
       do ialt=i2,i3,i4
       d=0.

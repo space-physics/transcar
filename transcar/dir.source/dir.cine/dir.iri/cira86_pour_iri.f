@@ -7,14 +7,14 @@ C   GTS5, GLOBE5 and GLOBL5 developed by A.E. Hedin (2/26/87) were
 C   modified for use in IRI --------- D. Bilitza -------- March 1991
 C
 C     INPUT:
-C        IDAY - DAY OF YEAR 
+C        IDAY - DAY OF YEAR
 C        SEC - UT(SEC)
 C        GLAT - GEODETIC LATITUDE(DEG)
 C        GLONG - GEODETIC LONGITUDE(DEG)
 C        STL - LOCAL APPARENT SOLAR TIME(HRS)
 C        F107A - 3 MONTH AVERAGE OF F10.7 FLUX
 C
-C     OUTPUT: 
+C     OUTPUT:
 C        TINF - EXOSPHERIC TEMPERATURE (K)
 C        TLB - TEMPERATURE AT LOWER BOUNDARY (K)
 C        SIGMA - SHAPE PARAMETER FOR TEMPERATURE PROFILE
@@ -48,7 +48,7 @@ C
       PLG(5,3) = 7.5*(7.*C2 -1.)*S2
       PLG(6,3) = 3.*C*PLG(5,3)-2.*PLG(4,3)
       PLG(4,4) = 15.*S2*S
-      PLG(5,4) = 105.*S2*S*C 
+      PLG(5,4) = 105.*S2*S*C
       PLG(6,4)=(9.*C*PLG(5,4)-7.*PLG(4,4))/2.
       PLG(7,4)=(11.*C*PLG(6,4)-8.*PLG(5,4))/3.
       XL=GLAT
@@ -69,7 +69,7 @@ C EXOSPHERIC TEMPERATURE
 C
 C         F10.7 EFFECT
       T1 =  ( 3.11701E-3 - 0.64111E-5 * DFA ) * DFA
-        F1 = 1. + 0.426385E-2 * DFA 
+        F1 = 1. + 0.426385E-2 * DFA
         F2 = 1. + 0.511819E-2 * DFA
         F3 = 1. + 0.292246E-2 * DFA
 C        TIME INDEPENDENT
@@ -97,16 +97,16 @@ C        TERDIURNAL
       Z1 =  PLG(5,4) * CD14
       Z2 =  PLG(7,4) * CD14
       T14=(0.147284E-2*PLG(4,4)-0.173933E-3*Z1+0.365016E-4*Z2)*S3TLOC
-     2   +(0.341345E-3*PLG(4,4)-0.153218E-3*Z1+0.115102E-3*Z2)*C3TLOC 
+     2   +(0.341345E-3*PLG(4,4)-0.153218E-3*Z1+0.115102E-3*Z2)*C3TLOC
       T7814 = F2 * ( T7 + T8 + T14 )
 C        LONGITUDINAL
-      T11= F3 * (( 0.562606E-2 * PLG(3,2) + 0.594053E-2 * PLG(5,2) + 
-     $       0.109358E-2 * PLG(7,2) - 0.301801E-2 * PLG(2,2) - 
-     $       0.423564E-2 * PLG(4,2) - 0.248289E-2 * PLG(6,2) + 
+      T11= F3 * (( 0.562606E-2 * PLG(3,2) + 0.594053E-2 * PLG(5,2) +
+     $       0.109358E-2 * PLG(7,2) - 0.301801E-2 * PLG(2,2) -
+     $       0.423564E-2 * PLG(4,2) - 0.248289E-2 * PLG(6,2) +
      $      (0.189689E-2 * PLG(2,2) + 0.415654E-2 * PLG(4,2)) * CD14
      $     ) * COS(DGTR*GLONG) +
-     $     ( -0.11654E-1 * PLG(3,2) - 0.449173E-2 * PLG(5,2) - 
-     $       0.353189E-3 * PLG(7,2) + 0.919286E-3 * PLG(2,2) + 
+     $     ( -0.11654E-1 * PLG(3,2) - 0.449173E-2 * PLG(5,2) -
+     $       0.353189E-3 * PLG(7,2) + 0.919286E-3 * PLG(2,2) +
      $       0.216372E-2 * PLG(4,2) + 0.863968E-3 * PLG(6,2) +
      $      (0.118068E-1 * PLG(2,2) + 0.331190E-2 * PLG(4,2)) * CD14
      $     ) * SIN(DGTR*GLONG) )
@@ -121,9 +121,9 @@ C
 C TEMPERATURE DERIVATIVE AT LOWER BOUNDARY
 C
 C         F10.7 EFFECT
-      T1 =  0.252317E-2 * DFA 
+      T1 =  0.252317E-2 * DFA
 C        TIME INDEPENDENT
-      T2 = -0.467542E-1 * PLG(3,1) + 0.12026 * PLG(5,1) 
+      T2 = -0.467542E-1 * PLG(3,1) + 0.12026 * PLG(5,1)
 C        ASYMMETRICAL ANNUAL
       	CD14 = COS( DR  * (IDAY+8.45398) )
       T5 = -0.13324 * PLG(2,1)  * CD14

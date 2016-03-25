@@ -8,7 +8,7 @@
       real*8,intent(in) :: tu
       real,intent(in) :: kp
       integer,intent(in) :: iyd
-      integer,intent(inout) :: ndeg,ierr 
+      integer,intent(inout) :: ndeg,ierr
 ! FIXME does ierr need to be saved in calling module?
       integer,intent(out) :: mdeg
       real*8,intent(out) :: phipot(1),Lmin,Lmax,latequi
@@ -19,7 +19,7 @@
 
 
       integer ikp,len_coef,len_rec,len_buf,irec
-      
+
       integer iyddeb,iydfin,i
       real buffer(1000)
       real*8 phi(3*npt)
@@ -105,7 +105,7 @@ c     &        form='formatted',status='old',iostat=ierr,err=999)
 
 999    continue
       close(87)
-      if (ierr.gt.0) then 
+      if (ierr.gt.0) then
       print*,'WARNING: Error reading varpot.dat, fallback to defaults'
 !if there was an error reading varpot.dat, fallback to default param
       ndeg=ndeg0

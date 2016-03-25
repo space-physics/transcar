@@ -435,16 +435,16 @@
         real weitang(2*nbrango2),cosang(2*nbrango2),pitchang(2*nbrango2)
 
 !    for LBH and NI (photon intensity)
-        real wavelbh(105),flbh(105),lbhint
-        real waveni(9),fni(9),tni(9),niint,niextint
+        real wavelbh(105),lbhint
+        real waveni(9),tni(9),niint,niextint
 !
         character word*4
 !    real t0,t1
         character *80 crsin,option,rdtin,exfile
-        integer file,ien1,isp1
+        integer file
         equivalence (file,exfile)
         common /mess/ messag
-        character headline*80,messag*130,sun*3
+        character messag*130,sun*3
         character*9 title(nbrexc,nbrsp)
         character*30 istdate
         integer yyddd
@@ -2536,23 +2536,28 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !----------------------------------------------------------------------
 
       function ncross(e,engdd,qntsty,ialt,Etherm,denelc,nen)
-!
+
 !    calculates the crossover energy of the thermal and streaming
 !    electrons
 !
         implicit none
-!
-        integer npt
-!
+
+
+        integer npt,nen
+
         include 'TRANSPORT.INC'
-!
-        real etherm,emass
-        integer ialt,nen,nmax,nn,nlevtrans,n,ncross
-        real qntsty(nbren,2*nbralt-1,-nbrango2:nbrango2),e(nbren)
-        real engdd(nbren),denelc
+
+        real,intent(in) :: e(nbren),engdd(nbren),
+     &              qntsty(nbren,2*nbralt-1,-nbrango2:nbrango2),
+     &        etherm,denelc
+
+        integer,intent(in) :: ialt
+
+        real emass,fzero
+        integer nmax,nn,nlevtrans,n,ncross
         real pi,a,b,c,flx
 
-        real eth,fzero
+        real eth
 
         eth=fzero(denelc*1.e6,Etherm*1.16046e4)
         ncross=nlevtrans(e,engdd,5.*Etherm,nen)
@@ -2860,9 +2865,9 @@ c47     format(1i4,4f10.2,2(1pe12.3))
      &           zel(nbralt),smgdpa(nbralt),temion(nbralt)
       character*9 title(nbrexc,nbrsp)
 !
-       open(fic_transout,file='dir.data/dir.linux/dir.cine/TRANSOUT'
-     &    ,status='unknown')
-       rewind(fic_transout)
+       open(fic_transout,file='dir.data/dir.linux/dir.cine/TRANSOUT',
+     &    status='new')
+!       rewind(fic_transout)
 !
 !-------------------------------------------------------------
 !-------------------- lecture DATTRANS ------------------------
@@ -3026,7 +3031,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 
 !       Print out the cross section for a few states of interest
 !       O(1D), O(1S),O(3p3P)
-        open(955,file='cross.dat',status='replace')
+        open(955,file='cross.dat',status='new')
         do ien=1,nen
           write(955,*) e(ien), cinex(3,2,ien), cinex(3,3,ien),
      &          cinex(3,5,ien),cinex(3,4,ien),cinex(3,jsg(3),ien),

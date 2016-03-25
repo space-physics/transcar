@@ -420,7 +420,8 @@ C       --MZ
 
 !    !Get Hot O input information
 !    if(chkOHot) then
-!      open(917,file='/home/mattz/dir.transcar/dir.input/DATOHOTnull')
+!      open(917,file='dir.input/DATOHOTnull',
+!     & status='old')
 !      read(917,*) flagOHot
 
 !      if(flagOHot) then

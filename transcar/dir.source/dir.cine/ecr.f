@@ -9,40 +9,40 @@ c
      &      xmasdens,colden,mgdpa,smgdpa,chideg,icont,iprt,spfac,
      &      moddene,modtemp,modcomp)
 c
- 	    include 'TRANSPORT.INC'
+           include 'TRANSPORT.INC'
 c
- 	    real altkm(nbralt),denelc(nbralt),dne(nbralt),temelc(nbralt),
-     &		dte(nbralt),temion(nbralt),dti(nbralt),derivte(nbralt),
-     &		tneutre(nbralt),gwt(nbrang),comp(nbralt)
+       real altkm(nbralt),denelc(nbralt),dne(nbralt),temelc(nbralt),
+     &      dte(nbralt),temion(nbralt),dti(nbralt),derivte(nbralt),
+     &      tneutre(nbralt),gwt(nbrang),comp(nbralt)
 c
- 	    real angzb(nbrang),gmu(nbrang)
+           real angzb(nbrang),gmu(nbrang)
 c
-     	real botE(nbren),centE(nbren),ddeng(nbren)
+           real botE(nbren),centE(nbren),ddeng(nbren)
 c
- 	    real fcdens(8),densneut(8,nbralt),xmasdens(nbralt)
-      	real colden(8,nbralt),mgdpa(nbralt),smgdpa(nbralt)
+           real fcdens(8),densneut(8,nbralt),xmasdens(nbralt)
+            real colden(8,nbralt),mgdpa(nbralt),smgdpa(nbralt)
 c
- 	    real fluxup(nbren,nbrango2),fluxdown(nbren,nbrango2)
+           real fluxup(nbren,nbrango2),fluxdown(nbren,nbrango2)
 
-     	integer moddene,modtemp,md2
-     	real chideg
+           integer moddene,modtemp,md2
+           real chideg
 c
-     	integer icont(12),iprt(9)
-     	real travalt(nbralt)
+           integer icont(12),iprt(9)
+           real travalt(nbralt)
 c
-     	md2 = nang/2
-     	pi = 4.*atan(1.)
-     	pio180 = pi/180.
+           md2 = nang/2
+           pi = 4.*atan(1.)
+           pio180 = pi/180.
 c
 c-------------------- neutraldata ----------------------------
 c
- 	    if (iprt(1).eq.1)then
-c 	write(6,*)'Writting NEUTRAL'
-c	write(6,*)'Writting NEUTRAL                             [A'
+           if (iprt(1).eq.1)then
+c       write(6,*)'Writting NEUTRAL'
+c      write(6,*)'Writting NEUTRAL                             [A'
  3000 format (
      &'      ----- neutraldata, reecrit apres iniflu.f  ---',/,
      &'      Nombre d''especes a considerer (nspec), Id #',/,i1,10x,i10)
-3016 	format(
+3016       format(
      &'       altitude grid parameters', /,
      &'      nalt: # altitude grid points pour photo ',/,
      &'      zbot: minimum altitude. ztop: maximum altitude.   ',/,
@@ -83,7 +83,7 @@ c	write(6,*)'Writting NEUTRAL                             [A'
      &    'sin(magn.dip angle) ')
 c
       open (ineutr, file='dir.data/dir.linux/dir.cine/NEUTRAL_VERIF',
-     & status='replace')
+     & status='new')
       rewind ineutr
       write (ineutr,3000)nspec,knm
       write (ineutr,3016)
@@ -102,20 +102,20 @@ c
       write(ineutr,3055)(tneutre(i),i=1,nalt)
       write(ineutr,3057)nspec
       do jsp=1,nspec
- 	      write(ineutr,3060)specie(jsp)
+             write(ineutr,3060)specie(jsp)
         write(ineutr,3065)(densneut(jsp,ialt),ialt=1,nalt)
- 	      write(ineutr,3066)specie(jsp)
+             write(ineutr,3066)specie(jsp)
         write(ineutr,3065)(colden(jsp,ialt),ialt=1,nalt)
       enddo
 c
       close(ineutr)
- 	  endif
+         endif
 c
 c----------------- elecprofil ---------------------------
 c
- 	  if (iprt(2).eq.1)then
-c	write(6,*)'Writting ELEC                                [A'
-c 	write(6,*)'Writting ELEC'
+         if (iprt(2).eq.1)then
+c      write(6,*)'Writting ELEC                                [A'
+c       write(6,*)'Writting ELEC'
  4000 format('  ----- elecprofil apres iniflu.f --------',/)
  4001 format(i10,10x,'Nombre d''energies (nen)')
  4035 format(i10,10x,f10.7,9x,'nen, facteur de croissance')
@@ -159,12 +159,12 @@ c 	write(6,*)'Writting ELEC'
  4025 format ('% O+/Ne Modele Millestone')
 c
       open(ielec,file='dir.data/dir.linux/dir.cine/ELEC_VERIF',
-     & status='replace')
+     & status='new')
       rewind ielec
       write (ielec,4000)
       write (ielec,4017)knm,eave,alpha
       if(icont(3).eq.5)then
- 	  write(ielec,4030)
+         write(ielec,4030)
         write (ielec,4035)nen,spfac
       else
         write (ielec,4018)
@@ -185,7 +185,7 @@ c
       write (ielec,4019) (gwt(iang),iang=1,nang)
       write (ielec,4003)
       do iang=1,md2
-	     write (ielec,4015) angzb(iang),gmu(iang),gwt(iang)
+           write (ielec,4015) angzb(iang),gmu(iang),gwt(iang)
         write (ielec,4002) (fluxdown(nen+1-ien,iang), ien = 1,nen)
       end do
       write (ielec,4013)
@@ -194,16 +194,16 @@ c
         write (ielec,4002) (fluxup(nen+1-ien,iang), ien = 1,nen)
       end do
       if(moddene.eq.2)then
- 	  write (ielec,4009)
+         write (ielec,4009)
       else
- 	  write (ielec,4008)
+         write (ielec,4008)
       endif
       write (ielec,4012) nalt
 c     In order to avoid division by 0, it is necessary to reduce
-c 	the alt. extrema.
+c       the alt. extrema.
       travalt(1)=altkm(1)+0.01
-     	do 10 ialt=2,nalt-1
-     	  travalt(ialt)=altkm(ialt)
+           do 10 ialt=2,nalt-1
+             travalt(ialt)=altkm(ialt)
 10    continue
       travalt(nalt)=altkm(nalt)-0.01
       write (ielec,4010) (travalt(i), i = 1,nalt)
@@ -211,17 +211,17 @@ c 	the alt. extrema.
 c     write (ielec,*)'Erreurs sur les densites electroniques'
 c     write (ielec,4011) (dne(i), i = 1,nalt)
       if (modtemp.eq.2)then
-     	write (ielec,*)'Temperatures electroniques from IRI'
+           write (ielec,*)'Temperatures electroniques from IRI'
           else
-     	write (ielec,*)'Temperatures electroniques'
+           write (ielec,*)'Temperatures electroniques'
       endif
       write (ielec,4010) (temelc(i), i = 1,nalt)
 c     write (ielec,*)'Erreurs sur les temperatures electroniques'
 c     write (ielec,4011) (dte(i), i = 1,nalt)
       if (modtemp.eq.2)then
-     	write (ielec,*)'Temperatures ioniques from IRI'
+           write (ielec,*)'Temperatures ioniques from IRI'
           else
-     	write (ielec,*)'Temperatures ioniques'
+           write (ielec,*)'Temperatures ioniques'
       endif
       write (ielec,4010) (temion(i), i = 1,nalt)
 c     write (ielec,*)'Erreurs sur les temperatures ioniques'
@@ -238,50 +238,50 @@ c     write (ielec,4011) (dti(i), i = 1,nalt)
       write (ielec,4023) (smgdpa(i),i=1,nalt)
 
       close(ielec)
- 	    endif
+           endif
 c
-      	return
-      	end
+            return
+            end
 c
 c----------------------------------------------------------------------
 c
         subroutine ecrit_DATDEG
 c
- 	    implicit none
+           implicit none
 
         include 'TRANSPORT.INC'
 c
-c 	Le but de ce sous programme est de palier le probleme suivant :
-c 	lorsqu'on appelle transcar, il laisse dans DATDEG la trace du
-c 	fichier d'entree des sections efficaces utilise. Si (comme ca
-c 	arrive souvent), on appelle transsolo ensuite, avec des
-c 	conditions qui n'ont rien a voir, on ecrase les sections
-c 	efficaces pour en recalculer d'autres. Pour eviter ca, ce
-c 	sous programme, a n'appeler qu'apres transsolo (ce serait meme
-c 	mieux a la fin de transcar) reecrit dans DATDEG des noms de
-c 	fichier de sections efficaces differents.
+c       Le but de ce sous programme est de palier le probleme suivant :
+c       lorsqu'on appelle transcar, il laisse dans DATDEG la trace du
+c       fichier d'entree des sections efficaces utilise. Si (comme ca
+c       arrive souvent), on appelle transsolo ensuite, avec des
+c       conditions qui n'ont rien a voir, on ecrase les sections
+c       efficaces pour en recalculer d'autres. Pour eviter ca, ce
+c       sous programme, a n'appeler qu'apres transsolo (ce serait meme
+c       mieux a la fin de transcar) reecrit dans DATDEG des noms de
+c       fichier de sections efficaces differents.
 
         integer i
         character*70 chaine(18),crs,rdt
-1000 	format(a)
+1000       format(a)
 c
         open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
      &       status='old')
-	    rewind(fic_datdeg)
-     	do i = 1,18
-     	  read(fic_datdeg,1000)chaine(i)
-     	enddo
-     	close(fic_datdeg)
+          rewind(fic_datdeg)
+           do i = 1,18
+             read(fic_datdeg,1000)chaine(i)
+           enddo
+           close(fic_datdeg)
 c
-     	chaine(3) = 'dir.cine/dir.seff/crs'
-     	chaine(4) = 'dir.cine/dir.seff/rdt'
+           chaine(3) = 'dir.cine/dir.seff/crs'
+           chaine(4) = 'dir.cine/dir.seff/rdt'
 c
       open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
      &        status='old')
-	    rewind(fic_datdeg)
-     	do i = 1,18
-     	  write(fic_datdeg,1000)chaine(i)
-     	enddo
-     	close(fic_datdeg)
+          rewind(fic_datdeg)
+           do i = 1,18
+             write(fic_datdeg,1000)chaine(i)
+           enddo
+           close(fic_datdeg)
 
-    	end subroutine ecrit_DATDEG
+          end subroutine ecrit_DATDEG

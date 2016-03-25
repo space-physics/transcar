@@ -18,7 +18,7 @@ Cf2py intent(out) Bmag, dipangle, orient
          CALL FELDCOF(YEAR,DIMO)
          flginit=.false.
        endif
-        
+
         print*,'call feldg'
         CALL FELDG(latgeo,longeo,zref,BNORTH,BEAST,BDOWN,Bmag)
 c       CALL SHELLG(latgeo,longeo,zref,DIMO,XL,ICODE,BAB1)

@@ -41,7 +41,7 @@ do i=1,nbpoint
   T3_15=T3new(i)**(-1.5)
   Tm_15=Tmnew(i)**(-1.5)
   Te_15=Tenew(i)**(-1.5)
-	
+
   thermacc(i)=thermodiff*qenew(i)/Tenew(i)**2.5
 
         !************************************************************************
@@ -105,29 +105,29 @@ do i=1,nbpoint
 	    D2am1(i)=lpr
             C2bm1(i)=-T1pnew(i)*N1new(i)/xn2(i)
 	    D2bm1(i)=log(xn1(i)*T1pnew(i))
-	
+
 	    C2am2(i)=-Tepnew(i)
 	    D2am2(i)=lpr
             C2bm2(i)=-T2pnew(i)*N2new(i)/xn2(i)
 	    D2bm2(i)=log(xn2(i)*T2pnew(i))
-	
+
 	    C2am3(i)=-Tepnew(i)
 	    D2am3(i)=lpr
             C2bm3(i)=-T3pnew(i)*N3new(i)/xn3(i)
 	    D2bm3(i)=log(xn3(i)*T3pnew(i))
-	
+
 	    C2amm(i)=-Tepnew(i)
 	    D2amm(i)=lpr
             C2bmm(i)=-Tmpnew(i)*Nmnew(i)/xnm(i)
 	    D2bmm(i)=log(xnm(i)*Tmpnew(i))
-	
+
 enddo
 
 call velocity(Vel1m,Ipos1,Iposnp,deltat_2)
-	
+
 D2al=(D2a(1)+D2a(2))/2.
 D2bl=(D2b(1)+D2b(2))/2.
-	
+
 D2ar=.5*log(Nenew(np)*Tepnew(np)*Nenew(nx)*Tepnew(nx))
 D2br=.5*log(xn1(np)*T1pnew(np)*xn1(nx)*T1pnew(nx))
 
@@ -144,9 +144,9 @@ if (isnant(U1new,nx)) then
 endif
 
 call velocity(Vel2m,Ipos1,Iposnp,deltat_2)
-	
+
 D2bl=(D2b(1)+D2b(2))/2.
-	
+
 D2br=.5*log(xn2(np)*T2pnew(np)*xn2(nx)*T2pnew(nx))
 
 call sources(Ipos1,Iposn,deltat_2,2,C2am2,D2am2,D2al,D2ar)
@@ -162,9 +162,9 @@ if (isnant(U2new,nx)) then
 endif
 
 call velocity(Vel3m,Ipos1,Iposnp,deltat_2)
-	
+
 D2bl=(D2b(1)+D2b(2))/2.
-	
+
 D2br=.5*log(xn3(np)*T3pnew(np)*xn3(nx)*T3pnew(nx))
 
 call sources(Ipos1,Iposn,deltat_2,2,C2am3,D2am3,D2al,D2ar)
@@ -178,11 +178,11 @@ if (isnant(U3new,nx)) then
   print*,'probleme lors du calcul de U3new dans la boucle ',iboucle
   goto 246
 endif
-	
+
 call velocity(Velmm,Ipos1,Iposnp,deltat_2)
-	
+
 D2bl=(D2b(1)+D2b(2))/2.
-	
+
 D2br=.5*log(xnm(np)*Tmpnew(np)*xnm(nx)*Tmpnew(nx))
 
 call sources(Ipos1,Iposn,deltat_2,2,C2amm,D2amm,D2al,D2ar)
@@ -204,9 +204,9 @@ do i=1,npoint
           -JJ(i)/N_o-0.*Jes(i)/N_o)/Nenew(i)/Co(0)
 enddo
 
-	
-	
-	
+
+
+
 	    D3(i)=-G(i)+thermacc(i)/mi/Ci0
      &            -3.*(Tepnew(i)-Tetnew(i))*alt_geo_1(i)
      &            -3.*(T2pnew(i)-T2tnew(i))*alt_geo_1(i)
@@ -234,7 +234,7 @@ enddo
 
 	    D3(i)=D3(i)-.6*q3new(i)/xn3(i)*Cni
      &			  *nuin(i)/(T3new(i)+14.*T2new(i))
-	
+
 	    D3(i)=D3(i)+(nuiN2(i)+nuiO2(i)+nuiO(i)+nuiH(i))
      &                    *(Un(i)/Ci0)
      &                 -.6*nuiN2(i)/(Tn(i)/T_0+28.*T2new(i))
@@ -377,11 +377,11 @@ C[[[    heavy ions momentum equation resolution
      &            +nuli(i)+nule(i)+nulj(i)+nuln(i)
      &            +numN2(i)+numO2(i)+numO(i)
      &            +numi(i)+nume(i)+numj(i)+numn(i))/3.
-	
+
 
 	  enddo
 
-	
+
 	  do i=1,nx
 
 

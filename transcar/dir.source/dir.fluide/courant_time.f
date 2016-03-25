@@ -10,7 +10,7 @@ c    implicit none
 
        integer iyddeb,iydfin
        real temps,tempsdeb,tempsfin
-       
+
 
        real*8 Lmin,Lmax,DL,LM,alfa
        real*8 fx,d11,d12,d21,d22,det
@@ -44,7 +44,7 @@ c    implicit none
        save ierr
 
        if (flgini) then
-         ierr=1       
+         ierr=1
          flgini=.false.
          open(67,file='dir.source/dir.fluide/varcourant.dat',
      &              form='formatted',status='old',iostat=ierr,err=999)
@@ -52,7 +52,7 @@ c    implicit none
 
 999       continue
          close(67)
-       
+
 
       if (ierr.gt.0) then
           Jsup=0.

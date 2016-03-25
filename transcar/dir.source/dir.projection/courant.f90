@@ -9,7 +9,7 @@ real*8 :: tu,lon,lat
 real :: kp,Jsup
 real*8 :: phicourant(npt),psi
 real*8 :: latequi,Lmin,Lmax
-	
+
 save ierr
 
 interface
@@ -28,7 +28,7 @@ end interface
 	call coef_cour(iyd,tu,kp,ndeg,mdeg,phicourant,	&
       		       Lmin,Lmax,latequi,ierr)
 Lmin=0.d0
-Lmax=0.d0	
+Lmax=0.d0
 !call IMM_COUR(ndeg,mdeg,phicourant,Lmin,Lmax,latequi)
 
 if (Lmin.lt.Lmax) then
@@ -36,7 +36,7 @@ if (Lmin.lt.Lmax) then
 else
   ierr=1
 endif
- 
+
 Jsup=0.
 if (ierr.eq.0) then
   call val_fit(lon,lat,ndeg,mdeg,phicourant,Lmin,Lmax,latequi,psi)
@@ -44,8 +44,8 @@ if (ierr.eq.0) then
 !	dans le fichier initial le courant est en 10^-7 A/m2
   Jsup=Jsup/10.
 endif
-	
+
 return
 end subroutine courant
-	
-	
+
+

@@ -1,5 +1,5 @@
 subroutine potentiel(iyd,tu,kp,lon,lat,Eest,Enord,pot,ddp)
-	
+
 implicit none
 
 !f2py intent(out) :: pot, ddp
@@ -16,7 +16,7 @@ double precision :: phipot(npt), latequi,Lmin,Lmax, fit(3)
 
 save ierr
 
-!TODO segfault if this interface is not defined 
+!TODO segfault if this interface is not defined
 
 interface
 

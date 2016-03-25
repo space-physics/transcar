@@ -5,7 +5,7 @@
 !----------------------------------!
 
 	  call velocity(Velim,Ipos1,Iposnp,deltat_2)
-	
+
 	  do i=1,nx
 
           Tr1=T_0*T2new(i)
@@ -16,7 +16,7 @@
 	  T3_15(i)=T3new(i)**(-1.5)/nu_0
 	  Tm_15(i)=Tmnew(i)**(-1.5)/nu_0
 	  Te_15(i)=Tenew(i)**(-1.5)/nu_0
-	
+
 	  thermacc(i)=thermodiff*qenew(i)/Tenew(i)**2.5
 
           nuiN2(i)=3.36e-9*Nn2(i)                               *t0
@@ -73,7 +73,7 @@
 
 	    D3(i)=D3(i)-.6*q3new(i)/xn3(i)*Cni
      &			  *nuin(i)/(T3new(i)+14.*T2new(i))
-	
+
 	    D3(i)=D3(i)+(nuiN2(i)+nuiO2(i)+nuiO(i)+nuiH(i))
      &                    *(Un(i)/Ci0)
      &                 -.6*nuiN2(i)/(Tn(i)/T_0+28.*T2new(i))
@@ -95,7 +95,7 @@
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-	
+
 	  D2ar=.5*log(Nenew(np)*Tepnew(np)*Nenew(nx)*Tepnew(nx))
 	  D2br=.5*log(xn2(np)*T2pnew(np)*xn2(nx)*T2pnew(nx))
 	  call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
@@ -131,7 +131,7 @@ C]]]
 C[[[    O+ momentum equation resolution
 
 	  call velocity(Veljm,Ipos1,Iposnp,deltat_2)
-	
+
 	  do i=1,nx
 
           Tr=(T_0*T1new(i)+Tn(i))/2.
@@ -209,10 +209,10 @@ C[[[    O+ momentum equation resolution
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-	
+
 	  D2ar=.5*log(Nenew(np)*Tepnew(np)*Nenew(nx)*Tepnew(nx))
 	  D2br=.5*log(xn1(np)*T1pnew(np)*xn1(nx)*T1pnew(nx))
-	
+
 	  call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
 	  call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
 c	  call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
@@ -250,7 +250,7 @@ C]]]
 C[[[    heavy ions momentum equation resolution
 
 	  call velocity(Velmm,Ipos1,Iposnp,deltat_2)
-	
+
 	  do i=1,nx
 
           Tr=(T_0*Tmnew(i)+Tn(i))/2.
@@ -360,7 +360,7 @@ C[[[    heavy ions momentum equation resolution
      &            +nuli(i)+nule(i)+nulj(i)+nuln(i)
      &            +numN2(i)+numO2(i)+numO(i)
      &            +numi(i)+nume(i)+numj(i)+numn(i))/3.
-	
+
 
 	  enddo
 
@@ -368,10 +368,10 @@ C[[[    heavy ions momentum equation resolution
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-	
+
 	  D2ar=.5*log(Nenew(np)*Tepnew(np)*Nenew(nx)*Tepnew(nx))
 	  D2br=.5*log(xnm(np)*Tmpnew(np)*xnm(nx)*Tmpnew(nx))
-	
+
 	  call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
 	  call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
 c	  call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
@@ -407,7 +407,7 @@ C]]]
 C[[[    N+ momentum equation resolution
 
 	  call velocity(Velnm,Ipos1,Iposnp,deltat_2)
-	
+
 	  do i=1,nx
 
           nunH (i)=0.145e-9*Nh(i)                               *t0
@@ -481,10 +481,10 @@ C[[[    N+ momentum equation resolution
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-	
+
 	  D2ar=.5*log(Nenew(np)*Tepnew(np)*Nenew(nx)*Tepnew(nx))
 	  D2br=.5*log(xn3(np)*T3pnew(np)*xn3(nx)*T3pnew(nx))
-	
+
 	  call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
 	  call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
 c	  call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)

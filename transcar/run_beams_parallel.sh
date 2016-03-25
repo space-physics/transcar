@@ -14,7 +14,7 @@
 # bring back simulation output to your PC.
 
 localonly=1
-remotes=(irs4 irs3 swoboj)
+remotes=(irs4 irs3 swoboj brent)
 
 BeamEnergyTableFN=BT_E1E2prev.csv
 RODIR=$1
@@ -23,7 +23,7 @@ exedir=code/transcar/transcar
 
 flux0=70114000000.0
 
-hact=0   # 2 term all jobs on error now, 1 let existing jobs finish, 0 keep running/starting
+hact=2   # 2 term all jobs on error now, 1 let existing jobs finish, 0 keep running/starting
 
 #------- start code --------------
 [[ -d $RODIR ]] && \rm -r $RODIR  #cleanup local output
@@ -34,7 +34,7 @@ if [[ $localonly -eq 0 ]]; then
   # purge remote output directory and setup ssh agent for duration of sims
   for remote in "${remotes[@]}"; do
     ssh-add -t 7200 "$HOME/.ssh/$remote" #use ssh agent so as to not have to retype password
-    ssh $remote -t "(cd $exedir && git pull && cd dir.source && make -s && cd; cd code/transcar-utils && git pull && cd ../hist-utils && git pull)"
+    ssh $remote -t "(cd $exedir && git pull && cd dir.source && make -s && cd; cd code/transcarread && git pull && cd ../histutils && git pull)"
     ssh $remote -t "[[ -d $exedir/$RODIR ]] && rm -r $exedir/$RODIR"
   done
 

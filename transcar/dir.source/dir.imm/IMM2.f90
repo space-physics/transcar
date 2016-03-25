@@ -1,6 +1,6 @@
-SUBROUTINE IMM 
+SUBROUTINE IMM
 
-! Lire les sorties ELECTRO et les ecrire dans un fichier 
+! Lire les sorties ELECTRO et les ecrire dans un fichier
 ! Transformer cettes sorties au TRANSCAR
 
 Implicit none
@@ -12,21 +12,21 @@ real*8,dimension(dpar11) :: latitude
 real*8,dimension(dpar11) :: longitude
 character*20 :: nomf
 real*8, dimension(dpar11) :: utem2, FEtem2, Etem2, alite2,&
-			utem2_fit,FEtem2_fit,Etem2_fit,alite2_fit	
+            utem2_fit,FEtem2_fit,Etem2_fit,alite2_fit
 
 Integer, parameter :: npt=49*80,ndeg=8,mdeg=8,rang=(2*mdeg+1)*(ndeg+1),&
-			rang1=(ndeg+1)*(mdeg+1),rangcoef=1000
+            rang1=(ndeg+1)*(mdeg+1),rangcoef=1000
 Integer :: mode,nb_data,nb_data_pot,ind_data(npt),ind_data_pot(npt)
 
 Real*8  :: A(npt*rang),B(rang*npt),Apot(npt*rang),Bpot(rang*npt)
 real*8  :: latmin=50.d0,latmax=72.d0,latequi=40.d0, rmin=1E-6, Lmin,Lmax
 
 !Real*8  :: coef_r(rang),coef_i(rang)
-Real*8	:: coef(rang)
+Real*8    :: coef(rang)
 
 real*8 :: coefpot(rangcoef),coefflux(rangcoef),coefte(rangcoef),coefalg(rangcoef),&
-	      phipot(rangcoef),phicour(rangcoef),phienerg(rangcoef),phifluxF(rangcoef)
-					
+          phipot(rangcoef),phicour(rangcoef),phienerg(rangcoef),phifluxF(rangcoef)
+
 common/phi/coefpot,coefflux,coefte,coefalg,Lmin,Lmax,ndg,mdg
 
 Lmin=latmin
@@ -67,7 +67,7 @@ close(4)
 open(unit=4,file='dir.source/dir.imm/longitude.lis',form='formatted',status='unknown')
 read(4,*) (longitude(i),i=1,dpar11)
 do i=1,dpar11
-	longitude(i)=longitude(i)*180.d0/pi	
+    longitude(i)=longitude(i)*180.d0/pi
 end do
 close(4)
 
@@ -86,10 +86,10 @@ close (10)
 
 mode=0
 call geometrie(dpar11,nb_data,ind_data,longitude,latitude,latmin,&
-		latmax,latequi,mode,ndeg,mdeg,rang,A,B)
+        latmax,latequi,mode,ndeg,mdeg,rang,A,B)
 mode=1
 call geometrie(dpar11,nb_data_pot,ind_data_pot,longitude,latitude,latmin,&
-		latmax,latequi,mode,ndeg,mdeg,rang,Apot,Bpot)
+        latmax,latequi,mode,ndeg,mdeg,rang,Apot,Bpot)
 !!!!!!!!!!!!!!!!!!!!!! POTENTIEL
 
 open(10,file='dir.output/coefpot.lis',form='formatted',status='unknown')
@@ -108,8 +108,8 @@ do i=1,rang
   write(10,*) coefpot(i)
 end do
 !do i=1,rang1
-!	coefpot(i)=dcmplx(coef_r(i),coef_i(i))
-!	write(10,*) coef_r(i),coef_i(i)
+!    coefpot(i)=dcmplx(coef_r(i),coef_i(i))
+!    write(10,*) coef_r(i),coef_i(i)
 !end do
 
 close(10)
@@ -123,8 +123,8 @@ do i=1,rang
 end do
 
 !do i=1,rang1
-!	coefflux(i)=dcmplx(coef_r(i),coef_i(i))
-!	write(20,*) coef_r(i),coef_i(i)
+!    coefflux(i)=dcmplx(coef_r(i),coef_i(i))
+!    write(20,*) coef_r(i),coef_i(i)
 !end do
 close(20)
 
@@ -136,8 +136,8 @@ do i=1,rang
 end do
 
 !do i=1,rang1
-!	coefte(i)=dcmplx(coef_r(i),coef_i(i))
-!	write(30,*) coef_r(i),coef_i(i)
+!    coefte(i)=dcmplx(coef_r(i),coef_i(i))
+!    write(30,*) coef_r(i),coef_i(i)
 !end do
 close(30)
 !!!!!!!!!!!!!!!!!!!!!!! COURANTS ALIGNES
@@ -148,8 +148,8 @@ do i=1,rang
 end do
 
 !do i=1,rang1
-!	coefalg(i)=dcmplx(coef_r(i),coef_i(i))
-!	write(40,*) coef_r(i),coef_i(i)
+!    coefalg(i)=dcmplx(coef_r(i),coef_i(i))
+!    write(40,*) coef_r(i),coef_i(i)
 !end do
 
 close(40)
@@ -167,7 +167,7 @@ write(9,*)(utem2_fit(i),i=1,dpar11)
 call projection(nb_data,ind_data,rang,A,B,FEtem2,FEtem2_fit)
 
 do i=1,dpar11
-	FEtem2_fit(i)=exp(FEtem2_fit(i))/1000.
+    FEtem2_fit(i)=exp(FEtem2_fit(i))/1000.
 end do
 write(9,*)(FEtem2_fit(i),i=1,dpar11)
 
@@ -175,7 +175,7 @@ write(9,*)(FEtem2_fit(i),i=1,dpar11)
 call projection(nb_data,ind_data,rang,A,B,Etem2,Etem2_fit)
 
 do i=1,dpar11
-	Etem2_fit(i)=exp(Etem2_fit(i))/1000.
+    Etem2_fit(i)=exp(Etem2_fit(i))/1000.
 end do
 write(9,*)(Etem2_fit(i),i=1,dpar11)
 
@@ -183,7 +183,7 @@ write(9,*)(Etem2_fit(i),i=1,dpar11)
 call projection(nb_data,ind_data,rang,A,B,Alite2,Alite2_fit)
 
 do i=1,dpar11
-	Alite2_fit(i)=Alite2_fit(i)/1E7
+    Alite2_fit(i)=Alite2_fit(i)/1E7
 end do
 
 write(9,*)(Alite2_fit(i),i=1,dpar11)

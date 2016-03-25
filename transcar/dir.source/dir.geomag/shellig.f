@@ -1,12 +1,12 @@
 C SHELLIG.FOR, Version 2.0, January 1992
 C
-C 11/1/91 SHELLG: lowest starting point for B0 search is 2  
+C 11/1/91 SHELLG: lowest starting point for B0 search is 2
 C 1/27/92 Adopted to IGRF-91 coeffcients model
 C 2/5/92  Reduce variable-names: INTER(P)SHC,EXTRA(P)SHC,INITI(ALI)ZE
 C
 C*********************************************************************
 C  SUBROUTINES FINDB0, SHELLG, STOER, FELDG, FELDCOF, GETSHC,        *
-C	INTERSHC, EXTRASHC, INITIZE                                  *
+C    INTERSHC, EXTRASHC, INITIZE                                  *
 C*********************************************************************
 C*********************************************************************
 C
@@ -16,23 +16,23 @@ C--------------------------------------------------------------------
 C FINDS SMALLEST MAGNETIC FIELD STRENGTH ON FIELD LINE
 C
 C INPUT:   STPS   STEP SIZE FOR FIELD LINE TRACING
-C  	COMMON/FIDB0/
-C	   SP     DIPOLE ORIENTED COORDINATES FORM SHELLG; P(1,*),
-C 		  P(2,*), P(3,*) CLOSEST TO MAGNETIC EQUATOR 
-C	   BDEL   REQUIRED ACCURACY  = [ B(LAST) - BEQU ] / BEQU  
-C		  B(LAST)  IS FIELD STRENGTH BEFORE BEQU
+C      COMMON/FIDB0/
+C       SP     DIPOLE ORIENTED COORDINATES FORM SHELLG; P(1,*),
+C           P(2,*), P(3,*) CLOSEST TO MAGNETIC EQUATOR
+C       BDEL   REQUIRED ACCURACY  = [ B(LAST) - BEQU ] / BEQU
+C          B(LAST)  IS FIELD STRENGTH BEFORE BEQU
 C
 C OUTPUT:  VALUE  =.FALSE., IF BEQU IS NOT MINIMAL VALUE ON FIELD LINE
-C	   BEQU	  MAGNETIC FIELD STRENGTH AT MAGNETIC EQUATOR
-C	   RR0	  EQUATORIAL RADIUS NORMALIZED TO EARTH RADIUS
-C	   BDEL	  FINAL ACHIEVED ACCURACY
+C       BEQU      MAGNETIC FIELD STRENGTH AT MAGNETIC EQUATOR
+C       RR0      EQUATORIAL RADIUS NORMALIZED TO EARTH RADIUS
+C       BDEL      FINAL ACHIEVED ACCURACY
 C--------------------------------------------------------------------
 ! i/o
-      real,intent(in) :: stps      
+      real,intent(in) :: stps
 
-      DIMENSION 	P(8,4),SP(3)
-      LOGICAL		VALUE
-      COMMON/FIDB0/	SP
+      DIMENSION     P(8,4),SP(3)
+      LOGICAL        VALUE
+      COMMON/FIDB0/    SP
 C
       STEP=STPS
       IRUN=0
@@ -41,7 +41,7 @@ C
         VALUE=.FALSE.
         GOTO 8888
       ENDIF
-C*********************FIRST THREE POINTS 
+C*********************FIRST THREE POINTS
       P(1,2)=SP(1)
       P(2,2)=SP(2)
       P(3,2)=SP(3)
@@ -61,32 +61,32 @@ C*********************FIRST THREE POINTS
       CALL STOER(P(1,3),BQ3,R3)
 C******************INVERT SENSE IF REQUIRED
       IF(BQ3.LE.BQ1) GOTO 2
-      	STEP=-STEP
-      	R3=R1
-      	BQ3=BQ1
-      	DO 1 I=1,5
-      		ZZ=P(I,1)
-      		P(I,1)=P(I,3)
-1     		P(I,3)=ZZ
-C******************INITIALIZATION 
-2	STEP12=STEP/12.
-	VALUE=.TRUE.
-	BMIN=1.E4
-	BOLD=1.E4
+          STEP=-STEP
+          R3=R1
+          BQ3=BQ1
+          DO 1 I=1,5
+              ZZ=P(I,1)
+              P(I,1)=P(I,3)
+1             P(I,3)=ZZ
+C******************INITIALIZATION
+2     STEP12=STEP/12.
+      VALUE=.TRUE.
+      BMIN=1.E4
+      BOLD=1.E4
 C******************CORRECTOR (FIELD LINE TRACING)
-	N=0
+      N=0
 5555  P(1,3)=P(1,2)+STEP12*(5.*P(4,3)+8.*P(4,2)-P(4,1))
-	N=N+1
+      N=N+1
       P(2,3)=P(2,2)+STEP12*(5.*P(5,3)+8.*P(5,2)-P(5,1))
 C******************PREDICTOR (FIELD LINE TRACING)
       P(1,4)=P(1,3)+STEP12*(23.*P(4,3)-16.*P(4,2)+5.*P(4,1))
       P(2,4)=P(2,3)+STEP12*(23.*P(5,3)-16.*P(5,2)+5.*P(5,1))
       P(3,4)=P(3,3)+STEP
       CALL STOER(P(1,4),BQ3,R3)
-	DO 1111 J=1,3
-	DO 1111 I=1,8
-1111	P(I,J)=P(I,J+1)
-	B=SQRT(BQ3)
+      DO 1111 J=1,3
+      DO 1111 I=1,8
+1111      P(I,J)=P(I,J+1)
+      B=SQRT(BQ3)
       IF(B.LT.BMIN) BMIN=B
         IF(B.LE.BOLD) THEN
           BOLD=B
@@ -104,18 +104,18 @@ C******************PREDICTOR (FIELD LINE TRACING)
         STEP=STEP/10.
         GOTO 7777
       ENDIF
-8888	RR0=ROLD
-	BEQU=BOLD
-	BDEL=BDELTA
+8888      RR0=ROLD
+      BEQU=BOLD
+      BDEL=BDELTA
 
-	END SUBROUTINE FINDB0
+      END SUBROUTINE FINDB0
 C
 C
       SUBROUTINE SHELLG(GLAT,GLON,ALT,DIMO,FL,ICODE,B0)
 C--------------------------------------------------------------------
 C CALCULATES L-VALUE FOR SPECIFIED GEODAETIC COORDINATES, ALTITUDE
 C AND GEMAGNETIC FIELD MODEL.
-C REF: G. KLUGE, EUROPEAN SPACE OPERATIONS CENTER, INTERNAL NOTE 
+C REF: G. KLUGE, EUROPEAN SPACE OPERATIONS CENTER, INTERNAL NOTE
 C      NO. 67, 1970.
 C      G. KLUGE, COMPUTER PHYSICS COMMUNICATIONS 3, 31-35, 1972
 C--------------------------------------------------------------------
@@ -124,42 +124,42 @@ C   - USING CORRECT DIPOL MOMENT I.E.,DIFFERENT COMMON/MODEL/
 C   - USING IGRF EARTH MAGNETIC FIELD MODELS FROM 1945 TO 1990
 C--------------------------------------------------------------------
 C  INPUT:  ENTRY POINT SHELLG
-C	 	GLAT  GEODETIC LATITUDE IN DEGREES (NORTH)
-C         	GLON  GEODETIC LONGITUDE IN DEGREES (EAST)
-C         	ALT   ALTITUDE IN KM ABOVE SEA LEVEL
+C             GLAT  GEODETIC LATITUDE IN DEGREES (NORTH)
+C               GLON  GEODETIC LONGITUDE IN DEGREES (EAST)
+C               ALT   ALTITUDE IN KM ABOVE SEA LEVEL
 C
-C	   ENTRY POINT SHELLC
-C		V(3)  CARTESIAN COORDINATES IN EARTH RADII (6371.2 KM)
-C			X-AXIS POINTING TO EQUATOR AT 0 LONGITUDE
-C			Y-AXIS POINTING TO EQUATOR AT 90 LONG.
-C			Z-AXIS POINTING TO NORTH POLE
+C         ENTRY POINT SHELLC
+C            V(3)  CARTESIAN COORDINATES IN EARTH RADII (6371.2 KM)
+C                  X-AXIS POINTING TO EQUATOR AT 0 LONGITUDE
+C                  Y-AXIS POINTING TO EQUATOR AT 90 LONG.
+C                  Z-AXIS POINTING TO NORTH POLE
 C
-C	   DIMO	      DIPOL MOMENT IN GAUSS (NORMALIZED TO EARTH RADIUS) 
+C         DIMO            DIPOL MOMENT IN GAUSS (NORMALIZED TO EARTH RADIUS)
 C
-C	   COMMON 
-C		X(3)	NOT USED
-C		H(144)	FIELD MODEL COEFFICIENTS ADJUSTED FOR SHELLG
+C         COMMON
+C            X(3)      NOT USED
+C            H(144)      FIELD MODEL COEFFICIENTS ADJUSTED FOR SHELLG
 C-----------------------------------------------------------------------
-C  OUTPUT: FL   	L-VALUE
-C	   ICODE  	=1 NORMAL COMPLETION
-C			=2 UNPHYSICAL CONJUGATE POINT (FL MEANINGLESS)
-C			=3 SHELL PARAMETER GREATER THAN LIMIT UP TO
-C			   WHICH ACCURATE CALCULATION IS REQUIRED;
-C			   APPROXIMATION IS USED.
-C 	   B0   	MAGNETIC FIELD STRENGTH IN GAUSS
+C  OUTPUT: FL         L-VALUE
+C         ICODE        =1 NORMAL COMPLETION
+C                  =2 UNPHYSICAL CONJUGATE POINT (FL MEANINGLESS)
+C                  =3 SHELL PARAMETER GREATER THAN LIMIT UP TO
+C                     WHICH ACCURATE CALCULATION IS REQUIRED;
+C                     APPROXIMATION IS USED.
+C          B0         MAGNETIC FIELD STRENGTH IN GAUSS
 C-----------------------------------------------------------------------
-      DIMENSION 	V(3),U(3,3),P(8,100),SP(3)
-      COMMON 		X(3),H(144)
-      COMMON/FIDB0/	SP
-      COMMON/GENER/	UMR,ERA,AQUAD,BQUAD
+      DIMENSION       V(3),U(3,3),P(8,100),SP(3)
+      COMMON             X(3),H(144)
+      COMMON/FIDB0/      SP
+      COMMON/GENER/      UMR,ERA,AQUAD,BQUAD
 C
 C-- RMIN, RMAX ARE BOUNDARIES FOR IDENTIFICATION OF ICODE=2 AND 3
 C-- STEP IS STEP SIZE FOR FIELD LINE TRACING
 C-- STEQ IS STEP SIZE FOR INTEGRATION
-C 
-      DATA RMIN,RMAX	/0.05,1.01/
-      DATA STEP,STEQ	/0.20,0.03/
-	BEQU=1.E10
+C
+      DATA RMIN,RMAX      /0.05,1.01/
+      DATA STEP,STEQ      /0.20,0.03/
+      BEQU=1.E10
 C*****ENTRY POINT  SHELLG  TO BE USED WITH GEODETIC CO-ORDINATES        SHEL0080
       RLAT=GLAT*UMR
       CT=SIN(RLAT)                                                      SHEL0100
@@ -212,17 +212,17 @@ C*****INVERT SENSE IF REQUIRED                                          SHEL0490
 1     P(I,3)=ZZ                                                         SHEL0570
 C*****SEARCH FOR LOWEST MAGNETIC FIELD STRENGTH
 2     IF(BQ1.LT.BEQU) THEN
-	BEQU=BQ1
-	IEQU=1
-	ENDIF
+      BEQU=BQ1
+      IEQU=1
+      ENDIF
       IF(BQ2.LT.BEQU) THEN
-	BEQU=BQ2
-	IEQU=2
-	ENDIF
+      BEQU=BQ2
+      IEQU=2
+      ENDIF
       IF(BQ3.LT.BEQU) THEN
-	BEQU=BQ3
-	IEQU=3
-	ENDIF
+      BEQU=BQ3
+      IEQU=3
+      ENDIF
 C*****INITIALIZATION OF INTEGRATION LOOPS                               SHEL0580
       STEP12=STEP/12.
       STEP2=STEP+STEP                                                   SHEL0600
@@ -282,33 +282,33 @@ C*****PREDICTOR (FIELD LINE TRACING)                                    SHEL1100
       CALL STOER(P(1,N+1),BQ3,R3)                                       SHEL1140
 C*****SEARCH FOR LOWEST MAGNETIC FIELD STRENGTH
       IF(BQ3.LT.BEQU) THEN
-	IEQU=N+1
-	BEQU=BQ3
-	ENDIF
+      IEQU=N+1
+      BEQU=BQ3
+      ENDIF
 3     CONTINUE
-10    IF(IEQU.lt.2) IEQU=2 
+10    IF(IEQU.lt.2) IEQU=2
       SP(1)=P(1,IEQU-1)
       SP(2)=P(2,IEQU-1)
       SP(3)=P(3,IEQU-1)
       IF(ORADIK.LT.1E-15)GOTO11                                         SHEL1150
-      FI=FI+STP/0.75*OTERM*ORADIK/(ORADIK-RADIK)              
+      FI=FI+STP/0.75*OTERM*ORADIK/(ORADIK-RADIK)
 C
 C-- The minimal allowable value of FI was changed from 1E-15 to 1E-12,
 C-- because 1E-38 is the minimal allowable arg. for ALOG in our envir.
 C-- D. Bilitza, Nov 87.
 C
-11    FI=0.5*ABS(FI)/SQRT(B0)+1E-12                       
-C*****COMPUTE L FROM B AND I.  SAME AS CARMEL IN INVAR.  
+11    FI=0.5*ABS(FI)/SQRT(B0)+1E-12
+C*****COMPUTE L FROM B AND I.  SAME AS CARMEL IN INVAR.
 C
 C-- Correct dipole moment is used here. D. Bilitza, Nov 87.
 C
       DIMOB0=DIMO/B0
       XX=LOG(FI*FI*FI/DIMOB0)
-      IF(XX.GT.23.0) GOTO 776   
-      IF(XX.GT.11.7) GOTO 775  
-      IF(XX.GT.+3.0) GOTO 774    
-      IF(XX.GT.-3.0) GOTO 773   
-      IF(XX.GT.-22.) GOTO 772  
+      IF(XX.GT.23.0) GOTO 776
+      IF(XX.GT.11.7) GOTO 775
+      IF(XX.GT.+3.0) GOTO 774
+      IF(XX.GT.-3.0) GOTO 773
+      IF(XX.GT.-22.) GOTO 772
   771 GG=3.33338E-1*XX+3.0062102E-1                                     SHEL1250
       GOTO777                                                           SHEL1260
   772 GG=((((((((-8.1537735E-14*XX+8.3232531E-13)*XX+1.0066362E-9)*XX+  SHEL1270
@@ -342,8 +342,8 @@ C*******************************************************************
 C* SUBROUTINE USED FOR FIELD LINE TRACING IN SHELLG                *
 C* CALLS ENTRY POINT FELDI IN GEOMAGNETIC FIELD SUBROUTINE FELDG   *
 C*******************************************************************
-      DIMENSION 	P(7),U(3,3)
-      COMMON 		XI(3),H(144)
+      DIMENSION       P(7),U(3,3)
+      COMMON             XI(3),H(144)
 C*****XM,YM,ZM  ARE GEOMAGNETIC CARTESIAN INVERSE CO-ORDINATES          SHEL1540
       ZM=P(3)                                                           SHEL1550
       FLI=P(1)*P(1)+P(2)*P(2)+1E-15
@@ -360,7 +360,7 @@ C*****TRANSFORM TO GEOGRAPHIC CO-ORDINATE SYSTEM                        SHEL1620
       XI(2)=XM*U(2,1)+YM*U(2,2)+ZM*U(2,3)                               SHEL1670
       XI(3)=XM*U(3,1)          +ZM*U(3,3)                               SHEL1680
 C*****COMPUTE DERIVATIVES                                               SHEL1690
-      CALL FELDI!(XI,H)                                                  SHEL1700
+      CALL FELDI!(XI,H)                                                 SHEL1700
       Q=H(1)/RQ                                                         SHEL1710
       DX=H(3)+H(3)+Q*XI(1)                                              SHEL1720
       DY=H(4)+H(4)+Q*XI(2)                                              SHEL1730
@@ -383,11 +383,11 @@ C
 C
       SUBROUTINE FELDG(GLAT,GLON,ALT,BNORTH,BEAST,BDOWN,BABS)           SHEL1890
 Cf2py intent(in) GLAT, GLON, ALT
-Cf2py intent(out) BNORTH, BEAST, BDOWN, BABS      
+Cf2py intent(out) BNORTH, BEAST, BDOWN, BABS
 
 C-------------------------------------------------------------------
 C CALCULATES EARTH MAGNETIC FIELD FROM SPHERICAL HARMONICS MODEL
-C REF: G. KLUGE, EUROPEAN SPACE OPERATIONS CENTRE, INTERNAL NOTE 61, 
+C REF: G. KLUGE, EUROPEAN SPACE OPERATIONS CENTRE, INTERNAL NOTE 61,
 C      1970.
 C--------------------------------------------------------------------
 C CHANGES (D. BILITZA, NOV 87):
@@ -395,43 +395,43 @@ C   - FIELD COEFFICIENTS IN BINARY DATA FILES INSTEAD OF BLOCK DATA
 C   - CALCULATES DIPOL MOMENT
 C--------------------------------------------------------------------
 C  INPUT:  ENTRY POINT FELDG
-C	 	GLAT  GEODETIC LATITUDE IN DEGREES (NORTH)
-C         	GLON  GEODETIC LONGITUDE IN DEGREES (EAST)
-C         	ALT   ALTITUDE IN KM ABOVE SEA LEVEL
+C             GLAT  GEODETIC LATITUDE IN DEGREES (NORTH)
+C               GLON  GEODETIC LONGITUDE IN DEGREES (EAST)
+C               ALT   ALTITUDE IN KM ABOVE SEA LEVEL
 C
-C	   ENTRY POINT FELDC
-C		V(3)  CARTESIAN COORDINATES IN EARTH RADII (6371.2 KM)
-C			X-AXIS POINTING TO EQUATOR AT 0 LONGITUDE
-C			Y-AXIS POINTING TO EQUATOR AT 90 LONG.
-C			Z-AXIS POINTING TO NORTH POLE
+C         ENTRY POINT FELDC
+C            V(3)  CARTESIAN COORDINATES IN EARTH RADII (6371.2 KM)
+C                  X-AXIS POINTING TO EQUATOR AT 0 LONGITUDE
+C                  Y-AXIS POINTING TO EQUATOR AT 90 LONG.
+C                  Z-AXIS POINTING TO NORTH POLE
 C
-C	   COMMON BLANK AND ENTRY POINT FELDI ARE NEEDED WHEN USED
-C	     IN CONNECTION WITH L-CALCULATION PROGRAM SHELLG.
-C	
-C	   COMMON /MODEL/ AND /GENER/
-C		UMR     = ATAN(1.0)*4./180.   <DEGREE>*UMR=<RADIANT>
-C		ERA	EARTH RADIUS FOR NORMALIZATION OF CARTESIAN 
-C			COORDINATES (6371.2 KM)
-C		AQUAD, BQUAD   SQUARE OF MAJOR AND MINOR HALF AXIS FOR 
-C			EARTH ELLIPSOID AS RECOMMENDED BY INTERNATIONAL 
-C			ASTRONOMICAL UNION (6378.160, 6356.775 KM).
-C		NMAX    MAXIMUM ORDER OF SPHERICAL HARMONICS
-C		TIME	YEAR (DECIMAL: 1973.5) FOR WHICH MAGNETIC 
-C			FIELD IS TO BE CALCULATED
-C		G(M)	NORMALIZED FIELD COEFFICIENTS (SEE FELDCOF)
-C			M=NMAX*(NMAX+2)
+C         COMMON BLANK AND ENTRY POINT FELDI ARE NEEDED WHEN USED
+C           IN CONNECTION WITH L-CALCULATION PROGRAM SHELLG.
+C
+C         COMMON /MODEL/ AND /GENER/
+C            UMR     = ATAN(1.0)*4./180.   <DEGREE>*UMR=<RADIANT>
+C            ERA      EARTH RADIUS FOR NORMALIZATION OF CARTESIAN
+C                  COORDINATES (6371.2 KM)
+C            AQUAD, BQUAD   SQUARE OF MAJOR AND MINOR HALF AXIS FOR
+C                  EARTH ELLIPSOID AS RECOMMENDED BY INTERNATIONAL
+C                  ASTRONOMICAL UNION (6378.160, 6356.775 KM).
+C            NMAX    MAXIMUM ORDER OF SPHERICAL HARMONICS
+C            TIME      YEAR (DECIMAL: 1973.5) FOR WHICH MAGNETIC
+C                  FIELD IS TO BE CALCULATED
+C            G(M)      NORMALIZED FIELD COEFFICIENTS (SEE FELDCOF)
+C                  M=NMAX*(NMAX+2)
 C------------------------------------------------------------------------
 C  OUTPUT: BABS   MAGNETIC FIELD STRENGTH IN GAUSS
-C	   BNORTH, BEAST, BDOWN   COMPONENTS OF THE FIELD WITH RESPECT
-C		  TO THE LOCAL GEODETIC COORDINATE SYSTEM, WITH AXIS
-C		  POINTING IN THE TANGENTIAL PLANE TO THE NORTH, EAST
-C		  AND DOWNWARD.   
+C         BNORTH, BEAST, BDOWN   COMPONENTS OF THE FIELD WITH RESPECT
+C              TO THE LOCAL GEODETIC COORDINATE SYSTEM, WITH AXIS
+C              POINTING IN THE TANGENTIAL PLANE TO THE NORTH, EAST
+C              AND DOWNWARD.
 C-----------------------------------------------------------------------
-      DIMENSION 	V(3),B(3)   
-      CHARACTER*12 	NAME
-      COMMON 		XI(3),H(144)
-      COMMON/MODEL/	NAME,NMAX,TIME,G(144)  
-      COMMON/GENER/	UMR,ERA,AQUAD,BQUAD
+      DIMENSION       V(3),B(3)
+      CHARACTER*12       NAME
+      COMMON             XI(3),H(144)
+      COMMON/MODEL/      NAME,NMAX,TIME,G(144)
+      COMMON/GENER/      UMR,ERA,AQUAD,BQUAD
 C
 C-- IS RECORDS ENTRY POINT
 C
@@ -455,7 +455,7 @@ C*****ENTRY POINT  FELDC  TO BE USED WITH CARTESIAN CO-ORDINATES        SHEL2070
       XXX=V(1)                                                          SHEL2100
       YYY=V(2)                                                          SHEL2110
       ZZZ=V(3)                                                          SHEL2120
-10    RQ=1./(XXX*XXX+YYY*YYY+ZZZ*ZZZ) 
+10    RQ=1./(XXX*XXX+YYY*YYY+ZZZ*ZZZ)
       XI(1)=XXX*RQ                                                      SHEL2140
       XI(2)=YYY*RQ                                                      SHEL2150
       XI(3)=ZZZ*RQ                                                      SHEL2160
@@ -513,25 +513,25 @@ C
 C------------------------------------------------------------------------
 C  DETERMINES COEFFICIENTS AND DIPOL MOMENT FROM IGRF MODELS
 C
-C	INPUT:  YEAR	DECIMAL YEAR FOR WHICH GEOMAGNETIC FIELD IS TO
-C			BE CALCULATED
-C	OUTPUT:	DIMO	GEOMAGNETIC DIPOL MOMENT IN GAUSS (NORMALIZED 
-C			TO EARTH'S RADIUS) AT THE TIME (YEAR)
-C  D. BILITZA, NSSDC, GSFC, CODE 633, GREENBELT, MD 20771, 
-C	(301)286-9536   NOV 1987.
+C      INPUT:  YEAR      DECIMAL YEAR FOR WHICH GEOMAGNETIC FIELD IS TO
+C                  BE CALCULATED
+C      OUTPUT:      DIMO      GEOMAGNETIC DIPOL MOMENT IN GAUSS (NORMALIZED
+C                  TO EARTH'S RADIUS) AT THE TIME (YEAR)
+C  D. BILITZA, NSSDC, GSFC, CODE 633, GREENBELT, MD 20771,
+C      (301)286-9536   NOV 1987.
 C-----------------------------------------------------------------------
-        CHARACTER*12	FILMOD, FIL1, FIL2
+        CHARACTER*12      FILMOD, FIL1, FIL2
 
-       DIMENSION	GH1(144),GH2(120),GHA(144),FILMOD(11),DTEMOD(11)
-       DOUBLE PRECISION X,F0,F 
-       COMMON/MODEL/	FIL1,NMAX,TIME,GH1
-       COMMON/GENER/	UMR,ERAD,AQUAD,BQUAD
-       DATA		FILMOD /'dgrf45.dat', 'dgrf50.dat',            
-     1			'dgrf55.dat', 'dgrf60.dat', 'dgrf65.dat',      
-     2			'dgrf70.dat', 'dgrf75.dat', 'dgrf80.dat',      
-     3			'dgrf85.dat', 'igrf90.dat','igrf90s.dat'/
-       DATA		DTEMOD / 1945., 1950., 1955., 1960., 1965.,           
-     1			1970., 1975., 1980., 1985., 1990., 1995./      
+       DIMENSION      GH1(144),GH2(120),GHA(144),FILMOD(11),DTEMOD(11)
+       DOUBLE PRECISION X,F0,F
+       COMMON/MODEL/      FIL1,NMAX,TIME,GH1
+       COMMON/GENER/      UMR,ERAD,AQUAD,BQUAD
+       DATA            FILMOD /'dgrf45.dat', 'dgrf50.dat',
+     1                  'dgrf55.dat', 'dgrf60.dat', 'dgrf65.dat',
+     2                  'dgrf70.dat', 'dgrf75.dat', 'dgrf80.dat',
+     3                  'dgrf85.dat', 'igrf90.dat','igrf90s.dat'/
+       DATA            DTEMOD / 1945., 1950., 1955., 1960., 1965.,
+     1                  1970., 1975., 1980., 1985., 1990., 1995./
 c
 c  numye is number of years represented by IGRF models
 c
@@ -547,28 +547,28 @@ C-- DETERMINE IGRF-YEARS FOR INPUT-YEAR
        IYEA = INT(YEAR/5.)*5
        L = (IYEA - 1945)/5 + 1
        IF(L.LT.1) L=1
-       IF(L.GT.NUMYE) L=NUMYE         
-       DTE1 = DTEMOD(L)   
+       IF(L.GT.NUMYE) L=NUMYE
+       DTE1 = DTEMOD(L)
        FIL1 = FILMOD(L)
-       DTE2 = DTEMOD(L+1) 
+       DTE2 = DTEMOD(L+1)
        FIL2 = FILMOD(L+1)
 
 C-- GET IGRF COEFFICIENTS FOR THE BOUNDARY YEARS
        print*,'call GETSHC'
-       CALL GETSHC (IU, FIL1, NMAX1, ERAD, GH1, IER)  
-           IF (IER .NE. 0) STOP                           
-       CALL GETSHC (IU, FIL2, NMAX2, ERAD, GH2, IER)  
-           IF (IER .NE. 0) STOP                    
+       CALL GETSHC (IU, FIL1, NMAX1, ERAD, GH1, IER)
+           IF (IER .NE. 0) STOP
+       CALL GETSHC (IU, FIL2, NMAX2, ERAD, GH2, IER)
+           IF (IER .NE. 0) STOP
 C-- DETERMINE IGRF COEFFICIENTS FOR YEAR
        IF (L .LE. NUMYE-1) THEN
-      print*,'call INTERSHC'                        
-         CALL INTERSHC (YEAR, DTE1, NMAX1, GH1, DTE2, 
-     1              NMAX2, GH2, NMAX, GHA)                        
+      print*,'call INTERSHC'
+         CALL INTERSHC (YEAR, DTE1, NMAX1, GH1, DTE2,
+     1              NMAX2, GH2, NMAX, GHA)
        ELSE
       print*,'call EXTRASHC'
-         CALL EXTRASHC (YEAR, DTE1, NMAX1, GH1, NMAX2,     
-     1              GH2, NMAX, GHA)                                    
-       ENDIF 
+         CALL EXTRASHC (YEAR, DTE1, NMAX1, GH1, NMAX2,
+     1              GH2, NMAX, GHA)
+       ENDIF
 C-- DETERMINE MAGNETIC DIPOL MOMENT AND COEFFIECIENTS G
        F0=0.D0
        DO 1234 J=1,3
@@ -578,58 +578,58 @@ C-- DETERMINE MAGNETIC DIPOL MOMENT AND COEFFIECIENTS G
        DIMO = DSQRT(F0)
 
        GH1(1) =  0.0
-       I=2          
-      F0=1.D-5                
-      IF(IS.EQ.0) F0=-F0 
-      SQRT2=SQRT(2.)      
+       I=2
+      F0=1.D-5
+      IF(IS.EQ.0) F0=-F0
+      SQRT2=SQRT(2.)
 
-      DO 9 N=1,NMAX           
+      DO 9 N=1,NMAX
        X = N
-             F0 = F0 * X * X / (4.D0 * X - 2.D0)               
+             F0 = F0 * X * X / (4.D0 * X - 2.D0)
              IF(IS.EQ.0) F0 = F0 * (2.D0 * X - 1.D0) / X
-       F = F0 * 0.5D0                                    
+       F = F0 * 0.5D0
              IF(IS.EQ.0) F = F * SQRT2
        GH1(I) = GHA(I-1) * F0
-       I = I+1                                         
-      DO 9 M=1,N                                    
-             F = F * (X + M) / (X - M + 1.D0)                 
-       IF(IS.EQ.0) F = F * DSQRT((X - M + 1.D0) / (X + M))             
+       I = I+1
+      DO 9 M=1,N
+             F = F * (X + M) / (X - M + 1.D0)
+       IF(IS.EQ.0) F = F * DSQRT((X - M + 1.D0) / (X + M))
        GH1(I) = GHA(I-1) * F
        GH1(I+1) = GHA(I) * F
         I=I+2
-9     CONTINUE                                          
+9     CONTINUE
 
        END SUBROUTINE FELDCOF
 C
 C
-       SUBROUTINE GETSHC (IU, FSPEC, NMAX, ERAD, GH, IER)           
-                                                                                
-C ===============================================================               
-C                                                                               
-C       Version 1.01                                                 
-C                                                                               
-C       Reads spherical harmonic coefficients from the specified     
-C       file into an array.                                          
-C                                                                               
-C       Input:                                                       
-C           IU    - Logical unit number                              
-C           FSPEC - File specification                               
-C                                                                               
-C       Output:                                                      
-C           NMAX  - Maximum degree and order of model                
-C           ERAD  - Earth's radius associated with the spherical     
-C       	    harmonic coefficients, in the same units as      
-C		    elevation                                        
-C	    GH    - Schmidt quasi-normal internal spherical          
-C		    harmonic coefficients                            
-C	    IER   - Error number: =  0, no error                     
-C				  = -2, records out of order         
-C			     	  = FORTRAN run-time error number    
-C                                                                    
-C	A. Zunde                                                     
-C	USGS, MS 964, Box 25046 Federal Center, Denver, CO  80225    
-C                                                                               
-C ===============================================================               
+       SUBROUTINE GETSHC (IU, FSPEC, NMAX, ERAD, GH, IER)
+
+C ===============================================================
+C
+C       Version 1.01
+C
+C       Reads spherical harmonic coefficients from the specified
+C       file into an array.
+C
+C       Input:
+C           IU    - Logical unit number
+C           FSPEC - File specification
+C
+C       Output:
+C           NMAX  - Maximum degree and order of model
+C           ERAD  - Earth's radius associated with the spherical
+C                 harmonic coefficients, in the same units as
+C                elevation
+C          GH    - Schmidt quasi-normal internal spherical
+C                harmonic coefficients
+C          IER   - Error number: =  0, no error
+C                          = -2, records out of order
+C                               = FORTRAN run-time error number
+C
+C      A. Zunde
+C      USGS, MS 964, Box 25046 Federal Center, Denver, CO  80225
+C
+C ===============================================================
 
        include '../dir.include/CHEMIN.INC'
 
@@ -639,11 +639,11 @@ C ===============================================================
        Integer,Intent(in):: IU
        Real,Intent(out) :: GH(*),erad
        Integer,Intent(out):: ier,nmax
-                                                                                
-C ---------------------------------------------------------------               
-C	Open coefficient file. Read past first header record.        
-C	Read degree and order of model and Earth's radius.           
-C ---------------------------------------------------------------               
+
+C ---------------------------------------------------------------
+C      Open coefficient file. Read past first header record.
+C      Read degree and order of model and Earth's radius.
+C ---------------------------------------------------------------
 
        FILEIN=FSPEC
        FILEIN1='dir.data/dir.linux/dir.geomag/'//FILEIN
@@ -651,185 +651,185 @@ c       FILEIN1=FILEIN
 
        print*,'opening for reading: ',filein1
        OPEN (IU, FILE=FILEIN1, STATUS='OLD',IOSTAT=IER, ERR=999)
-       READ (IU, *, IOSTAT=IER, ERR=999)                            
-       READ (IU, *, IOSTAT=IER, ERR=999) NMAX, ERAD                 
-                                                                                
-C ---------------------------------------------------------------               
-C	Read the coefficient file, arranged as follows:              
-C                                                                               
-C					N     M     G     H          
-C					----------------------       
-C				    /   1     0    GH(1)  -          
-C				   /	1     1    GH(2) GH(3)       
-C				  /	2     0    GH(4)  -          
-C				 /	2     1    GH(5) GH(6)       
-C	    NMAX*(NMAX+3)/2 	/	2     2    GH(7) GH(8)       
-C	       records		\	3     0    GH(9)  -          
-C				 \      .     .     .     .          
-C				  \	.     .     .     .          
-C	    NMAX*(NMAX+2)	   \	.     .     .     .          
-C	    elements in GH	    \  NMAX  NMAX   .     .          
-C                                                                               
-C	N and M are, respectively, the degree and order of the       
-C	coefficient.                                                 
-C ---------------------------------------------------------------               
-                                                                                
-      I = 0                                                        
-      DO NN = 1, NMAX                                              
-           DO MM = 0, NN                                            
-              READ (IU, *, IOSTAT=IER, ERR=999) N, M, G, H      
-   
-              IF (NN .NE. N .OR. MM .NE. M) THEN                   
-                  IER = -2                                         
-                  GOTO 999                                         
-              ENDIF       
-                                         
-              I = I + 1                                            
-              GH(I) = G                                            
-              IF (M .NE. 0) THEN                                   
-                  I = I + 1                                        
-                  GH(I) = H                                        
-              ENDIF                                                
-          End DO                                                    
-      End Do                                                      
-                                                                                
-999   CLOSE (IU)                                                   
+       READ (IU, *, IOSTAT=IER, ERR=999)
+       READ (IU, *, IOSTAT=IER, ERR=999) NMAX, ERAD
 
-      END SUBROUTINE GETSHC                                                    
+C ---------------------------------------------------------------
+C      Read the coefficient file, arranged as follows:
+C
+C                              N     M     G     H
+C                              ----------------------
+C                            /   1     0    GH(1)  -
+C                           /      1     1    GH(2) GH(3)
+C                          /      2     0    GH(4)  -
+C                         /      2     1    GH(5) GH(6)
+C          NMAX*(NMAX+3)/2       /      2     2    GH(7) GH(8)
+C             records            \      3     0    GH(9)  -
+C                         \      .     .     .     .
+C                          \      .     .     .     .
+C          NMAX*(NMAX+2)         \      .     .     .     .
+C          elements in GH          \  NMAX  NMAX   .     .
+C
+C      N and M are, respectively, the degree and order of the
+C      coefficient.
+C ---------------------------------------------------------------
+
+      I = 0
+      DO NN = 1, NMAX
+           DO MM = 0, NN
+              READ (IU, *, IOSTAT=IER, ERR=999) N, M, G, H
+
+              IF (NN .NE. N .OR. MM .NE. M) THEN
+                  IER = -2
+                  GOTO 999
+              ENDIF
+
+              I = I + 1
+              GH(I) = G
+              IF (M .NE. 0) THEN
+                  I = I + 1
+                  GH(I) = H
+              ENDIF
+          End DO
+      End Do
+
+999   CLOSE (IU)
+
+      END SUBROUTINE GETSHC
 C
 C
-	SUBROUTINE INTERSHC (DATE, DTE1, NMAX1, GH1, DTE2,          
-     1			      NMAX2, GH2, NMAX, GH)                  
-                                                                                
-C ===============================================================               
-C                                                                               
-C	Version 1.01                                                 
-C                                                                               
-C	Interpolates linearly, in time, between two spherical        
-C	harmonic models.                                             
-C                                                                               
-C	Input:                                                       
-C	    DATE  - Date of resulting model (in decimal year)        
-C	    DTE1  - Date of earlier model                            
-C	    NMAX1 - Maximum degree and order of earlier model        
-C	    GH1   - Schmidt quasi-normal internal spherical          
-C		    harmonic coefficients of earlier model           
-C	    DTE2  - Date of later model                              
-C	    NMAX2 - Maximum degree and order of later model          
-C	    GH2   - Schmidt quasi-normal internal spherical          
-C		    harmonic coefficients of later model             
-C                                                                               
-C	Output:                                                      
-C	    GH    - Coefficients of resulting model                  
-C	    NMAX  - Maximum degree and order of resulting model      
-C                                                                               
-C	A. Zunde                                                     
-C	USGS, MS 964, Box 25046 Federal Center, Denver, CO  80225    
-C                                                                               
-C ===============================================================               
-                                                                                
-	  Real,Intent(in) ::   date,GH1(*), GH2(*),dte1,dte2
+      SUBROUTINE INTERSHC (DATE, DTE1, NMAX1, GH1, DTE2,
+     1                        NMAX2, GH2, NMAX, GH)
+
+C ===============================================================
+C
+C      Version 1.01
+C
+C      Interpolates linearly, in time, between two spherical
+C      harmonic models.
+C
+C      Input:
+C          DATE  - Date of resulting model (in decimal year)
+C          DTE1  - Date of earlier model
+C          NMAX1 - Maximum degree and order of earlier model
+C          GH1   - Schmidt quasi-normal internal spherical
+C                harmonic coefficients of earlier model
+C          DTE2  - Date of later model
+C          NMAX2 - Maximum degree and order of later model
+C          GH2   - Schmidt quasi-normal internal spherical
+C                harmonic coefficients of later model
+C
+C      Output:
+C          GH    - Coefficients of resulting model
+C          NMAX  - Maximum degree and order of resulting model
+C
+C      A. Zunde
+C      USGS, MS 964, Box 25046 Federal Center, Denver, CO  80225
+C
+C ===============================================================
+
+        Real,Intent(in) ::   date,GH1(*), GH2(*),dte1,dte2
       Integer,Intent(in) :: nmax1,nmax2
-      Real,Intent(out) ::  GH(*)  
-      Integer,intent(out) :: nmax                      
-                                                                                
-C ---------------------------------------------------------------               
-C	The coefficients (GH) of the resulting model, at date        
-C	DATE, are computed by linearly interpolating between the     
-C	coefficients of the earlier model (GH1), at date DTE1,       
-C	and those of the later model (GH2), at date DTE2. If one     
-C	model is smaller than the other, the interpolation is        
-C	performed with the missing coefficients assumed to be 0.     
-C ---------------------------------------------------------------               
-                                                                                
-	FACTOR = (DATE - DTE1) / (DTE2 - DTE1)                       
-                                                                                
-	IF (NMAX1 .EQ. NMAX2) THEN                                   
-	    K = NMAX1 * (NMAX1 + 2)                                  
-	    NMAX = NMAX1                                             
-	ELSE IF (NMAX1 .GT. NMAX2) THEN                              
-	    K = NMAX2 * (NMAX2 + 2)                                  
-	    L = NMAX1 * (NMAX1 + 2)                                  
-	    DO 1122 I = K + 1, L                                          
-1122		GH(I) = GH1(I) + FACTOR * (-GH1(I))                  
-	    NMAX = NMAX1                                             
-	ELSE                                                         
-	    K = NMAX1 * (NMAX1 + 2)                                  
-	    L = NMAX2 * (NMAX2 + 2)                                  
-	    DO 1133 I = K + 1, L                                          
-1133		GH(I) = FACTOR * GH2(I)                              
-	    NMAX = NMAX2                                             
-	ENDIF                                                        
-                                                                                
-	DO 1144 I = 1, K                                                  
-1144	    GH(I) = GH1(I) + FACTOR * (GH2(I) - GH1(I))              
-                                      
-	END SUBROUTINE INTERSHC
+      Real,Intent(out) ::  GH(*)
+      Integer,intent(out) :: nmax
+
+C ---------------------------------------------------------------
+C      The coefficients (GH) of the resulting model, at date
+C      DATE, are computed by linearly interpolating between the
+C      coefficients of the earlier model (GH1), at date DTE1,
+C      and those of the later model (GH2), at date DTE2. If one
+C      model is smaller than the other, the interpolation is
+C      performed with the missing coefficients assumed to be 0.
+C ---------------------------------------------------------------
+
+      FACTOR = (DATE - DTE1) / (DTE2 - DTE1)
+
+      IF (NMAX1 .EQ. NMAX2) THEN
+          K = NMAX1 * (NMAX1 + 2)
+          NMAX = NMAX1
+      ELSE IF (NMAX1 .GT. NMAX2) THEN
+          K = NMAX2 * (NMAX2 + 2)
+          L = NMAX1 * (NMAX1 + 2)
+          DO 1122 I = K + 1, L
+1122            GH(I) = GH1(I) + FACTOR * (-GH1(I))
+          NMAX = NMAX1
+      ELSE
+          K = NMAX1 * (NMAX1 + 2)
+          L = NMAX2 * (NMAX2 + 2)
+          DO 1133 I = K + 1, L
+1133            GH(I) = FACTOR * GH2(I)
+          NMAX = NMAX2
+      ENDIF
+
+      DO 1144 I = 1, K
+1144          GH(I) = GH1(I) + FACTOR * (GH2(I) - GH1(I))
+
+      END SUBROUTINE INTERSHC
 C
 C
-	SUBROUTINE EXTRASHC (DATE, DTE1, NMAX1, GH1, NMAX2,           
-     1			      GH2, NMAX, GH)                           
-                                                                                
-C ===============================================================               
-C                                                                               
-C	Version 1.01                                                   
-C                                                                               
-C	Extrapolates linearly a spherical harmonic model with a        
-C	rate-of-change model.                                          
-C                                                                               
-C	Input:                                                         
-C	    DATE  - Date of resulting model (in decimal year)          
-C	    DTE1  - Date of base model                                 
-C	    NMAX1 - Maximum degree and order of base model             
-C	    GH1   - Schmidt quasi-normal internal spherical            
-C		    harmonic coefficients of base model                
-C	    NMAX2 - Maximum degree and order of rate-of-change         
-C		    model                                              
-C	    GH2   - Schmidt quasi-normal internal spherical            
-C		    harmonic coefficients of rate-of-change model      
-C                                                                               
-C	Output:                                                        
-C	    GH    - Coefficients of resulting model                    
-C	    NMAX  - Maximum degree and order of resulting model        
-C                                                                               
-C	A. Zunde                                                       
-C	USGS, MS 964, Box 25046 Federal Center, Denver, CO  80225      
-C                                                                               
-C ===============================================================               
-                                                                                
-	DIMENSION	GH1(*), GH2(*), GH(*)                          
-                                                                                
-C ---------------------------------------------------------------               
-C	The coefficients (GH) of the resulting model, at date          
-C	DATE, are computed by linearly extrapolating the coef-         
-C	ficients of the base model (GH1), at date DTE1, using          
-C	those of the rate-of-change model (GH2), at date DTE2. If      
-C	one model is smaller than the other, the extrapolation is      
-C	performed with the missing coefficients assumed to be 0.       
-C ---------------------------------------------------------------               
-                                                                                
-	FACTOR = (DATE - DTE1)                                         
-                                                                                
-	IF (NMAX1 .EQ. NMAX2) THEN                                     
-	    K = NMAX1 * (NMAX1 + 2)                                    
-	    NMAX = NMAX1                                               
-	ELSE IF (NMAX1 .GT. NMAX2) THEN                                
-	    K = NMAX2 * (NMAX2 + 2)                                    
-	    L = NMAX1 * (NMAX1 + 2)                                    
-	    DO 1155 I = K + 1, L                                            
-1155		GH(I) = GH1(I)                                         
-	    NMAX = NMAX1                                               
-	ELSE                                                           
-	    K = NMAX1 * (NMAX1 + 2)                                    
-	    L = NMAX2 * (NMAX2 + 2)                                    
-	    DO 1166 I = K + 1, L                                            
-1166		GH(I) = FACTOR * GH2(I)                                
-	    NMAX = NMAX2                                               
-	ENDIF                                                          
-                                                                                
-      DO 1177 I = 1, K                                                    
-1177	    GH(I) = GH1(I) + FACTOR * GH2(I)                           
-                                                                                                                                        
+      SUBROUTINE EXTRASHC (DATE, DTE1, NMAX1, GH1, NMAX2,
+     1                        GH2, NMAX, GH)
+
+C ===============================================================
+C
+C      Version 1.01
+C
+C      Extrapolates linearly a spherical harmonic model with a
+C      rate-of-change model.
+C
+C      Input:
+C          DATE  - Date of resulting model (in decimal year)
+C          DTE1  - Date of base model
+C          NMAX1 - Maximum degree and order of base model
+C          GH1   - Schmidt quasi-normal internal spherical
+C                harmonic coefficients of base model
+C          NMAX2 - Maximum degree and order of rate-of-change
+C                model
+C          GH2   - Schmidt quasi-normal internal spherical
+C                harmonic coefficients of rate-of-change model
+C
+C      Output:
+C          GH    - Coefficients of resulting model
+C          NMAX  - Maximum degree and order of resulting model
+C
+C      A. Zunde
+C      USGS, MS 964, Box 25046 Federal Center, Denver, CO  80225
+C
+C ===============================================================
+
+      DIMENSION      GH1(*), GH2(*), GH(*)
+
+C ---------------------------------------------------------------
+C      The coefficients (GH) of the resulting model, at date
+C      DATE, are computed by linearly extrapolating the coef-
+C      ficients of the base model (GH1), at date DTE1, using
+C      those of the rate-of-change model (GH2), at date DTE2. If
+C      one model is smaller than the other, the extrapolation is
+C      performed with the missing coefficients assumed to be 0.
+C ---------------------------------------------------------------
+
+      FACTOR = (DATE - DTE1)
+
+      IF (NMAX1 .EQ. NMAX2) THEN
+          K = NMAX1 * (NMAX1 + 2)
+          NMAX = NMAX1
+      ELSE IF (NMAX1 .GT. NMAX2) THEN
+          K = NMAX2 * (NMAX2 + 2)
+          L = NMAX1 * (NMAX1 + 2)
+          DO 1155 I = K + 1, L
+1155            GH(I) = GH1(I)
+          NMAX = NMAX1
+      ELSE
+          K = NMAX1 * (NMAX1 + 2)
+          L = NMAX2 * (NMAX2 + 2)
+          DO 1166 I = K + 1, L
+1166            GH(I) = FACTOR * GH2(I)
+          NMAX = NMAX2
+      ENDIF
+
+      DO 1177 I = 1, K
+1177          GH(I) = GH1(I) + FACTOR * GH2(I)
+
       END SUBROUTINE EXTRASHC
 C
 C
@@ -837,18 +837,18 @@ C
 C----------------------------------------------------------------
 C Initializes the parameters in COMMON/GENER/
 C
-C	UMR     = ATAN(1.0)*4./180.   <DEGREE>*UMR=<RADIANT>
-C	ERA	EARTH RADIUS FOR NORMALIZATION OF CARTESIAN 
-C			COORDINATES (6371.2 KM) 
-C	EREQU	MAJOR HALF AXIS FOR EARTH ELLIPSOID (6378.160 KM)
-C	ERPOL	MINOR HALF AXIS FOR EARTH ELLIPSOID (6356.775 KM)
-C	AQUAD	SQUARE OF MAJOR HALF AXIS FOR EARTH ELLIPSOID
-C	BQUAD   SQUARE OF MINOR HALF AXIS FOR EARTH ELLIPSOID
+C      UMR     = ATAN(1.0)*4./180.   <DEGREE>*UMR=<RADIANT>
+C      ERA      EARTH RADIUS FOR NORMALIZATION OF CARTESIAN
+C                  COORDINATES (6371.2 KM)
+C      EREQU      MAJOR HALF AXIS FOR EARTH ELLIPSOID (6378.160 KM)
+C      ERPOL      MINOR HALF AXIS FOR EARTH ELLIPSOID (6356.775 KM)
+C      AQUAD      SQUARE OF MAJOR HALF AXIS FOR EARTH ELLIPSOID
+C      BQUAD   SQUARE OF MINOR HALF AXIS FOR EARTH ELLIPSOID
 C
-C ERA, EREQU and ERPOL as recommended by the INTERNATIONAL 
+C ERA, EREQU and ERPOL as recommended by the INTERNATIONAL
 C ASTRONOMICAL UNION .
 C-----------------------------------------------------------------
-      	COMMON/GENER/	UMR,ERA,AQUAD,BQUAD
+            COMMON/GENER/      UMR,ERA,AQUAD,BQUAD
         ERA=6371.2
         EREQU=6378.16
         ERPOL=6356.775

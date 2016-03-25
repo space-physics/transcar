@@ -173,7 +173,7 @@ C      ***** N2 DENSITY ****
         DMR=D6(3)/DM28M-1.
         D(3)=DENSM(ALT,DM28M,XMM,TZ,MN3,ZN3,TN3,TGN3,MN2,ZN2,TN2,TGN2)
         D(3)=D(3)*(1.+DMR*DMC)
-        if (isnan(d(3))) 
+        if (isnan(d(3)))
      &    print*,'gtd6: nan d3:',
      &     ALT,DM28M,XMM,TZ,MN3,ZN3,TN3,TGN3,MN2,ZN2,TN2,TGN2
 C      ***** HE DENSITY ****

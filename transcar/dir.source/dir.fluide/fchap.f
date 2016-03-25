@@ -11,10 +11,10 @@ c
 	data re/6356.766/
 	data indesp/3,4,2,7,1,8,5/
 	common /decl/decli
-	
+
 	stl=tu+glong/15.
 	call grille(z,lat,lon,tu,chi,decli,zi,lati,loni,wi,ni,zj,wj,nj)
-	
+
 	if (ni.gt.0) then
 	  do i=1,nesp
 	    chap1(i)=0.

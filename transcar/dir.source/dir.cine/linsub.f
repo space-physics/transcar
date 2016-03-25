@@ -6,7 +6,7 @@ c----------------------------------------------------------------------
 c
       SUBROUTINE  SGBCO( ABD, LDA, N, ML, MU, IPVT, RCOND, Z )
 C
-C         FACTORS A REAL BAND MATRIX BY GAUSSIAN ELIMINATION 
+C         FACTORS A REAL BAND MATRIX BY GAUSSIAN ELIMINATION
 C         AND ESTIMATES THE CONDITION OF THE MATRIX.
 C
 C         REVISION DATE:  8/1/82
@@ -328,7 +328,7 @@ C                                  ** FIND L = PIVOT INDEX
          IPVT(K) = L + K - M
 C
          IF (ABD(L,K) .EQ. 0.0E0) THEN
-C                                      ** ZERO PIVOT IMPLIES THIS COLUMN 
+C                                      ** ZERO PIVOT IMPLIES THIS COLUMN
 C                                      ** ALREADY TRIANGULARIZED
             INFO = K
          ELSE
@@ -722,7 +722,7 @@ C                                            ** FIND L = PIVOT INDEX
          IPVT(K) = L
 C
          IF (A(L,K) .EQ. 0.0E0) THEN
-C                                     ** ZERO PIVOT IMPLIES THIS COLUMN 
+C                                     ** ZERO PIVOT IMPLIES THIS COLUMN
 C                                     ** ALREADY TRIANGULARIZED
             INFO = K
          ELSE
@@ -888,7 +888,7 @@ C                                          ** NON-UNIT INCREMENTS
 C                                          ** UNIT INCREMENTS
          M = MOD(N,6)
          IF( M.NE.0 ) THEN
-C                             ** CLEAN-UP LOOP SO REMAINING VECTOR 
+C                             ** CLEAN-UP LOOP SO REMAINING VECTOR
 C                             ** LENGTH IS A MULTIPLE OF 6.
             DO 30  I = 1, M
               SASUM = SASUM + ABS(SX(I))
@@ -919,8 +919,8 @@ C       SY  SING-PREC ARRAY CONTAINING VECTOR 'Y'
 C     INCY  SPACING OF ELEMENTS OF VECTOR 'Y' IN 'SY'
 C
 C --OUTPUT--
-C       SY   FOR I = 0 TO N-1, OVERWRITE  SY(LY+I*INCY) WITH 
-C                 SA*SX(LX+I*INCX) + SY(LY+I*INCY), 
+C       SY   FOR I = 0 TO N-1, OVERWRITE  SY(LY+I*INCY) WITH
+C                 SA*SX(LX+I*INCX) + SY(LY+I*INCY),
 C            WHERE LX = 1          IF INCX .GE. 0,
 C                     = (-INCX)*N  IF INCX .LT. 0
 C            AND LY IS DEFINED IN A SIMILAR WAY USING INCY.
@@ -987,7 +987,7 @@ C     INCY  SPACING OF ELEMENTS OF VECTOR 'Y' IN 'SY'
 C
 C --OUTPUT--
 C     SDOT   SUM FOR I = 0 TO N-1 OF  SX(LX+I*INCX) * SY(LY+I*INCY),
-C            WHERE  LX = 1          IF INCX .GE. 0, 
+C            WHERE  LX = 1          IF INCX .GE. 0,
 C                      = (-INCX)*N  IF INCX .LT. 0,
 C            AND LY IS DEFINED IN A SIMILAR WAY USING INCY.
 C
@@ -1049,7 +1049,7 @@ C            SA  SINGLE PRECISION SCALE FACTOR
 C            SX  SING-PREC ARRAY, LENGTH 1+(N-1)*INCX, CONTAINING VECTOR
 C          INCX  SPACING OF VECTOR ELEMENTS IN 'SX'
 C
-C --OUTPUT-- SX  REPLACE  SX(1+I*INCX)  WITH  SA * SX(1+I*INCX) 
+C --OUTPUT-- SX  REPLACE  SX(1+I*INCX)  WITH  SA * SX(1+I*INCX)
 C                FOR I = 0 TO N-1
 C
       REAL SA, SX(*)

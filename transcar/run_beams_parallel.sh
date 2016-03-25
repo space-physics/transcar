@@ -19,7 +19,9 @@ remotes=(irs4 irs3 swoboj)
 BeamEnergyTableFN=BT_E1E2prev.csv
 RODIR=$1
 [[ -z $RODIR ]] && { echo "you must specify an output directory"; exit 1; }
-[[ $RODIR -eq $HOME ]] && { echo "don't erase your entire hard drive!"; exit 1;}
+[[ $RODIR == $HOME ]] && { echo "don't erase your entire home drive!"; exit 1; }
+[[ $RODIR == / ]] && { echo "don't erase your entire hard drive!"; exit 1; }
+
 exedir=code/transcar/transcar
 
 flux0=70114000000.0

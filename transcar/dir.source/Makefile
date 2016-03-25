@@ -19,9 +19,9 @@ OPTIONS=-assume byterecl  -O3 -march=native
 #OPTIONS += -g -C -fpe:0 -traceback 
 else ifeq ($(fc),gfortran)
 # we use std=legacy because there are deleted features used
-OPTIONS=-frecord-marker=4  -O3 -march=native  -std=legacy
+OPTIONS=-frecord-marker=4  -O0 -march=native  -std=legacy
 #OPTIONS+=   #-pedantic #-Wall #for gfortran 
-#OPTIONS+= -fno-align-commons -g -fbounds-check -fbacktrace -ffpe-trap=zero,overflow#,underflow#,denormal
+OPTIONS+= -fno-align-commons -g -fbounds-check -fbacktrace -ffpe-trap=zero,overflow,underflow,denormal
 else
 $(info you must specify your compiler with fc=mycompiler.  E.g. make fc=gfortran)
 endif

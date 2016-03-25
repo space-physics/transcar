@@ -1,26 +1,28 @@
        subroutine convec(iyd,tu,kp,dlongeo,dlatgeo,
      &                   dlonmag,dlatmag,dlonref,dt,psi0,flgpot)
+
+       include 'comm.f'
+
        implicit none
-C Michael Hirsch, these intents have NOT been verified!
-Cf2py intent(in) iyd, tu, kp, dlongeo, dlatgeo, dlonmag, dlatmag, dlonref, dt, flgpot
-Cf2py intent(out) psi0
+       
+       include 'comm_dp.f'
 
-       real*8,intent(inout) :: dlonmag
+       real(dp),intent(inout) :: dlonmag
 
-       real*8 dlonmlt,lat,lon,dlat,dlon,dlon1,dlat1
-       real*8 tu,dt
+       real(dp) dlonmlt,lat,lon,dlat,dlon,dlon1,dlat1
+       real(dp) tu,dt
        real kp
-       real*8 EE(2),Ex(2)
-       real*8 ca,sa,re,ctet,dx,dy,clat,transit
-       real*8 dlatgeo,dlongeo,dlonref,dtmag,distance
-       real*8 dlonmlt1,lattransi,lateps,dlonmlt0,dcoef
-       real*8 dpsi0,dpsi10,dpsi20,dtheta,dtheta1,dtheta2
-       real*8 psi,psi0,psi1,psi2,dlon0,dlat0
-       real*8 cor_cnv
-       real*8 dt1,dt2,pideg
-       real*8 vh,vp,vpnord,vpest,dlatmag
-       real*8 loc(2,2),dpot(2)
-       complex*16 cpsi
+       real(dp) EE(2),Ex(2)
+       real(dp) ca,sa,re,ctet,dx,dy,clat,transit
+       real(dp) dlatgeo,dlongeo,dlonref,dtmag,distance
+       real(dp) dlonmlt1,lattransi,lateps,dlonmlt0,dcoef
+       real(dp) dpsi0,dpsi10,dpsi20,dtheta,dtheta1,dtheta2
+       real(dp) psi,psi0,psi1,psi2,dlon0,dlat0
+       real(dp) cor_cnv
+       real(dp) dt1,dt2,pideg
+       real(dp) vh,vp,vpnord,vpest,dlatmag
+       real(dp) loc(2,2),dpot(2)
+       complex(zp) cpsi
        real zref,year
        integer i,j,iyd
        logical flgpot,flgini
@@ -38,18 +40,16 @@ Cf2py intent(out) psi0
      &			Bmag,dipangle,Enord,Eest,
      &			vperpnord,vperpest,vhorizon,vpara,ddp,Jtop
 
-       real*8 rad2deg,deg2rad,pi,dlonmag0,dlatmag0,dlo0,dla0
-       data deg2rad/1.745329251994330d-2/
-       data rad2deg/57.295779513082320d0/
-       data pi/3.141592653589793d0/
+       real(dp) dlonmag0,dlatmag0,dlo0,dla0
 
-        real*8 lat_top
-        data lat_top/89.9d0/
+
+        real(dp) lat_top
+        data lat_top/89.9_dp/
 
        save dtmag,dlonmag0,dlatmag0
        
        if (flgini) then
-       open(56,file='trace_conv',form='formatted',status='replace')
+       open(56,file='trace_conv',form='formatted',status='new')
        flgini=.false.
        endif
 
@@ -66,12 +66,12 @@ c       print*,'entree convec',longeo,latgeo
 c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
        dlo0=dlonmag-dlonmag0
        dla0=dlatmag-dlatmag0
-        dtmag=(dlonmag+dlonref)/15.d0+ tu/3600.d0
-       dtmag=mod(dtmag+24.d0,24.d0)
+        dtmag=(dlonmag+dlonref)/15._dp + tu/3600._dp
+       dtmag=mod(dtmag+24._dp,24._dp)
        tmag=dtmag
-       dlonmlt=dtmag*15.d0
+       dlonmlt=dtmag*15._dp
 
-       print*,'convec.f: call potentiel, dlonmag,dlonmlt',
+       write(stdout,*),'convec.f: call potentiel, dlonmag,dlonmlt',
      &   dlonmag,dlonmlt
        call potentiel(iyd,tu,kp,dlonmlt,dlatmag ,EE(1),EE(2),psi,ddp)
        
@@ -82,9 +82,9 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
        pot=psi0
        Enord=EE(2)
        Eest=EE(1)
-       vpest =-EE(2)/Bmag*10.d0
+       vpest =-EE(2)/Bmag*10._dp
        vperpest=vpest
-       vpnord= EE(1)/Bmag*10.d0
+       vpnord= EE(1)/Bmag*10._dp
        vperpnord=vpnord
        vh =vpnord/cos(dipangle*deg2rad)
        vhorizon=vh
@@ -94,12 +94,15 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
         dlon = vpest*dt/re/cos(min(dlatmag,lat_top)*deg2rad)
         dlat =  vh*dt/re
        if (dlon.ne.0.d0 .and. dlat.ne.0.d0) then
-
+         write(stdout,*),'convec.f: call cor_cnv   dlonmlt,dlatmag ',
+     &                    dlonmlt,dlatmag
+     
          dtheta=cor_cnv(iyd,tu,kp,dlonmlt,dlatmag,
      &			   dlat,dlon,psi0)
          dlonmag=dlonmlt-(tu+dt)/240.d0-dlonref
          dlonmag=mod(dlonmag+360.d0,360.d0)
-         print*,'convec.f: call mag2geo, inputs:',
+      write(stdout,*),'convec.f: call mag2geo,',
+     &                ' dlatmag,dlonmag,dlatgeo,dlongeo:',
      &                   dlatmag,dlonmag,dlatgeo,dlongeo
          call mag2geo(dlatmag,dlonmag,dlatgeo,dlongeo)
          print*,'mag2geo outputs:',dlatmag,dlonmag,dlatgeo,dlongeo
@@ -129,24 +132,22 @@ c100       format(a2,10(1x,g15.8))
        end Subroutine convec
 
 
-        subroutine integ(lat,lon,dlat,dlon)
+      subroutine integ(lat,lon,dlat,dlon)
+        include 'comm.f'        
         implicit none
-        double precision,intent(inout) :: lat,lon
-        double precision,intent(in) :: dlat,dlon
+        include 'comm_dp.f'
+        real(dp),intent(inout) :: lat,lon
+        real(dp),intent(in) :: dlat,dlon
 
-        double precision x,y,z,
+        real(dp) :: x,y,z,
      & clon,slon,clat,slat,
-     & dx,dy,ca,sa,cb,sb,
-     & rad2deg,deg2rad,pi
-        data rad2deg/57.2957795130823229d0/ 
-        data deg2rad/0.174532925199432955d-01/
-        data pi/3.14159265358979312d0/
+     & dx,dy,ca,sa,cb,sb
 
         lon=lon+dlon*rad2deg
         lat=lat+dlat*rad2deg
         if (lat.ge.90.d0) then
-            lat=180.d0-lat
-            lon=lon+180.d0
+            lat=180._dp-lat
+            lon=lon+180._dp
         endif
         return
 
@@ -159,17 +160,17 @@ c        sa=dsin(lon*deg2rad)
 c        cb=-dx*sa-dy*ca
 c        sb=dx*ca-dy*sa
 c        lon=datan2(sb,cb)*rad2deg
-        clat=dcos(lat*deg2rad)
-        slat=dsin(lat*deg2rad)
-        clon=dcos(lon*deg2rad)
-        slon=dsin(lon*deg2rad)
+        clat=cos(lat*deg2rad)
+        slat=sin(lat*deg2rad)
+        clon=cos(lon*deg2rad)
+        slon=sin(lon*deg2rad)
         x=(clat-dlat*slat)*clon-dlon*slon
         y=(clat-dlat*slat)*slon+dlon*clon
         z=slat+dlat*clat
 
-        lat=datan2(z,dsqrt(x**2+y**2))*rad2deg
-        lon=datan2(y,x)*rad2deg
-        lon=mod(lon+360.d0,360.d0)
+        lat=atan2(z,sqrt(x**2+y**2))*rad2deg
+        lon=atan2(y,x)*rad2deg
+        lon=mod(lon+360._dp,360._dp)
 
         end subroutine integ
 
@@ -177,28 +178,28 @@ c        lon=datan2(sb,cb)*rad2deg
 
       double precision function cor_cnv(iyd,tu,kp,lonmlt,latmag,
      &              dlat,dlon,psi0)
-
+       include 'comm.f'
        implicit none
+       include 'comm_dp.f'
 
-       real*8 tu
-       real kp
-       real*8 dlon,dlat,latmag,lonmlt,psi0
-       real*8 ca,sa,dlon1,lat,lon,dlat1,xa
-       real*8 rad2deg,deg2rad,pi
+       integer, intent(in) :: iyd
+       real(dp), intent(in) :: tu,psi0
+       real, intent(in) :: kp
+       
+       real(dp), intent(inout) :: dlat,dlon,lonmlt,latmag
+
+       real(dp) ca,sa,dlon1,lat,lon,dlat1,xa
        integer itmax
-       real*8 tol,x1,x2,func,eps,potar,deupi
+       real(dp) x1,x2,func,eps,potar,deupi
        parameter (itmax=100,eps=3.d-8)
-       integer iter,iyd
-       real*8 a,b,c,d,e,fa,fb,fc,p,q,r,s,tol1,xm
-        real*8 b0,fb0
-        real*8 angle_ref,angle_max,ds,a1,a2,delta
-        real*8 dlo,dla,coef_ds
+       integer iter
+       real(dp) a,b,c,d,e,fa,fb,fc,p,q,r,s,tol1,xm
+        real(dp) b0,fb0
+        real(dp) ds,a1,a2,delta
+        real(dp) dlo,dla
         logical flgini
-        data tol/1.d-8/
-        data deg2rad/1.745329251994330d-002/
-        data rad2deg/57.295779513082320d0/
-        data pi/3.141592653589793d0/
-        data angle_ref,angle_max,coef_ds/0.d0,0.1d0,1.d-2/
+        real(dp),parameter :: tol=1.d-8,angle_ref=0._dp,
+     &    angle_max=0.1_dp,coef_ds=1.d-2
 
 
 
@@ -208,9 +209,9 @@ c        lon=datan2(sb,cb)*rad2deg
         lon=lonmlt
         dla=dlat*coef_ds
         dlo=dlon*coef_ds
-        ds=dsqrt(dlo**2+dla**2)
+        ds=sqrt(dlo**2+dla**2)
         fa=potar(iyd,tu,kp,lonmlt,latmag,dlat,dlon,a,psi0)
-        b=pi/2.d0
+        b=pi/2._dp
         fb=potar(iyd,tu,kp,lonmlt,latmag,dla,dlo,b,psi0)
         c=-b
         fc=potar(iyd,tu,kp,lonmlt,latmag,dla,dlo,c,psi0)
@@ -221,9 +222,9 @@ c        lon=datan2(sb,cb)*rad2deg
           delta=a1*a1+4.d0*fa*a2
           if (delta.gt.0.d0) then
             if (fb.ge.fc) then
-              b=(a1-dsqrt(delta))/2.d0/a2
+              b=(a1-sqrt(delta))/2.d0/a2
             else
-              b=(a1+dsqrt(delta))/2.d0/a2
+              b=(a1+sqrt(delta))/2.d0/a2
             endif
             b=2.d0*b/ds*coef_ds
           else
@@ -245,12 +246,19 @@ c        lon=datan2(sb,cb)*rad2deg
           fb=potar(iyd,tu,kp,lonmlt,latmag,dlat,dlon,b,psi0)
         enddo
        
-       ca=dcos(b)
-       sa=dsin(b)
+       ca=cos(b)
+       sa=sin(b)
        dlon1=dlon*ca-dlat*sa
        dlat1=dlon*sa+dlat*ca
        lat=latmag
        lon=lonmlt
+      
+      if (debug) then
+       write(stdout,*),'convec.f: cor_cnv 1st call:',
+     & ' call integ  lat,lon,dlat,dlon'
+     &, lat,lon,dlat,dlon
+      endif
+       
        call integ(lat,lon,dlat1,dlon1)
        c=b
        fc=fb
@@ -309,36 +317,46 @@ c        lon=datan2(sb,cb)*rad2deg
 12       continue
 999       continue
        cor_cnv=mod(b,deupi)
-       ca=dcos(cor_cnv)
-       sa=dsin(cor_cnv)
+       ca=cos(cor_cnv)
+       sa=sin(cor_cnv)
        dlon1=dlon*ca-dlat*sa
        dlat=dlon*sa+dlat*ca
        dlon=dlon1
        lat=latmag
        lon=lonmlt
+       
+      if (debug) then
+      call cpu_time(tic)
+      write(stdout,*),tic,' convec.f: cor_cnv 2nd call:',
+     & ' call integ  lat,lon,dlat,dlon'
+     &, lat,lon,dlat,dlon
+      endif
+      
        call integ(lat,lon,dlat,dlon)
        latmag=lat
        lonmlt=lon
 
        end function cor_cnv
 
+
        double precision function potar(iyd,tu,kp,lonmlt,latmag,
      &      dlat,dlon,dtheta,psi0)
-
+        include 'comm.f'
        implicit none
+       
+       integer,intent(in) :: iyd
+       real(dp),intent(in) :: tu,lonmlt,latmag,dlat,dlon,dtheta,psi0
+       real, intent(in) :: kp
+       real ddp
+       real(dp) ca,sa,dx,dy,x,y,lat,lon,psi
 
-       double precision tu
-       real kp,ddp
-       integer iyd
-       double precision ca,sa,dx,dy,dlon,dlat,dtheta,x,y,
-     & lat,lon,latmag,lonmlt,psi,psi0
-
-       ca=dcos(dtheta)
-       sa=dsin(dtheta)
+       ca=cos(dtheta)
+       sa=sin(dtheta)
        dx=dlon*ca-dlat*sa
        dy=dlon*sa+dlat*ca
        lat=latmag
        lon=lonmlt
+       
        call integ(lat,lon,dy,dx)
        call potentiel(iyd,tu,kp,lon,lat,x,y,psi,ddp)
        potar=psi-psi0

@@ -2,7 +2,8 @@ c
 c	Date: Mon, 6 Feb 1995 08:50:27 -0500
 c	From: hedin@grid.gsfc.nasa.gov (Alan Hedin)
 C-----------------------------------------------------------------------
-      SUBROUTINE GTD6(IYD,SEC,ALT,GLAT,GLONG,STL,F107A,F107,AP,MASS,D,T)
+      SUBROUTINE GTD6(IYD,SEC,ALT,GLAT,GLONG,STL,F107A,F107,AP,MASS,
+     &                                                              D,T)
 C        Neutral Atmosphere Empirical Model from the surface to lower
 C          exosphere  MSISE90 (JGR, 96, 1159-1172, 1991)
 C         A.E.Hedin 4/24/90;6/3/91(add SAVE)
@@ -77,7 +78,10 @@ C
       real,intent(out) :: D(8),T(2)
       real,intent(in) :: AP(7)
       real D6(8),T6(2)
-      DIMENSION ZN3(5),ZN2(4),SV(25)
+      real ZN3(5),ZN2(4)
+
+      real :: SV(25) = (/(1.,j=1,25)/)
+      
       COMMON/GTS3C/TLB,S,DB04,DB16,DB28,DB32,DB40,DB48,DB01,ZA,T0,Z0
      & ,G0,RL,DD,DB14,TR12
       COMMON/MESO6/TN1(5),TN2(4),TN3(5),TGN1(2),TGN2(2),TGN3(2)
@@ -95,7 +99,7 @@ C
       DATA MN3/5/,ZN3/32.5,20.,15.,10.,0./
       DATA MN2/4/,ZN2/72.5,55.,45.,32.5/
       DATA ZMIX/62.5/,ALAST/99999./,MSSL/-999/
-      DATA SV/25*1./
+      
 
 c
       IF(ISW.NE.64999) CALL TSELEC(SV)
@@ -1028,7 +1032,7 @@ C        UT,LONGITUDE MAGNETIC ACTIVITY
 C-----------------------------------------------------------------------
       SUBROUTINE TSELEC(SV)
       implicit none
-      real,intent(in) :: sv(1)
+      real,intent(in) :: sv(25)
 C        SET SWITCHES
 C        SW FOR MAIN TERMS, SWC FOR CROSS TERMS
       real SAV(25),SVV(1),sw(25),isw,swc(25)

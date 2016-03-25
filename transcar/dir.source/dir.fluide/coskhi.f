@@ -1,37 +1,41 @@
-        real function coskhi(lat,long,h,mois,jour,ioption)
+      real function coskhi(lat,long,h,month,day,ioption)
+        include 'comm.f'
+        
         implicit none
+        
+        include 'comm_sp.f'
+        
 c******  calcul de cos(ki) ****
 c**  lat latitude geographic **   degrees decimal
 c**  long longitude **  degrees decimal
 c**  h heure tu ** decimal hours
-c** jour ** day...
+c** day ** day...
 c**    ...of the month if ioption = 1
 c**    ...of the year if ioption = 2
-c** mois ** month integer
+c** month ** month integer
 c
-        integer,intent(in) :: mois,jour,ioption
+        integer,intent(in) :: month,day,ioption
         real,intent(in) :: lat, long,h
 
         real decli,pideg,dlat,hloc,temps,tloc,ki
         integer jj
 
-        real,parameter :: pi=3.141592654,deuxpi=6.283185308
         integer,parameter :: moi(12)=(/0,31,59,90,120,151,181,212,243,
      &    273, 304, 334/)
 
         common /decl/decli
 
-        pideg = pi/180.
-        dlat = lat * pideg
+        dlat = lat * deg2rad
         hloc = (h + mod(long+360.,360.)/15.)/24.
         if (ioption.eq.1) then
-            jj = jour + moi(mois)
+            jj = day + moi(month)
         else
-            jj = jour
+            jj = day
         endif
-        temps = ((jj - 172.625) + hloc)/365.25 * deuxpi
-        tloc = hloc  * deuxpi
-        decli = 23.45 * pideg * cos(temps)
+        
+        temps = ((jj - 172.625) + hloc)/365.25 * (2*pi)
+        tloc = hloc  * (2*pi)
+        decli = 23.45 * deg2rad * cos(temps)
         coskhi = sin (decli)*sin(dlat)
      &          - cos(decli)  *  cos(dlat) * cos(tloc)
         coskhi=min(coskhi,1.)

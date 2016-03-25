@@ -1,10 +1,13 @@
-       subroutine jour_mois(ian,ijour,imois)
-Cf2py intent(in) ian
-Cf2py intent(out) ijour
-Cf2py intent(out) imois
-Cf2py intent(out) iday
+       subroutine jour_mois(ian,
+     &                          ijour,imois)
+     
+       implicit none
+       
+       
+       integer, intent(in)  :: ian
+       integer, intent(out) :: ijour,imois, iday
 
-       integer m1(12),m2(12)
+       integer m1(12),m2(12),i,im,nan,njour
 
        data m1/31,59,90,120,151,181,212,243,273,304,334,365/
        data m2/31,60,91,121,152,182,213,244,274,305,335,366/

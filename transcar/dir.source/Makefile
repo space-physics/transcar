@@ -18,7 +18,9 @@ ifeq ($(fc),ifort)
 OPTIONS=-assume byterecl  -O2 -march=native #-warn all #for ifort
 else ifeq ($(fc),gfortran)
 # we use std=legacy because there are deleted features used
-OPTIONS=-frecord-marker=4 -O2 -march=native  -std=legacy #-fno-align-commons  #-pedantic #-Wall #for gfortran 
+OPTIONS=-frecord-marker=4  -O1 -march=native  -std=legacy
+#OPTIONS+= -fno-align-commons  #-pedantic #-Wall #for gfortran 
+OPTIONS+= -g -fbounds-check -fbacktrace
 else
 $(info you must specify your compiler with fc=mycompiler.  E.g. make fc=gfortran)
 endif

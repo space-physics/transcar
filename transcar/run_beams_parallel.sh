@@ -23,10 +23,10 @@ exedir=code/transcar/transcar
 
 flux0=70114000000.0
 
-hact=0   # 2 term all jobs on error now, 1 let existing jobs finish, 0 keep running/starting
+hact=2   # 2 term all jobs on error now, 1 let existing jobs finish, 0 keep running/starting
 
 #------- start code --------------
-[[ -d $RODIR ]] && \rm -r $RODIR  #cleanup local output
+[[ -d $RODIR ]] && \rm -rf $RODIR  #cleanup local output
 
 if [[ $localonly -eq 0 ]]; then
   remjp=$(IFS=,; echo "${remotes[*]}") #puts array into comma separated string for GNU parallel

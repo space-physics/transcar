@@ -1,4 +1,8 @@
         program transconvec_13
+        
+        include 'comm.f'
+        include 'comm_sp.f'
+        
 !
 !     Ce programme demarre le couple de programmes de transports.
 !     Anciennement : eiscat.f
@@ -1082,22 +1086,22 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
         if (itube.ge.0) then
 
       tempstube=tempsini+itube*step         ! temps de resolution du tube
-      do while (tempstube.ge.86400.d0)        !
-        tempstube=tempstube-86400.d0            ! on ramene tempstube entre 0 et 24 heures
+      do while (tempstube.ge. 86400._dp)        !
+        tempstube=tempstube-86400._dp            ! on ramene tempstube entre 0 et 24 heures
         iydtube=iydtube+1                !
       enddo                        !
 
       tempsfin=tempstube+tempsconv             ! temps desire en fin de convection (version mesure radar)
       iydfin=iydtube
-      do while (tempsfin.ge.86400.d0)            !
-        tempsfin=tempsfin-86400.d0            ! on ramene tempsfin entre 0 et 24 heures
+      do while (tempsfin.ge. 86400._dp)            !
+        tempsfin=tempsfin-86400._dp            ! on ramene tempsfin entre 0 et 24 heures
         iydfin=iydfin+1                !
       enddo                        !
 
       tempsdeb=tempstube-tempsconv_1        ! temps desire en debut de convection (version mesure radar)
       iyddeb=iydtube
-      do while (tempsdeb.lt.0.d0)            !
-        tempsdeb=tempsdeb+86400.d0            ! on ramene tempsdeb entre 0 et 24 heures
+      do while (tempsdeb.lt. 0._dp)            !
+        tempsdeb=tempsdeb+86400._dp            ! on ramene tempsdeb entre 0 et 24 heures
         iyddeb=iyddeb-1                !
       enddo                        !
 
@@ -1126,7 +1130,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 !------------
 ! initialisation du temps et ouverture du fichier "initialization time and opening the file"
-      print*,"initialization time and opening the file"
+      if (debug) write(stdout,*),"initialization time, opening the file"
 
       tempsint=0.d0
       tempsort=0.d0
@@ -1137,7 +1141,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
     
       stl=mod(temps/3600.+longeo/15.,24.d0)
       iannee=iyd/1000
-      call jour_mois(iyd,ijour,imois)
+      call jour_mois(iyd,
+     &                   ijour,imois)
       iheure=int(temps/3600.)
       iminute=int(temps/60.-iheure*60.)
       seconde=mod(temps,60.d0)
@@ -1150,16 +1155,24 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
       kp=ap2kp(ap(2))
       ikp=kp*3.
 
-      print*,'call convec'
+      if (debug) then
+          call cpu_time(tic)
+          write(stdout,*),tic,'call convec'
+      endif
 
       call convec(iyd,temps,kp,dlongeo,dlatgeo,
      &              dlonmag,dlatmag,dlonref,dx0,pot,flgpot)
           longeo=dlongeo
           latgeo=dlatgeo
-      print*,'done convec, longeo,latgeo',longeo,latgeo
+      
+      if (debug) then
+      call cpu_time(tic)
+      write(stdout,*),tic,'transconvec: done convec, entering coskhi'
+     & !,' longeo,latgeo',longeo,latgeo
+      endif
 
-      chi=acos(coskhi(latgeo,longeo,temps/3600.,iannee,ijour,i1))
-      chideg=chi*180./3.14159265
+      chi=acos(coskhi(latgeo,longeo,temps/3600.,imois,ijour,i1))
+      chideg=chi*rad2deg
 
       sinI=sin(dipangle*deg2rad)
       cosI=cos(dipangle*deg2rad)
@@ -1205,8 +1218,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 !
 ! definitions des parametres initiaux et sauvegarde initiale "definitions of initial parameters and initial backup"
-!
-        print*,"definitions of initial parameters and initial backup"
+       if (debug) then
+       write(stdout,*),"definitions of initial parameters",
+     & " and initial backup"
+       endif
+       
         flagatmos=.true.
 
         do i=1,nx
@@ -1223,12 +1239,16 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
         if (isnant(nenew,nx)
      &  .or.isnant(Tenew,nx)
      &  .or.isnant(T1new,nx)) then
-          print*,'probleme avant appel a atmos'
+          write(stderr,*),'problem before calling atmos'
           goto 246
         endif
     
-        print*,'transconvec: call atmos  latgeo=',latgeo
-        call atmos(iyd,sngl(temps),stl,alt,latgeo,longeo,jpreci,f107,
+        if (debug) then
+         call cpu_time(tic)
+         write(stdout,*),tic,' transconvec: call atmos'!  latgeo=',latgeo
+        endif
+        
+        call atmos(iyd,real(temps,sp),stl,alt,latgeo,longeo,jpreci,f107,
      &           ap,Nenew,Tenew,T1new,nx,kiappel,file_cond)
 
         nrectemps=1
@@ -1350,7 +1370,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
         enddo
         dt_max=5.*dt_max/R0
     
-       print*,'call pas_de_temps'
+       if (debug)  write(stdout,*),'call pas_de_temps'
        call pas_de_temps(iyd,temps,dt,postint,dto,postinto)
        tempsint=postint
        tempsort=sortie
@@ -1513,9 +1533,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
           endif
 
           !Loop over altitudes of interest
-          !inc=floor(dble(indlim)/10)
+          !inc=floor(real(indlim,dp)/10)
        inc=1
-          write(44,*) temps,ceiling(dble(indlim)/inc),nen
+          write(44,*) temps,ceiling(real(indlim,dp)/inc),nen
           do ien=1,nen
             write(44,*) e(ien)
           enddo
@@ -1667,10 +1687,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
         if (isnant(nenew,nx)
      &  .or.isnant(Tenew,nx)
      &  .or.isnant(T1new,nx)) then
-          print*,'probleme avant appel a atmos'
+          write(stderr,*),'problem before calling atmos'
           goto 246
         endif
-         call atmos(iyd,sngl(temps),stl,alt,latgeo,longeo,jpreci,f107,
+         call atmos(iyd,real(temps,sp),stl,alt,latgeo,longeo,jpreci,f107,
      &            ap,Nenew,Tenew,T1new,nx,kiappel,file_cond)
 
         if (vparaB.ne.0.) vtrans=vparaB*100./Ci0
@@ -2023,7 +2043,8 @@ CCCCC                                                                           
          Nnonew(np)=min(1.,Nnonew(nx)/Nnonew(nx-1))*Nnonew(nx)
 
           if (isnant(Nnonew,nx)) then
-            print*,'probleme lors du calcul de Nnonew'
+            call cpu_time(tic)
+        write(stderr,*),tic,'problem when calculating Tenew in loop 1'
             goto 246
           endif
 
@@ -2656,7 +2677,10 @@ CCCCC                                                                           
 ![[[    H+ momentum equation resolution
 
       call velocity(Velim,Ipos1,Iposnp,deltat_2)
-      print*,'H+ momentum equation resolution'
+      
+      call cpu_time(tic)
+      write(stdout,*),tic,'H+ momentum equation resolution'
+      
       do i=1,nx
 
           Tr1=T_0*T2new(i)
@@ -2764,9 +2788,12 @@ CCCCC                                                                           
       call sources(Ipos1,Iposn,deltat_2,7,zero,D7,0.,0.)
           lbc=1.
           rbc=1.
-      print*,'call lcpfct'
+          
+      call cpu_time(tic)
+      write(stdout,*),tic,'call lcpfct'
       call lcpfct(U2old,U2new,Ipos1,Iposn,
      &              lbc,0.,0.,U2new(np),.false.,0)
+     
           do i=1,nx
             dexpnu=D7(i)*deltat_2
             if (abs(dexpnu).lt.1.e-7) then
@@ -2782,7 +2809,8 @@ CCCCC                                                                           
           enddo
 
           if (isnant(U2new,nx)) then
-            print*,'probleme lors du calcul de U2new dans la boucle 1'
+            call cpu_time(tic)
+            write(stderr,*),tic,'problem calc U2new loop  1'
             goto 246
           endif
 
@@ -2790,8 +2818,11 @@ CCCCC                                                                           
 !]]]
 
 ![[[    O+ momentum equation resolution
+        call cpu_time(tic)
+      write(stdout,*),tic,'O+ momentum equation resolution'
 
       call velocity(Veljm,Ipos1,Iposnp,deltat_2)
+      
     
       do i=1,nx
 
@@ -2884,6 +2915,10 @@ CCCCC                                                                           
       call sources(Ipos1,Iposn,deltat_2,7,zero,D7,0.,0.)
           lbc=1.
           rbc=1.
+      
+      call cpu_time(tic)
+      write(stdout,*),tic,'H+ momentum LCPFCT'
+          
       call lcpfct(U1old,U1new,Ipos1,Iposn,
      &              lbc,0.,0.,U1new(np),.false.,0)
           do i=1,nx
@@ -2903,7 +2938,8 @@ CCCCC                                                                           
 !      U1new(nx)=max(U1new(nx),0.)
 
           if (isnant(U1new,nx)) then
-            print*,'probleme lors du calcul de U1new dans la boucle 1'
+          call cpu_time(tic)
+         write(stderr,*),tic,'problem calc U1new loop 1'
             goto 246
           endif
 
@@ -2913,7 +2949,8 @@ CCCCC                                                                           
 !]]]
 
 ![[[    heavy ions momentum equation resolution
-
+      call cpu_time(tic)
+      write(stdout,*),tic,'Heavy Ions equation resolution'
       call velocity(Velmm,Ipos1,Iposnp,deltat_2)
     
       do i=1,nx
@@ -3081,7 +3118,8 @@ CCCCC                                                                           
           enddo
 
           if (isnant(Umnew,nx)) then
-            print*,'probleme lors du calcul de Umnew dans la boucle 1'
+          call cpu_time(tic)
+       write(stderr,*),tic,'Heavy Ions problem calc  Umnew loop 1'
             goto 246
           endif
 
@@ -3091,9 +3129,10 @@ CCCCC                                                                           
 !]]]
 
 ![[[    N+ momentum equation resolution
+      call cpu_time(tic)
+      write(stdout,*),tic,'N+ momentum equation resolution'
     
       call velocity(Velnm,Ipos1,Iposnp,deltat_2)
-!      print*,'N+ momentum equation resolution'
       do i=1,nx
 
           nunH (i)=0.145e-9*Nh(i)                               *t0
@@ -3204,7 +3243,8 @@ CCCCC                                                                           
 !    enddo
 
           if (isnant(U3new,nx)) then
-            print*,'problem when calculating U3new in loop 1'
+          call cpu_time(tic)
+       write(stderr,*),tic,'N+ mom. problem calc U3new in loop 1'
             goto 246
           endif
 
@@ -3223,7 +3263,7 @@ CCCCC                                                                           
      &            -JJ(i)/N_0-0.*Jes(i)/N_0)
      &               /Nenew(i)/Ce0
 
-          enddo
+      enddo
 
 
 
@@ -3233,7 +3273,8 @@ CCCCC                                                                           
 
 
 ![[[    H+ heat flow equation resolution
-!      print*,'H+ heat flow equation resolution'
+      call cpu_time(tic)
+      write(stdout,*),tic,'H+ heatflow equation resolution'
       do i=1,nx
 
         C2a(i)=-2.2*q2new(i)
@@ -3379,7 +3420,8 @@ CCCCC                                                                           
           q2new(np)=q2new(nx)
 
           if (isnant(q2new,nx)) then
-            print*,'probleme lors du calcul de q2new dans la boucle 1'
+          call cpu_time(tic)
+      write(stderr,*),tic,'H+ heatflow problem calc q2new loop 1'
             goto 246
           endif
 
@@ -3390,7 +3432,8 @@ CCCCC                                                                           
       call velocity(Veljq,Ipos1,Iposnp,deltat_2)
 
 ![[[    O+ heat flow equation resolution
-!      print*,'O+ heat flow equation resolution'
+       call cpu_time(tic)
+       write(stdout,*),tic,'O+ heat flow equation resolution'
       do i=1,nx
 
         C2a(i)=-2.2*Cji*q1new(i)
@@ -3511,13 +3554,15 @@ CCCCC                                                                           
           q1new(np)=q1new(nx)
 
           if (isnant(q1new,nx)) then
-            print*,'problem when calculating q1new in loop 1'
+          call cpu_time(tic)
+      write(stderr,*),tic,'L3557: problem calc q1new in loop 1'
             goto 246
           endif
 
 
 !]]]
-!      print*,'call velocity'
+       call cpu_time(tic)
+       write(stdout,*),tic,'N+ heat flow'
       call velocity(Velnq,Ipos1,Iposnp,deltat_2)
 
 ![[[    N+ heat flow equation resolution
@@ -3650,7 +3695,8 @@ CCCCC                                                                           
     
 
 ![[[    Electron energy and heat flow equation resolution (1)
-!      print*,'Electron energy and heat flow equation resolution (1)'
+      call cpu_time(tic)
+      write(stdout,*),tic,'e- energy & heat flow eqn resolution (1)'
     
       do i=1,nx
 
@@ -3902,7 +3948,8 @@ CCCCC                                                                           
           qenew(np)=qenew(nx)
 
           if (isnant(qenew,nx)) then
-            print*,'probleme lors du calcul de qenew dans la boucle 1'
+            call cpu_time(tic)
+        write(stderr,*),tic,'problem when calculating qenew in loop 1'
             goto 246
           endif
 
@@ -3939,7 +3986,8 @@ CCCCC                                                                           
           Tenew(np)=2.*Tenew(nx)-Tenew(nx-1)
 
           if (isnant(Tenew,nx)) then
-            print*,'probleme lors du calcul de Tenew dans la boucle 1'
+            call cpu_time(tic)
+        write(stderr,*),tic,'problem when calculating Tenew in loop 1'
             goto 246
           endif
 
@@ -3949,11 +3997,13 @@ CCCCC                                                                           
 
 
           if (isnant(qenew,nx)) then
-            print*,'probleme dans stabenerg avec qe dans la boucle 1'
+            call cpu_time(tic)
+        write(stderr,*),tic,'problem in stabenerg with qe in loop 1'
             goto 246
           endif
           if (isnant(Tenew,nx)) then
-            print*,'probleme dans stabenerg avec Te dans la boucle 1'
+            call cpu_time(tic)
+        write(stderr,*),tic,'problem in stabenerg with Te in loop 1'
             goto 246
           endif
 
@@ -4041,7 +4091,8 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
           Tenew(np)=2.*Tenew(nx)-Tenew(nx-1)
 
           if (isnant(Tenew,nx)) then
-            print*,'probleme lors du calcul de Tenew dans la boucle 1'
+            call cpu_time(tic)
+      write(stderr,*),tic,'L4076: problem when calc Tenew in loop 1'
             goto 246
           endif
 
@@ -4051,7 +4102,8 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
 
 
           if (isnant(qenew,nx)) then
-            print*,'probleme dans stabenerg avec qe dans la boucle 1'
+            call cpu_time(tic)
+         write(stderr,*),tic,'problem in stabenerg with qe in loop 1'
             goto 246
           endif
           if (isnant(Tenew,nx)) then
@@ -6873,7 +6925,8 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3q,0.,0.)
           qenew(np)=qenew(nx)
 
           if (isnant(qenew,nx)) then
-            print*,'probleme lors du calcul de qenew dans la boucle 1'
+          call cpu_time(tic)
+        write(stderr,*),tic,'L6910: problem calc  qenew in loop 1'
             goto 246
           endif
 
@@ -6910,7 +6963,8 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
           Tenew(np)=2.*Tenew(nx)-Tenew(nx-1)
 
           if (isnant(Tenew,nx)) then
-            print*,'probleme lors du calcul de Tenew dans la boucle 1'
+            call cpu_time(tic)
+        write(stderr,*),tic,'L6966: problem when calc Tenew in loop 1'
             goto 246
           endif
 
@@ -6920,7 +6974,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
 
 
           if (isnant(qenew,nx)) then
-            print*,'probleme dans stabenerg avec qe dans la boucle 1'
+            print*,'problem in stabenerg with qe in loop 1'
             goto 246
           endif
           if (isnant(Tenew,nx)) then
@@ -6978,7 +7032,8 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3q,0.,0.)
           qenew(np)=qenew(nx)
 
           if (isnant(qenew,nx)) then
-            print*,'probleme lors du calcul de qenew dans la boucle 1'
+            call cpu_time(tic)
+        write(stderr,*),tic,'L7014: problem when calc qenew in loop 1'
             goto 246
           endif
 
@@ -7012,7 +7067,8 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
           Tenew(np)=2.*Tenew(nx)-Tenew(nx-1)
 
           if (isnant(Tenew,nx)) then
-            print*,'probleme lors du calcul de Tenew dans la boucle 1'
+            call cpu_time(tic)
+        write(stderr,*),tic,'L7049: problem when calc Tenew in loop 1'
             goto 246
           endif
 
@@ -7466,7 +7522,8 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
           enddo
 
           if (isnant(T1tnew,nx)) then
-            print*,'probleme lors du calcul de T1tnew dans la boucle 2'
+            call cpu_time(tic)
+        write(stderr,*),tic,'problem when calculating T1tnew in loop 2'
             goto 246
           endif
 
@@ -7621,7 +7678,8 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
 c    flag=.false.
 
           if (isnant(Tmpnew,nx)) then
-            print*,'probleme lors du calcul de Tmpnew dans la boucle 2'
+            call cpu_time(tic)
+        write(stderr,*),tic,'problem when calculating Tmpnew in loop 2'
             goto 246
           endif
 
@@ -7748,7 +7806,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
           enddo
 
           if (isnant(Tmtnew,nx)) then
-            print*,'probleme lors du calcul de Tmtnew dans la boucle 2'
+            print*,'problem calc Tmtnew loop 2'
             goto 246
           endif
 
@@ -7850,7 +7908,8 @@ c            T3pnew(i)=T1pnew(i)
       enddo
 
           if (isnant(T3pnew,nx)) then
-            print*,'probleme lors du calcul de T3pnew dans la boucle 2'
+            call cpu_time(tic)
+        write(stderr,*),tic,'problem when calculating T3pnew in loop 2'
             goto 246
           endif
 
@@ -7947,7 +8006,8 @@ c            T3tnew(i)=T1tnew(i)
       enddo
 
           if (isnant(T3tnew,nx)) then
-            print*,'probleme lors du calcul de T3tnew dans la boucle 2'
+            call cpu_time(tic)
+        write(stderr,*),tic,'problem when calculating T3tnew in loop 2'
             goto 246
           endif
 456    continue
@@ -8076,7 +8136,7 @@ C]]]
 
 C    on a debranche ici a cause d'un probleme de NaN
 246    continue
-        print*,'on a debranche ici a cause d''un probleme de NaN'
+        print*,'something caused a NaN'
         print*,'pas de temps et params de norm',dt,deltat,R0,Ci0
         close(unfic_out_transcar)
         close(unfic_in_transcar)
@@ -8181,8 +8241,8 @@ C    on a debranche ici a cause d'un probleme de NaN
         write(fid_NaN,rec=1)(buffer(i),i=1,longbuf)
         close(fid_NaN)
         stop 'NaN detected'
-        end
-C-----------------------------------------------------------------------
+        end program 
+!-----------------------------------------------------------------------
         pure real function signe(x)
         implicit none
         real,intent(in) :: x
@@ -8194,7 +8254,7 @@ C-----------------------------------------------------------------------
         endif
 
         end function signe
-C-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
       ! split a string into 2 either side of a delimiter token
       character(len=80) function split(instr,  delm)
         implicit none

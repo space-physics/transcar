@@ -65,16 +65,20 @@ c     to perform special grid operations, or compute conservation sums.
 c
 C-----------------------------------------------------------------------
 
-          Implicit  NONE
-          Integer   NPT, I1, IN, I1P, INP, I,mode
-          Real      BIGNUM, SRHO1, VRHO1, SRHON, VRHON, RHO1M, RHONP
+          Implicit NONE
+          Integer,Intent(IN) :: I1, IN
+          Real, Intent(IN) ::  SRHO1,VRHO1, SRHON, VRHON
+
+          Integer   I1P, INP, I,mode
+          Real      RHO1M, RHONP
           Real      RHOT1M, RHOTNP, RHOTD1M, RHOTDNP
-          Logical   PBC
-          Parameter ( NPT = 500 )
-          Parameter ( BIGNUM = 1.0E38 )
+          Logical,Intent(IN) ::  PBC
+          Integer,Parameter :: NPT = 500
+          Real,Parameter :: BIGNUM = Huge(1.)
 c     BIGNUM = Machine Dependent Largest Number - Set By The User!!!!
 
-          Real     RHOO(NPT),     RHON(NPT)
+          Real, Intent(IN)  ::     RHOO(NPT)
+          Real, Intent(OUT) ::     RHON(NPT)
 
 c     /FCT_SCRH/ Holds scratch arrays for use by LCPFCT and CNVFCT
           Real     SCRH(NPT),     SCR1(NPT),     DIFF(NPT)
@@ -111,11 +115,11 @@ C-----------------------------------------------------------------------
 c     Calculate the convective and diffusive fluxes . . .
 C-----------------------------------------------------------------------
           If ( PBC ) Then
-            RHO1M = RHOO(IN)
-            RHONP = RHOO(I1)
+             RHO1M = RHOO(IN)
+             RHONP = RHOO(I1)
           Else
-            RHO1M = SRHO1*RHOO(I1) + VRHO1
-            RHONP = SRHON*RHOO(IN) + VRHON
+             RHO1M = SRHO1*RHOO(I1) + VRHO1
+             RHONP = SRHON*RHOO(IN) + VRHON
           End If
 
           DIFF(I1) = NULH(I1) * ( RHOO(I1) - RHO1M )
@@ -143,7 +147,7 @@ C-----------------------------------------------------------------------
 c     Calculate LORHOT, the transported mass elements, and LNRHOT, the
 c     transported & diffused mass elements  . . .
 C-----------------------------------------------------------------------
-          Do 2 I = I1, IN
+          Do  I = I1, IN
              LORHOT(I) = LO(I)*RHOO(I) + SOURCE(I) + (FLXH(I)-FLXH(I+1))
              LNRHOT(I) = LORHOT(I) + (DIFF(I+1) - DIFF(I))
              RHOT(I)  = LORHOT(I)*RLN(I)
@@ -153,8 +157,8 @@ C-----------------------------------------------------------------------
      &source(i)*RLN(I)
 
              endif
-    2        RHOTD(I) = LNRHOT(I)*RLN(I)
-
+            RHOTD(I) = LNRHOT(I)*RLN(I)
+         End do
 c     Evaluate the boundary conditions for RHOT and RHOTD . . .
 C-----------------------------------------------------------------------
           If ( PBC ) Then
@@ -177,22 +181,22 @@ C-----------------------------------------------------------------------
           FABS(I1) = ABS ( FLXH(I1) )
           FSGN(I1) = SIGN ( DIFF1, DIFF(I1) )
 
-          Do 3 I = I1P, IN
+          Do I = I1P, IN
              FLXH(I) = MULH(I) * ( RHOT(I) - RHOT(I-1) )
-    3        DIFF(I) = RHOTD(I) - RHOTD(I-1)
-
+             DIFF(I) = RHOTD(I) - RHOTD(I-1)
+          End do
           FLXH(INP) = MULH(INP) * ( RHOTNP - RHOT(IN) )
           DIFF(INP) = RHOTDNP - RHOTD(IN)
 
 c     Calculate the magnitude & sign of the antidiffusive flux followed
 c     by the flux-limiting changes on the right and left . . .
 C-----------------------------------------------------------------------
-          Do 4 I = I1, IN
+          Do I = I1, IN
              FABS(I+1) = ABS ( FLXH(I+1) )
              FSGN(I+1) = SIGN ( DIFF1, DIFF(I+1) )
              TERM(I+1) = FSGN(I+1)*LN(I)*DIFF(I)
-    4        TERP(I) = FSGN(I)*LN(I)*DIFF(I+1)
-
+             TERP(I) = FSGN(I)*LN(I)*DIFF(I+1)
+          End do
           If ( PBC ) Then
              TERP(INP) = TERP(I1)
              TERM(I1) = TERM(INP)
@@ -207,7 +211,7 @@ C-----------------------------------------------------------------------
           FLXH(I1) = FSGN(I1) * max ( 0.0,
      &                  min ( TERM(I1), FABS(I1), TERP(I1) ) )
 
-          Do 5 I = I1, IN
+          Do I = I1, IN
              FLXH(I+1) = FSGN(I+1) * max ( 0.0,
      &                min ( TERM(I+1), FABS(I+1), TERP(I+1) ) )
              RHON(I) = RLN(I) * ( LNRHOT(I)
@@ -217,16 +221,14 @@ C-----------------------------------------------------------------------
              if(flag)print*,'FC-',i,rhon(i),RLN(I)*LNrhot(i),
      &(FLXH(I)-FLXH(I+1))
              endif
-    5        SOURCE(I) = 0.0
+            SOURCE(I) = 0.0
+         End do
 
-      Return
-      End
+      End Subroutine LCPFCT
 
 C=======================================================================
 
       Subroutine MAKEGRID ( RADHO, RADHN, I1, INP, ALPHA )
-
-Cf2py intent(in) RADHO, RADHN, I1, ALPHA
 
 C-----------------------------------------------------------------------
 c
@@ -249,11 +251,12 @@ c                                 = 4 general geometry (user supplied) I
 c
 C-----------------------------------------------------------------------
 
-          Implicit  NONE
-          Integer   NPT, I1, I1P, I, IN, INP, ALPHA
-          Parameter ( NPT = 500 )
+          Implicit None
+          Integer   I1P, I, IN
+          Integer,Parameter :: NPT = 500
 
-          Real     RADHO(INP), RADHN(INP), PI, FTPI
+          Integer, Intent(IN)  ::     I1, INP, ALPHA
+          Real, Intent(IN)     ::     RADHO(INP), RADHN(INP)
 
 c     /FCT_SCRH/ Holds scratch arrays for use by LCPFCT and CNVFCT
           Real     SCRH(NPT),     SCR1(NPT),     DIFF(NPT)
@@ -269,7 +272,7 @@ c     /FCT_GRID/ Holds geometry, grid, area and volume information
           Real     ROH(NPT),      RNH(NPT),      ADUGTH(NPT)
           Common  /FCT_GRID/ LO, LN, AH, RLN, LH, RLH, ROH, RNH, ADUGTH
 
-          DATA     PI, FTPI /3.1415927, 4.1887902/
+          real,parameter ::     PI=4.*atan(1.), FTPI =4.1887902
 
 C-----------------------------------------------------------------------
           I1P = I1 + 1
@@ -278,71 +281,76 @@ C-----------------------------------------------------------------------
 c  Store the old and new grid interface locations from input and then
 c  update the new and average interface and grid coefficients . . .
 C-----------------------------------------------------------------------
-          Do 1 I = I1, INP
+          Do  I = I1, INP
              ROH(I) = RADHO(I)
-    1        RNH(I) = RADHN(I)
-
+             RNH(I) = RADHN(I)
+          End do
 c  Select the choice of coordinate systems . . .
 C-----------------------------------------------------------------------
-          Go To (100, 200, 300, 400), ALPHA
-
+          select case(ALPHA)
+          case(1)
 c  Cartesian coordinates . . .
 C-----------------------------------------------------------------------
- 100      AH(INP) = 1.0
-          Do 101 I = I1, IN
+          AH(INP) = 1.0
+          Do I = I1, IN
              AH(I) = 1.0
              LO(I) = ROH(I+1) - ROH(I)
-  101        LN(I) = RNH(I+1) - RNH(I)
-          Go To 500
+             LN(I) = RNH(I+1) - RNH(I)
+          End do
 
+          case(2)
 c  Cylindrical Coordinates: RADIAL . . .
 C-----------------------------------------------------------------------
-  200     DIFF(I1) = RNH(I1)*RNH(I1)
+          DIFF(I1) = RNH(I1)*RNH(I1)
           SCRH(I1) = ROH(I1)*ROH(I1)
           AH(INP) = PI*(ROH(INP) + RNH(INP))
-          DO 201 I = I1, IN
+          DO I = I1, IN
              AH(I) = PI*(ROH(I) + RNH(I))
              SCRH(I+1) = ROH(I+1)*ROH(I+1)
              LO(I) = PI*(SCRH(I+1) - SCRH(I))
              DIFF(I+1) = RNH(I+1)*RNH(I+1)
-  201        LN(I) = PI*(DIFF(I+1) - DIFF(I))
-          Go To 500
-
+             LN(I) = PI*(DIFF(I+1) - DIFF(I))
+          End do
+          
+          case(3)
 c  Spherical Coordinates: RADIAL . . .
 C-----------------------------------------------------------------------
-  300     SCR1(I1) = ROH(I1)*ROH(I1)*ROH(I1)
+          SCR1(I1) = ROH(I1)*ROH(I1)*ROH(I1)
           DIFF(I1) = RNH(I1)*RNH(I1)*RNH(I1)
           SCRH(INP) = (ROH(INP) + RNH(INP))*ROH(INP)
           AH(INP) = FTPI*(SCRH(INP) + RNH(INP)*RNH(INP))
-          DO 301 I = I1, IN
+          DO I = I1, IN
              SCR1(I+1) = ROH(I+1)*ROH(I+1)*ROH(I+1)
              DIFF(I+1) = RNH(I+1)*RNH(I+1)*RNH(I+1)
              SCRH(I) = (ROH(I) + RNH(I))*ROH(I)
              AH(I) = FTPI*(SCRH(I) + RNH(I)*RNH(I))
              LO(I) = FTPI*(SCR1(I+1) - SCR1(I))
-  301        LN(I) = FTPI*(DIFF(I+1) - DIFF(I))
-          Go To 500
-
+             LN(I) = FTPI*(DIFF(I+1) - DIFF(I))
+          End do
+            
+          case(4)  
 c  Special Coordinates: Areas and Volumes are User Supplied . . .
 C-----------------------------------------------------------------------
-  400     Continue
+          end select
 
 c  Additional system independent geometric variables . . .
 C-----------------------------------------------------------------------
-  500     Do 501 I = I1, IN
-  501        RLN(I) = 1.0/LN(I)
+          Do I = I1, IN
+            RLN(I) = 1.0/LN(I)
+          End do
           LH(I1)  = LN(I1)
           RLH(I1) = RLN(I1)
-          Do 502 I = I1P, IN
+          Do I = I1P, IN
              LH(I) =  0.5*(LN(I) + LN(I-1))
-  502        RLH(I) = 0.5*(RLN(I) + RLN(I-1))
+             RLH(I) = 0.5*(RLN(I) + RLN(I-1))
+          End do
           LH(INP)  = LN(IN)
           RLH(INP) = RLN(IN)
-          Do 503 I = I1, INP
-  503        ADUGTH(I) = AH(I)*(RNH(I) - ROH(I))
+          Do I = I1, INP
+             ADUGTH(I) = AH(I)*(RNH(I) - ROH(I))
+          End do
 
-      Return
-      End
+      End Subroutine MAKEGRID
 
 C=======================================================================
 
@@ -364,8 +372,8 @@ c
 C-----------------------------------------------------------------------
 
           Implicit NONE
-          Integer  NPT, I1, I1P, I, IN, INP
-          Parameter ( NPT = 500 )
+          Integer  I1, I1P, I, IN, INP
+          Integer,Parameter :: NPT = 500
 
           Real     UH(INP), DT, RDT, DTH, DT2, DT4, ONE3RD, ONE6TH
 
@@ -408,7 +416,7 @@ C-----------------------------------------------------------------------
           DTH = 0.5*DT
           ONE6TH = 1.0/6.0
           ONE3RD = 1.0/3.0
-          Do 1 I = I1, INP
+          Do I = I1, INP
           if (flag) print*,'VEL-',i,uh(i)
              HADUDTH(I) = DT*AH(I)*UH(I) - ADUGTH(I)
              EPSH(I) = HADUDTH(I)*RLH(I)
@@ -420,8 +428,8 @@ C-----------------------------------------------------------------------
              MULH(I) =  0.25 - 0.5*NULH(I)
              NULH(I) = LH(I)*(NULH(I) + SCRH(I))
              MULH(I) = LH(I)*(MULH(I) + SCRH(I))
-    1        DIFF(I) = UH(I) - RDT*(RNH(I) - ROH(I))
-
+             DIFF(I) = UH(I) - RDT*(RNH(I) - ROH(I))
+        End do
 c     Now calculate VDTODR for CNVFCT . . .
 C-----------------------------------------------------------------------
           DT2 = 2.0*DT
@@ -429,15 +437,15 @@ C-----------------------------------------------------------------------
           VDTODR(I1) = DT2*DIFF(I1)/(RNH(I1P)-RNH(I1) +
      &                               ROH(I1P)-ROH(I1))
 
-          Do 2 I = I1P, IN
-    2        VDTODR(I) = DT4*DIFF(I)/(RNH(I+1)-RNH(I-1) +
+          Do I = I1P, IN
+            VDTODR(I) = DT4*DIFF(I)/(RNH(I+1)-RNH(I-1) +
      &                                ROH(I+1)-ROH(I-1))
-
+          End do
           VDTODR(INP) = DT2*DIFF(INP)/(RNH(INP)-RNH(IN) +
      &                                 ROH(INP)-ROH(IN))
 
-       Return
-       End
+
+       End Subroutine VELOCITY
 
 C=======================================================================
 
@@ -465,15 +473,15 @@ c
 C-----------------------------------------------------------------------
 
           Implicit NONE
-          Integer  NPT, NINDMAX, MODE, IS, I, I1, IN, I1P, INP
-          Parameter ( NPT = 500, NINDMAX = 150 )
+          Integer  MODE, IS, I, I1, IN, I1P, INP
+          Integer,Parameter :: NPT = 500, NINDMAX = 150
 
           Real     C(NPT), D(NPT), DT, DTH, DTQ, D1, DN
 
 c     /FCT_NDEX/ Holds a scalar list of special cell information . . .
           Real     SCALARS(NINDMAX)
-          Integer  INDEX(NINDMAX), NIND
-          Common  /FCT_NDEX/ NIND, INDEX, SCALARS
+          Integer  INDX(NINDMAX), NIND
+          Common  /FCT_NDEX/ NIND, INDX, SCALARS
 
 c     /FCT_SCRH/ Holds scratch arrays for use by LCPFCT and CNVFCT
           Real     SCRH(NPT),     SCR1(NPT),     DIFF(NPT)
@@ -501,90 +509,98 @@ C-----------------------------------------------------------------------
          INP = IN + 1
          DTH = 0.5*DT
          DTQ = 0.25*DT
-         Go To  ( 101, 202, 303, 404, 505, 606, 707 ), MODE
-
+         select case(MODE)
+         case(1)
 c  + DIV(D) is computed conservatively and added to SOURCE . . .
 C-----------------------------------------------------------------------
   101    SCRH(I1) = DT*AH(I1)*D1
          SCRH(INP) = DT*AH(INP)*DN
-         Do 1 I = IN, I1P, -1
+         Do I = IN, I1P, -1
             if (flag) then
              print*,'1-',i,SCRH(I+1) - SCRH(I),
      &DTH*AH(I)*(D(I) + D(I-1)),SOURCE(I)
             endif
             SCRH(I) = DTH*AH(I)*(D(I) + D(I-1))
-    1       SOURCE(I) = SOURCE(I) + (SCRH(I+1) - SCRH(I))
+            SOURCE(I) = SOURCE(I) + (SCRH(I+1) - SCRH(I))
+         End do
          SOURCE(I1) = SOURCE(I1) + (SCRH(I1P) - SCRH(I1))
       Return
 
+         case(2)
 c  + C*GRAD(D) is computed efficiently and added to the SOURCE . . .
 C-----------------------------------------------------------------------
   202    SCRH(I1) = DTH*D1
          SCRH(INP) = DTH*DN
-         Do 2 I = IN, I1P, -1
+         Do I = IN, I1P, -1
             SCRH(I) = DTQ*(D(I)+D(I-1))
             DIFF(I) = SCRH(I+1) - SCRH(I)
             if (flag) then
              print*,'2-',i,C(I)*(AH(I+1)+AH(I))*DIFF(I),
      &DIFF(I),SOURCE(I)
             endif
-    2       SOURCE(I) = SOURCE(I)
+           SOURCE(I) = SOURCE(I)
      &                + C(I)*(AH(I+1)+AH(I))*DIFF(I)
+         End do
          SOURCE(I1) = SOURCE(I1) + C(I1)*(AH(I1P)+AH(I1))*
      &                 (SCRH(I1P)-SCRH(I1))
       Return
 
+         case(3)
 c  + D is added to SOURCE in an explicit formulation . . .
 C-----------------------------------------------------------------------
-  303    Do 3 I = I1, IN
+  303    Do I = I1, IN
             if (flag) then
              print*,'3-',i,DT*LO(I)*D(I),SOURCE(I)
             endif
-C           SOURCE(I) = SOURCE(I) + DT*LO(I)*D(I)
-   3   continue
+!           SOURCE(I) = SOURCE(I) + DT*LO(I)*D(I)
+         End do
       Return
 
+         case(4)
 c  + DIV(D) is computed conservatively from interface data . . .
 C-----------------------------------------------------------------------
   404    SCRH(INP) = DT*AH(INP)*DN
          SCRH( I1) = DT*AH( I1)*D1
-         Do 4 I = IN, I1P, -1
+         Do I = IN, I1P, -1
             SCRH(I)   = DT*AH(I)*D(I)
-    4       SOURCE(I) = SOURCE(I)+SCRH(I+1)-SCRH(I)
+            SOURCE(I) = SOURCE(I)+SCRH(I+1)-SCRH(I)
+         End do
          SOURCE(I1) = SOURCE(I1) + SCRH(I1P) - SCRH(I1)
       Return
-
+        
+         case(5)
 c  + C*GRAD(D) is computed using interface data . . .
 C-----------------------------------------------------------------------
   505    SCRH( I1) = DTH*D1
          SCRH(INP) = DTH*DN
-         Do 5 I = IN, I1P, -1
+         Do I = IN, I1P, -1
             SCRH(I) = DTH*D(I)
             DIFF(I) = SCRH(I+1) - SCRH(I)
-    5       SOURCE(I) = SOURCE(I)
+            SOURCE(I) = SOURCE(I)
      &                + C(I)*(AH(I+1)+AH(I))*DIFF(I)
+         End do
          SOURCE(I1) = SOURCE(I1) + C(I1)*(AH(I1P)+AH(I1))*
      &                     (SCRH(I1P)-SCRH(I1))
       Return
-
+         case(6)
 c  + C for source terms only at a list of indices . . .
 C-----------------------------------------------------------------------
-  606    Do 6 IS = 1, NIND
-            I = INDEX(IS)
-    6       SOURCE(I) = SOURCE(I) + SCALARS(IS)
-
-      Return
-
+  606    Do IS = 1, NIND
+            I = INDX(IS)
+            SOURCE(I) = SOURCE(I) + SCALARS(IS)
+         End do
+         
+        case(7)
 C-----------------------------------------------------------------------
-  707    Do 7 I = I1, IN
+  707    Do I = I1, IN
             if (flag) then
              print*,'7-',i,DT*D(I),DT,D(I),SOURCE(I)
             endif
-   7   continue
+         end do
 
-      RETURN
+        End select
 
-      End
+      End Subroutine SOURCES
 
 C=======================================================================
 
@@ -629,15 +645,17 @@ c
 C-----------------------------------------------------------------------
 
           Implicit  NONE
-          Integer   NPT, I1, IN, I1P, INP, I
-          Real      BIGNUM, SRHO1, VRHO1, SRHON, VRHON, RHO1M, RHONP
+          Integer   I1, IN, I1P, INP, I
+          Real      SRHO1, VRHO1, SRHON, VRHON, RHO1M, RHONP
           Real      RHOT1M, RHOTNP, RHOTD1M, RHOTDNP
           Logical   PBC
-          Parameter ( NPT = 500 )
-          Parameter ( BIGNUM = 1.0E38 )
+
+          Integer,Parameter :: NPT = 500
+          Real,Parameter :: BIGNUM = Huge(1.)
 c     BIGNUM = Machine Dependent Largest Number - Set By The User!!!!
 
-          Real     RHOO(NPT),     RHON(NPT)
+          Real, Intent(IN)  ::   RHOO(NPT)     
+          Real, Intent(OUT) ::   RHON(NPT)
 
 c     /FCT_SCRH/ Holds scratch arrays for use by LCPFCT and CNVFCT
           Real     SCRH(NPT),     SCR1(NPT),     DIFF(NPT)
@@ -679,24 +697,24 @@ C-----------------------------------------------------------------------
           DIFF(I1) = NULH(I1) * ( RHOO(I1) - RHO1M )
           FLXH(I1) = VDTODR(I1) * ( RHOO(I1) - RHO1M )
 
-          Do 1 I = I1P, IN
+          Do I = I1P, IN
              DIFF(I) = ( RHOO(I) - RHOO(I-1) )
              FLXH(I) = VDTODR(I) * DIFF(I)
-    1        DIFF(I) = NULH(I) * DIFF(I)
-
+             DIFF(I) = NULH(I) * DIFF(I)
+          End do
           DIFF(INP) = NULH(INP) * ( RHONP - RHOO(IN) )
           FLXH(INP) = VDTODR(INP) * ( RHONP - RHOO(IN) )
 
 c     Calculate LORHOT, the transported mass elements, and LNRHOT, the
 c     transported & diffused mass elements  . . .
 C-----------------------------------------------------------------------
-          Do 2 I = I1, IN
+          Do I = I1, IN
              LORHOT(I) = LN(I) * (RHOO(I) - 0.5*(FLXH(I+1) + FLXH(I)))
      &                   + SOURCE(I)
              LNRHOT(I) = LORHOT(I) + (DIFF(I+1) - DIFF(I))
              RHOT(I)  = LORHOT(I)*RLN(I)
-    2        RHOTD(I) = LNRHOT(I)*RLN(I)
-
+             RHOTD(I) = LNRHOT(I)*RLN(I)
+          End do
 c     Evaluate the boundary conditions for RHOT and RHOTD . . .
 C-----------------------------------------------------------------------
           If ( PBC ) Then
@@ -719,22 +737,22 @@ C-----------------------------------------------------------------------
           FABS(I1) = ABS ( FLXH(I1) )
           FSGN(I1) = SIGN ( DIFF1, DIFF(I1) )
 
-          Do 3 I = I1P, IN
+          Do I = I1P, IN
              FLXH(I) = MULH(I) * ( RHOT(I) - RHOT(I-1) )
-    3        DIFF(I) = RHOTD(I) - RHOTD(I-1)
-
+             DIFF(I) = RHOTD(I) - RHOTD(I-1)
+          End do
           FLXH(INP) = MULH(INP) * ( RHOTNP - RHOT(IN) )
           DIFF(INP) = RHOTDNP - RHOTD(IN)
 
 c     Calculate the magnitude & sign of the antidiffusive flux followed
 c     by the flux-limiting changes on the right and left . . .
 C-----------------------------------------------------------------------
-          Do 4 I = I1, IN
+          Do  I = I1, IN
              FABS(I+1) = ABS ( FLXH(I+1) )
              FSGN(I+1) = SIGN ( DIFF1, DIFF(I+1) )
              TERM(I+1) = FSGN(I+1)*LN(I)*DIFF(I)
-    4        TERP(I) = FSGN(I)*LN(I)*DIFF(I+1)
-
+             TERP(I) = FSGN(I)*LN(I)*DIFF(I+1)
+          End do
           If ( PBC ) Then
              TERP(INP) = TERP(I1)
              TERM(I1) = TERM(INP)
@@ -749,14 +767,14 @@ C-----------------------------------------------------------------------
           FLXH(I1) = FSGN(I1) * max ( 0.0,
      &                  min ( TERM(I1), FABS(I1), TERP(I1) ) )
 
-          Do 5 I = I1, IN
+          Do I = I1, IN
              FLXH(I+1) = FSGN(I+1) * max ( 0.0,
      &                min ( TERM(I+1), FABS(I+1), TERP(I+1) ) )
              RHON(I) = RLN(I) * ( LNRHOT(I) + (FLXH(I) - FLXH(I+1)) )
-    5        SOURCE(I) = 0.0
+             SOURCE(I) = 0.0
+          End do
 
-      Return
-      End
+      End Subroutine CNVFCT
 
 C=======================================================================
 
@@ -776,11 +794,11 @@ c     CSUM   Real              value of the conservation sum of rho    O
 c
 C-----------------------------------------------------------------------
 
-          Implicit NONE
-          Integer  NPT, I, I1, IN
-          Parameter ( NPT = 500 )
-          Real     CSUM, RHO(NPT)
-
+          Implicit None
+          Integer  I, I1, IN
+          Integer,Parameter :: NPT = 500
+          Real     RHO(NPT)
+          Real, Intent(OUT) :: CSUM
 c     /FCT_GRID/ Holds geometry, grid, area and volume information
           Real     LO(NPT),       LN(NPT),       AH (NPT)
           Real     RLN(NPT),      LH (NPT),      RLH(NPT)
@@ -790,11 +808,11 @@ c     /FCT_GRID/ Holds geometry, grid, area and volume information
 c  Compute the ostensibly conserved total mass (BEWARE B.C.) . . .
 C-----------------------------------------------------------------------
           CSUM = 0.0
-          Do 80 I = I1, IN
- 80          CSUM = CSUM + LN(I)*RHO(I)
+          Do I = I1, IN
+             CSUM = CSUM + LN(I)*RHO(I)
+          End do
 
-      Return
-      End
+      End Subroutine CONSERVE
 
 C=======================================================================
 
@@ -819,10 +837,9 @@ c                              = 2 grid restored from OLD_GRID common  I
 c
 C-----------------------------------------------------------------------
 
-          Implicit  NONE
-          Integer   NPT, I, MODE, I1, IN
-          Parameter ( NPT = 500 )
-
+          Implicit  None
+          Integer   I, MODE, I1, IN
+          Integer,Parameter :: NPT = 500
 c     /OLD_GRID/ Holds geometry, grid, area and volume information
           Real     LOP(NPT),      LNP(NPT),      AHP(NPT)
           Real     RLNP(NPT),     RLHP(NPT),     LHP(NPT)
@@ -838,45 +855,46 @@ c     /FCT_GRID/ Holds geometry, grid, area and volume information
 
 C-----------------------------------------------------------------------
           If ( MODE .eq. 1 ) Then
-             Do 101 I = I1, IN
+             Do I = I1, IN
                 LOP(I)  = LO(I)
                 LNP(I)  = LN(I)
-  101           RLNP(I) = RLN(I)
-             Do 102 I = I1, IN+1
+                RLNP(I) = RLN(I)
+             End do
+             Do I = I1, IN+1
                 AHP(I)  = AH(I)
                 LHP(I)  = LH(I)
                 RLHP(I) = RLH(I)
                 ROHP(I) = ROH(I)
                 RNHP(I) = RNH(I)
-  102           ADUGTHP(I) = ADUGTH(I)
+                ADUGTHP(I) = ADUGTH(I)
+             End do
           Else If ( MODE .eq. 2 ) Then
-             Do 201 I = I1, IN
+             Do I = I1, IN
                 LO(I)  = LOP(I)
                 LN(I)  = LNP(I)
-  201           RLN(I) = RLNP(I)
-             Do 202 I = I1, IN+1
+               RLN(I) = RLNP(I)
+             End do
+             Do I = I1, IN+1
                 AH(I)  = AHP(I)
                 LH(I)  = LHP(I)
                 RLH(I) = RLHP(I)
                 ROH(I) = ROHP(I)
                 RNH(I) = RNHP(I)
-  202           ADUGTH(I) = ADUGTHP(I)
+                ADUGTH(I) = ADUGTHP(I)
+             End do
           Else
              Write ( 6, 1001 ) MODE
           End If
  1001     Format ( ' COPYGRID Error! MODE =', I3, ' (not 1 or 2!)' )
 
-      Return
-      End
+      End Subroutine COPYGRID
 
 C=======================================================================
 
       Block Data FCTBLK
 
-C-----------------------------------------------------------------------
-          Implicit  NONE
-          Integer   NPT
-          Parameter ( NPT = 500 )
+          Implicit  None
+          Integer,Parameter :: NPT =500
 
 c     /FCT_MISC/ Holds the source array and diffusion coefficient
           Real     SOURCE(NPT),   DIFF1
@@ -911,11 +929,11 @@ c                                 = 3 for spherical geometry           I
 c                                 = 4 general geometry (user supplied) I
 c
 C-----------------------------------------------------------------------
-          Implicit  NONE
-          Integer   NPT, I1, I1P, I, IN, INP, ALPHA
-          Parameter ( NPT = 500 )
+          Implicit  None
+          Integer   I1, I1P, I, IN, INP, ALPHA
+          Integer,Parameter :: NPT = 500
 
-          Real     RADHN(INP), PI, FTPI
+          Real     RADHN(INP)
 
 c     /FCT_SCRH/ Holds scratch arrays for use by LCPFCT and CNVFCT
           Real     SCRH(NPT),     SCR1(NPT),     DIFF(NPT)
@@ -931,7 +949,7 @@ c     /FCT_GRID/ Holds geometry, grid, area and volume information
           Real     ROH(NPT),      RNH(NPT),      ADUGTH(NPT)
           Common  /FCT_GRID/ LO, LN, AH, RLN, LH, RLH, ROH, RNH, ADUGTH
 
-          DATA     PI, FTPI /3.1415927, 4.1887902/
+          real,parameter::     PI=4.*atan(1.), FTPI= 4.1887902
 
 C-----------------------------------------------------------------------
           I1P = I1 + 1
@@ -940,62 +958,68 @@ C-----------------------------------------------------------------------
 c  Store the old and new grid interface locations from input and then
 c  update the new and average interface and grid coefficients . . .
 C-----------------------------------------------------------------------
-          Do 1 I = I1, INP
-    1        RNH(I) = RADHN(I)
-
+          Do  I = I1, INP
+             RNH(I) = RADHN(I)
+          End do
 c  Select the choice of coordinate systems . . .
 C-----------------------------------------------------------------------
-          Go To (100, 200, 300, 400), ALPHA
+          select case(ALPHA)
 
+          case(1)
 c  Cartesian coordinates . . .
 C-----------------------------------------------------------------------
  100      AH(INP) = 1.0
-          Do 101 I = I1, IN
-  101        LN(I) = RNH(I+1) - RNH(I)
-          Go To 500
+          Do I = I1, IN
+             LN(I) = RNH(I+1) - RNH(I)
+          End do
 
+          case(2)
 c  Cylindrical Coordinates: RADIAL . . .
 C-----------------------------------------------------------------------
   200     DIFF(I1) = RNH(I1)*RNH(I1)
           AH(INP) = PI*(ROH(INP) + RNH(INP))
-          DO 201 I = I1, IN
+          DO I = I1, IN
              AH(I) = PI*(ROH(I) + RNH(I))
              DIFF(I+1) = RNH(I+1)*RNH(I+1)
-  201        LN(I) = PI*(DIFF(I+1) - DIFF(I))
-          Go To 500
-
+             LN(I) = PI*(DIFF(I+1) - DIFF(I))
+          End do
+          
+          case(3)
 c  Spherical Coordinates: RADIAL . . .
 C-----------------------------------------------------------------------
   300     DIFF(I1) = RNH(I1)*RNH(I1)*RNH(I1)
           SCRH(INP) = (ROH(INP) + RNH(INP))*ROH(INP)
           AH(INP) = FTPI*(SCRH(INP) + RNH(INP)*RNH(INP))
-          DO 301 I = I1, IN
+          DO I = I1, IN
              DIFF(I+1) = RNH(I+1)*RNH(I+1)*RNH(I+1)
              SCRH(I) = (ROH(I) + RNH(I))*ROH(I)
              AH(I) = FTPI*(SCRH(I) + RNH(I)*RNH(I))
-  301        LN(I) = FTPI*(DIFF(I+1) - DIFF(I))
-          Go To 500
-
+             LN(I) = FTPI*(DIFF(I+1) - DIFF(I))
+          End do
+          
+          case(4)
 c  Special Coordinates: Areas and Volumes are User Supplied . . .
 C-----------------------------------------------------------------------
-  400     Continue
+          end select
 
 c  Additional system independent geometric variables . . .
 C-----------------------------------------------------------------------
-  500     Do 501 I = I1, IN
-  501        RLN(I) = 1.0/LN(I)
+          Do I = I1, IN
+             RLN(I) = 1.0/LN(I)
+          End do   
           LH(I1)  = LN(I1)
           RLH(I1) = RLN(I1)
-          Do 502 I = I1P, IN
+          Do I = I1P, IN
              LH(I) =  0.5*(LN(I) + LN(I-1))
-  502        RLH(I) = 0.5*(RLN(I) + RLN(I-1))
+             RLH(I) = 0.5*(RLN(I) + RLN(I-1))
+          End do
           LH(INP)  = LN(IN)
           RLH(INP) = RLN(IN)
-          Do 503 I = I1, INP
-  503        ADUGTH(I) = AH(I)*(RNH(I) - ROH(I))
+          Do I = I1, INP
+             ADUGTH(I) = AH(I)*(RNH(I) - ROH(I))
+          End do
 
-      Return
-      End
+      End Subroutine NEW_GRID
 
 C=======================================================================
 
@@ -1011,19 +1035,17 @@ c     DIFFA  Real    Replacement residual diffusion coefficient        I
 c                    Defaults to 0.999 but could be as high as 1.0000
 c
 C-----------------------------------------------------------------------
-          Implicit NONE
-          Integer  NPT
-          Real     DIFFA
-          Parameter ( NPT = 500 )
+          Implicit None
+          Real, Intent(IN) ::     DIFFA
+          Integer,Parameter:: NPT = 500
 
 c     /FCT_MISC/ Holds the source array and diffusion coefficient
-          Real     SOURCE(NPT),   DIFF1
+          Real     SOURCE(NPT), DIFF1
           Common  /FCT_MISC/ SOURCE, DIFF1
 
           DIFF1 = DIFFA
 
-      Return
-      End
+      End Subroutine RESIDIFF
 
 C=======================================================================
 
@@ -1047,10 +1069,10 @@ c     I1       Integer            first cell index                     I
 c     IN       Integer            last cell index                      I
 c
 C-----------------------------------------------------------------------
-          Implicit  NONE
-          Integer   NPT, I1, I1P, I, IN, INP
+          Implicit  None
+          Integer   I1, I1P, I, IN, INP
           Real      RADR
-          Parameter ( NPT = 500 )
+          Integer,Parameter :: NPT = 500
 
 c     /OLD_GRID/ Holds geometry, grid, area and volume information
           Real     LOP(NPT),      LNP(NPT),      AHP(NPT)
@@ -1070,24 +1092,25 @@ C-----------------------------------------------------------------------
           INP = IN + 1
 
 C  Multiply each volume element by the local radius
-          DO 100 I = I1, IN
-          LN(I) = LNP(I)*RADR
-  100     LO(I) = LOP(I)*RADR
-
+          DO I = I1, IN
+           LN(I) = LNP(I)*RADR
+           LO(I) = LOP(I)*RADR
+          End do
 c  Additional system independent geometric variables . . .
 C-----------------------------------------------------------------------
-  500     Do 501 I = I1, IN
-  501        RLN(I) = 1.0/LN(I)
+          Do I = I1, IN
+            RLN(I) = 1.0/LN(I)
+          End do
           LH(I1)  = LN(I1)
           RLH(I1) = RLN(I1)
-          Do 502 I = I1P, IN
+          Do I = I1P, IN
              LH(I) =  0.5*(LN(I) + LN(I-1))
-  502        RLH(I) = 0.5*(RLN(I) + RLN(I-1))
+             RLH(I) = 0.5*(RLN(I) + RLN(I-1))
+          End do
           LH(INP)  = LN(IN)
           RLH(INP) = RLN(IN)
 
-      Return
-      End
+      End Subroutine SET_GRID
 
 C=======================================================================
 
@@ -1107,14 +1130,14 @@ c     Argument:
 c     IND    Integer              index of interface to be reset       I
 c
 C-----------------------------------------------------------------------
-          Implicit  NONE
-          Integer   NPT, NINDMAX, IND, IS, I
-          Parameter ( NPT = 500, NINDMAX = 150 )
+          Implicit  None
+          Integer   IND, IS, I
+          Integer,Parameter :: NPT = 500, NINDMAX = 150
 
 c     /FCT_NDEX/ Holds a scalar list of special cell information . . .
           Real     SCALARS(NINDMAX)
-          Integer  INDEX(NINDMAX), NIND
-          Common  /FCT_NDEX/ NIND, INDEX, SCALARS
+          Integer  INDX(NINDMAX), NIND
+          Common  /FCT_NDEX/ NIND, INDX, SCALARS
 
 c     /FCT_VELO/ Holds velocity-dependent flux coefficients
           Real     HADUDTH(NPT),  NULH(NPT),     MULH(NPT)
@@ -1131,14 +1154,13 @@ C-----------------------------------------------------------------------
                 Stop
              End If
              Do IS = 1, NIND
-                I = INDEX(IS)
+                I = INDX(IS)
                 NULH(I) = 0.0
                 MULH(I) = 0.0
              End Do
           End If
 
-      Return
-      End
+      End Subroutine ZERODIFF
 
 C=======================================================================
 

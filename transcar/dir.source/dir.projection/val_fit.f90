@@ -1,26 +1,26 @@
 subroutine val_fit(lon,lat,ndeg,mdeg,coef_psi,latmin,latmax,latequi,psi,psi_est,psi_nord)
-
+include 'comm.f90'
 implicit none
+include 'comm_dp.f'
 
-real*8,intent(in) :: lon,lat,coef_psi(:),latmin,latmax,latequi
+real(dp),intent(in) :: lon,lat,coef_psi(:),latmin,latmax,latequi
 integer,intent(in) :: ndeg,mdeg
-Real*8,intent(out), optional :: psi,psi_est,psi_nord
+Real(dp),intent(out), optional :: psi,psi_est,psi_nord
 !
 Integer,parameter::	npt=100000
-Real*8,parameter ::	pi=3.14159265358979d0,deg2rad=1.745329251994330d-2,	&
-			rad2deg=57.295779513082320d0
-Real*8,parameter ::     coeffc=6.d0,re=6.378d0,lat_top=89.9d0
+
+Real(dp),parameter ::     coeffc=6._dp,re=6.378_dp,lat_top=89.9_dp
 Integer	::	i,j,k,l,rang
 
 Logical :: mode
-Real*8	::  LM,DL
-Real*8	::	coef_est,coef_nord
-Real*8	::	psi0
-Real*8  ::      alpha,xmin,xequi,coslinf,dxmin,d12,d11,d210,d21,d22,det_1,xmax,coslsup
-Real*8  ::      anm,bnm,cnm(0:npt),cosphi,sinphi
-Real*8  ::	A(npt),A_est(npt),A_nord(npt),Pn(0:npt),dPn(0:npt)
-Real*8  ::	xinf,xfit,xsup,phi,expdx
-Real*8  ::	dxequi,dxequi2,expjdx,expcdx,expcdx_1,Fnm_inf,Fnm_sup,dFnm_inf,dFnm_sup,sum
+Real(dp)	::  LM,DL
+Real(dp)	::	coef_est,coef_nord
+Real(dp)	::	psi0
+Real(dp)  ::      alpha,xmin,xequi,coslinf,dxmin,d12,d11,d210,d21,d22,det_1,xmax,coslsup
+Real(dp)  ::      anm,bnm,cnm(0:npt),cosphi,sinphi
+Real(dp)  ::	A(npt),A_est(npt),A_nord(npt),Pn(0:npt),dPn(0:npt)
+Real(dp)  ::	xinf,xfit,xsup,phi,expdx
+Real(dp)  ::	dxequi,dxequi2,expjdx,expcdx,expcdx_1,Fnm_inf,Fnm_sup,dFnm_inf,dFnm_sup,sum
 
 mode=present(psi_est)
 
@@ -66,8 +66,8 @@ if (lat<latmin.and.lat>=latequi) then
     d21=d210+j*d11
     d22=2.d0*dxmin+j*d12
     det_1=1.d0/(d11*d22-d12*d21)
-    cosphi=dcos(j*phi)
-    sinphi=dsin(j*phi)
+    cosphi=cos(real(j,dp)*phi)
+    sinphi=sin(real(j,dp)*phi)
     do i=0,ndeg
       k=k+1
       anm=(d22-cnm(i)*d12)*det_1
@@ -105,8 +105,8 @@ elseif(lat>=latmin.and.lat<=latmax) then
     endif
   enddo
   do j=1,mdeg
-    cosphi=dcos(j*phi)
-    sinphi=dsin(j*phi)
+    cosphi=dcos(real(j,dp)*phi)
+    sinphi=dsin(real(j,dp)*phi)
     do i=0,ndeg
       k=k+1
       A(k)=Pn(i)*cosphi
@@ -162,8 +162,8 @@ elseif(lat>latmax) then
     endif
   enddo
   do j=1,mdeg
-    cosphi=cos(j*phi)
-    sinphi=sin(j*phi)
+    cosphi=cos(real(j,dp)*phi)
+    sinphi=sin(real(j,dp)*phi)
     expjdx=expdx*expjdx
     do i=0,ndeg
       k=k+1

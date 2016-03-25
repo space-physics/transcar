@@ -1,7 +1,7 @@
        subroutine atmos(iyd,ces,stl,z,glat,glong,jpreci,f107,
      &            ap,Ne,Te,Tj,nx,kiappel,file_cond)
 
-
+        include 'comm.f'
 
         include 'TRANSPORT.INC'
 
@@ -230,9 +230,6 @@ C       --MZ
         real J0,B0,sinI0,cosI0,chi
         data B0,sinI0,cosI0/.542,.9848,.1736/
 
-        real deg2rad
-        data deg2rad/0.01745329251994/
-
         real lonmag,latmag,tmag,cofo,cofh,cofn,Fe0,Ee0,Fi0,Ei0,chi0
         real Bmag,dipangle,Enord,Eest,vperpnord,vperpest,vhorizon,vpara
         real kp,ddp,Jtop
@@ -343,7 +340,7 @@ C       --MZ
         nan=iyd/1000
         njour=mod(iyd,1000)
         chi=acos(coskhi(glat,glong,sec/3600.,nan,njour,2))
-        chi0=chi*180./3.141592654
+        chi0=chi*rad2deg
 
         rap=1.
 !    if (njour.eq.48) then
@@ -363,7 +360,7 @@ C       --MZ
 !    endif
 
 
-        temploc=(91.-chi*180./3.141592654)
+        temploc=(91.-chi*rad2deg)
         vartemp=(1+tanh(temploc*3.))/2.
         J0=0.
 !        Qetop  = -5.e-4-4.e-3*exp(-(chi0-91.)**2/30.)
@@ -447,7 +444,8 @@ C       --MZ
          !Find the reference hot O density
          secOHot=sec
 
-!         print*,'atmos: call gtd6, hot O. glat=',glat
+         call cpu_time(tic)
+         write(stdout,*),tic,' atmos: call gtd6, hot O. glat=',glat
          call gtd6(iyd,secOHot,zNOHotRef,glat,glong,stl,
      &        f107(3),f107(2),ap,48,d,t)
          NOHotRef=pctOHot*0.01*d(2)
@@ -570,57 +568,57 @@ c     Transport cinetique. Kinetic transport
         if (flgini) then
         flgnan=.true.
                if (isnan(glat)) then
-                 print*,'atmos: NaN detected in glat'
-                 print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'atmos: NaN detected in glat'
+                 write(stderr,*),'atmos: NaN detected in glat'
+                 write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
+                 stop
                elseif (isnan(glong)) then
-                 print*,'atmos: NaN detected in glong'
-                 print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'atmos: NaN detected in glong'
+                 write(stderr,*),'atmos: NaN detected in glong'
+                 write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
+                 stop 
                elseif (isnan(sec)) then
-                 print*,'atmos: NaN in sec'
-                 print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'atmos: NaN in sec'
+                 write(stderr,*),'atmos: NaN in sec'
+                 write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
+                 stop
                elseif (isnan(stl)) then
-                 print*,'atmos: NaN in stl'
-                 print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'atmos: NaN in stl'
+                 write(stderr,*),'atmos: NaN in stl'
+                 write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
+                 stop
                elseif (isnant(ne,nx)) then
-                 print*,'problem with ne'
-                 print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'NaN detected in array'
+                 write(stderr,*),'atmos: NaN in Ne'
+                 write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
+                 stop
                elseif (isnant(te,nx)) then
-                 print*,'problem with te'
-                 print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'NaN detected in array'
+                 write(stderr,*),'atmos: NaN in Te'
+                 write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
+                 stop
                elseif (isnant(tj,nx)) then
-                 print*,'problem with tj'
-                 print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'NaN detected in array'
+                 write(stderr,*),'problem with tj'
+                 write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
+                 stop 
                elseif (isnant(nh,nx)) then
-                 print*,'problem with nh'
-                 print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'NaN detected in array'
+                 write(stderr,*),'problem with nh'
+                 write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
+                 stop
                elseif (isnant(no,nx)) then
-                 print*,'problem with no'
-                 print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'NaN detected in array'
+                write(stderr,*),'problem with no'
+                write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
+                 stop
                elseif (isnant(no2,nx)) then
-                 print*,'problem with no2'
-                 print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'NaN detected in array'
+                 write(stderr,*),'problem with no2'
+                 write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
+                 stop
                elseif (isnant(nn2,nx)) then
-                 print*,'problem with nn2'
-                 print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'NaN detected in array'
+                 write(stderr,*),'problem with nn2'
+                 write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
+                 stop
                elseif (isnant(nn,nx)) then
-                 print*,'problem with nn'
-                 print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'NaN detected in array'
+                 write(stderr,*),'problem with nn'
+                 write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
+                 stop
                elseif (isnant(tn,nx)) then
-                 print*,'problem with tn'
-                 print*,npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 'NaN detected in array'
+                 write(stderr,*),'problem with tn'
+                 write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
+                 stop
                endif
                flgnan=.false.
                flg_err=.false.

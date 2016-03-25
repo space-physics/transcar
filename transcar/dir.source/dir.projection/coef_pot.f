@@ -1,30 +1,34 @@
-      subroutine coef_pot(iyd,tu,kp,ndeg,
-     & mdeg,phipot,Lmin,Lmax,latequi,ddp,ierr)
+      subroutine coef_pot(iyd,tu,kp,
+     &              ndeg,mdeg,phipot,Lmin,Lmax,latequi,ddp)
+
+      include 'comm.f'
 
       implicit none
+      
+      include 'comm_sp.f'
 
-      include '../dir.include/TRANSPORT.INC'
+      include 'TRANSPORT.INC'
+      
 
-      real*8,intent(in) :: tu
+      real(dp),intent(in) :: tu
       real,intent(in) :: kp
       integer,intent(in) :: iyd
-      integer,intent(inout) :: ndeg,ierr 
-! FIXME does ierr need to be saved in calling module?
-      integer,intent(out) :: mdeg
-      real*8,intent(out) :: phipot(1),Lmin,Lmax,latequi
+      integer,intent(out) :: ndeg,mdeg
+      real(dp),intent(out) :: phipot(*),Lmin,Lmax,latequi
       real,intent(out) :: ddp
 
+      integer,save :: ierr  ! file read error
+      
+      real(dp),parameter :: Linf=61.5_dp,Lsup=72.5_dp,latlim=55._dp
       integer, parameter :: ndeg0=5, mdeg0=5, npt=(ndeg0+1)*(2*mdeg0+1)
-      real*8,parameter :: Linf=61.5d0,Lsup=72.5d0,latlim=55.d0
 
-
-      integer ikp,len_coef,len_rec,len_buf,irec
+      integer len_coef,len_rec,len_buf,irec
       
       integer iyddeb,iydfin,i
       real buffer(1000)
-      real*8 phi(3*npt)
+      real(dp) phi(3*npt)
 
-      real*8 tempsdeb,tempsfin,xt,xtd,xtf
+      real(dp) tempsdeb,tempsfin,xt,xtd,xtf
       logical flgini
 
       data iyddeb    ,tempsdeb  ,iydfin    ,tempsfin  ,irec,flgini
@@ -32,7 +36,7 @@
 
 
       data phi/
-c        0<=Kp<=2-
+!        0<=Kp<=2-
      &   -2.930d-01,  2.260d-01,  9.700d-02, -2.600d-02,
      &    1.400d-02, -1.700d-02,  8.100d-01,  1.432d+00,
      &   -1.103d+00, -1.740d+00,  4.620d-01,  8.070d-01,
@@ -50,7 +54,7 @@ c        0<=Kp<=2-
      &    2.500d-02,  1.700d-02,  2.110d-01, -6.300d-02,
      &   -3.400d-02,  1.180d-01, -5.200d-02, -6.000d-03,
      &   -3.000d-03, -3.600d-02,
-c        2<=Kp<=4-
+!        2<=Kp<=4-
      &   -3.660d-01,  1.450d-01,  3.160d-01,  5.000d-03,
      &   -8.600d-02, -1.400d-02,  4.750d-01,  7.321d+00,
      &   -4.626d+00, -8.764d+00,  1.718d+00,  1.601d+00,
@@ -68,7 +72,7 @@ c        2<=Kp<=4-
      &   -1.170d-01,  1.750d-01,  3.640d-01,  9.700d-02,
      &   -2.790d-01, -2.660d-01, -1.710d-01, -1.000d-02,
      &    1.450d-01,  1.140d-01,
-c        4<=Kp<=6-
+!        4<=Kp<=6-
      &   -1.242d+00,  3.820d-01,  1.096d+00, -1.990d-01,
      &   -1.590d-01,  1.220d-01,  1.137d+00,  1.724d+01,
      &   -1.073d+01, -1.200d+01,  1.825d+00, -7.920d-01,
@@ -91,14 +95,16 @@ c        4<=Kp<=6-
       if (flgini) then
           ierr=1
           flgini=.false.
+          
           open(87,file='dir.data/dir.linux/dir.projection/varpot.dat',
      &       form='unformatted',access='direct',status='old',recl=40,
      &         iostat=ierr,err=999)
-c     &        form='formatted',status='old',iostat=ierr,err=999)
+
           read(87,rec=1)(buffer(i),i=1,10)
           ndeg=buffer(5)
           mdeg=buffer(6)
           len_coef=(2*mdeg+1)*(ndeg+1)
+          write(stdout,*),'len_coef=',len_coef
           len_buf=len_coef+10
           len_rec=4*len_buf
       endif
@@ -106,19 +112,23 @@ c     &        form='formatted',status='old',iostat=ierr,err=999)
 999    continue
       close(87)
       if (ierr.gt.0) then 
-      print*,'WARNING: Error reading varpot.dat, fallback to defaults'
-!if there was an error reading varpot.dat, fallback to default param
-      ndeg=ndeg0
-      mdeg=mdeg0
-      Lmin=Linf
-      Lmax=Lsup
-      latequi=latlim
-      ikp=kp
-          if(ikp.le.1.) then
+      
+          call cpu_time(tic)
+          write(stderr,*),tic,
+     &  ' WARNING: Error reading varpot.dat, fallback to defaults  kp=',
+     &  kp
+    !if there was an error reading varpot.dat, fallback to default param
+          ndeg=ndeg0
+          mdeg=mdeg0
+          Lmin=Linf
+          Lmax=Lsup
+          latequi=latlim
+
+          if(kp.le.1.) then
             do i=1,(ndeg+1)*(mdeg+1)
               phipot(i)=phi(i)
             enddo
-          else if(ikp.le.3.) then
+          elseif(kp.le.3.) then
             do i=1,(ndeg+1)*(mdeg+1)
               phipot(i)=phi(i+npt)
             enddo
@@ -127,42 +137,42 @@ c     &        form='formatted',status='old',iostat=ierr,err=999)
               phipot(i)=phi(i+2*npt)
             enddo
           endif
+          
       else
 ! continue to read varpot.dat
-       open(87,file='dir.data/dir.linux/dir.projection/varpot.dat',
+           open(87,file='dir.data/dir.linux/dir.projection/varpot.dat',
      &        form='unformatted',access='direct',status='old',
      &         recl=len_rec,iostat=ierr)
-c     &        form='formatted',status='old',iostat=ierr)
 
-       xt=iyd+tu*1.d-6
-          if (iyd.lt.1900000) xt=xt+1900000.d0
+           xt=iyd+tu*1.d-6
+              if (iyd.lt.1900000) xt=xt+1900000.d0
 
-       xtd=iyddeb+tempsdeb*1.d-6
-       xtf=iydfin+tempsfin*1.d-6
-       do while (xtd.gt.xt.or.xtf.le.xt)
-            if (xtf.gt.xt) irec=max(irec-1,1)
-            if (xtf.le.xt) irec=irec+1
+           xtd=iyddeb+tempsdeb*1.d-6
+           xtf=iydfin+tempsfin*1.d-6
+           do while (xtd.gt.xt.or.xtf.le.xt)
+                if (xtf.gt.xt) irec=max(irec-1,1)
+                if (xtf.le.xt) irec=irec+1
 
-            read(87,rec=irec) (buffer(i),i=1,len_buf)
-            iyddeb=buffer(1)
-            tempsdeb=buffer(2)
-            iydfin=buffer(3)
-            tempsfin=buffer(4)
-            Lmin=buffer(7)
-            Lmax=buffer(8)
-            latequi=buffer(9)
-            ddp=buffer(10)
-c         read(87,*) iyddeb,tempsdeb,iydfin,tempsfin,
-c     &                 ndeg,mdeg,Lmin,Lmax,latequi,ddp
-            xtd=iyddeb+tempsdeb*1.d-6
-            xtf=iydfin+tempsfin*1.d-6
+                read(87,rec=irec) (buffer(i),i=1,len_buf)
+                iyddeb=buffer(1)
+                tempsdeb=buffer(2)
+                iydfin=buffer(3)
+                tempsfin=buffer(4)
+                Lmin=buffer(7)
+                Lmax=buffer(8)
+                latequi=buffer(9)
+                ddp=buffer(10)
+!          read(87,*) iyddeb,tempsdeb,iydfin,tempsfin,
+!    &                 ndeg,mdeg,Lmin,Lmax,latequi,ddp
+                xtd=iyddeb+tempsdeb*1.d-6
+                xtf=iydfin+tempsfin*1.d-6
 
-c        read(87,*) (phipot(i),i=1,(2*mdeg+1)*(ndeg+1))
-            do i=1,len_coef
-              phipot(i)=buffer(10+i)
-            end do
-       end do
-       close(87)
+!        read(87,*) (phipot(i),i=1,(2*mdeg+1)*(ndeg+1))
+                do i=1,len_coef
+                  phipot(i)=buffer(10+i)
+                end do
+           end do
+           close(87)
 
       End If
 

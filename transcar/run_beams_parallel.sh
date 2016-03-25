@@ -19,6 +19,7 @@ remotes=(irs4 irs3 swoboj)
 BeamEnergyTableFN=BT_E1E2prev.csv
 RODIR=$1
 [[ -z $RODIR ]] && { echo "you must specify an output directory"; exit 1; }
+[[ $RODIR -eq $HOME ]] && { echo "don't erase your entire hard drive!"; exit 1;}
 exedir=code/transcar/transcar
 
 flux0=70114000000.0
@@ -26,7 +27,7 @@ flux0=70114000000.0
 hact=2   # 2 term all jobs on error now, 1 let existing jobs finish, 0 keep running/starting
 
 #------- start code --------------
-[[ -d $RODIR ]] && \rm -rf $RODIR  #cleanup local output
+[[ -d $RODIR ]] && \rm -ri $RODIR  #cleanup local output
 
 if [[ $localonly -eq 0 ]]; then
   remjp=$(IFS=,; echo "${remotes[*]}") #puts array into comma separated string for GNU parallel

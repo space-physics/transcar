@@ -1,4 +1,6 @@
 #!/bin/bash
+set -u; set -e
+
 # Michael Hirsch 2014
 # using GNU parallel 20130922
 # this script for loops transcar, making a new precinput.dat each time for the

@@ -28,13 +28,15 @@ Prereqs
 
 Installation
 ============
-
-.. code:: bash
+::
 
   git clone https://github.com/scienceopen/transcar
   cd transcar
   ./setup.sh
-  
+
+If you then modify the source code, you just have to in dir.obj type::
+
+    make
   
 To Run
 ======

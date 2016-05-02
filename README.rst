@@ -24,7 +24,7 @@ Prereqs
 =======
 ::
 
-    sudo apt-get install gfortran cmake parallel
+    sudo apt-get install gfortran cmake make parallel
 
 Fortran Installation
 ====================

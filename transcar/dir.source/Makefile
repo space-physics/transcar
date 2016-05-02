@@ -35,7 +35,7 @@ $(info $(COMPINFO) on $(OPSYS))
 $(shell mkdir -p ../dir.obj)
 
 FLAG_COMPIL= $(OPTIONS) -I$(INCLUDE) -c
-FLAG_LIEN= $(OPTIONS) -lpthread -fexternal-blas -lblas -llapack -latlas -I$(INCLUDE) -o
+FLAG_LIEN= $(OPTIONS)  -I$(INCLUDE) -o
 
 LIB=$(LD_LIBRARY_PATH)/
 

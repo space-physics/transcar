@@ -24,7 +24,7 @@ Prereqs
 =======
 ::
 
-    sudo apt-get install gfortran libblas-dev liblapack-dev libatlas-dev libatlas-dev make
+    sudo apt-get install gfortran cmake parallel
 
 Installation
 ============

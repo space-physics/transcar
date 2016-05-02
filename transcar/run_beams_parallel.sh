@@ -1,5 +1,5 @@
 #!/bin/bash
-set -u; set -e
+set -e
 
 # Michael Hirsch 2014
 # using GNU parallel 20130922

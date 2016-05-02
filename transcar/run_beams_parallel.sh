@@ -24,7 +24,7 @@ RODIR=$1
 [[ $RODIR == $HOME ]] && { echo "don't erase your entire home drive!"; exit 1; }
 [[ $RODIR == / ]] && { echo "don't erase your entire hard drive!"; exit 1; }
 
-exedir=code/transcar/transcar
+exedir=code/transcar/transcar #this assumes your remote PCs have it there, ~/code/transcar/transcar--don't use the tilde here.
 
 flux0=70114000000.0
 
@@ -56,9 +56,9 @@ if [[ $localonly -eq 0 ]]; then
   ssh-add -D #remove ssh keys from memory
 
 else #local only
+echo $exedir $RODIR $BeamEnergyTableFN
   parallel \
     --nice 18 --halt $hact --eta --progress --joblog parallellog --colsep ',' \
-    --workdir $exedir \
     ./beamRunner.sh $RODIR :::: $BeamEnergyTableFN
     #"python3 transcar_run.py" $RODIR $flux0 :::: $BeamEnergyTableFN
     

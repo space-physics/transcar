@@ -2,6 +2,9 @@
 # michael hirsch, based on M. Zettergren code
 # setups up beam directories
 
+set -u
+
+
 DebugMsg=0 #0 for less verbose
 
 setupBeamDirs()

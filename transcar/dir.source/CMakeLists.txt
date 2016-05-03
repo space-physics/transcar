@@ -18,8 +18,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../..)
 
 include_directories(dir.include)
 
-add_executable(transconvec_13.op.out ../transconvec_13.op.f ../reacrates.f)
-target_link_libraries(transconvec_13.op.out fluide numeric system proj 
+add_executable(transconvec_13.op.out ../transconvec_13.op.f ../reacrates.f90)
+target_link_libraries(transconvec_13.op.out fluide numeric system proj
                        convec geomag transelec imm)
 
 #---- build libraries ----------
@@ -27,7 +27,7 @@ set(c ../dir.fluide)
 add_library(fluide ${c}/atmos.op.f ${c}/vent.f ${c}/msis90.f ${c}/coskhi.f ${c}/fchap.f)
 
 set(c ../dir.numeric)
-add_library(numeric ${c}/lcpfct.f ${c}/stabenerg.f90 ${c}/pas_de_temps.f 
+add_library(numeric ${c}/lcpfct.f ${c}/stabenerg.f90 ${c}/pas_de_temps.f
         ${c}/solve_ODE.f90 ${c}/balanc.f ${c}/balbak.f ${c}/elmhes.f 
         ${c}/eltran.f ${c}/hqr2.f  ${c}/cdiv.f)
 

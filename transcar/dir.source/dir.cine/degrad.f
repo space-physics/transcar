@@ -31,7 +31,7 @@ c			  E2 > E1 ==> secondary
 
 	    include 'TRANSPORT.INC'
 	    
-c
+        
         real e(nbren),engdd(nbren)
         real esig(nbren),bsig(nbren),delta(nbren)
 
@@ -53,19 +53,21 @@ c
 	    common /rdist_/ omdeg(nbren,nbren,nbrsp)
 	    common /distfct_/lopal
 
-*	The redistribution function as calculated by the SWARTZ
-*	code.
-*	OMDEG(N1,N2,J) : cross-section for inelastic scattering
-*			  from energy N1 to N2
-*	OMDEG(N2,N1,J)  : cross-section for the production of a
-*			  secondary with energy N2
+! The redistribution function as calculated by the SWARTZ code.
+!	OMDEG(N1,N2,J) : cross-section for inelastic scattering
+!			  from energy N1 to N2
+!	OMDEG(N2,N1,J)  : cross-section for the production of a
+!			  secondary with energy N2
 
-	character*8 istdate,isttime
-	character*9 title(nbrexc,nbrsp)
- 	character*9 excion(nbrionst,nbrsp)
-	character(len=80) crsin,crsout,rdtout,preout
-	character(len=80) line
- 	integer idess(2),lenc,kiappel,i1,i2
+      character*8 istdate,isttime
+      character*9 title(nbrexc,nbrsp)
+      character*9 excion(nbrionst,nbrsp)
+      character(len=80) crsin,crsout,rdtout,preout
+      character(len=80) line
+      integer idess(2),lenc,kiappel,i1,i2
+
+! file handles
+      integer fic_datdeg
 c
 1000    format(a)
 1010	format(' Pre-electron transport code version 3 ',/,a8,3x,a8/)
@@ -116,7 +118,8 @@ c
         write(6,*)'    degrad.f : computation of the cross sections'
 
 
-c 	Met les energies en ordre croissant
+! 	Met les energies en ordre croissant
+!   Puts energies in ascending order
 
  	    if(centE(1).lt.centE(nen))then
  	      do ien = 1,nen
@@ -130,8 +133,8 @@ c 	Met les energies en ordre croissant
  	     enddo
  	    endif
 
-c 	Input control parameters
-     	open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
+! 	Input control parameters
+     	open(newunit=fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
      &           status='old')
      	read(fic_datdeg,*)ibid
      	read(fic_datdeg,1000)crsin
@@ -144,31 +147,26 @@ c 	Input control parameters
      	read (fic_datdeg,*) idess(1),idess(2)
      	call xline(2,fic_datdeg)
      	read (fic_datdeg,*) iprint1,iprint2,iprint3,iprint4
-     	read(fic_datdeg,1000)logint   ! logint: interpolation type for
-c 				             cross sections
+     	read(fic_datdeg,1000)logint   ! logint: interpolation type for cross sections
      	read(fic_datdeg,1000)lt1           ! lt1   : without ionization
      	read(fic_datdeg,1000)lt2           ! lt2   : only with ioniz.
      	read(fic_datdeg,1000)lt3           ! lt3   : without degradation
      	read(fic_datdeg,1000)lt4           ! lt4   : without excitation
      	read(fic_datdeg,1000)lopal    ! Opal sec. distrib. (Rees sinon)
 	    close (fic_datdeg)
-c
-c	Check for old computation
-c
-	    open(unfic_crsout_degrad,
-     &	     	file='dir.data/dir.linux/'
-     &                     //crsout,status='OLD',form='UNFORMATTED',
-     &		iostat=iost)
- 	    if (iost.ne.0)then
-   	    print*,' No old differential cross section file'
+
+!	Check for old computation
+
+	    open(unfic_crsout_degrad, file='dir.data/dir.linux/'//crsout,
+     &       status='old',form='UNFORMATTED',iostat=iost)
+ 	    if (iost.ne.0) then
+   	      print*,' No old differential cross section file'
  	      print*,' Cross sections therefore computed'
-c 	  Puisqu'il n'existe pas, cree le fichier de sortie
-	      open(unfic_crsout_degrad,
-     .	     	file='dir.data/dir.linux/'
-     &                     //crsout,status='new',form='UNFORMATTED',
-     .		iostat=iost)
+!        If it does not exist, create the output file
+	      open(unfic_crsout_degrad,file='dir.data/dir.linux/'//crsout,
+     &          status='new',form='UNFORMATTED', iostat=iost)
  	      rewind(unfic_crsout_degrad)
-  	    close(unfic_crsout_degrad)
+  	      close(unfic_crsout_degrad)
  	      go to 10
  	    endif
 c
@@ -181,12 +179,12 @@ c 	end=20 renvoie a l'etiquette 20 en cas de non lecture
 
 c
      	if(ien.ne.nen .or. isp.lt.nspec)then
-     	  write(stdout,*),ien,nen,isp,nspec
-       	    print*,'Old cross section file does not match new energy'
-     	    print*,'grid requirement for nen and nspec'
+     	  write(stdout,*),'ien,nen,isp,nspec',ien,nen,isp,nspec
+       	    print*,'Old cross section file does not match new energy ',
+     &          'grid requirement for nen and nspec'
      	    print*,'Cross sections therefore computed'
       	  close(unfic_crsout_degrad)
-     	  go to 10
+     	  goto 10
      	endif
 c
 	    read(unfic_crsout_degrad) (esig(ien),ien=1,nen)

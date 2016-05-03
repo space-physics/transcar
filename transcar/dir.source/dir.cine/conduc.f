@@ -6,11 +6,13 @@ c
      &		hrloc,cped,chal,ratHoP,cpedsum,chalsum,cpedCS,chalCS,
      &		ratHoPsum,gyreave,gyriave,collOp,collNOp,collO2p,
      &		collionSN,collionRG,collen2,colleo2,colleo1,colle,iprt,
-     &		f107,icolin)
+     &		f107,icolin,fic_transout)
 c
         implicit none
         include 'TRANSPORT.INC'
-c
+
+        integer, intent(in) :: fic_transout
+
         integer nalt,ialt,iprt(40),icolin
         integer file_cond
         real altkm(nbralt),denelc(nbralt),O1prate(nbralt),

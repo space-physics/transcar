@@ -4,7 +4,7 @@ c
         subroutine prot(centE,Ebot,ddeng,alt,altkm,
      &        iprt,nspec,nang,nango2,nalt,jpreci,mcount,
      &        prodprotelec,primprotelec,fluxprimprot,qprimprot,
-     &        prodionprot,gmu,gwt,densig,densneut)
+     &        prodionprot,gmu,gwt,densig,densneut, fic_transout)
 
         include 'comm.f'
         implicit none
@@ -30,7 +30,8 @@ c 	serve) : ion production rate (m-3 s-1)
 c	prodionprot (isp,ialt)                  : cm-3.s-1
 c 	1,2,3,4,5,6 -> N2+,O2+,O+,H+,He+,N+
 c
-c 	INPUTS
+! 	INPUTS
+        integer, intent(in) :: fic_transout
         integer iprt(40),mcount(5),nspec
         real centE(nbren),Ebot(nbren),ddeng(nbren)
         real alt(nbralt),altkm(nbralt),densneut(8,nbralt)

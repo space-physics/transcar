@@ -22,11 +22,11 @@ c
 c 	Parametres internes :
      	real spfac,emax,emin	   !calcul eventuel d'une grille propre
      	integer ien,iang,iost
-      character(len=80),parameter ::
+      character(len=*),parameter ::
      &        datdegfn = 'dir.data/dir.linux/dir.cine/DATDEG'
 
-
-
+        integer fic_datdeg
+    
 c 	Pour transferer via DATDEG les caracteristiques de grille a
 c 	degrad.f
  	    integer type_de_grille,lenc,idess(2),iprint1,iprint2,iprint3,
@@ -35,7 +35,7 @@ c 	degrad.f
         character*80 crsin,crs,rdt,crsfn
 
 c 	On stoke les parametres de calcul de degrad.
-        open(fic_datdeg, file=datdegfn, status='old')
+        open(newunit=fic_datdeg, file=datdegfn, status='old')
 
         rewind(fic_datdeg)
      	read(fic_datdeg,*) type_de_grille
@@ -158,14 +158,13 @@ c       Lecture des grilles d'energie.
 c	goto 314
         crsfn = 'dir.data/dir.linux/'//crs
         print*,'attempting to open ',crsfn
-        open(icrsin,file=crsfn,
-     &       status='OLD',form='UNFORMATTED',
+        open(icrsin,file=crsfn, status='OLD',form='UNFORMATTED',
      &          iostat=iost,err=992)
         rewind icrsin
         read(icrsin) nenold,i1,i2,i3
         
         if (nenold .ne. nen) then
-            stop 'crsfn doesnt match the nen size'
+            error stop 'crsfn doesnt match the nen size'
         endif
         
         read(icrsin) (centE(ien),ien=1,nen)
@@ -189,9 +188,9 @@ c
 c 	On previent maintenant degrad de ou il faut lire les sections
 c 	efficaces.
         print*,'attempting to open ',datdegfn
-        open(fic_datdeg,file=datdegfn,
+        open(newunit=fic_datdeg,file=datdegfn,
      &       status='unknown',err=993) !yes unknown in case not all values rewritten
-!        rewind(fic_datdeg)
+        rewind(fic_datdeg)
        print*,'beginning to rewrite ',datdegfn
      	write(fic_datdeg,1010)type_de_grille
         write(fic_datdeg,1020) crsin
@@ -299,9 +298,9 @@ c
  	    return
 
 992     write(stderr,*),' Cross-section file is in error. Status=',iost
-     	stop
+     	error stop
 
-993     write(stderr,*),' trouble writing crs file'
-        stop
+993     error stop ' trouble writing crs file'
+        
 
         end subroutine quelle_grille

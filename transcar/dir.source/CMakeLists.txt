@@ -55,7 +55,7 @@ add_library(transelec ${c}/transelec.op.f ${c}/lect.f  ${c}/iniflu.f
             ${c}/linsub.f ${c}/quelle_grille.f ${c}/quel_flux.f
             ${c}/flux_val.f ${c}/hardion.f 
             ${c}/dir.iri/iris12.f ${c}/dir.iri/irif12.f ${c}/dir.iri/cira86_pour_iri.f 
-            ${c}/ecr.f ${c}/conduc.f ${c}/prec_time.f
+            ${c}/ecr.f ${c}/prec_time.f ${c}/conduc.f
             ${c}/dE_dt.f ${c}/low_proton.f ${c}/prot.f)
 target_link_libraries(transelec system fluide)
 

@@ -44,9 +44,8 @@
        data specie/'[N2]','[O2]','[O]','[H]','[He]','[N]','[A]','[NO]'/
      
       integer,parameter :: ineutr=10,ielec=12,iindat=14,transcar_dat=15,
-     &  unfic_in_transcar=16,unfic_out_transcar=18,
-     &  fic_datdeg=20,fic_degout=22,fic_transout=24,
-     &  fic_crsin_degrad=26,fic_dattrans=28
+     &  fic_degout=22, fic_crsin_degrad=26,fic_dattrans=28
+
          data unfic_crsout_degrad/30/,unfic_rdtout_degrad/32/
          data icrsin/34/,irdtin/36/,icrsphot/38/
         data ifeldat/40/,ifelprt/50/,ifeltrans/52/

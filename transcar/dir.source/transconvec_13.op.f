@@ -366,6 +366,8 @@
         real Emin,Emax,Flux0,Eprev,Enext
         common /einterval/ Flux0,Emin,Emax,Eprev,Enext
 
+        integer unfic_in_transcar, unfic_out_transcar
+
 !-------precipitating electrons
         real timeser(1024), edist(1024)
         real fluxdist(1024,1024)
@@ -418,7 +420,7 @@
 
 !-------MZ
         print *, 'reading parameters from file: ',gridfn
-        open(unfic_in_transcar,file='dir.input/'//gridfn,
+        open(newunit=unfic_in_transcar,file='dir.input/'//gridfn,
      &        form='unformatted',          
      &                access='direct',status='old',recl=4*2*ncol0)
 
@@ -553,7 +555,7 @@
         longbuf=nligne*ncol
         longrec=itype*longbuf
 
-        open(unfic_in_transcar,file='dir.input/'//gridfn,
+        open(newunit=unfic_in_transcar,file='dir.input/'//gridfn,
      &        form='unformatted',              
      &                  access='direct',status='old',recl=longrec)
 
@@ -844,7 +846,8 @@
               longbuf1=nligne*ncol1
           longrec1=itype*longbuf
 
-          open(unfic_out_transcar,file='dir.output/transcar_output',
+          open(newunit=unfic_out_transcar,
+     &         file='dir.output/transcar_output',
      &         form='unformatted',access='direct',recl=longrec1,
      &           status='new')
 
@@ -8137,7 +8140,7 @@ C]]]
 
 C    on a debranche ici a cause d'un probleme de NaN
 246    continue
-        print*,'something caused a NaN'
+        write(stderr,*) 'something caused a NaN'
         print*,'pas de temps et params de norm',dt,deltat,R0,Ci0
         close(unfic_out_transcar)
         close(unfic_in_transcar)
@@ -8241,7 +8244,7 @@ C    on a debranche ici a cause d'un probleme de NaN
         enddo
         write(fid_NaN,rec=1)(buffer(i),i=1,longbuf)
         close(fid_NaN)
-        stop 'NaN detected'
+        error stop 'NaN detected'
         end program 
 !-----------------------------------------------------------------------
         pure real function signe(x)

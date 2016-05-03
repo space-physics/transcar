@@ -466,7 +466,7 @@
 
 !    Default values
 !
-        data  lchem/.false./
+      !  data  lchem/.false./
 !    LPRINT    : switch to turn printed output on/off
 !    LPLOT    : switch to turn output for plot routines on/off
 !    LPLOTM  : create cumulative plotfile (for PLTMUL)
@@ -522,9 +522,12 @@
         logical onlyfl,usrang,exsorc,usrtau
         
         real qpreceV 
+        logical,parameter :: lruther=.true.
+
+      integer fic_transout
+
         qpreceV = 0.
-        
-        data lruther/.true./iphase/0/gphase/.5/
+        data iphase/0/ gphase/.5/
 !
 !    switches for turning on/off different options (these should
 !        generally left at the default setting):
@@ -839,8 +842,8 @@
 !         fluxprim(z,E)        : cm-2.s-1.eV-1
 !         qprimpHot(E,z,A)    : cm-2.s-1.eV-1.sr-1
         call phel(e,alt,altkm,iprt,fluxprim,
-     &         primelec,qprimpHot,photelec,nspec,nang,nango2,nalt,
-     &          jpreci,mcount,prodionphot,densig)
+     &         primelec,qprimpHot,photelec,nang,nango2,nalt,
+     &          jpreci,mcount,prodionphot,densig,fic_transout)
 
 !
 !       read in primary pRoto electron production rates.
@@ -853,7 +856,7 @@
         call prot(e,Ebot,ddeng,alt,altkm,iprt,
      &        nspec,nang,nango2,nalt,jpreci,mcount,
      &        protelec,primprotelec,fluxprimprot,qprimpRot,
-     &          prodionprot,gmu,gwt,densig,densneut)
+     &          prodionprot,gmu,gwt,densig,densneut,fic_transout)
 
 
         do iang = -nango2,nango2
@@ -1327,8 +1330,8 @@ c
 c     Calcul des moments suprathermiques
 c
         call moments(nalt,alt,altkm,e,engdd,
-     &          nang,nango2,weitang,cosang,intensite,iprt,ntherm,
-     &          Ne_supra,courant_supra,Te_supra,Chaleur_supra)
+     &    nang,nango2,weitang,cosang,intensite,iprt,ntherm,
+     &    Ne_supra,courant_supra,Te_supra,Chaleur_supra,fic_transout)
 
 c
         call zeroit(prodelsec,nalt)
@@ -1618,7 +1621,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
      &        hrloc,cped,chal,ratHoP,cpedsum,chalsum,cpedCS,chalCS,
      &        ratHoPsum,gyreave,gyriave,collOp,collNOp,collO2p,
      &        collionSN,collionRG,collen2,colleo2,colleo1,colle,iprt,
-     &        f107(1),icolin)
+     &        f107(1),icolin,fic_transout)
       endif
 !
       if(iprt(9).eq.1)then
@@ -1898,11 +1901,11 @@ c47     format(1i4,4f10.2,2(1pe12.3))
       end subroutine intgrl
 !----------------------------------------------------------------------
 !
-         subroutine moments(nalt,alt,altkm,e,engdd,
-     &        nang,nango2,weitang,cosang,intensite,iprt,ntherm,
-     &        Ne_supra,courant_supra,Te_supra,Chaleur_supra)
+      subroutine moments(nalt,alt,altkm,e,engdd,
+     &     nang,nango2,weitang,cosang,intensite,iprt,ntherm,
+     &     Ne_supra,courant_supra,Te_supra,Chaleur_supra,fic_transout)
 !
-         implicit none
+       implicit none
 !
         integer npt
 !
@@ -1910,10 +1913,11 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !
 !     Entrees :
 !     ---------
+        integer, intent(in) ::  nalt, fic_transout
         real engdd(nbren),alt(nbralt),altkm(nbralt),e(nbren)
         real weitang(2*nbrango2),cosang(2*nbrango2)
         real intensite(nbren,nbralt,-nbrango2:nbrango2)
-        integer nalt,iprt(40),nang,nango2
+        integer iprt(40),nang,nango2
         integer ntherm(nbralt)
         logical flux_flg
 
@@ -2064,7 +2068,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
      &   '  [km]       [cm-3]    [cm-2.s-1]    [K]    [eV.cm-2.s-1]')
 1010     format(f10.2,4(1pe10.2))
 
-           end subroutine moments
+      end subroutine moments
 !
 !----------------------------------------------------------------------
 !
@@ -2110,7 +2114,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
         logical lamber, onlyfl, usrang, usrtau, lpass, linear
         save lpass
         data lpass /.false./
-        data pi4/12.56637061435917295385057/        ! 4*pi
+        real,parameter :: pi4=4*4*atan(1.)        ! 4*pi
 
         call zeroit(hl,2*nbrango2+1)
         call zeroit(phi,maxphi)
@@ -2138,7 +2142,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
          dtauc(ilyr)=tau(ilyr)-tau(ilyr-1)        ! set up tau
         enddo
 
-*    set up phase function
+!    set up phase function
 
         if(iphase.eq.-1) then           ! Rutherford phase function
           pmom(0,1)=1.
@@ -2244,9 +2248,10 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !--------------------------- phel ---------------------------------
 !
         subroutine phel(e,alt,altkm,iprt,fluxprim,
-     &          primelec,qprim,photelec,nspec,nang,nango2,nalt,
-     &          jpreci,mcount,prodionprim,densig)
-!
+     &          primelec,qprim,photelec,nang,nango2,nalt,
+     &          jpreci,mcount,prodionprim,densig,fic_transout)
+
+      implicit none
         include 'TRANSPORT.INC'
 !
 !       read in primary electron production rates.  determine angular
@@ -2282,7 +2287,12 @@ c47     format(1i4,4f10.2,2(1pe12.3))
         real photelec(nbralt),prodionprim(nbrsp*2,nbralt)
            real primelec(nbralt,nbren),fluxprim(nbralt,nbren)
         real qprim(nbren,nbralt,-nbrango2:nbrango2)
-!
+
+      integer,intent(in) :: fic_transout, jpreci
+
+      integer i, ialt, iang, ien,isp,iz,j,k,nnen,nz,nnspec
+      real r2pi
+
 900      format (5f10.2)
 910      format (5(1pe10.2))
 920      format (20x,'Altitude:',f10.2,' km')
@@ -2379,23 +2389,27 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !
 !     Interpolation en energie:
       do iz=1,nz
-      do ien=1,nnen
-        finput(ien)=prophel(iz,ien)
-       enddo
-       call intlin(nnen,ephel,finput,nen,e,foutput)
-      do ien=1,nen
-        finter(ien,iz)=foutput(ien)
-       enddo
+           do ien=1,nnen
+               finput(ien)=prophel(iz,ien)
+           enddo
+
+           call intlin(nnen,ephel,finput,nen,e,foutput)
+
+           do ien=1,nen
+               finter(ien,iz)=foutput(ien)
+           enddo
       enddo
 !     Interpolation en altitude:
       do ien=1,nen
-       do iz=1,nz
-        finput(iz)=finter(ien,iz)
-       enddo
+           do iz=1,nz
+               finput(iz)=finter(ien,iz)
+           enddo
+
        call intlin(nz,z,finput,nalt,altkm,foutput)
-      do ialt=1,nalt
-        primelec(ialt,ien)=foutput(ialt)
-       enddo
+
+           do ialt=1,nalt
+               primelec(ialt,ien)=foutput(ialt)
+           enddo
       enddo
 !
       if(iprt(22).eq.1)then
@@ -2441,10 +2455,9 @@ c47     format(1i4,4f10.2,2(1pe12.3))
           do ialt=1,nalt,mcount(5)
             write(fic_transout,920)  altkm(ialt)
             write(fic_transout,910)(fluxprim(ialt,ien), ien = 1,nen)
-       enddo
+          enddo
         endif
-!
-        return
+
       end subroutine phel
 !
 !--------------------------------------------------------------------
@@ -2813,9 +2826,8 @@ c47     format(1i4,4f10.2,2(1pe12.3))
             denselcalc(ialt) = denelc(ialt)
           endif
         enddo
-!
-        return
-        end
+
+        end subroutine densout
 !
 !-------------------------- reed ----------------------------
 !
@@ -2866,16 +2878,21 @@ c47     format(1i4,4f10.2,2(1pe12.3))
       real denelc(nbralt),temelc(nbralt),
      &           zel(nbralt),smgdpa(nbralt),temion(nbralt)
       character*9 title(nbrexc,nbrsp)
-!
-       open(fic_transout,file='dir.data/dir.linux/dir.cine/TRANSOUT'
-     &    ,status='unknown')
+
+      integer fic_datdeg, fic_transout
+
+
+      open(newunit=fic_transout,
+     &    file='dir.data/dir.linux/dir.cine/TRANSOUT',
+     &    status='new')
        rewind(fic_transout)
 !
 !-------------------------------------------------------------
 !-------------------- lecture DATTRANS ------------------------
 !
-        open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
-     &    status='OLD',iostat=iost,err=997)
+      open(newunit=fic_datdeg,
+     & file='dir.data/dir.linux/dir.cine/DATDEG',
+     &    status='old',iostat=iost,err=997)
          rewind(fic_datdeg)
          read (fic_datdeg,*)ibid
         read(fic_datdeg,'(a)') crsinput
@@ -2967,18 +2984,18 @@ c47     format(1i4,4f10.2,2(1pe12.3))
        print*,'#(energie) in ',crsin,' = ',ien
        print*,'#(specie) in  ',rdtin,' = ',nspec
        print*,'#(specie) in  ',crsin,' = ',isp
-       stop
+       error stop
       endif
 
-        if(nensig.gt.nbren.or.nspec.gt.nbrsp.or.iexc.gt.nbrexc.or.
+      if(nensig.gt.nbren.or.nspec.gt.nbrsp.or.iexc.gt.nbrexc.or.
      &        jp.gt.nbrionst) then
-       print*,'actual and maximum values'
-      print*,'nensig,nbren :',nensig,nbren
-      print*,'nspec,nbrsp :',nspec,nbrsp
-      print*,'iexc,nbrexc :',iexc,nbrexc
-      print*,'jp,nbrionst :',jp,nbrionst
-      stop 'error'        ! call abort
-        endif
+          print*,'actual and maximum values'
+          print*,'nensig,nbren :',nensig,nbren
+          print*,'nspec,nbrsp :',nspec,nbrsp
+          print*,'iexc,nbrexc :',iexc,nbrexc
+          print*,'jp,nbrionst :',jp,nbrionst
+          error stop 'error'        ! call abort
+      endif
 !
         read(icrsin) (esig(ien),ien=1,nensig)
         read(icrsin) (bsig(ien),ien=1,nensig)
@@ -3216,15 +3233,19 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 5112     format (/,' Corresponding cosines (cosang):',/,4(1f16.13,2x))
 5114     format (/,' Corresponding weight (weitang):',/,4(1f16.13,2x))
 5190     format (' Incident flux vs energy :',/,5(1x,1pe10.2))
-!
+
       return
-!
+
 993    print*,' Diff.cross-sect. file is in error. Status=',iost
-      stop 'Diff Cross sect file error'
+       error stop 'Diff Cross sect file error'
+
 992    print*,' Cross-section file is in error. Status=',iost
-      stop 'cross section file error'
+       error stop 'cross section file error'
+
 997   print*,'DATDEG Option file is in error. Status=',iost
-      stop 'DATDEG file error'
+      error stop 'DATDEG file error'
+
 998   print*,'DATTRANS Option file is in error. Status=',iost
-       stop 'DATTRANS file error'        ! call abort
-      end
+      error stop 'DATTRANS file error'        ! call abort
+      
+      end subroutine reed

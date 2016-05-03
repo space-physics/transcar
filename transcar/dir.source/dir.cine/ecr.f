@@ -261,27 +261,24 @@ c 	sous programme, a n'appeler qu'apres transsolo (ce serait meme
 c 	mieux a la fin de transcar) reecrit dans DATDEG des noms de
 c 	fichier de sections efficaces differents.
 
-        integer i
+        integer i, u
         character*70 chaine(18),crs,rdt
 1000 	format(a)
 c
-        open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
-     &       status='old')
-	    rewind(fic_datdeg)
+        open(newunit=u,
+     &       file='dir.data/dir.linux/dir.cine/DATDEG', status='old')
+	    rewind(u)
      	do i = 1,18
-     	  read(fic_datdeg,1000)chaine(i)
+     	  read(u,1000)chaine(i)
      	enddo
-     	close(fic_datdeg)
-c
+
      	chaine(3) = 'dir.cine/dir.seff/crs'
      	chaine(4) = 'dir.cine/dir.seff/rdt'
-c
-      open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
-     &        status='old')
-	    rewind(fic_datdeg)
+
+	    rewind(u)
      	do i = 1,18
-     	  write(fic_datdeg,1000)chaine(i)
+     	  write(u,1000)chaine(i)
      	enddo
-     	close(fic_datdeg)
+     	close(u)
 
     	end subroutine ecrit_DATDEG

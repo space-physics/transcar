@@ -37,6 +37,8 @@ coef_est=-1.d0/re/cos(deg2rad*min(lat,lat_top))
 
 
 if (lat<latmin.and.lat>=latequi) then
+  print*,'val_fit: lat<latmin and lat>=latequi'
+
   xinf=log(tan(pi/4.d0-lat*deg2rad/2.d0))
 
   coef_nord=coef_est
@@ -91,6 +93,7 @@ if (lat<latmin.and.lat>=latequi) then
   enddo
 
 elseif(lat>=latmin.and.lat<=latmax) then
+  print*,'lat>=latmin and lat<=latmax'
   xfit=(LM-lat)*DL
   coef_nord=alpha/re
 
@@ -124,7 +127,7 @@ elseif(lat>=latmin.and.lat<=latmax) then
     enddo
   enddo
 elseif(lat>latmax) then
-
+  print *,'val_fit: lat>latmax'
   xmax =log(tan(pi/4.d0-latmax*deg2rad/2.d0))
 
 !  if (lat<lat_top) then

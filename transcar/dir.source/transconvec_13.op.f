@@ -2959,8 +2959,7 @@ CCCCC                                                                           
 !]]]
 
 ![[[    heavy ions momentum equation resolution
-      call cpu_time(tic)
-      write(stdout,*),tic,'Heavy Ions equation resolution'
+      write(stdout,*) 'Heavy Ions equation resolution'
       call velocity(Velmm,Ipos1,Iposnp,deltat_2)
     
       do i=1,nx
@@ -3139,8 +3138,7 @@ CCCCC                                                                           
 !]]]
 
 ![[[    N+ momentum equation resolution
-      call cpu_time(tic)
-      write(stdout,*),tic,'N+ momentum equation resolution'
+      write(stdout,*) 'N+ momentum equation resolution'
     
       call velocity(Velnm,Ipos1,Iposnp,deltat_2)
       do i=1,nx
@@ -3217,10 +3215,10 @@ CCCCC                                                                           
 
       enddo
 
-          D2al=(D2a(1)+D2a(2))/2.
-          D2ar=ylimd(Radn(np),D2a,extra,nx)
-          D2bl=(D2b(1)+D2b(2))/2.
-          D2br=ylimd(Radn(np),D2b,extra,nx)
+      D2al=(D2a(1)+D2a(2))/2.
+      D2ar=ylimd(Radn(np),D2a,extra,nx)
+      D2bl=(D2b(1)+D2b(2))/2.
+      D2br=ylimd(Radn(np),D2b,extra,nx)
     
       D2ar=.5*log(Nenew(np)*Tepnew(np)*Nenew(nx)*Tepnew(nx))
       D2br=.5*log(xn3(np)*T3pnew(np)*xn3(nx)*T3pnew(nx))
@@ -3252,11 +3250,10 @@ CCCCC                                                                           
 !      U3new(i)=U1new(i)
 !    enddo
 
-          if (isnant(U3new,nx)) then
-          call cpu_time(tic)
-       write(stderr,*),tic,'N+ mom. problem calc U3new in loop 1'
-            if (halt) goto 246
-          endif
+      if (isnant(U3new,nx)) then
+         write(stderr,*) 'N+ mom. problem calc U3new in loop 1'
+         if (halt) goto 246
+      endif
 
 
 !]]]
@@ -3428,11 +3425,10 @@ CCCCC                                                                           
           q2new(nx)=max(0.,q2new(nx))
           q2new(np)=q2new(nx)
 
-          if (isnant(q2new,nx)) then
-          call cpu_time(tic)
-      write(stderr,*),tic,'H+ heatflow problem calc q2new loop 1'
-            if (halt) goto 246
-          endif
+      if (isnant(q2new,nx)) then
+        write(stderr,*) 'H+ heatflow problem calc q2new loop 1'
+        if (halt) goto 246
+      endif
 
 
 !]]]
@@ -3704,8 +3700,7 @@ CCCCC                                                                           
     
 
 ![[[    Electron energy and heat flow equation resolution (1)
-      call cpu_time(tic)
-      write(stdout,*),tic,'e- energy & heat flow eqn resolution (1)'
+      write(stdout,*) 'e- energy & heat flow eqn resolution (1)'
     
       do i=1,nx
 
@@ -4117,7 +4112,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
       endif
       
       if (isnant(Tenew,nx)) then
-       write(stderr,*)'probleme dans stabenerg avec Te dans la boucle 1'
+        write(stderr,*) 'problem in stabenerg with Te in the loop 1'
         if (halt) goto 246
       endif
               
@@ -6974,7 +6969,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
 
           if (isnant(Tenew,nx)) then
             call cpu_time(tic)
-        write(stderr,*),tic,'L6966: problem when calc Tenew in loop 1'
+         write(stderr,*),tic,'L6977: problem when calc Tenew in loop 1'
             if (halt) goto 246
           endif
 
@@ -6984,11 +6979,11 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
 
 
           if (isnant(qenew,nx)) then
-            print*,'problem in stabenerg with qe in loop 1'
+            write(stderr,*) 'problem in stabenerg with qe in loop 1'
             if (halt) goto 246
           endif
           if (isnant(Tenew,nx)) then
-            print*,'probleme dans stabenerg avec Te dans la boucle 1'
+            write(stderr,*) 'problem in stabenerg with Te in loop 1'
             if (halt) goto 246
           endif
 

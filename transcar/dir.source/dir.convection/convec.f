@@ -71,7 +71,7 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
        tmag=real(dtmag)
        dlonmlt=dtmag*15._dp
 
-       write(stdout,*),'convec.f: call potentiel, dlonmag,dlonmlt',
+       write(stdout,*) 'convec.f: call potentiel, dlonmag,dlonmlt',
      &   dlonmag,dlonmlt
        call potentiel(iyd,tu,kp,dlonmlt,dlatmag ,EE(1),EE(2),psi,ddp)
        

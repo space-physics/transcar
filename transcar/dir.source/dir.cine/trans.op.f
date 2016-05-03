@@ -5,7 +5,7 @@
      &   temelc,temion,smgdpa,prodiontot,chaufelec,kiappel,
      &   Ne_supra,courant_supra,Te_supra,Chaleur_supra,ut)
 
-!
+       include 'comm.f'
 !-----------------------------------------------------------------------
 !    This code solves the transport equation with the multistream
 !    approach using the modified DISORT subroutine
@@ -824,6 +824,7 @@
        endif
 !
 
+      write(stdout,*) 'trans.f: for each energy, call eloss'
       do ien = 1,nen
        call eloss(e(ien),ien,temelc,denelc,elosse,
      &        nbren,nen,nbralt,nalt)
@@ -945,7 +946,7 @@ c       --------------------------------------------------------------
        endif
       enddo
 c
-c    print*,'    Begin of energy loop'
+      print*,'    Begin of energy loop'
 
       nloop=0
       call zeroit(qint,(2*nbralt-1)*(nbrango2*2+1))
@@ -2842,7 +2843,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
      &    eplt,nke,jsg,jsp,ethres,bratio,cel,cin,cinex,
      &    lamber,onlyfl,exsorc,usrang,usrtau,ddeng,centE,botE,icolin,
      &    fic_transout)
-!
+        include 'comm.f'
         include 'TRANSPORT.INC'
 !
       logical lporter,linear,ldeltam,lamber,onlyfl,exsorc,usrang,
@@ -2881,10 +2882,10 @@ c47     format(1i4,4f10.2,2(1pe12.3))
      &           zel(nbralt),smgdpa(nbralt),temion(nbralt)
       character*9 title(nbrexc,nbrsp)
 
-      integer fic_datdeg
+      integer fic_datdeg,u,icrsin
       integer, intent(out) :: fic_transout
 
-
+      print *,'trans:reed: replace dir.data/dir.linux/dir.cine/TRANSOUT'
       open(newunit=fic_transout,
      &    file='dir.data/dir.linux/dir.cine/TRANSOUT',
      &    status='replace') !replace not new
@@ -2957,10 +2958,10 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !  *    read in ionization and excitation cross-sections vs energy.
 !
        print*,' open file: ','dir.data/dir.linux/'//crsin
-       open(icrsin,file='dir.data/dir.linux/'//crsin,
+       open(newunit=icrsin,file='dir.data/dir.linux/'//crsin,
      &        status='OLD',form='UNFORMATTED',
      &        iostat=iost,err=992)
-       rewind icrsin
+       rewind(icrsin)
        print*,' open file: ','dir.data/dir.linux'//rdtin
        open(irdtin,file='dir.data/dir.linux/'//rdtin,
      &        status='OLD',form='UNFORMATTED',
@@ -2974,12 +2975,11 @@ c47     format(1i4,4f10.2,2(1pe12.3))
           rtext='       .'
         end if
         read(irdtin) nensig,nspecsig
-         if (nspecsig.lt.nspec)then
-       write(6,*)'number of specie in rdtin   =',nspecsig
-       write(6,*)'number of specie in NEUTRAL =',nspec
-       write(6,*)'impossible to continue'
-       stop
-         endif
+      if (nspecsig.lt.nspec)then
+       write(stderr,*)'number of specie in rdtin   =',nspecsig
+       write(stderr,*)'number of specie in NEUTRAL =',nspec
+       error stop'impossible to continue'
+      endif
         read(icrsin) ien,isp,iexc,jp    ! test for correct inputfile
         if(ien.ne.nensig)then
        print*,rdtin,' does not match ',crsin
@@ -3053,15 +3053,15 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 
 !       Print out the cross section for a few states of interest
 !       O(1D), O(1S),O(3p3P)
-        open(955,file='cross.dat',status='replace')
+        open(newunit=u,file='cross.dat',status='replace')
         do ien=1,nen
-          write(955,*) e(ien), cinex(3,2,ien), cinex(3,3,ien),
+          write(u,*) e(ien), cinex(3,2,ien), cinex(3,3,ien),
      &          cinex(3,5,ien),cinex(3,4,ien),cinex(3,jsg(3),ien),
      &          cinex(1,3,ien),cinex(1,4,ien),cinex(1,5,ien),
      &          cinex(1,7,ien),
      &          cinex(1,jsg(1),ien),cinex(2,jsg(2),ien)
         enddo
-        close(955)
+        close(u)
 !       -MZ
 
 !

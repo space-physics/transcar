@@ -25,7 +25,7 @@ c 	Parametres internes :
       character(len=*),parameter ::
      &        datdegfn = 'dir.data/dir.linux/dir.cine/DATDEG'
 
-        integer fic_datdeg
+        integer fic_datdeg,icrsin
     
 c 	Pour transferer via DATDEG les caracteristiques de grille a
 c 	degrad.f
@@ -158,9 +158,9 @@ c       Lecture des grilles d'energie.
 c	goto 314
         crsfn = 'dir.data/dir.linux/'//crs
         print*,'attempting to open ',crsfn
-        open(icrsin,file=crsfn, status='OLD',form='UNFORMATTED',
+        open(newunit=icrsin,file=crsfn, status='OLD',form='UNFORMATTED',
      &          iostat=iost,err=992)
-        rewind icrsin
+        rewind(icrsin)
         read(icrsin) nenold,i1,i2,i3
         
         if (nenold .ne. nen) then

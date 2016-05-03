@@ -1507,8 +1507,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
      &           status='unknown')
            write(fid_temp,rec=nrectemps)(buffer(i),i=1,longbuf)
            close(fid_temp)
-1000       format(' utc second:  ',i8,' tube number: ',i3)
-           write(*,1000) int(temps),itube
+        write(stdout,*)'utc second: ',int(temps),' tube number: ',itube
        tempsort=tempsort+sortie
 
 !------Output code for optical emissions
@@ -2802,8 +2801,7 @@ CCCCC                                                                           
           lbc=1.
           rbc=1.
           
-      call cpu_time(tic)
-      write(stdout,*),tic,'call lcpfct'
+      
       call lcpfct(U2old,U2new,Ipos1,Iposn,
      &              lbc,0.,0.,U2new(np),.false.,0)
      
@@ -2831,8 +2829,8 @@ CCCCC                                                                           
 !]]]
 
 ![[[    O+ momentum equation resolution
-        call cpu_time(tic)
-      write(stdout,*),tic,'O+ momentum equation resolution'
+
+      write(stdout,*) 'O+ momentum equation resolution'
 
       call velocity(Veljm,Ipos1,Iposnp,deltat_2)
       
@@ -2929,8 +2927,7 @@ CCCCC                                                                           
           lbc=1.
           rbc=1.
       
-      call cpu_time(tic)
-      write(stdout,*),tic,'H+ momentum LCPFCT'
+      write(stdout,*) 'H+ momentum LCPFCT'
           
       call lcpfct(U1old,U1new,Ipos1,Iposn,
      &              lbc,0.,0.,U1new(np),.false.,0)
@@ -3286,8 +3283,7 @@ CCCCC                                                                           
 
 
 ![[[    H+ heat flow equation resolution
-      call cpu_time(tic)
-      write(stdout,*),tic,'H+ heatflow equation resolution'
+      write(stdout,*) 'H+ heatflow equation resolution'
       do i=1,nx
 
         C2a(i)=-2.2*q2new(i)
@@ -3445,8 +3441,8 @@ CCCCC                                                                           
       call velocity(Veljq,Ipos1,Iposnp,deltat_2)
 
 ![[[    O+ heat flow equation resolution
-       call cpu_time(tic)
-       write(stdout,*),tic,'O+ heat flow equation resolution'
+
+       write(stdout,*) 'O+ heat flow equation resolution'
       do i=1,nx
 
         C2a(i)=-2.2*Cji*q1new(i)
@@ -3574,8 +3570,8 @@ CCCCC                                                                           
 
 
 !]]]
-       call cpu_time(tic)
-       write(stdout,*),tic,'N+ heat flow'
+
+       write(stdout,*) 'N+ heat flow'
       call velocity(Velnq,Ipos1,Iposnp,deltat_2)
 
 ![[[    N+ heat flow equation resolution

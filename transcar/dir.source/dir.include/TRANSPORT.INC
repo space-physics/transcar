@@ -29,7 +29,7 @@
         character*5 specie(8)
 !
          integer unfic_crsout_degrad,unfic_rdtout_degrad
-         integer icrsin,irdtin,icrsphot
+         integer irdtin,icrsphot
         integer ifeldat,ifelprt,ifeltrans
         integer fic_euvcoeff,fic_euvindex
 !
@@ -47,6 +47,6 @@
      &  fic_degout=22, fic_crsin_degrad=26,fic_dattrans=28
 
          data unfic_crsout_degrad/30/,unfic_rdtout_degrad/32/
-         data icrsin/34/,irdtin/36/,icrsphot/38/
+         data irdtin/36/,icrsphot/38/
         data ifeldat/40/,ifelprt/50/,ifeltrans/52/
         data fic_euvcoeff/54/,fic_euvindex/56/

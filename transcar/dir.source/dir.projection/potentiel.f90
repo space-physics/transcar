@@ -31,8 +31,8 @@ end interface
 !Lmin=0.d0
 !Lmax=0.d0
 
-call cpu_time(tic)
-write(stdout,*),tic,'potentiel.f: call coef_pot'
+
+write(stdout,*) 'potentiel.f: call coef_pot'
 call coef_pot(iyd,tu,kp,&
 	                     ndeg,mdeg,phipot,Lmin,Lmax,latequi,ddp)
 !call IMM_POT(ndeg,mdeg,phipot,Lmin,Lmax,latequi)

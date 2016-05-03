@@ -78,11 +78,11 @@ c                   au transport fluide
         include 'comm.f'
         include 'TRANSPORT.INC'
 	
-      	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
-     .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
-     .               nwave,ns,nns,f107min,f107max,iseff,wnmseff,
-     .               lambdasr,sigsro2,Isr,lineflux,sigabso2,qyield,
-     .               Isr2
+      common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
+     & pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,nwave,ns,nns,
+     & f107min,f107max,iseff,wnmseff, lambdasr,
+     & sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
+
         integer nalt,ns,nns,nwave
         real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
       	real f107(3),day,ap(7),hrloc,UT,glat,chi,chideg
@@ -127,7 +127,7 @@ c ---	Open up files to be used in this program.
      &          status='old')
         rewind(ifeldat)
         open (unit=ifelprt,file= 'dir.data/dir.linux/dir.cine/FELOUT',
-     &          status='new')
+     &          status='replace') ! replace not new
         rewind(ifelprt)
         open (unit=ifeltrans,
      .		file='dir.data/dir.linux/dir.cine/FELTRANS',
@@ -1030,34 +1030,41 @@ c
      .	   sigi,sigt,ichapman)
 
       include 'comm.f'
+      include 'TRANSPORT.INC'
 
-        include 'TRANSPORT.INC'
+      real, intent(in) :: f107(3),ap(7)
 
-        real, intent(in) :: f107(3),ap(7)
+      common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,
+     & pfluxmin,pfluxmax,wave,eV,wavemin,
+     & wavemax,eVmin,eVmax,nwave,ns,nns,
+     & f107min,f107max,iseff,wnmseff, 
+     & lambdasr,sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
 
-      	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
-     .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
-     .		      nwave,ns,nns, f107min,f107max,iseff,wnmseff, lambdasr,
-     .                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
-        common /const/ pi,re,recm,bolt,gzero,amu
- 	real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
- 	integer index(39)
-       	real altkm(nbralt),Ecent(nbren),engdd(nbren),Ebot(nbren)
-       	real centE(nbren),ddeng(nbren),botE(nbren)
-        real xchap(nbralt,nbrsp)
- 	integer iprt(12),idess(9)
-      	real seffion(2000,7),sefftot(2000,5),eVseff(2000),wnmseff(2000)
-      	real sigi(39,7),sigt(39,5)
- 	real wave(39),Pflux(39),Eflux(39),eV(39),tneutre(nbralt),
-     .		  densneut(8,nbralt),colden(8,nbralt)
- 	real pfluxmin(39),pfluxmax(39)
- 	real wwt(7,6,39),threshold(7)
- 	integer number(7),iseff
- 	real trav(39),eVmid(39),work(39),place,year
- 	integer yyddd
- 	real enflux
+      real threshold(7),eVseff(2000),seffion(2000,7),sefftot(2000,5),
+     & pfluxmin(39),pfluxmax(39),wave(39),eV(39),wavemin(39),
+     & wavemax(39),eVmin(39),eVmax(39),f107min,f107max,wnmseff(2000),
+     & lambdasr(9),sigsro2(8),Isr(8),lineflux(7),sigabso2(7),qyield(7),
+     & Isr2(8)
+      integer nbseff,nwave,ns,nns,iseff
+
+      common /const/ pi,re,recm,bolt,gzero,amu
+      integer index(39)
+      real altkm(nbralt),Ecent(nbren),engdd(nbren),Ebot(nbren)
+      real centE(nbren),ddeng(nbren),botE(nbren)
+      real xchap(nbralt,nbrsp)
+      integer iprt(12),idess(9)
+      real sigi(39,7),sigt(39,5)
+      real Pflux(39),Eflux(39),tneutre(nbralt),
+     &		  densneut(8,nbralt),colden(8,nbralt)
+
+      real wwt(7,6,39)
+
+      integer number(7)
+      real trav(39),eVmid(39),work(39),place,year
+      integer yyddd
+      real enflux
         real chapesp(8)
-c
+
 1000    format (1x,/,'hour=',f6.2, 8x,'chi =',f6.2, 3x,'degrees',
      .    6x,'exo temp =',f8.2,/)
 1010  	format ('     felin.f : Production of primary photoelectrons',
@@ -1531,52 +1538,54 @@ c------------------------ search ------------------------------
 c
 c------------------------ Function sefint ---------------------------
 c
- 	function sefint(ener,isp,type)
-c
- 	implicit none
- 	include 'TRANSPORT.INC'
-c
-      	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
-     .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
-     .		      nwave,ns,nns,f107min,f107max,iseff,wnmseff,lambdasr,
-     .                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
-      	real seffion(2000,7),sefftot(2000,5),eVseff(2000),threshold(7)
-        real wnmseff(2000)
-        real eV(39),wave(39),pfluxmin(39),pfluxmax(39)
-        real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
-        real f107min,f107max,ener,sefint
-        integer ns,nns,isp,nwave,nbseff,type,iseff
-        real sigsro2(8),lambdasr(9),Isr(8)
-        real lineflux(7),sigabso2(7),qyield(7),Isr2(8)
+      real function sefint(ener,isp,typ)
 
- 	real tabin(2000),tabeV(2000),tabout(1),seffout(1)
- 	integer i
-c 	type = 1 --> total
-c 	type = 2 --> ionisation
-c
- 	if(type.eq.1)then
- 	  do i = 1,nbseff
- 	    tabin(i) = sefftot(nbseff+1-i,isp)
- 	    tabeV(i) = eVseff(nbseff+1-i)
- 	  enddo
- 	elseif(type.eq.2)then
- 	  do i = 1,nbseff
- 	    tabin(i) = seffion(nbseff+1-i,isp)
- 	    tabeV(i) = eVseff(nbseff+1-i)
- 	  enddo
- 	endif
- 	tabout(1) = ener
-c
- 	call intlin(nbseff,tabeV,tabin,1,tabout,seffout)
-c
- 	sefint = seffout(1)*1.e-18
-c
- 	return
- 	end
+      implicit none
+      include 'TRANSPORT.INC'
 
+      real, intent(in) :: ener
+      integer, intent(in) :: isp,typ
+
+      common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,
+     & pfluxmin,pfluxmax,wave,eV,wavemin,
+     & wavemax,eVmin,eVmax,nwave,ns,nns,
+     & f107min,f107max,iseff,wnmseff, 
+     & lambdasr,sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
+
+      real threshold(7),eVseff(2000),seffion(2000,7),sefftot(2000,5),
+     & pfluxmin(39),pfluxmax(39),wave(39),eV(39),wavemin(39),
+     & wavemax(39),eVmin(39),eVmax(39),f107min,f107max,wnmseff(2000),
+     & lambdasr(9),sigsro2(8),Isr(8),lineflux(7),sigabso2(7),qyield(7),
+     & Isr2(8)
+      integer nbseff,nwave,ns,nns,iseff
+
+
+      real tabin(2000),tabeV(2000),tabout(1),seffout(1)
+      integer i
+c 	typ = 1 --> total
+c 	typ = 2 --> ionisation
 c
-c------------------------ Function sperfc ---------------------------
-c
+      if(typ.eq.1)then
+     	  do i = 1,nbseff
+     	    tabin(i) = sefftot(nbseff+1-i,isp)
+     	    tabeV(i) = eVseff(nbseff+1-i)
+     	  enddo
+      elseif(typ.eq.2)then
+     	  do i = 1,nbseff
+     	    tabin(i) = seffion(nbseff+1-i,isp)
+     	    tabeV(i) = eVseff(nbseff+1-i)
+     	  enddo
+      endif
+      tabout(1) = ener
+
+      call intlin(nbseff,tabeV,tabin,1,tabout,seffout)
+
+      sefint = seffout(1)*1.e-18
+
+      end function sefint
+
+!------------------------ Function sperfc ---------------------------
+
       pure real function sperfc(dummy)
       implicit none
       real,intent(in) :: dummy
@@ -1603,37 +1612,44 @@ c
         do i = 1,ntab
             trav(i) = tab(indx(i))
         enddo
+
         do i = 1,ntab
            tab(i) = trav(i)
         enddo
 
         end subroutine reord
-c
-c-------------------- donnees -------------------------------
-c
- 	block data
 
-      	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
-     .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
-     .		      nwave,ns,nns,f107min,f107max,iseff,wnmseff,lambdasr,
-     .                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
- 	common /const/ pi,re,recm,bolt,gzero,amu
-c
- 	real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
-      	real seffion(2000,7),sefftot(2000,5),eVseff(2000),wnmseff(2000)
-       	dimension threshold(7),eV(39),wave(39)
- 	dimension pfluxmin(39),pfluxmax(39)
-        real sigsro2(8),lambdasr(9),Isr(8)
-        real lineflux(7),sigabso2(7),qyield(7),Isr2(8)
-c
- 	real eVbrO(10),brO(5,10),eVbrN2(13),brN2(5,13),
+!-------------------- donnees -------------------------------
+
+      block data
+
+      implicit none
+
+      common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,
+     & pfluxmin,pfluxmax,wave,eV,wavemin,
+     & wavemax,eVmin,eVmax,nwave,ns,nns,
+     & f107min,f107max,iseff,wnmseff, 
+     & lambdasr,sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
+
+      real threshold(7),eVseff(2000),seffion(2000,7),sefftot(2000,5),
+     & pfluxmin(39),pfluxmax(39),wave(39),eV(39),wavemin(39),
+     & wavemax(39),eVmin(39),eVmax(39),f107min,f107max,wnmseff(2000),
+     & lambdasr(9),sigsro2(8),Isr(8),lineflux(7),sigabso2(7),qyield(7),
+     & Isr2(8)
+      integer nbseff,nwave,ns,nns,iseff
+
+      common /const/ pi,re,recm,bolt,gzero,amu
+      real pi,re,recm,bolt,gzero,amu
+
+
+      real eVbrO(10),brO(5,10),eVbrN2(13),brN2(5,13),
      .  	eVbrO2(20),brO2(3,20),eVbrO2dis(14),brO2dis(6,14),
      .		eVbrN2dis(2),brN2dis(1,2),eVbrH(2),brH(1,2),
      .		eVbrHe(2),brHe(1,2)
- 	integer neVbrO,nstO,neVbrN2,nstN2,
+      integer neVbrO,nstO,neVbrN2,nstN2,
      .  	neVbrO2,nstO2,neVbrO2dis,nstO2dis,neVbrN2dis,nstN2dis,
      .  	neVbrH,nstH,neVbrHe,nstHe
- 	common /branching/
+      common /branching/
      .		eVbrN2,    brN2,    neVbrN2,    nstN2,
      .		eVbrO2,    brO2,    neVbrO2,    nstO2,
      .		eVbrO,     brO,     neVbrO,     nstO,
@@ -1658,7 +1674,7 @@ c
         data Isr2 /6.1e9,9.5e9,16.2e9,25.2e9,35.6e9,56.e9,
      .                  121.5e9,225.e9/
 
- 	integer ne
+      integer ne
 c 	WARNING! In a block data, an array T(i,j) is read by i begining
 c 	and j ending.
 c
@@ -1822,11 +1838,11 @@ c 	excitation.
  	data eVbrH /500.,13.6/
  	data nstH /1/
  	data brH / 1.,1./
-c
+
 	data neVbrHe /2/
  	data eVbrHe /500.,24.6/
  	data nstHe /1/
  	data brHe / 1.,1./
-c
+
 
  	end block data

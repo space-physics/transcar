@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(transcar Fortran)
 
-add_compile_options(-march=native)
+add_compile_options(-march=native -Wline-truncation)
 
 # compiler dependent flags necessary for disk files used (sorry)
 if(${CMAKE_Fortran_COMPILER_ID} MATCHES GNU)
-    add_compile_options(-frecord-marker=4 -std=legacy)
+    add_compile_options(-frecord-marker=4 -std=legacy)# -Warray-bounds=2)
 elseif(${CMAKE_Fortran_COMPILER_ID} MATCHES Intel)
     add_compile_options(-assume byterecl)
 elseif(${CMAKE_Fortran_COMPILER_ID} MATCHES PGI)

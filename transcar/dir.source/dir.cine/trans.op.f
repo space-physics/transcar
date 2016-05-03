@@ -714,7 +714,8 @@
      &    zbot,ztop,hrloc,tempexo,knm,glat,ap(1),albedo,
      &    qxdown,qxup,fluxup,fluxdown,temelc,temion,ezero,izplt,ieplt,
      &    eplt,nke,jsg,jsp,ethres,bratio,cel,cin,cinex,
-     &    lamber,onlyfl,exsorc,usrang,usrtau,ddeng,centE,botE,icolin)
+     &    lamber,onlyfl,exsorc,usrang,usrtau,ddeng,centE,botE,icolin,
+     &    fic_transout)
 
 
 !
@@ -853,8 +854,8 @@
 !         qprimpRot(E,z,A)    : cm-2.s-1.eV-1.sr-1
 !
 
-        call prot(e,Ebot,ddeng,alt,altkm,iprt,
-     &        nspec,nang,nango2,nalt,jpreci,mcount,
+        call prot(e,Ebot,ddeng,altkm,iprt,
+     &        nango2,nalt,jpreci,mcount,
      &        protelec,primprotelec,fluxprimprot,qprimpRot,
      &          prodionprot,gmu,gwt,densig,densneut,fic_transout)
 
@@ -2839,7 +2840,8 @@ c47     format(1i4,4f10.2,2(1pe12.3))
      &    zbot,ztop,hrloc,tempexo,knm,glat,Apind,albedo,
      &    qxdown,qxup,fluxup,fluxdown,temelc,temion,ezero,izplt,ieplt,
      &    eplt,nke,jsg,jsp,ethres,bratio,cel,cin,cinex,
-     &    lamber,onlyfl,exsorc,usrang,usrtau,ddeng,centE,botE,icolin)
+     &    lamber,onlyfl,exsorc,usrang,usrtau,ddeng,centE,botE,icolin,
+     &    fic_transout)
 !
         include 'TRANSPORT.INC'
 !
@@ -2879,12 +2881,13 @@ c47     format(1i4,4f10.2,2(1pe12.3))
      &           zel(nbralt),smgdpa(nbralt),temion(nbralt)
       character*9 title(nbrexc,nbrsp)
 
-      integer fic_datdeg, fic_transout
+      integer fic_datdeg
+      integer, intent(out) :: fic_transout
 
 
       open(newunit=fic_transout,
      &    file='dir.data/dir.linux/dir.cine/TRANSOUT',
-     &    status='new')
+     &    status='replace') !replace not new
        rewind(fic_transout)
 !
 !-------------------------------------------------------------
@@ -3200,16 +3203,16 @@ c47     format(1i4,4f10.2,2(1pe12.3))
        enddo
         end if
       if (iprt(1).eq.1)then
-       write(fic_transout,*)
-          do 130 iang=1,nango2
-         write(fic_transout,*)'Downward flux. Angle =',pitchang(iang)
-            write (fic_transout,5190) (qxdown(ien,-iang),ien=1,nen)
-130       continue
-          do 140 iang=1,nango2
-         write(fic_transout,*)
-     &        'Upward flux.   Angle =',pitchang(nango2+iang)
-            write (fic_transout,5190) (qxup(ien,iang),ien=1,nen)
-140       continue
+        write(fic_transout,*)
+        do iang=1,nango2
+          write(fic_transout,*)'Downward flux. Angle =',pitchang(iang)
+          write (fic_transout,5190) (qxdown(ien,-iang),ien=1,nen)
+        enddo
+        do iang=1,nango2
+          write(fic_transout,*)'Upward flux.   Angle =',
+     &         pitchang(nango2+iang)
+          write (fic_transout,5190) (qxup(ien,iang),ien=1,nen)
+        end do
       endif
 5000     format (7(1x,1pe10.2))
 5020     format (' Electron dens. (denelc)[cm-3]:',/,5(1x,1pe10.2))

@@ -1,4 +1,5 @@
         program transconvec_13
+
         
         include 'comm.f'
         include 'comm_sp.f'
@@ -8,7 +9,9 @@
 !     Anciennement : eiscat.f
         character(len=80) split,gridfn
 
-        parameter (npt=500,xcoeffno=1.,ncol0=50,intemps0=300,nb_ion=6)
+        integer, parameter :: npt=500,ncol0=50,intemps0=300,nb_ion=6
+        real, parameter :: xcoeffno=1.
+
         logical isnant
         external isnant
 !
@@ -70,7 +73,7 @@
         real T3pold(npt),T3told(npt),Tmpold(npt),Tmtold(npt)
         real Tepold(npt),Tetold(npt)
 
-        real facteur0(npt),facteur1(npt),facteur2(npt),Tmoy,Umn2
+        real facteur0(npt),facteur1(npt),facteur2(npt),Tmoy
         real latgeo,longeo,latgeo_ini,longeo_ini
 
 !-------Optical calculation variables
@@ -109,7 +112,10 @@
         logical exval
 !-------MZ
 
-        real Te1new(npt),qe1new(npt)
+        integer  ipos_t1t
+
+!        real Te1new(npt)
+        real qe1new(npt)
         real C2qa(npt),D2qa(npt),C2qb(npt),D2qb(npt),D3q(npt),D7q(npt)
         real C2ea(npt),D2ea(npt),C2eb(npt),D2eb(npt),D3e(npt),D7e(npt)
         real T1_15(npt),T2_15(npt),T3_15(npt),Tm_15(npt),Te_15(npt)
@@ -257,12 +263,13 @@
         real D2d(npt),C2d(npt)
         real Sc(npt)
 
-        real rbc,lbc,Vr,Vl,D2ar,D2al,D2br,D2bl,D2cr,D2cl,D2dr,D2dl
+        real rbc,lbc,D2ar,D2al,D2br,D2bl,D2cr,D2cl,D2dr,D2dl
         real zero(npt),fact
         real coefelec,coefini
         real Nibot,Njbot,Uibot,Ujbot,Tibot,Tjbot,ones(npt)
         real Tebot,Qibot,Qjbot,Qebot,Qitop,Qjtop,Qetop
-        real f107(3),ap(7),d(8),t(2),zhplus,zinf,zsup,stl,sec,JJ(npt)
+        real f107(3),ap(7),d(8),zhplus,zinf,zsup,stl,sec,JJ(npt)
+!        real t(2)
         real vartemp,prodtemp
         real ai(6),bij(6,5),ci(6),cis(6),af(6,npt)
 
@@ -300,7 +307,7 @@
         integer itype
 
         !added for conductivity calculations
-        real sigmaP(npt),sigmaH(npt),sigmaC(npt)
+!        real sigmaP(npt),sigmaH(npt),sigmaC(npt)
         !-----MZ
 
         !Coefficients for molecular species
@@ -375,10 +382,11 @@
         common /precdist/ nfluxdist,ntimeser,timeser,                   
      &                  edist,fluxdist,precint,precext
         integer ioerr
-        character*80 prec_fname 
+        character(len=80) prec_fname 
         real fluxstat,timestat
-        character*80 tempchar
 !-------MZ
+
+        real qk0,ql0,qm0,r_min,rbc_2,rcira,rekm,seconde,sini,t_min
 
         include 'TRANSPORT.INC'
     
@@ -429,13 +437,13 @@
 
         read(unfic_in_transcar,rec=1) (buffer(i),i=1,2*ncol0)
 
-        nx      =buffer( 1)
-        ncol    =buffer( 2)
-        iannee  =buffer( 3)
-        imois   =buffer( 4)
-        ijour   =buffer( 5)
-        iheure  =buffer( 6)
-        iminute =buffer( 7)
+        nx      = int(buffer( 1))
+        ncol    = int(buffer( 2))
+        iannee  = int(buffer( 3))
+        imois   = int(buffer( 4))
+        ijour   = int(buffer( 5))
+        iheure  = int(buffer( 6))
+        iminute = int(buffer( 7))
         seconde =buffer( 8)
         intpas  =buffer( 9)
         longeo  =buffer(10)
@@ -446,7 +454,7 @@
         f107(2) =buffer(15)
         f107(3) =buffer(16)
         ap(2)   =buffer(17)
-        ikp     =buffer(18)
+        ikp     = int(buffer(18))
         dTinf   =buffer(19)
         dUinf   =buffer(20)
         cofo    =buffer(21)
@@ -454,7 +462,7 @@
         cofn    =buffer(23)
 !        Enord   =buffer(31)            Get this from the DATCAR input file
 !        Eest    =buffer(32)            Get this from DATCAR
-        iapprox =buffer(37)
+        iapprox = int(buffer(37))
 
         ipos_z=1
         ipos_n1=2
@@ -1688,20 +1696,21 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 !------MZ
 
 
-        if (isnant(nenew,nx)
-     &  .or.isnant(Tenew,nx)
-     &  .or.isnant(T1new,nx)) then
+      if (isnant(nenew,nx)
+     &.or.isnant(Tenew,nx)
+     &.or.isnant(T1new,nx)) then
           write(stderr,*),'problem before calling atmos'
           if (halt) goto 246
         endif
-         call atmos(iyd,real(temps,sp),stl,alt,latgeo,longeo,jpreci,f107,
+      
+      call atmos(iyd,real(temps,sp),stl,alt,latgeo,longeo,jpreci,f107,
      &            ap,Nenew,Tenew,T1new,nx,kiappel,file_cond)
 
         if (vparaB.ne.0.) vtrans=vparaB*100./Ci0
 
          flagatmos=.false.
 
-        if (flgne) stop'concentration negative'
+        if (flgne) error stop 'concentration negative'
 
 !]]
 ![[     former timestep results memorization
@@ -4094,36 +4103,37 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
           tenew(np)=tenew(nx)
           Tenew(np)=2.*Tenew(nx)-Tenew(nx-1)
 
-          if (isnant(Tenew,nx)) then
-            call cpu_time(tic)
-      write(stderr,*),tic,'L4076: problem when calc Tenew in loop 1'
-            if (halt) goto 246
-          endif
+      if (isnant(Tenew,nx)) then
+        call cpu_time(tic)
+        write(stderr,*),tic,'L4076: problem when calc Tenew in loop 1'
+        if (halt) goto 246
+      endif
 
 
       call stabenerg(nx,xne,Teold,Tenew,qeold,qenew,
      &            D7e,D7q,Cei,deltat_4)
 
 
-          if (isnant(qenew,nx)) then
-            call cpu_time(tic)
+      if (isnant(qenew,nx)) then
+         call cpu_time(tic)
          write(stderr,*),tic,'problem in stabenerg with qe in loop 1'
-            if (halt) goto 246
-          endif
-          if (isnant(Tenew,nx)) then
-            print*,'probleme dans stabenerg avec Te dans la boucle 1'
-            if (halt) goto 246
-          endif
+         if (halt) goto 246
+      endif
+      
+      if (isnant(Tenew,nx)) then
+       write(stderr,*)'probleme dans stabenerg avec Te dans la boucle 1'
+        if (halt) goto 246
+      endif
               
 
 
-          do i=1,np
-            Tenew(i)=max(Tenew(i),T_min)
+      do i=1,np
+        Tenew(i)=max(Tenew(i),T_min)
         Tepnew(i)=Tenew(i)
         Tetnew(i)=Tenew(i)
-            qeold(i)=qenew(i)
-            Teold(i)=Tenew(i)
-          enddo
+        qeold(i)=qenew(i)
+        Teold(i)=Tenew(i)
+      enddo
 
 C ]]]
 
@@ -7911,11 +7921,11 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
 c            T3pnew(i)=T1pnew(i)
       enddo
 
-          if (isnant(T3pnew,nx)) then
-            call cpu_time(tic)
-        write(stderr,*),tic,'problem when calculating T3pnew in loop 2'
-            if (halt) goto 246
-          endif
+      if (isnant(T3pnew,nx)) then
+       call cpu_time(tic)
+       write(stderr,*) tic,'problem when calculating T3pnew in loop 2'
+       if (halt) goto 246
+      endif
 
 
 c    temperature perpendiculaire
@@ -8009,12 +8019,12 @@ c            T3tnew(i)=T1tnew(i)
         T3new(i)=(T3pnew(i)+2.*T3tnew(i))/3.
       enddo
 
-          if (isnant(T3tnew,nx)) then
-            call cpu_time(tic)
-        write(stderr,*),tic,'problem when calculating T3tnew in loop 2'
-            if (halt) goto 246
-          endif
-456    continue
+      if (isnant(T3tnew,nx)) then
+        call cpu_time(tic)
+        write(stderr,*) tic,'problem when calculating T3tnew in loop 2'
+        if (halt) goto 246
+      endif
+
 
 C]]]
         enddo                    ! fin de boucle temporelle

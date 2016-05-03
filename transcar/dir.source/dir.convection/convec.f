@@ -28,7 +28,7 @@
        logical flgpot,flgini
        data flgini/.true./
 
-       real latgeo,longeo,pot
+       real latgeo,longeo!,pot
        real lonmag,latmag,tmag,cofo,cofh,cofn,Fe0,Ee0,Fi0,Ei0
        real Bmag,dipangle,Enord,Eest,vperpnord,vperpest,vhorizon,vpara
        real B,dip,or,ddp,Jtop
@@ -36,9 +36,9 @@
        integer ikp
 
         common/buff/lonmag,latmag,tmag,ikp,cofo,cofh,cofn,chi,
-     &       		Fe0,Ee0,Fi0,Ei0,
-     &			Bmag,dipangle,Enord,Eest,
-     &			vperpnord,vperpest,vhorizon,vpara,ddp,Jtop
+     &               Fe0,Ee0,Fi0,Ei0,
+     &            Bmag,dipangle,Enord,Eest,
+     &            vperpnord,vperpest,vhorizon,vpara,ddp,Jtop
 
        real(dp) dlonmag0,dlatmag0,dlo0,dla0
 
@@ -59,8 +59,8 @@
 
 c       dlatgeo=latgeo
 c       dlongeo=longeo
-       latgeo=dlatgeo
-       longeo=dlongeo
+       latgeo=real(dlatgeo)
+       longeo=real(dlongeo)
 
 c       print*,'entree convec',longeo,latgeo
 c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
@@ -68,7 +68,7 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
        dla0=dlatmag-dlatmag0
         dtmag=(dlonmag+dlonref)/15._dp + tu/3600._dp
        dtmag=mod(dtmag+24._dp,24._dp)
-       tmag=dtmag
+       tmag=real(dtmag)
        dlonmlt=dtmag*15._dp
 
        write(stdout,*),'convec.f: call potentiel, dlonmag,dlonmlt',
@@ -79,17 +79,17 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
        
        print*,'convec.f: call magfild'  
        call magfild(latgeo,longeo,zref,year,Bmag,dipangle,orient)
-       pot=psi0
-       Enord=EE(2)
-       Eest=EE(1)
+!       pot=psi0
+       Enord=real(EE(2))
+       Eest=real(EE(1))
        vpest =-EE(2)/Bmag*10._dp
-       vperpest=vpest
+       vperpest=real(vpest)
        vpnord= EE(1)/Bmag*10._dp
-       vperpnord=vpnord
+       vperpnord=real(vpnord)
        vh =vpnord/cos(dipangle*deg2rad)
-       vhorizon=vh
+       vhorizon=real(vh)
        vp    =vpnord*tan(dipangle*deg2rad)*orient
-       vpara=vp
+       vpara=real(vp)
        
         dlon = vpest*dt/re/cos(min(dlatmag,lat_top)*deg2rad)
         dlat =  vh*dt/re
@@ -98,7 +98,7 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
      &                    dlonmlt,dlatmag
      
          dtheta=cor_cnv(iyd,tu,kp,dlonmlt,dlatmag,
-     &			   dlat,dlon,psi0)
+     &               dlat,dlon,psi0)
          dlonmag=dlonmlt-(tu+dt)/240.d0-dlonref
          dlonmag=mod(dlonmag+360.d0,360.d0)
       write(stdout,*),'convec.f: call mag2geo,',
@@ -109,10 +109,10 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
        endif
 
 
-       lonmag=dlonmag
-       latmag=dlatmag
-       longeo=dlongeo
-       latgeo=dlatgeo
+       lonmag=real(dlonmag)
+       latmag=real(dlatmag)
+       longeo=real(dlongeo)
+       latgeo=real(dlatgeo)
        dlonmag0=dlonmag
        dlatmag0=dlatmag
 c       write(*,100)tu,dlonmlt,dlatmag,Enord,Eest,
@@ -127,7 +127,7 @@ c     &dtheta,psi0
 !       print*,'attempting trace_conv write'
        write(56,*) tu,dlonmlt,dlatmag,psi0,dlo0,dla0
 c100       format(a2,10(1x,g15.8))
-100       format(9(1x,g15.8))
+!100       format(9(1x,g15.8))
 
        end Subroutine convec
 
@@ -233,7 +233,7 @@ c        lon=datan2(sb,cb)*rad2deg
         else
           b=2.d0*fa/a1/ds*coef_ds
         endif
-    	fb=potar(iyd,tu,kp,lonmlt,latmag,dlat,dlon,b,psi0)
+        fb=potar(iyd,tu,kp,lonmlt,latmag,dlat,dlon,b,psi0)
         flgini=.true.
         do while(fa*fb.gt.0.d0)
           if (flgini) then
@@ -264,7 +264,7 @@ c        lon=datan2(sb,cb)*rad2deg
        fc=fb
        do 12 iter=1,itmax
          if((fb.gt.0.d0.and.fc.gt.0.d0)
-     &	     .or.(fb.lt.0.d0.and.fc.lt.0.d0))then
+     &         .or.(fb.lt.0.d0.and.fc.lt.0.d0))then
            c=a
            fc=fa
            d=b-a

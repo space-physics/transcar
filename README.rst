@@ -24,7 +24,10 @@ Prereqs
 =======
 ::
 
-    sudo apt-get install gfortran cmake parallel
+    sudo apt-get install gfortran cmake make parallel bc wget
+    
+If you don't have GNU Parallel, you can install it via ``setup_parallel.sh`` on any system including Cygwin.
+If it's not compiling for you let me know, it really should be platform-independent.
 
 Fortran Installation
 ====================

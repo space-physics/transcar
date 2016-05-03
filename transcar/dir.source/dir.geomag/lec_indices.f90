@@ -106,7 +106,7 @@ pure integer function num_rec(ian_deb,iday_deb,ian,imois,ijour)
     integer,parameter :: m1(12)=(/31,59,90,120,151,181,212,243,273,304,334,365/),	&
                          m2(12)=(/31,60,91,121,152,182,213,244,274,305,335,366/)
 
-    integer nj_an,kd
+    integer nj_an,kd,i,njour
 
     nj_an = 1 - iday_deb
 

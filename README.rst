@@ -24,17 +24,24 @@ Prereqs
 =======
 ::
 
-    sudo apt-get install gfortran libblas-dev liblapack-dev libatlas-dev libatlas-dev make
+    sudo apt-get install gfortran cmake make parallel bc wget
+    
+If you don't have GNU Parallel, you can install it via ``setup_parallel.sh`` on any system including Cygwin.
+If it's not compiling for you let me know, it really should be platform-independent.
 
-Installation
-============
-
-.. code:: bash
+Fortran Installation
+====================
+The basic program uses Bash and Fortran code, so it runs anywhere (Linux/BSD/Mac/Windows)::
 
   git clone https://github.com/scienceopen/transcar
-  cd transcar
-  ./setup.sh
-  
+  cd transcar/transcar/dir.source/dir.obj
+  cmake ..
+  make -j7 --quiet
+  cd ../..
+
+If you then modify the Fortran source code, you just have to in dir.obj type::
+
+    make
   
 To Run
 ======
@@ -44,3 +51,20 @@ Simulations are configured in transcar/dir.input/DATCAR. Simulations are run by:
     ./run_beams_parallel.sh /tmp/tc
     
 where /tmp/tc is the output directory. Files are automatically erased there, so be careful!
+
+Optional
+========
+
+Python installation
+-------------------
+If you wish to use the user-friendly Python interfaces (alpha test)::
+
+    python setup.py develop
+
+Specify compiler
+----------------
+Cmake uses your system default Fortran compiler, but if you wish to use another compiler, set environment variable FC in the Cmake call. For example, Intel ``ifort``::
+
+    FC=ifort cmake ..
+
+

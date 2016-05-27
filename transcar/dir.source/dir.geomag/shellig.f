@@ -160,56 +160,56 @@ C
       DATA RMIN,RMAX	/0.05,1.01/
       DATA STEP,STEQ	/0.20,0.03/
 	BEQU=1.E10
-C*****ENTRY POINT  SHELLG  TO BE USED WITH GEODETIC CO-ORDINATES        SHEL0080
+C*****ENTRY POINT  SHELLG  TO BE USED WITH GEODETIC CO-ORDINATES        
       RLAT=GLAT*UMR
-      CT=SIN(RLAT)                                                      SHEL0100
-      ST=COS(RLAT)                                                      SHEL0110
+      CT=SIN(RLAT)                                                      
+      ST=COS(RLAT)                                                      
       D=SQRT(AQUAD-(AQUAD-BQUAD)*CT*CT)
       X(1)=(ALT+AQUAD/D)*ST/ERA
       X(3)=(ALT+BQUAD/D)*CT/ERA
       RLON=GLON*UMR
-      X(2)=X(1)*SIN(RLON)                                               SHEL0160
-      X(1)=X(1)*COS(RLON)                                               SHEL0170
-      GOTO9                                                             SHEL0180
-      ENTRY SHELLC(V,FL,B0)                                             SHEL0190
-C*****ENTRY POINT  SHELLC  TO BE USED WITH CARTESIAN CO-ORDINATES       SHEL0200
-      X(1)=V(1)                                                         SHEL0210
-      X(2)=V(2)                                                         SHEL0220
-      X(3)=V(3)                                                         SHEL0230
-C*****CONVERT TO DIPOL-ORIENTED CO-ORDINATES                            SHEL0240
-      DATA U/                 +0.3511737,-0.9148385,-0.1993679,         SHEL0250
-     A                        +0.9335804,+0.3583680,+0.0000000,         SHEL0260
-     B                        +0.0714471,-0.1861260,+0.9799247/         SHEL0270
+      X(2)=X(1)*SIN(RLON)                                               
+      X(1)=X(1)*COS(RLON)                                               
+      GOTO9                                                             
+      ENTRY SHELLC(V,FL,B0)                                             
+C*****ENTRY POINT  SHELLC  TO BE USED WITH CARTESIAN CO-ORDINATES       
+      X(1)=V(1)                                                         
+      X(2)=V(2)                                                         
+      X(3)=V(3)                                                         
+C*****CONVERT TO DIPOL-ORIENTED CO-ORDINATES                            
+      DATA U/                 +0.3511737,-0.9148385,-0.1993679,         
+     A                        +0.9335804,+0.3583680,+0.0000000,         
+     B                        +0.0714471,-0.1861260,+0.9799247/         
 9     RQ=1./(X(1)*X(1)+X(2)*X(2)+X(3)*X(3))
-      R3H=SQRT(RQ*SQRT(RQ))                                             SHEL0290
-      P(1,2)=(X(1)*U(1,1)+X(2)*U(2,1)+X(3)*U(3,1))*R3H                  SHEL0300
-      P(2,2)=(X(1)*U(1,2)+X(2)*U(2,2)            )*R3H                  SHEL0310
-      P(3,2)=(X(1)*U(1,3)+X(2)*U(2,3)+X(3)*U(3,3))*RQ                   SHEL0320
-C*****FIRST THREE POINTS OF FIELD LINE                                  SHEL0330
-      STEP=-SIGN(STEP,P(3,2))                                           SHEL0340
-      CALL STOER(P(1,2),BQ2,R2)                                         SHEL0350
-      B0=SQRT(BQ2)                                                      SHEL0360
-      P(1,3)=P(1,2)+0.5*STEP*P(4,2)                                     SHEL0370
-      P(2,3)=P(2,2)+0.5*STEP*P(5,2)                                     SHEL0380
-      P(3,3)=P(3,2)+0.5*STEP                                            SHEL0390
-      CALL STOER(P(1,3),BQ3,R3)                                         SHEL0400
-      P(1,1)=P(1,2)-STEP*(2.*P(4,2)-P(4,3))                             SHEL0410
-      P(2,1)=P(2,2)-STEP*(2.*P(5,2)-P(5,3))                             SHEL0420
-      P(3,1)=P(3,2)-STEP                                                SHEL0430
-      CALL STOER(P(1,1),BQ1,R1)                                         SHEL0440
-      P(1,3)=P(1,2)+STEP*(20.*P(4,3)-3.*P(4,2)+P(4,1))/18.              SHEL0450
-      P(2,3)=P(2,2)+STEP*(20.*P(5,3)-3.*P(5,2)+P(5,1))/18.              SHEL0460
-      P(3,3)=P(3,2)+STEP                                                SHEL0470
-      CALL STOER(P(1,3),BQ3,R3)                                         SHEL0480
-C*****INVERT SENSE IF REQUIRED                                          SHEL0490
-      IF(BQ3.LE.BQ1)GOTO2                                               SHEL0500
-      STEP=-STEP                                                        SHEL0510
-      R3=R1                                                             SHEL0520
-      BQ3=BQ1                                                           SHEL0530
-      DO 1 I=1,7                                                        SHEL0540
-      ZZ=P(I,1)                                                         SHEL0550
-      P(I,1)=P(I,3)                                                     SHEL0560
-1     P(I,3)=ZZ                                                         SHEL0570
+      R3H=SQRT(RQ*SQRT(RQ))                                             
+      P(1,2)=(X(1)*U(1,1)+X(2)*U(2,1)+X(3)*U(3,1))*R3H                  
+      P(2,2)=(X(1)*U(1,2)+X(2)*U(2,2)            )*R3H                  
+      P(3,2)=(X(1)*U(1,3)+X(2)*U(2,3)+X(3)*U(3,3))*RQ                   
+C*****FIRST THREE POINTS OF FIELD LINE                                  
+      STEP=-SIGN(STEP,P(3,2))                                           
+      CALL STOER(P(1,2),BQ2,R2)                                         
+      B0=SQRT(BQ2)                                                      
+      P(1,3)=P(1,2)+0.5*STEP*P(4,2)                                     
+      P(2,3)=P(2,2)+0.5*STEP*P(5,2)                                     
+      P(3,3)=P(3,2)+0.5*STEP                                            
+      CALL STOER(P(1,3),BQ3,R3)                                         
+      P(1,1)=P(1,2)-STEP*(2.*P(4,2)-P(4,3))                             
+      P(2,1)=P(2,2)-STEP*(2.*P(5,2)-P(5,3))                             
+      P(3,1)=P(3,2)-STEP                                                
+      CALL STOER(P(1,1),BQ1,R1)                                         
+      P(1,3)=P(1,2)+STEP*(20.*P(4,3)-3.*P(4,2)+P(4,1))/18.              
+      P(2,3)=P(2,2)+STEP*(20.*P(5,3)-3.*P(5,2)+P(5,1))/18.              
+      P(3,3)=P(3,2)+STEP                                                
+      CALL STOER(P(1,3),BQ3,R3)                                         
+C*****INVERT SENSE IF REQUIRED                                          
+      IF(BQ3.LE.BQ1)GOTO2                                               
+      STEP=-STEP                                                        
+      R3=R1                                                             
+      BQ3=BQ1                                                           
+      DO 1 I=1,7                                                        
+      ZZ=P(I,1)                                                         
+      P(I,1)=P(I,3)                                                     
+1     P(I,3)=ZZ                                                         
 C*****SEARCH FOR LOWEST MAGNETIC FIELD STRENGTH
 2     IF(BQ1.LT.BEQU) THEN
 	BEQU=BQ1
@@ -223,63 +223,63 @@ C*****SEARCH FOR LOWEST MAGNETIC FIELD STRENGTH
 	BEQU=BQ3
 	IEQU=3
 	ENDIF
-C*****INITIALIZATION OF INTEGRATION LOOPS                               SHEL0580
+C*****INITIALIZATION OF INTEGRATION LOOPS                               
       STEP12=STEP/12.
-      STEP2=STEP+STEP                                                   SHEL0600
-      STEQ=SIGN(STEQ,STEP)                                              SHEL0610
-      FI=0.                                                             SHEL0620
-      ICODE=1                                                           SHEL0630
-      ORADIK=0.                                                         SHEL0640
-      OTERM=0.                                                          SHEL0650
-      STP=R2*STEQ                                                       SHEL0660
-      Z=P(3,2)+STP                                                      SHEL0670
+      STEP2=STEP+STEP                                                   
+      STEQ=SIGN(STEQ,STEP)                                              
+      FI=0.                                                             
+      ICODE=1                                                           
+      ORADIK=0.                                                         
+      OTERM=0.                                                          
+      STP=R2*STEQ                                                       
+      Z=P(3,2)+STP                                                      
       STP=STP/0.75
-      P(8,1)=STEP2*(P(1,1)*P(4,1)+P(2,1)*P(5,1))                        SHEL0690
-      P(8,2)=STEP2*(P(1,2)*P(4,2)+P(2,2)*P(5,2))                        SHEL0700
-C*****MAIN LOOP (FIELD LINE TRACING)                                    SHEL0710
-      DO 3 N=3,3333                                                     SHEL0720
-C*****CORRECTOR (FIELD LINE TRACING)                                    SHEL0730
-      P(1,N)=P(1,N-1)+STEP12*(5.*P(4,N)+8.*P(4,N-1)-P(4,N-2))           SHEL0740
-      P(2,N)=P(2,N-1)+STEP12*(5.*P(5,N)+8.*P(5,N-1)-P(5,N-2))           SHEL0750
-C*****PREPARE EXPANSION COEFFICIENTS FOR INTERPOLATION                  SHEL0760
-C*****OF SLOWLY VARYING QUANTITIES                                      SHEL0770
-      P(8,N)=STEP2*(P(1,N)*P(4,N)+P(2,N)*P(5,N))                        SHEL0780
-      C0=P(1,N-1)**2+P(2,N-1)**2                                        SHEL0790
-      C1=P(8,N-1)                                                       SHEL0800
-      C2=(P(8,N)-P(8,N-2))*0.25                                         SHEL0810
+      P(8,1)=STEP2*(P(1,1)*P(4,1)+P(2,1)*P(5,1))                        
+      P(8,2)=STEP2*(P(1,2)*P(4,2)+P(2,2)*P(5,2))                        
+C*****MAIN LOOP (FIELD LINE TRACING)                                    
+      DO 3 N=3,3333                                                     
+C*****CORRECTOR (FIELD LINE TRACING)                                    
+      P(1,N)=P(1,N-1)+STEP12*(5.*P(4,N)+8.*P(4,N-1)-P(4,N-2))           
+      P(2,N)=P(2,N-1)+STEP12*(5.*P(5,N)+8.*P(5,N-1)-P(5,N-2))           
+C*****PREPARE EXPANSION COEFFICIENTS FOR INTERPOLATION                  
+C*****OF SLOWLY VARYING QUANTITIES                                      
+      P(8,N)=STEP2*(P(1,N)*P(4,N)+P(2,N)*P(5,N))                        
+      C0=P(1,N-1)**2+P(2,N-1)**2                                        
+      C1=P(8,N-1)                                                       
+      C2=(P(8,N)-P(8,N-2))*0.25                                         
       C3=(P(8,N)+P(8,N-2)-C1-C1)/6.0
-      D0=P(6,N-1)                                                       SHEL0830
-      D1=(P(6,N)-P(6,N-2))*0.5                                          SHEL0840
-      D2=(P(6,N)+P(6,N-2)-D0-D0)*0.5                                    SHEL0850
+      D0=P(6,N-1)                                                       
+      D1=(P(6,N)-P(6,N-2))*0.5                                          
+      D2=(P(6,N)+P(6,N-2)-D0-D0)*0.5                                    
       E0=P(7,N-1)
-      E1=(P(7,N)-P(7,N-2))*0.5                                          SHEL0870
-      E2=(P(7,N)+P(7,N-2)-E0-E0)*0.5                                    SHEL0880
-C*****INNER LOOP (FOR QUADRATURE)                                       SHEL0890
-4     T=(Z-P(3,N-1))/STEP                                               SHEL0900
-      IF(T.GT.1.)GOTO5                                                  SHEL0910
-      HLI=0.5*(((C3*T+C2)*T+C1)*T+C0)                                   SHEL0920
+      E1=(P(7,N)-P(7,N-2))*0.5                                          
+      E2=(P(7,N)+P(7,N-2)-E0-E0)*0.5                                    
+C*****INNER LOOP (FOR QUADRATURE)                                       
+4     T=(Z-P(3,N-1))/STEP                                               
+      IF(T.GT.1.)GOTO5                                                  
+      HLI=0.5*(((C3*T+C2)*T+C1)*T+C0)                                   
       ZQ=Z*Z
       R=HLI+SQRT(HLI*HLI+ZQ)
-      IF(R.LE.RMIN)GOTO30                                               SHEL0950
+      IF(R.LE.RMIN)GOTO30                                               
       RQ=R*R
-      FF=SQRT(1.+3.*ZQ/RQ)                                              SHEL0970
-      RADIK=B0-((D2*T+D1)*T+D0)*R*RQ*FF                                 SHEL0980
-      IF(R-RMAX)44,44,45                                                SHEL0990
-45    ICODE=2                                                           SHEL1000
-      RADIK=RADIK-12.*(R-RMAX)**2                                       SHEL1010
+      FF=SQRT(1.+3.*ZQ/RQ)                                              
+      RADIK=B0-((D2*T+D1)*T+D0)*R*RQ*FF                                 
+      IF(R-RMAX)44,44,45                                                
+45    ICODE=2                                                           
+      RADIK=RADIK-12.*(R-RMAX)**2                                       
 44    IF(RADIK+RADIK.LE.ORADIK) GOTO 10
-      TERM=SQRT(RADIK)*FF*((E2*T+E1)*T+E0)/(RQ+ZQ)                      SHEL1030
-      FI=FI+STP*(OTERM+TERM)                                            SHEL1040
-      ORADIK=RADIK                                                      SHEL1050
-      OTERM=TERM                                                        SHEL1060
-      STP=R*STEQ                                                        SHEL1070
-      Z=Z+STP                                                           SHEL1080
-      GOTO4                                                             SHEL1090
-C*****PREDICTOR (FIELD LINE TRACING)                                    SHEL1100
-5     P(1,N+1)=P(1,N)+STEP12*(23.*P(4,N)-16.*P(4,N-1)+5.*P(4,N-2))      SHEL1110
-      P(2,N+1)=P(2,N)+STEP12*(23.*P(5,N)-16.*P(5,N-1)+5.*P(5,N-2))      SHEL1120
-      P(3,N+1)=P(3,N)+STEP                                              SHEL1130
-      CALL STOER(P(1,N+1),BQ3,R3)                                       SHEL1140
+      TERM=SQRT(RADIK)*FF*((E2*T+E1)*T+E0)/(RQ+ZQ)                      
+      FI=FI+STP*(OTERM+TERM)                                            
+      ORADIK=RADIK                                                      
+      OTERM=TERM                                                        
+      STP=R*STEQ                                                        
+      Z=Z+STP                                                           
+      GOTO4                                                             
+C*****PREDICTOR (FIELD LINE TRACING)                                    
+5     P(1,N+1)=P(1,N)+STEP12*(23.*P(4,N)-16.*P(4,N-1)+5.*P(4,N-2))      
+      P(2,N+1)=P(2,N)+STEP12*(23.*P(5,N)-16.*P(5,N-1)+5.*P(5,N-2))      
+      P(3,N+1)=P(3,N)+STEP                                              
+      CALL STOER(P(1,N+1),BQ3,R3)                                       
 C*****SEARCH FOR LOWEST MAGNETIC FIELD STRENGTH
       IF(BQ3.LT.BEQU) THEN
 	IEQU=N+1
@@ -290,7 +290,7 @@ C*****SEARCH FOR LOWEST MAGNETIC FIELD STRENGTH
       SP(1)=P(1,IEQU-1)
       SP(2)=P(2,IEQU-1)
       SP(3)=P(3,IEQU-1)
-      IF(ORADIK.LT.1E-15)GOTO11                                         SHEL1150
+      IF(ORADIK.LT.1E-15)GOTO11                                         
       FI=FI+STP/0.75*OTERM*ORADIK/(ORADIK-RADIK)              
 C
 C-- The minimal allowable value of FI was changed from 1E-15 to 1E-12,
@@ -309,79 +309,79 @@ C
       IF(XX.GT.+3.0) GOTO 774    
       IF(XX.GT.-3.0) GOTO 773   
       IF(XX.GT.-22.) GOTO 772  
-  771 GG=3.33338E-1*XX+3.0062102E-1                                     SHEL1250
-      GOTO777                                                           SHEL1260
-  772 GG=((((((((-8.1537735E-14*XX+8.3232531E-13)*XX+1.0066362E-9)*XX+  SHEL1270
-     18.1048663E-8)*XX+3.2916354E-6)*XX+8.2711096E-5)*XX+1.3714667E-3)* SHEL1280
-     2XX+1.5017245E-2)*XX+4.3432642E-1)*XX+6.2337691E-1                 SHEL1290
-      GOTO777                                                           SHEL1300
-  773 GG=((((((((2.6047023E-10*XX+2.3028767E-9)*XX-2.1997983E-8)*XX-    SHEL1310
-     15.3977642E-7)*XX-3.3408822E-6)*XX+3.8379917E-5)*XX+1.1784234E-3)* SHEL1320
-     2XX+1.4492441E-2)*XX+4.3352788E-1)*XX+6.228644E-1                  SHEL1330
-      GOTO777                                                           SHEL1340
-  774 GG=((((((((6.3271665E-10*XX-3.958306E-8)*XX+9.9766148E-07)*XX-    SHEL1350
-     11.2531932E-5)*XX+7.9451313E-5)*XX-3.2077032E-4)*XX+2.1680398E-3)* SHEL1360
-     2XX+1.2817956E-2)*XX+4.3510529E-1)*XX+6.222355E-1                  SHEL1370
-      GOTO777                                                           SHEL1380
-  775 GG=(((((2.8212095E-8*XX-3.8049276E-6)*XX+2.170224E-4)*XX-6.7310339SHEL1390
-     1E-3)*XX+1.2038224E-1)*XX-1.8461796E-1)*XX+2.0007187E0             SHEL1400
-      GOTO777                                                           SHEL1410
-  776 GG=XX-3.0460681E0                                                 SHEL1420
+  771 GG=3.33338E-1*XX+3.0062102E-1                                     
+      GOTO777                                                           
+  772 GG=((((((((-8.1537735E-14*XX+8.3232531E-13)*XX+1.0066362E-9)*XX+  
+     18.1048663E-8)*XX+3.2916354E-6)*XX+8.2711096E-5)*XX+1.3714667E-3)* 
+     2XX+1.5017245E-2)*XX+4.3432642E-1)*XX+6.2337691E-1                 
+      GOTO777                                                           
+  773 GG=((((((((2.6047023E-10*XX+2.3028767E-9)*XX-2.1997983E-8)*XX-    
+     15.3977642E-7)*XX-3.3408822E-6)*XX+3.8379917E-5)*XX+1.1784234E-3)* 
+     2XX+1.4492441E-2)*XX+4.3352788E-1)*XX+6.228644E-1                  
+      GOTO777                                                           
+  774 GG=((((((((6.3271665E-10*XX-3.958306E-8)*XX+9.9766148E-07)*XX-    
+     11.2531932E-5)*XX+7.9451313E-5)*XX-3.2077032E-4)*XX+2.1680398E-3)* 
+     2XX+1.2817956E-2)*XX+4.3510529E-1)*XX+6.222355E-1                  
+      GOTO777                                                           
+  775 GG=(((((2.8212095E-8*XX-3.8049276E-6)*XX+2.170224E-4)*XX-6.7310339
+     1E-3)*XX+1.2038224E-1)*XX-1.8461796E-1)*XX+2.0007187E0             
+      GOTO777                                                           
+  776 GG=XX-3.0460681E0                                                 
   777 FL=EXP(LOG((1.+EXP(GG))*DIMOB0)/3.0)
-      RETURN                                                            SHEL1440
-C*****APPROXIMATION FOR HIGH VALUES OF L.                               SHEL1450
-30    ICODE=3                                                           SHEL1460
-      T=-P(3,N-1)/STEP                                                  SHEL1470
-      FL=1./(ABS(((C3*T+C2)*T+C1)*T+C0)+1E-15)                          SHEL1480
-      RETURN                                                            SHEL1490
-      END                                                               SHEL1500
+      RETURN                                                            
+C*****APPROXIMATION FOR HIGH VALUES OF L.                               
+30    ICODE=3                                                           
+      T=-P(3,N-1)/STEP                                                  
+      FL=1./(ABS(((C3*T+C2)*T+C1)*T+C0)+1E-15)                          
+      RETURN                                                            
+      END                                                               
 C
 C
-      SUBROUTINE STOER(P,BQ,R)                                          SHEL1510
+      SUBROUTINE STOER(P,BQ,R)                                          
 C*******************************************************************
 C* SUBROUTINE USED FOR FIELD LINE TRACING IN SHELLG                *
 C* CALLS ENTRY POINT FELDI IN GEOMAGNETIC FIELD SUBROUTINE FELDG   *
 C*******************************************************************
       DIMENSION 	P(7),U(3,3)
       COMMON 		XI(3),H(144)
-C*****XM,YM,ZM  ARE GEOMAGNETIC CARTESIAN INVERSE CO-ORDINATES          SHEL1540
-      ZM=P(3)                                                           SHEL1550
+C*****XM,YM,ZM  ARE GEOMAGNETIC CARTESIAN INVERSE CO-ORDINATES          
+      ZM=P(3)                                                           
       FLI=P(1)*P(1)+P(2)*P(2)+1E-15
       R=0.5*(FLI+SQRT(FLI*FLI+(ZM+ZM)**2))
       RQ=R*R
-      WR=SQRT(R)                                                        SHEL1590
-      XM=P(1)*WR                                                        SHEL1600
-      YM=P(2)*WR                                                        SHEL1610
-C*****TRANSFORM TO GEOGRAPHIC CO-ORDINATE SYSTEM                        SHEL1620
-      DATA U/                 +0.3511737,-0.9148385,-0.1993679,         SHEL1630
-     A                        +0.9335804,+0.3583680,+0.0000000,         SHEL1640
-     B                        +0.0714471,-0.1861260,+0.9799247/         SHEL1650
-      XI(1)=XM*U(1,1)+YM*U(1,2)+ZM*U(1,3)                               SHEL1660
-      XI(2)=XM*U(2,1)+YM*U(2,2)+ZM*U(2,3)                               SHEL1670
-      XI(3)=XM*U(3,1)          +ZM*U(3,3)                               SHEL1680
-C*****COMPUTE DERIVATIVES                                               SHEL1690
-      CALL FELDI!(XI,H)                                                  SHEL1700
-      Q=H(1)/RQ                                                         SHEL1710
-      DX=H(3)+H(3)+Q*XI(1)                                              SHEL1720
-      DY=H(4)+H(4)+Q*XI(2)                                              SHEL1730
-      DZ=H(2)+H(2)+Q*XI(3)                                              SHEL1740
-C*****TRANSFORM BACK TO GEOMAGNETIC CO-ORDINATE SYSTEM                  SHEL1750
-      DXM=U(1,1)*DX+U(2,1)*DY+U(3,1)*DZ                                 SHEL1760
-      DYM=U(1,2)*DX+U(2,2)*DY                                           SHEL1770
-      DZM=U(1,3)*DX+U(2,3)*DY+U(3,3)*DZ                                 SHEL1780
-      DR=(XM*DXM+YM*DYM+ZM*DZM)/R                                       SHEL1790
-C*****FORM SLOWLY VARYING EXPRESSIONS                                   SHEL1800
-      P(4)=(WR*DXM-0.5*P(1)*DR)/(R*DZM)                                 SHEL1810
-      P(5)=(WR*DYM-0.5*P(2)*DR)/(R*DZM)                                 SHEL1820
+      WR=SQRT(R)                                                        
+      XM=P(1)*WR                                                        
+      YM=P(2)*WR                                                        
+C*****TRANSFORM TO GEOGRAPHIC CO-ORDINATE SYSTEM                        
+      DATA U/                 +0.3511737,-0.9148385,-0.1993679,         
+     A                        +0.9335804,+0.3583680,+0.0000000,         
+     B                        +0.0714471,-0.1861260,+0.9799247/         
+      XI(1)=XM*U(1,1)+YM*U(1,2)+ZM*U(1,3)                               
+      XI(2)=XM*U(2,1)+YM*U(2,2)+ZM*U(2,3)                               
+      XI(3)=XM*U(3,1)          +ZM*U(3,3)                               
+C*****COMPUTE DERIVATIVES                                               
+      CALL FELDI!(XI,H)                                                 
+      Q=H(1)/RQ                                                         
+      DX=H(3)+H(3)+Q*XI(1)                                              
+      DY=H(4)+H(4)+Q*XI(2)                                              
+      DZ=H(2)+H(2)+Q*XI(3)                                              
+C*****TRANSFORM BACK TO GEOMAGNETIC CO-ORDINATE SYSTEM                  
+      DXM=U(1,1)*DX+U(2,1)*DY+U(3,1)*DZ                                 
+      DYM=U(1,2)*DX+U(2,2)*DY                                           
+      DZM=U(1,3)*DX+U(2,3)*DY+U(3,3)*DZ                                 
+      DR=(XM*DXM+YM*DYM+ZM*DZM)/R                                       
+C*****FORM SLOWLY VARYING EXPRESSIONS                                   
+      P(4)=(WR*DXM-0.5*P(1)*DR)/(R*DZM)                                 
+      P(5)=(WR*DYM-0.5*P(2)*DR)/(R*DZM)                                 
       DSQ=RQ*(DXM*DXM+DYM*DYM+DZM*DZM)
       BQ=DSQ*RQ*RQ
-      P(6)=SQRT(DSQ/(RQ+3.*ZM*ZM))                                      SHEL1850
-      P(7)=P(6)*(RQ+ZM*ZM)/(RQ*DZM)                                     SHEL1860
-      RETURN                                                            SHEL1870
-      END                                                               SHEL1880
+      P(6)=SQRT(DSQ/(RQ+3.*ZM*ZM))                                      
+      P(7)=P(6)*(RQ+ZM*ZM)/(RQ*DZM)                                     
+      RETURN                                                            
+      END                                                               
 C
 C
-      SUBROUTINE FELDG(GLAT,GLON,ALT,BNORTH,BEAST,BDOWN,BABS)           SHEL1890
+      SUBROUTINE FELDG(GLAT,GLON,ALT,BNORTH,BEAST,BDOWN,BABS)           
 Cf2py intent(in) GLAT, GLON, ALT
 Cf2py intent(out) BNORTH, BEAST, BDOWN, BABS      
 
@@ -420,7 +420,7 @@ C		TIME	YEAR (DECIMAL: 1973.5) FOR WHICH MAGNETIC
 C			FIELD IS TO BE CALCULATED
 C		G(M)	NORMALIZED FIELD COEFFICIENTS (SEE FELDCOF)
 C			M=NMAX*(NMAX+2)
-C------------------------------------------------------------------------
+C-----------------------------------------------------------------------
 C  OUTPUT: BABS   MAGNETIC FIELD STRENGTH IN GAUSS
 C	   BNORTH, BEAST, BDOWN   COMPONENTS OF THE FIELD WITH RESPECT
 C		  TO THE LOCAL GEODETIC COORDINATE SYSTEM, WITH AXIS
@@ -435,82 +435,82 @@ C-----------------------------------------------------------------------
 C
 C-- IS RECORDS ENTRY POINT
 C
-C*****ENTRY POINT  FELDG  TO BE USED WITH GEODETIC CO-ORDINATES         SHEL1920
-      IS=1                                                              SHEL1930
+C*****ENTRY POINT  FELDG  TO BE USED WITH GEODETIC CO-ORDINATES         
+      IS=1                                                              
       RLAT=GLAT*UMR
-      CT=SIN(RLAT)                                                      SHEL1950
-      ST=COS(RLAT)                                                      SHEL1960
-      D=SQRT(AQUAD-(AQUAD-BQUAD)*CT*CT)                                 SHEL1970
+      CT=SIN(RLAT)                                                      
+      ST=COS(RLAT)                                                      
+      D=SQRT(AQUAD-(AQUAD-BQUAD)*CT*CT)                                 
       RLON=GLON*UMR
-      CP=COS(RLON)                                                      SHEL1990
-      SP=SIN(RLON)                                                      SHEL2000
+      CP=COS(RLON)                                                      
+      SP=SIN(RLON)                                                      
        ZZZ=(ALT+BQUAD/D)*CT/ERA
        RHO=(ALT+AQUAD/D)*ST/ERA
-       XXX=RHO*CP                                                       SHEL2030
-       YYY=RHO*SP                                                       SHEL2040
-      GOTO10                                                            SHEL2050
-      ENTRY FELDC(V,B)                                                  SHEL2060
-C*****ENTRY POINT  FELDC  TO BE USED WITH CARTESIAN CO-ORDINATES        SHEL2070
-      IS=2                                                              SHEL2090
-      XXX=V(1)                                                          SHEL2100
-      YYY=V(2)                                                          SHEL2110
-      ZZZ=V(3)                                                          SHEL2120
+       XXX=RHO*CP                                                       
+       YYY=RHO*SP                                                       
+      GOTO10                                                            
+      ENTRY FELDC(V,B)                                                  
+C*****ENTRY POINT  FELDC  TO BE USED WITH CARTESIAN CO-ORDINATES        
+      IS=2                                                              
+      XXX=V(1)                                                          
+      YYY=V(2)                                                          
+      ZZZ=V(3)                                                          
 10    RQ=1./(XXX*XXX+YYY*YYY+ZZZ*ZZZ) 
-      XI(1)=XXX*RQ                                                      SHEL2140
-      XI(2)=YYY*RQ                                                      SHEL2150
-      XI(3)=ZZZ*RQ                                                      SHEL2160
-      GOTO20                                                            SHEL2170
-      ENTRY FELDI                                                       SHEL2180
-C*****ENTRY POINT  FELDI  USED FOR L COMPUTATION                        SHEL2190
-      IS=3                                                              SHEL2200
-20    IHMAX=NMAX*NMAX+1                                                 SHEL2210
-      LAST=IHMAX+NMAX+NMAX                                              SHEL2220
-      IMAX=NMAX+NMAX-1                                                  SHEL2230
-      DO 8 I=IHMAX,LAST                                                 SHEL2240
-8     H(I)=G(I)                                                         SHEL2250
-      DO 6 K=1,3,2                                                      SHEL2260
-      I=IMAX                                                            SHEL2270
-      IH=IHMAX                                                          SHEL2280
-1     IL=IH-I                                                           SHEL2290
-      F=2./FLOAT(I-K+2)                                                 SHEL2300
-      X=XI(1)*F                                                         SHEL2310
-      Y=XI(2)*F                                                         SHEL2320
-      Z=XI(3)*(F+F)                                                     SHEL2330
-      I=I-2                                                             SHEL2340
-      IF(I-1)5,4,2                                                      SHEL2350
-2     DO 3 M=3,I,2                                                      SHEL2360
-      H(IL+M+1)=G(IL+M+1)+Z*H(IH+M+1)+X*(H(IH+M+3)-H(IH+M-1))           SHEL2370
-     A                               -Y*(H(IH+M+2)+H(IH+M-2))           SHEL2380
-3     H(IL+M)=G(IL+M)+Z*H(IH+M)+X*(H(IH+M+2)-H(IH+M-2))                 SHEL2390
-     A                         +Y*(H(IH+M+3)+H(IH+M-1))                 SHEL2400
-4     H(IL+2)=G(IL+2)+Z*H(IH+2)+X*H(IH+4)-Y*(H(IH+3)+H(IH))             SHEL2410
-      H(IL+1)=G(IL+1)+Z*H(IH+1)+Y*H(IH+4)+X*(H(IH+3)-H(IH))             SHEL2420
-5     H(IL)=G(IL)+Z*H(IH)+2.*(X*H(IH+1)+Y*H(IH+2))                      SHEL2430
-      IH=IL                                                             SHEL2440
-      IF(I.GE.K)GOTO1                                                   SHEL2450
-6     CONTINUE                                                          SHEL2460
-      IF(IS.EQ.3)RETURN                                                 SHEL2470
-      S=.5*H(1)+2.*(H(2)*XI(3)+H(3)*XI(1)+H(4)*XI(2))                   SHEL2480
-      T=(RQ+RQ)*SQRT(RQ)                                                SHEL2490
-      BXXX=T*(H(3)-S*XXX)                                               SHEL2500
-      BYYY=T*(H(4)-S*YYY)                                               SHEL2510
-      BZZZ=T*(H(2)-S*ZZZ)                                               SHEL2520
-      IF(IS.EQ.2)GOTO7                                                  SHEL2530
+      XI(1)=XXX*RQ                                                      
+      XI(2)=YYY*RQ                                                      
+      XI(3)=ZZZ*RQ                                                      
+      GOTO20                                                            
+      ENTRY FELDI                                                       
+C*****ENTRY POINT  FELDI  USED FOR L COMPUTATION                        
+      IS=3                                                              
+20    IHMAX=NMAX*NMAX+1                                                 
+      LAST=IHMAX+NMAX+NMAX                                              
+      IMAX=NMAX+NMAX-1                                                  
+      DO 8 I=IHMAX,LAST                                                 
+8     H(I)=G(I)                                                         
+      DO 6 K=1,3,2                                                      
+      I=IMAX                                                            
+      IH=IHMAX                                                          
+1     IL=IH-I                                                           
+      F=2./FLOAT(I-K+2)                                                 
+      X=XI(1)*F                                                         
+      Y=XI(2)*F                                                         
+      Z=XI(3)*(F+F)                                                     
+      I=I-2                                                             
+      IF(I-1)5,4,2                                                      
+2     DO 3 M=3,I,2                                                      
+      H(IL+M+1)=G(IL+M+1)+Z*H(IH+M+1)+X*(H(IH+M+3)-H(IH+M-1))           
+     A                               -Y*(H(IH+M+2)+H(IH+M-2))           
+3     H(IL+M)=G(IL+M)+Z*H(IH+M)+X*(H(IH+M+2)-H(IH+M-2))                 
+     A                         +Y*(H(IH+M+3)+H(IH+M-1))                 
+4     H(IL+2)=G(IL+2)+Z*H(IH+2)+X*H(IH+4)-Y*(H(IH+3)+H(IH))             
+      H(IL+1)=G(IL+1)+Z*H(IH+1)+Y*H(IH+4)+X*(H(IH+3)-H(IH))             
+5     H(IL)=G(IL)+Z*H(IH)+2.*(X*H(IH+1)+Y*H(IH+2))                      
+      IH=IL                                                             
+      IF(I.GE.K)GOTO1                                                   
+6     CONTINUE                                                          
+      IF(IS.EQ.3)RETURN                                                 
+      S=.5*H(1)+2.*(H(2)*XI(3)+H(3)*XI(1)+H(4)*XI(2))                   
+      T=(RQ+RQ)*SQRT(RQ)                                                
+      BXXX=T*(H(3)-S*XXX)                                               
+      BYYY=T*(H(4)-S*YYY)                                               
+      BZZZ=T*(H(2)-S*ZZZ)                                               
+      IF(IS.EQ.2)GOTO7                                                  
       BABS=SQRT(BXXX*BXXX+BYYY*BYYY+BZZZ*BZZZ)
-      BEAST=BYYY*CP-BXXX*SP                                             SHEL2550
-      BRHO=BYYY*SP+BXXX*CP                                              SHEL2560
-      BNORTH=BZZZ*ST-BRHO*CT                                            SHEL2570
-      BDOWN=-BZZZ*CT-BRHO*ST                                            SHEL2580
-      RETURN                                                            SHEL2590
-7     B(1)=BXXX                                                         SHEL2600
-      B(2)=BYYY                                                         SHEL2610
-      B(3)=BZZZ                                                         SHEL2620
-      RETURN                                                            SHEL2630
-      END                                                               SHEL2640
+      BEAST=BYYY*CP-BXXX*SP                                             
+      BRHO=BYYY*SP+BXXX*CP                                              
+      BNORTH=BZZZ*ST-BRHO*CT                                            
+      BDOWN=-BZZZ*CT-BRHO*ST                                            
+      RETURN                                                            
+7     B(1)=BXXX                                                         
+      B(2)=BYYY                                                         
+      B(3)=BZZZ                                                         
+      RETURN                                                            
+      END                                                               
 C
 C
        SUBROUTINE FELDCOF(YEAR,DIMO)
-C------------------------------------------------------------------------
+C-----------------------------------------------------------------------
 C  DETERMINES COEFFICIENTS AND DIPOL MOMENT FROM IGRF MODELS
 C
 C	INPUT:  YEAR	DECIMAL YEAR FOR WHICH GEOMAGNETIC FIELD IS TO
@@ -603,18 +603,18 @@ C-- DETERMINE MAGNETIC DIPOL MOMENT AND COEFFIECIENTS G
 C
 C
        SUBROUTINE GETSHC (IU, FSPEC, NMAX, ERAD, GH, IER)           
-                                                                                
-C ===============================================================               
-C                                                                               
+                                                                        
+C ===============================================================       
+C                                                                       
 C       Version 1.01                                                 
-C                                                                               
+C                                                                       
 C       Reads spherical harmonic coefficients from the specified     
 C       file into an array.                                          
-C                                                                               
+C                                                                       
 C       Input:                                                       
 C           IU    - Logical unit number                              
 C           FSPEC - File specification                               
-C                                                                               
+C                                                                       
 C       Output:                                                      
 C           NMAX  - Maximum degree and order of model                
 C           ERAD  - Earth's radius associated with the spherical     
@@ -628,22 +628,22 @@ C			     	  = FORTRAN run-time error number
 C                                                                    
 C	A. Zunde                                                     
 C	USGS, MS 964, Box 25046 Federal Center, Denver, CO  80225    
-C                                                                               
-C ===============================================================               
+C                                                                       
+C ===============================================================       
 
        include '../dir.include/CHEMIN.INC'
 
 
        CHARACTER(len=*) FSPEC
-       character(len=80) FILEIN,FILEIN1 !warning, this can cause chopped filenames for long path!
+       character(len=80) FILEIN,FILEIN1 !warning, this can cause chopped
        Integer,Intent(in):: IU
        Real,Intent(out) :: GH(*),erad
        Integer,Intent(out):: ier,nmax
-                                                                                
-C ---------------------------------------------------------------               
+                                                                        
+C ---------------------------------------------------------------       
 C	Open coefficient file. Read past first header record.        
 C	Read degree and order of model and Earth's radius.           
-C ---------------------------------------------------------------               
+C ---------------------------------------------------------------       
 
        FILEIN=FSPEC
        FILEIN1='dir.data/dir.linux/dir.geomag/'//FILEIN
@@ -653,10 +653,10 @@ c       FILEIN1=FILEIN
        OPEN (IU, FILE=FILEIN1, STATUS='OLD',IOSTAT=IER, ERR=999)
        READ (IU, *, IOSTAT=IER, ERR=999)                            
        READ (IU, *, IOSTAT=IER, ERR=999) NMAX, ERAD                 
-                                                                                
-C ---------------------------------------------------------------               
+                                                                        
+C ---------------------------------------------------------------       
 C	Read the coefficient file, arranged as follows:              
-C                                                                               
+C                                                                       
 C					N     M     G     H          
 C					----------------------       
 C				    /   1     0    GH(1)  -          
@@ -669,11 +669,11 @@ C				 \      .     .     .     .
 C				  \	.     .     .     .          
 C	    NMAX*(NMAX+2)	   \	.     .     .     .          
 C	    elements in GH	    \  NMAX  NMAX   .     .          
-C                                                                               
+C                                                                       
 C	N and M are, respectively, the degree and order of the       
 C	coefficient.                                                 
-C ---------------------------------------------------------------               
-                                                                                
+C ---------------------------------------------------------------       
+                                                                        
       I = 0                                                        
       DO NN = 1, NMAX                                              
            DO MM = 0, NN                                            
@@ -692,22 +692,22 @@ C ---------------------------------------------------------------
               ENDIF                                                
           End DO                                                    
       End Do                                                      
-                                                                                
+                                                                        
 999   CLOSE (IU)                                                   
 
-      END SUBROUTINE GETSHC                                                    
+      END SUBROUTINE GETSHC                                             
 C
 C
 	SUBROUTINE INTERSHC (DATE, DTE1, NMAX1, GH1, DTE2,          
      1			      NMAX2, GH2, NMAX, GH)                  
-                                                                                
-C ===============================================================               
-C                                                                               
+                                                                        
+C ===============================================================       
+C                                                                       
 C	Version 1.01                                                 
-C                                                                               
+C                                                                       
 C	Interpolates linearly, in time, between two spherical        
 C	harmonic models.                                             
-C                                                                               
+C                                                                       
 C	Input:                                                       
 C	    DATE  - Date of resulting model (in decimal year)        
 C	    DTE1  - Date of earlier model                            
@@ -718,32 +718,32 @@ C	    DTE2  - Date of later model
 C	    NMAX2 - Maximum degree and order of later model          
 C	    GH2   - Schmidt quasi-normal internal spherical          
 C		    harmonic coefficients of later model             
-C                                                                               
+C                                                                       
 C	Output:                                                      
 C	    GH    - Coefficients of resulting model                  
 C	    NMAX  - Maximum degree and order of resulting model      
-C                                                                               
+C                                                                       
 C	A. Zunde                                                     
 C	USGS, MS 964, Box 25046 Federal Center, Denver, CO  80225    
-C                                                                               
-C ===============================================================               
-                                                                                
+C                                                                       
+C ===============================================================       
+                                                                        
 	  Real,Intent(in) ::   date,GH1(*), GH2(*),dte1,dte2
       Integer,Intent(in) :: nmax1,nmax2
       Real,Intent(out) ::  GH(*)  
       Integer,intent(out) :: nmax                      
-                                                                                
-C ---------------------------------------------------------------               
+                                                                        
+C ---------------------------------------------------------------       
 C	The coefficients (GH) of the resulting model, at date        
 C	DATE, are computed by linearly interpolating between the     
 C	coefficients of the earlier model (GH1), at date DTE1,       
 C	and those of the later model (GH2), at date DTE2. If one     
 C	model is smaller than the other, the interpolation is        
 C	performed with the missing coefficients assumed to be 0.     
-C ---------------------------------------------------------------               
-                                                                                
+C ---------------------------------------------------------------       
+                                                                        
 	FACTOR = (DATE - DTE1) / (DTE2 - DTE1)                       
-                                                                                
+                                                                        
 	IF (NMAX1 .EQ. NMAX2) THEN                                   
 	    K = NMAX1 * (NMAX1 + 2)                                  
 	    NMAX = NMAX1                                             
@@ -760,7 +760,7 @@ C ---------------------------------------------------------------
 1133		GH(I) = FACTOR * GH2(I)                              
 	    NMAX = NMAX2                                             
 	ENDIF                                                        
-                                                                                
+                                                                        
 	DO 1144 I = 1, K                                                  
 1144	    GH(I) = GH1(I) + FACTOR * (GH2(I) - GH1(I))              
                                       
@@ -769,14 +769,14 @@ C
 C
 	SUBROUTINE EXTRASHC (DATE, DTE1, NMAX1, GH1, NMAX2,           
      1			      GH2, NMAX, GH)                           
-                                                                                
-C ===============================================================               
-C                                                                               
+                                                                        
+C ===============================================================       
+C                                                                       
 C	Version 1.01                                                   
-C                                                                               
+C                                                                       
 C	Extrapolates linearly a spherical harmonic model with a        
 C	rate-of-change model.                                          
-C                                                                               
+C                                                                       
 C	Input:                                                         
 C	    DATE  - Date of resulting model (in decimal year)          
 C	    DTE1  - Date of base model                                 
@@ -787,29 +787,29 @@ C	    NMAX2 - Maximum degree and order of rate-of-change
 C		    model                                              
 C	    GH2   - Schmidt quasi-normal internal spherical            
 C		    harmonic coefficients of rate-of-change model      
-C                                                                               
+C                                                                       
 C	Output:                                                        
 C	    GH    - Coefficients of resulting model                    
 C	    NMAX  - Maximum degree and order of resulting model        
-C                                                                               
+C                                                                       
 C	A. Zunde                                                       
 C	USGS, MS 964, Box 25046 Federal Center, Denver, CO  80225      
-C                                                                               
-C ===============================================================               
-                                                                                
+C                                                                       
+C ===============================================================       
+                                                                        
 	DIMENSION	GH1(*), GH2(*), GH(*)                          
-                                                                                
-C ---------------------------------------------------------------               
+                                                                        
+C ---------------------------------------------------------------       
 C	The coefficients (GH) of the resulting model, at date          
 C	DATE, are computed by linearly extrapolating the coef-         
 C	ficients of the base model (GH1), at date DTE1, using          
 C	those of the rate-of-change model (GH2), at date DTE2. If      
 C	one model is smaller than the other, the extrapolation is      
 C	performed with the missing coefficients assumed to be 0.       
-C ---------------------------------------------------------------               
-                                                                                
+C ---------------------------------------------------------------       
+                                                                        
 	FACTOR = (DATE - DTE1)                                         
-                                                                                
+                                                                        
 	IF (NMAX1 .EQ. NMAX2) THEN                                     
 	    K = NMAX1 * (NMAX1 + 2)                                    
 	    NMAX = NMAX1                                               
@@ -826,10 +826,10 @@ C ---------------------------------------------------------------
 1166		GH(I) = FACTOR * GH2(I)                                
 	    NMAX = NMAX2                                               
 	ENDIF                                                          
-                                                                                
-      DO 1177 I = 1, K                                                    
+                                                                        
+      DO 1177 I = 1, K                                                  
 1177	    GH(I) = GH1(I) + FACTOR * GH2(I)                           
-                                                                                                                                        
+                                                                        
       END SUBROUTINE EXTRASHC
 C
 C

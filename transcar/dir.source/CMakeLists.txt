@@ -32,7 +32,7 @@ add_library(numeric ${c}/lcpfct.f ${c}/stabenerg.f90 ${c}/pas_de_temps.f
         ${c}/eltran.f ${c}/hqr2.f  ${c}/cdiv.f)
 
 set(c ../dir.system)
-add_library(system ${c}/architecture.f90 ${c}/isnan.f90 ../dir.fluide/jour_mois.f ../dir.cine/misc.f)
+add_library(system ${c}/isnan.f90 ../dir.fluide/jour_mois.f ../dir.cine/misc.f)
 
 set(c ../dir.projection)
 add_library(proj ${c}/projection.f90 ${c}/val_fit.f90 ${c}/plegendr.f 

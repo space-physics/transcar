@@ -1685,13 +1685,12 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 !------MZ
 
 
-        if (isnant(nenew,nx)
-     &  .or.isnant(Tenew,nx)
-     &  .or.isnant(T1new,nx)) then
+      if (isnant(nenew,nx).or.isnant(Tenew,nx).or.isnant(T1new,nx)) then
           write(stderr,*),'problem before calling atmos'
           if (halt) goto 246
-        endif
-         call atmos(iyd,real(temps,sp),stl,alt,latgeo,longeo,jpreci,f107,
+      endif
+      
+        call atmos(iyd,real(temps,sp),stl,alt,latgeo,longeo,jpreci,f107,
      &            ap,Nenew,Tenew,T1new,nx,kiappel,file_cond)
 
         if (vparaB.ne.0.) vtrans=vparaB*100./Ci0
@@ -1713,7 +1712,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
         N5old(i)=N5new(i)
         Neold(i)=Nenew(i)
         Nnoold(i)=Nnonew(i)
-            No1dold(i)=No1dnew(i)
+        No1dold(i)=No1dnew(i)
 
         U1old(i)=U1new(i)
         U2old(i)=U2new(i)
@@ -1721,7 +1720,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
         Umold(i)=Umnew(i)
         Ueold(i)=Uenew(i)
         Unoold(i)=Unonew(i)
-            Uo1dold(i)=Uo1dnew(i)
+        Uo1dold(i)=Uo1dnew(i)
 
         T1old(i)=T1new(i)
         T1pold(i)=T1pnew(i)
@@ -1736,10 +1735,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
         Tmpold(i)=Tmpnew(i)
         Tmtold(i)=Tmtnew(i)
 
-            Teold(i)=Tenew(i)
-            Tepold(i)=Tepnew(i)
-            Tetold(i)=Tetnew(i)
-            qeold(i)=qenew(i)
+        Teold(i)=Tenew(i)
+        Tepold(i)=Tepnew(i)
+        Tetold(i)=Tetnew(i)
+        qeold(i)=qenew(i)
 
         q1old(i)=q1new(i)
         q2old(i)=q2new(i)

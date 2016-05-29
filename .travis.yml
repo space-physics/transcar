@@ -25,7 +25,7 @@ matrix:
         - brew install gcc
 
 script: 
-    - cd transcar/transcar/dir.source/dir.obj
+    - cd transcar/dir.source/dir.obj
     - cmake ..
     - make VERBOSE=1
     - cd ../..

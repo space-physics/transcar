@@ -8,6 +8,8 @@ transcar
 :Fortran Authors: P.L. Blelly, J. Lilensten, M. Zettergren
 :Python Author, Fortran major cleanup: Michael Hirsch
 
+:Runs on: Linux/Unix, Mac, Windows (Cygwin or Windows Subsytem for Linux)
+
 TRANSCAR 1D flux tube ionospheric energy deposition flux transport model.
 Considers solar input and background conditions via MSIS, HWM.
 Models disturbance propagation in ionosphere via models including LCPFCT.
@@ -15,27 +17,15 @@ Models disturbance propagation in ionosphere via models including LCPFCT.
 Note, despite a very substantial effort to clean up the code, numerous
 deficiencies exist, that would require cleanup function by function.
 This is probably too large an effort, given that alternative models are
-available. Matt doesn't use Transcar anymore.
-
-I suggest getting started with Bash-based (terminal shell) program first, then
-if needed we can do to the networked poor-mans cluster version. There is extra time
-needed for one-time setup of those nodes.
+available.
 
 .. contents::
 
-Prereqs
+Install
 =======
 ::
 
-    sudo apt-get install gfortran cmake make parallel bc wget
-    
-If you don't have GNU Parallel, you can install it via ``setup_parallel.sh`` on any system including Cygwin.
-If it's not compiling for you let me know, it really should be platform-independent.
-
-Fortran Installation
-====================
-The basic program uses Bash and Fortran code, so it runs anywhere (Linux/BSD/Mac/Windows)::
-
+  apt-get install gfortran cmake make bc wget
   git clone https://github.com/scienceopen/transcar
   cd transcar/transcar/dir.source/dir.obj
   cmake ..
@@ -70,4 +60,11 @@ Cmake uses your system default Fortran compiler, but if you wish to use another 
 
     FC=ifort cmake ..
 
+Parallel remote execution
+-------------------------
+If you don't have GNU Parallel, you can install it via `setup_parallel.sh <setup_parallel.sh>`_ on any system including Cygwin.
 
+Code
+====
+
+`transconvec <https://github.com/scienceopen/transcar/blob/master/transcar/dir.source/transconvec_13.op.f>`_  Main Program

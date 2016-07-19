@@ -6,7 +6,7 @@ transcar
 ========
 
 :Fortran Authors: P.L. Blelly, J. Lilensten, M. Zettergren
-:Python Author, Fortran major cleanup: Michael Hirsch
+:Python Author, Fortran cleanup: Michael Hirsch
 
 :Runs on: Linux/Unix, Mac, Windows (Cygwin or Windows Subsytem for Linux)
 
@@ -32,10 +32,6 @@ Install
   make -j7 --quiet
   cd ../..
 
-If you then modify the Fortran source code, you just have to in dir.obj type::
-
-    make
-  
 To Run
 ======
 Simulations are configured in transcar/dir.input/DATCAR. Simulations are run by::
@@ -43,14 +39,14 @@ Simulations are configured in transcar/dir.input/DATCAR. Simulations are run by:
     cd transcar
     ./run_beams_parallel.sh /tmp/tc
     
-where /tmp/tc is the output directory. Files are automatically erased there, so be careful!
+where ``/tmp/tc`` is the output directory. Files are automatically erased there, so be careful!
 
 Optional
 ========
 
 Python installation
 -------------------
-If you wish to use the user-friendly Python interfaces (alpha test)::
+If you wish to use the Python interfaces (alpha test)::
 
     python setup.py develop
 
@@ -62,7 +58,9 @@ Cmake uses your system default Fortran compiler, but if you wish to use another 
 
 Parallel remote execution
 -------------------------
-If you don't have GNU Parallel, you can install it via `setup_parallel.sh <setup_parallel.sh>`_ on any system including Cygwin.
+install the latest GNU Parallel into ~/bin by::
+
+    wget -O - pi.dk/3 | bash
 
 Code
 ====

@@ -34,7 +34,7 @@ Install
 
 To Run
 ======
-Simulations are configured in transcar/dir.input/DATCAR. Simulations are run by::
+Simulations are configured in `transcar/dir.input/DATCAR <transcar/dir.input/DATCAR>`_. Simulations are run by::
     
     cd transcar
     ./run_beams_parallel.sh /tmp/tc

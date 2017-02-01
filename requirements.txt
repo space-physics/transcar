@@ -4,7 +4,6 @@ pandas
 pytz
 numpy
 nose
-six
 astropy
 scikit-image
 python-dateutil

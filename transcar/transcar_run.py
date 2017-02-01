@@ -2,7 +2,7 @@
 """
 This file is normally called from GNU Parallel
 """
-from . import Path
+from pathlib import Path
 import logging
 from collections import deque
 from subprocess import Popen

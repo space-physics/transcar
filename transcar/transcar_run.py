@@ -7,7 +7,7 @@ import logging
 from collections import deque
 from subprocess import Popen
 #
-from transcarread.parseTranscar import readTranscarInput
+from transcarread import readTranscarInput
 from histutils.cp_parents import cp_parents
 #
 transcarexe = 'transconvec_13.op.out'

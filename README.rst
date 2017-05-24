@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.com/scienceopen/transcar.svg?token=qSpy37WAwefTyjRcouQS&branch=master
-    :target: https://travis-ci.com/scienceopen/transcar
+.. image:: https://travis-ci.com/scivision/transcar.svg&branch=master
+    :target: https://travis-ci.com/scivision/transcar
 
 ========
 transcar
@@ -26,7 +26,7 @@ Install
 ::
 
   apt-get install gfortran cmake make bc wget
-  git clone https://github.com/scienceopen/transcar
+  git clone https://github.com/scivision/transcar
   cd transcar/transcar/dir.source/dir.obj
   cmake ..
   make -j7 --quiet
@@ -65,4 +65,4 @@ install the latest GNU Parallel into ~/bin by::
 Code
 ====
 
-`transconvec <https://github.com/scienceopen/transcar/blob/master/transcar/dir.source/transconvec_13.op.f>`_  Main Program
+`transconvec <https://github.com/scivision/transcar/blob/master/transcar/dir.source/transconvec_13.op.f>`_  Main Program

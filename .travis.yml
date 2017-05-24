@@ -1,31 +1,25 @@
+language: c
+
+os:
+  - linux
+  
+dist: trusty
+
 notifications:
   email: false
 
 git:
   depth: 3
 
-matrix:
-  include:
-    - os: linux
-      sudo: true
-      dist: trusty
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['gfortran-5']
-      before_install:
-        - mkdir -p $HOME/.local/bin
-        - ln -fs /usr/bin/gfortran-5 "$HOME/.local/bin/gfortran" 
+addons:
+  apt:
+    packages:
+      - gfortran
 
-#    - os: osx
-#      osx_image: xcode8.2 # or whatever the latest is
-#      before_install:
-#        - brew update
-#        - brew install gcc
 
 script: 
     - cd transcar/dir.source/dir.obj
     - cmake ..
-    - make VERBOSE=1
+    - make 
     - cd ../..
 

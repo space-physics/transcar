@@ -8,7 +8,7 @@ from collections import deque
 from subprocess import Popen
 #
 from transcarread import readTranscarInput
-from histutils.cp_parents import cp_parents
+from transcar import cp_parents
 #
 transcarexe = 'transconvec_13.op.out'
 fileok = 'finish.status'
@@ -37,14 +37,14 @@ def transcaroutcheck(odir,errfn):
                 f.write('true')
             else:
                 f.write('false')
-                logging.warn('transcaroutcheck: {} got unexpected return value, transcar may not have finished the sim'.format(odir))
+                logging.warn(f'transcaroutcheck: {odir} got unexpected return value, transcar may not have finished the sim')
                 raise AttributeError(last)
     except (IOError) as e:
-        logging.error('transcaroutcheck: problem reading transcar output.  {}'.format(e) )
+        logging.error(f'transcaroutcheck: problem reading transcar output.  {e}' )
     except IndexError as e:
         with open(fok,'w') as f:
             f.write('false')
-            logging.warn('transcaroutcheck: {} got unexpected return value, transcar may not have finished the sim'.format(odir))
+            logging.warn(f'transcaroutcheck: {odir} got unexpected return value, transcar may not have finished the sim')
 
 
 def setuptranscario(rodir,beamEnergy):
@@ -55,8 +55,8 @@ def setuptranscario(rodir,beamEnergy):
     try:
         (odir/'dir.output').mkdir(parents=True,exist_ok=True)
     except OSError:
-        raise ValueError('{} directory already existed, aborting'.format(beamEnergy))
-
+        raise ValueError(f'{beamEnergy} directory already existed, aborting')
+# %% move files where needed for this instantiation
     flist = [datcar, 'dir.input'/inp['precfile'], 'dir.data/type',transcarexe]
     flist.extend(['dir.data/dir.linux/dir.geomag/' +s  for s in ['data_geom.bin','igrf90.dat','igrf90s.dat']])
     flist.append('dir.data/dir.linux/dir.projection/varpot.dat')
@@ -64,6 +64,7 @@ def setuptranscario(rodir,beamEnergy):
     flist.extend(['dir.data/dir.linux/dir.cine/' +s  for s in ['DATDEG','DATFEL','DATTRANS','flux.flag','FELTRANS']])
     flist.append('dir.data/dir.linux/dir.cine/dir.euvac/EUVAC.dat')
     flist.extend(['dir.data/dir.linux/dir.cine/dir.seff/' +s  for s in ['crsb8','crsphot1.dat','rdtb8']])
+
     cp_parents(flist,odir)
 
 

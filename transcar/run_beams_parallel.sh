@@ -16,7 +16,7 @@ set -u; set -e
 # bring back simulation output to your PC.
 
 localonly=1
-remotes=(irs4 irs3 swoboj)
+remotes=  #(irs4 irs3 swoboj)
 
 BeamEnergyTableFN=BT_E1E2prev.csv
 RODIR=$1

@@ -1,13 +1,30 @@
 #!/usr/bin/env python
-from setuptools import setup
 
-req=['h5py','scipy','pandas','pytz','numpy','nose','astropy','scikit-image','python-dateutil','matplotlib',
-    'histutils','transcarread']
+req=['nose']
+pipreq=['transcarread']
+
+import pip
+try:
+    import conda.cli
+    conda.cli.main('install',*req)
+except Exception as e:
+    pip.main(['install'] + req)
+
+# %%
+from setuptools import setup
 
 setup(name='transcar',
       packages=['transcar'],
+      author='Michael Hirsch, Ph.D.',
       url='https://github.com/scivision/transcar',
-      dependency_links = ['https://github.com/scivision/transcarread/tarball/master#egg=transcarread'],
-     install_requires=req,
+      dependency_links = ['https://github.com/scivision/transcarread/tarball/master#egg=transcarread',],
+      classifiers=[
+      'Intended Audience :: Science/Research',
+      'Development Status :: 4 - Beta',
+      'License :: OSI Approved :: MIT License',
+      'Topic :: Scientific/Engineering :: Atmospheric Science',
+      'Programming Language :: Python :: 3.6',
+      ],
+     install_requires=req + pipreq,
 	  )
 	  

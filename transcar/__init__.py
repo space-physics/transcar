@@ -9,12 +9,16 @@ from transcarread import readTranscarInput
 transcarexe = 'transconvec_13.op.out'
 fileok = 'finish.status'
 # hard-coded in Fortran
-datcar = Path('transcar/dir.input') / 'DATCAR'
-precfn = 'transcar/dir.input/precinput.dat'
+din = Path('transcar/dir.input')
+ddat = Path('transcar/dir.data')
+datcar = din / 'DATCAR'
+precfn = din / 'precinput.dat'
 
 # %%
-def cp_parents(files,target_dir):
+def cp_parents(files, target_dir:Path):
     """
+    This function requires Python >= 3.6.
+
     This acts like bash cp --parents in Python
     inspiration from
     http://stackoverflow.com/questions/15329223/copy-a-file-into-a-directory-with-its-original-leading-directories-appended
@@ -35,10 +39,9 @@ def cp_parents(files,target_dir):
     target_dir = Path(target_dir).expanduser()
 #%% work
     for f in files:
-        #leave str() on this line or it will break
         newpath = target_dir / f.parent #to make it work like cp --parents, copying absolute paths if specified
-        Path(newpath).mkdir(parents=True, exist_ok=True)
-        copy2(str(f), newpath)
+        newpath.mkdir(parents=True, exist_ok=True)
+        copy2(f, newpath)
 
 
 def runTranscar(odir,errfn,msgfn):
@@ -79,28 +82,38 @@ def setuptranscario(rodir:Path, beamEnergy:float):
 
     (odir/'dir.output').mkdir(parents=True, exist_ok=True)
 # %% move files where needed for this instantiation
-    flist = [datcar, Path('dir.input') / inp['precfile'], Path('dir.data/type'),transcarexe]
-    flist.extend([Path('dir.data/dir.linux/dir.geomag') / s  for s in ['data_geom.bin','igrf90.dat','igrf90s.dat']])
-    flist.append(Path('dir.data/dir.linux/dir.projection/varpot.dat'))
+    flist = [datcar, din / inp['precfile'], ddat / 'type', Path('transcar')/transcarexe]
+    flist.extend([ddat / 'dir.linux/dir.geomag' / s  for s in ['data_geom.bin','igrf90.dat','igrf90s.dat']])
+    flist.append(ddat / 'dir.linux/dir.projection/varpot.dat')
     #transcar sigsegv on val_fit_ if FELTRANS is blank!
-    flist.extend([Path('dir.data/dir.linux/dir.cine') / s  for s in ['DATDEG','DATFEL','DATTRANS','flux.flag','FELTRANS']])
-    flist.append(Path('dir.data/dir.linux/dir.cine/dir.euvac/EUVAC.dat'))
-    flist.extend([Path('dir.data/dir.linux/dir.cine/dir.seff') /s  for s in ['crsb8','crsphot1.dat','rdtb8']])
+    flist.extend([ddat / 'dir.linux/dir.cine' / s  for s in ['DATDEG','DATFEL','DATTRANS','flux.flag','FELTRANS']])
+    flist.append(ddat / 'dir.linux/dir.cine/dir.euvac/EUVAC.dat')
+    flist.extend([ddat / 'dir.linux/dir.cine/dir.seff' /s  for s in ['crsb8','crsphot1.dat','rdtb8']])
 
-    cp_parents(flist,odir)
+    cp_parents(flist, odir)
 
+    return inp, odir
 
-    return inp,odir
+def setupPrecipitation(odir,inp,beam, flux0):
+    ofn = odir / precfn
 
-def setupPrecipitation(odir,inp,E1,E2,pr1,pr2, flux0):
-    dE =   E2-E1
-    Esum = E2+E1
+    E1 = beam['E1']
+    E2 = beam['E2']
+    pr1 = beam['pr1']
+    pr2 = beam['pr2']
+
+    dE =   E2 - E1
+    Esum = E2 + E1
     flux = flux0 / 0.5 / Esum / dE
     Elow = E1 - 0.5*(E1 - pr1)
     Ehigh= E2 - 0.5*(E2 - pr2)
 
-    precout = '\n'.join(('{}','{} {}','{} -1.0','{}','-1.0 -1.0')).format(
-              inp['precipstartsec'], Elow, flux, Ehigh, inp['precipendsec'])
+    precout = '\n'.join((f"{inp['precipstartsec']}",
+                         f'{Elow} {flux}',
+                         f'{Ehigh} -1.0',
+                         f"{inp['precipendsec']}",'-1.0 -1.0'))
 
-    with (odir/precfn).open('w') as f:
-        f.write(precout)
+
+    print('writing', ofn)
+
+    ofn.write_text(precout)

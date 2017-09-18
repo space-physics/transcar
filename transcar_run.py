@@ -10,7 +10,7 @@ from transcar import setuptranscario,setupPrecipitation,runTranscar,transcaroutc
 def runbeam(rodir:Path, Q0:float, beam, logfn:Path, errfn:Path):
 # %% copy the Fortran static init files to this directory (simple but robust)
     datinp,odir = setuptranscario(rodir, beam['E1'])
-    setupPrecipitation(odir, datinp, beam['E1'], beam['E2'], beam['pr1'], beam['pr2'], Q0)
+    setupPrecipitation(odir, datinp, beam, Q0)
 # %% run the compiled executable
     runTranscar(odir, errfn, logfn)
 #%% check output trivially

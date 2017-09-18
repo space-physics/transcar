@@ -12,6 +12,7 @@ except Exception as e:
 
 # %%
 from setuptools import setup
+import subprocess
 
 setup(name='transcar',
       packages=['transcar'],
@@ -27,4 +28,6 @@ setup(name='transcar',
       ],
      install_requires=req + pipreq,
 	  )
-	  
+
+subprocess.run(['cmake','..'],cwd='dir.source/dir.obj')
+subprocess.run(['make','-j2'],cwd='dir.source/dir.obj')

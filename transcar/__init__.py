@@ -2,16 +2,16 @@ from pathlib import Path
 from shutil import copy2
 import logging
 from collections import deque
-from subprocess import Popen
+import subprocess
 #
 from transcarread import readTranscarInput
 # %% constants dictacted by legacy Fortran code
 transcarexe = 'transconvec_13.op.out'
 fileok = 'finish.status'
 # hard-coded in Fortran
-din = Path('transcar/dir.input')
-ddat = Path('transcar/dir.data')
-datcar = din / 'DATCAR'
+din = Path('dir.input')
+ddat = Path('dir.data')
+DATCAR = din / 'DATCAR'
 precfn = din / 'precinput.dat'
 
 # %%
@@ -44,16 +44,17 @@ def cp_parents(files, target_dir:Path):
         copy2(f, newpath)
 
 
-def runTranscar(odir,errfn,msgfn):
+def runTranscar(odir:Path, errfn:Path, msgfn:Path):
     odir = Path(odir).expanduser()
+
     with (odir/errfn).open('w')  as ferr, (odir/msgfn).open('w') as fout:
-    #we need cwd feature of Popen that call() doesn't have
-        exe = (odir/transcarexe).resolve()
+        # remember it must be an iterable, even if only one argument.
+        exe = [odir / transcarexe]
 
-        proc = Popen(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
-        out,err = proc.communicate() #this makes popen block (we want this)
-        #print(out,err) #will be none since we didn't use PIPE
-
+        # Note: subprocess.run() is blocking by design.
+        #       subprocess.Popen() is non-blocking (unless commanded to wait)
+        #subprocess.run(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
+        subprocess.Popen(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
 
 def transcaroutcheck(odir,errfn):
     fok = odir/fileok
@@ -76,19 +77,19 @@ def transcaroutcheck(odir,errfn):
 
 
 def setuptranscario(rodir:Path, beamEnergy:float):
-    inp = readTranscarInput(datcar)
+    inp = readTranscarInput(DATCAR)
 
     odir = rodir / f'beam{beamEnergy:.1f}'
 
     (odir/'dir.output').mkdir(parents=True, exist_ok=True)
 # %% move files where needed for this instantiation
-    flist = [datcar, din / inp['precfile'], ddat / 'type', Path('transcar')/transcarexe]
-    flist.extend([ddat / 'dir.linux/dir.geomag' / s  for s in ['data_geom.bin','igrf90.dat','igrf90s.dat']])
-    flist.append(ddat / 'dir.linux/dir.projection/varpot.dat')
+    flist = [DATCAR, din / inp['precfile'], ddat / 'type', Path('transcar')/transcarexe]
+    flist += [ddat / 'dir.linux/dir.geomag' / s  for s in ['data_geom.bin','igrf90.dat','igrf90s.dat']]
+    flist += [ddat / 'dir.linux/dir.projection/varpot.dat']
     #transcar sigsegv on val_fit_ if FELTRANS is blank!
-    flist.extend([ddat / 'dir.linux/dir.cine' / s  for s in ['DATDEG','DATFEL','DATTRANS','flux.flag','FELTRANS']])
-    flist.append(ddat / 'dir.linux/dir.cine/dir.euvac/EUVAC.dat')
-    flist.extend([ddat / 'dir.linux/dir.cine/dir.seff' /s  for s in ['crsb8','crsphot1.dat','rdtb8']])
+    flist += [ddat / 'dir.linux/dir.cine' / s  for s in ['DATDEG','DATFEL','DATTRANS','flux.flag','FELTRANS']]
+    flist += [ddat / 'dir.linux/dir.cine/dir.euvac/EUVAC.dat']
+    flist += [ddat / 'dir.linux/dir.cine/dir.seff' /s  for s in ['crsb8','crsphot1.dat','rdtb8']]
 
     cp_parents(flist, odir)
 

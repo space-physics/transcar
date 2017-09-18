@@ -20,7 +20,7 @@ Prereqs
 =======
 Because Transcar is Python & Fortran based, it runs on any PC/Mac with Linux, OS X, Windows, etc.
 
-You can use your preferred Python install. 
+You can use your preferred Python install.
 I use `Anaconda Python <http://continuum.io/downloads>`_.
 
 Linux
@@ -44,16 +44,19 @@ However, you can also `install gfortran, cmake and make natively on Windows <htt
 
 Install
 =======
-::
+You'll need Cmake, Make, Gfortran and Python 3::
 
-  git clone https://github.com/scivision/transcar
+    python setup.py develop
 
-  cd transcar/transcar/dir.source/dir.obj
-  cmake ..
-  make -j7
+Manual compile
+--------------
+This is not normally needed, just for reference::
 
-  cd ../..
-  python setup.py develop
+    cd dir.source/dir.obj
+    cmake ..
+    make
+
+    cd ..
 
 Run
 ======
@@ -66,14 +69,14 @@ Python
 ------
 from the `transcar/` subdirectory::
 
-    python transcar_run.py /tmp/tc 
+    python transcar_run.py /tmp/tc
 
 Bash
 ----
 This is the Mac/Linux only legacy way of running Transcar::
 
     ./run_beams_parallel.sh /tmp/tc
-    
+
 where ``/tmp/tc`` is the output directory. Files are automatically erased there, so be careful!
 
 Optional

@@ -726,33 +726,29 @@ C     SET MIDDLE ABSCISSA AND WEIGHT FOR RULES OF ODD ORDER
          GWT( LIM + 1 ) = 2.D0 / PROD**2
       END IF
 C     CONVERT FROM (-1,1) TO (0,1)
-      DO 50  K = 1, M
+      DO   K = 1, M
          GMU( K ) = 0.5 * GMU( K ) + 0.5
          GWT( K ) = 0.5 * GWT( K )
-50    CONTINUE
-C
-      RETURN
-      END
-c
-c------------------------------------------------------------------
-c
-      subroutine xline(nbline,ijfile)                   
-      implicit none
-      integer,intent(in) :: nbline,ijfile  
+      enddo
 
-      character nc*30
+      END subroutine qgauss
+
+c------------------------------------------------------------------
+
+      subroutine xline(nbline,u)    
+    ! skips lines in file               
+      implicit none
+      integer,intent(in) :: nbline,u  
       integer i
 
-      do i=1,nbline        
-        read(ijfile,1000) nc    
+      do i=1,nbline       
+        read(u,*)    
       end do
 
- 1000 format(a1)              
-              
       end subroutine xline                   
-c
+
 c---------------------------------------------------------------
-c
+
       SUBROUTINE NUOION (XNUTOT,XNUO,XNUN2,XNUO2, TI,TN,DENO,DENN2,
      &                   DENO2,burnside)
       implicit None

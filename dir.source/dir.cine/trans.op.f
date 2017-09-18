@@ -1704,7 +1704,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
      &                      hrloc,glat,ap(1),f107(1),chideg,tempexo
       endif
 !
-      close (ifeltrans)
+
       close (fic_transout)
       close (irdtin)
 !
@@ -2269,7 +2269,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 !         qprim(E,z,A)        : cm-2.s-1.eV-1.sr-1
 !
 !     INPUTS
-      integer iprt(40),mcount(5)
+      integer iprt(40),mcount(5),ifeltrans
         real e(nbren),alt(nbralt),altkm(nbralt),densneut(8,nbralt)
        real  cel(nbrsp,nbren),cin(nbrsp,nbren)
         integer nang,nalt,nango2
@@ -2310,10 +2310,11 @@ c47     format(1i4,4f10.2,2(1pe12.3))
        enddo
        return
       endif
-          open (ifeltrans,file='dir.data/dir.linux/dir.cine/FELTRANS',
-     &    form='unformatted',status='old')
-          rewind(ifeltrans)
-      pi=atan(1.)*4.
+          open (newunit=ifeltrans,
+     &    file='dir.data/dir.linux/dir.cine/FELTRANS',
+     &    access='stream',status='old')
+
+      pi = 4.*atan(1.)
           r2pi = 1./(pi*2.)
 !
 !  *      read in primary photoelectron flux data
@@ -2329,6 +2330,9 @@ c47     format(1i4,4f10.2,2(1pe12.3))
        read  (ifeltrans) ((prophel(i,j),j=1,nnen),i=1,nz)
        read  (ifeltrans) (proelec(i), i = 1,nz)
        read  (ifeltrans) ((prodion(ialt,isp),ialt=1,nz),isp=1,nnspec+1)
+       close(ifeltrans)
+
+
        if(iprt(22).eq.1)then
          write (fic_transout,1000)
          write (fic_transout,*) 'Altitudes (z)'

@@ -120,27 +120,29 @@ c
         real Isr2(8)
         real Po1sdisso2(500)
         integer iz,iwave,ichapman,iflux,ilambda,imod,nrege
+      integer ifeldat,ifelprt,ifeltrans
         real maxchi,nan
         
 
         print *,'felin.f: nen=',nen
 
 c ---	Open up files to be used in this program.
-        open (unit=ifeldat,file= 'dir.data/dir.linux/dir.cine/DATFEL',
+      open (newunit=ifeldat,file='dir.data/dir.linux/dir.cine/DATFEL',
      &          status='old')
-        rewind(ifeldat)
-        open (unit=ifelprt,file= 'dir.data/dir.linux/dir.cine/FELOUT',
-     &          status='new')
+
+      open (newunit=ifelprt,file='dir.data/dir.linux/dir.cine/FELOUT',
+     &          status='unknown')
         rewind(ifelprt)
-        open (unit=ifeltrans,
-     .		file='dir.data/dir.linux/dir.cine/FELTRANS',
-     .		form='unformatted',
+
+        open (newunit=ifeltrans,
+     .		file='dir.data/dir.linux/dir.cine/FELTRANS',	access='stream',
      &          status='old')
         rewind(ifeltrans)
-      	write(ifelprt,*)'felin1.f'
-c
+
+      	write(ifelprt,*) 'felin1.f'
+
 c --- 	Resets all output arrays.
-c
+
        	call zeroit(proelec,nbralt)
       	call zeroit(prophel,nbralt*nbren)
         call zeroit(produc,nbralt*nbrsp*nbren)
@@ -1124,7 +1126,7 @@ c     	nns = ns+2 allows for diss ioniz of o2 and n2
  	    nan = ifix(year)
 c
 c       Met les energies en ordre decroissant
-        write(stdout,*),'felin:setpar: nen=',nen
+        print *,'felin:setpar: nen=',nen
         if(centE(1).gt.centE(nen))then
           do ien = 1,nen
             Ebot(ien)  = botE(ien)
@@ -1139,7 +1141,9 @@ c       Met les energies en ordre decroissant
           enddo
         endif
 
+        print *,'hi'
         call xline(13,ifeldat)
+        print *,'bye'
         read(ifeldat,*) (idess(i),i=1,8)
 c	iprt(1) = 1 if print Energy boxes definition [eV, angstrom, cm].
 c	iprt(2) = 1 if print Spectral lines.
@@ -1169,7 +1173,10 @@ c	iprt(12)= available.
         read(ifeldat,*) imod
         call xline(1,ifeldat)
         read(ifeldat,*) ichapman
-c
+
+      close(ifeldat)
+
+
 c----   Lecture des sections efficaces
 c 	sefftot = sections eff. totale, N2,O2,O
 c 	sefftion = sections eff. d'ionisation et d'ionisation dissocia

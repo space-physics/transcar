@@ -77,20 +77,22 @@ c                   au transport fluide
         include 'comm.f'
         implicit none
         include 'TRANSPORT.INC'
+
+        real, intent(in) :: knm, tempexo, glong, altkm(nbralt),
+     &    tneutre(nbralt),densneut(8,nbralt),colden(8,nbralt)
+        integer, intent(in) :: nspec
 	
       	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
      .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
      .               nwave,ns,nns,f107min,f107max,iseff,wnmseff,
      .               lambdasr,sigsro2,Isr,lineflux,sigabso2,qyield,
      .               Isr2
-        integer nalt,ns,nns,nwave
-        real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
+        integer nalt,ns,nns,nwave,iseff
+      real f107max,f107min,wavemin(39),wavemax(39),eVmin(39),eVmax(39)
       	real f107(3),day,ap(7),hrloc,UT,glat,chi,chideg
-       	dimension altkm(nbralt),densneut(8,nbralt),colden(8,nbralt),
-     .		  tneutre(nbralt)
 c 	wwt (specie, excit, energy) = branching ratio
        	real threshold(7),wwt(7,6,39)
-        integer number(7)
+        integer number(7),nbseff
 c     	Ecent = energy boxes (eV).
 c     	Ebot  = lower boundary of energy boxes (eV).
 c     	engdd = energy boxes width(eV).
@@ -117,8 +119,9 @@ c
         real Isr(8),pfluxsr(8,nbralt),chapsp(8)
         real Isr2(8)
         real Po1sdisso2(500)
-        integer iz,iwave
-        real maxchi
+        integer iz,iwave,ichapman,iflux,ilambda,imod,nrege
+        real maxchi,nan
+        
 
         print *,'felin.f: nen=',nen
 
@@ -169,7 +172,7 @@ c --- 	Calculates primary photoelectron production.
 
                 if(chi .lt. maxchi) then
                 call fchap(day,UT,altkm(iz),
-     &           glat,glon,f107,ap,chi,chapsp)
+     &           glat,glong,f107,ap,chi,chapsp)
 
                 do ilambda=1,8
                         pfluxsr(ilambda,iz)=Isr2(ilambda)*
@@ -194,7 +197,7 @@ c --- 	Calculates primary photoelectron production.
 
 !               Compute production of O(1S) from spectral line dissociation of O2
                 call fchap(day,UT,altkm(iz),
-     &           glat,glon,f107,ap,chi,chapsp)
+     &           glat,glong,f107,ap,chi,chapsp)
 
                 do ilambda=1,7
                         pfluxsr(ilambda,iz)=lineflux(ilambda)*
@@ -269,7 +272,7 @@ c
         real function chapgreen (CHI, ZCM, Tneutre, atomas)
 c
         implicit none
-        real chi,zcm,Tneutre,atomas
+        real, intent(in) :: chi,zcm,Tneutre,atomas
 c
 c       "Molecular absorption in planetary atmosphere"
 c       Green, Lindenmeyer and Griggs, JGR, vol 69, 1964, p493-504
@@ -533,15 +536,17 @@ c
 c---------------------------- densout1 -------------------------------
 c
       subroutine densout1(nalt,altkm,proelec,denselregE,nregE,altregE,
-     .		 densneut)
-c
- 	include 'TRANSPORT.INC'
-c
- 	real proelec(nbralt),denselregE(nbralt)
-c
-        real altkm(nbralt),densneut(8,nbralt)
- 	real altregE(nbralt)
- 	integer ialt,nalt,nregE
+     &		 densneut)
+
+      include 'TRANSPORT.INC'
+
+      real, intent(in) :: altkm(nbralt),densneut(8,nbralt)
+      integer,intent(out) :: nregE
+
+      real proelec(nbralt),denselregE(nbralt)
+
+      real altregE(nbralt)
+      integer ialt,nalt
 c
 c     	calcul de densites
  	nregE = 0
@@ -581,7 +586,10 @@ c
         implicit none
 
         include 'TRANSPORT.INC'
-	
+
+        integer, intent(in) :: nspec,imod
+	      real, intent(in) :: altkm(nbralt),tneutre(nbralt),
+     &    densneut(8,nbralt),colden(8,nbralt)
 
 c
 c 	Computes the different productions :
@@ -631,9 +639,8 @@ c     	        solar continuum [cm-3.s-1]
        integer,intent(in) :: kiappel,nalt,ns,nns,nwave
        real,intent(out) :: sflux(nbralt,nbren)        !I(z,lambda)
 
-       	real chi,altkm(nbralt)
-       	real colden(8,nbralt),densneut(8,nbralt),tneutre(nbralt),
-     . 	 	threshold(7),proelec(nbralt),prodion(nbralt,nbrsp*2),
+       	real chi
+       	real threshold(7),proelec(nbralt),prodion(nbralt,nbrsp*2),
      . 		proneut(nbralt,nbrsp),prophel(nbralt,nbren)
         real prodcont(nbralt),prodraie(nbralt)
        	real produc(nbralt,nbrsp,nbren),pflux(nwave),
@@ -643,8 +650,8 @@ c 	wwt = branching ratio sur les energies de Torr
        	real wwt(7,6,nwave)
 c 	wt = branching ratio sur les energies des petites boites
        	real wt(6),dev,flux,exa
-        integer num(7),imod,iontype,nexcit
-       	integer iprt(12),iwave,iz,isp,ist,ninter,ne,ionspe,nspec,i
+        integer num(7),iontype,nexcit
+       	integer iprt(12),iwave,iz,isp,ist,ninter,ne,ionspe,i
       real xchap(nbralt,nbrsp),sigt(nwave,5),dele,deltae,amu,gzero,bolt,
      &  recm,re,pi,sefint,energy
      
@@ -666,7 +673,7 @@ c
         do iwave=1,nwave
 !     .		write(6,*)'Wavelength ',iwave,'/',nwave
  	  deV = eVmax(iwave)-eVmin(iwave)
- 	  if(deV .le. 1. .or. imod.eq.1)then
+ 	  if(deV .le. 1. .or. imod==1)then
 c 	    On est sur une ligne discrete .ou. on ne coupe pas les
 c 	    intervalles en petite boites.
  	    flux = pflux(iwave)
@@ -790,9 +797,9 @@ c 	excited.
         include 'TRANSPORT.INC'
         
         integer,intent(in) :: nexcit,iontype
-        real,intent(in) :: deV,dele,exa,wt(6),sigion,flux
-        
-       	real densneut(8,nbralt)
+        real,intent(in) :: deV,dele,exa,wt(6),sigion,flux,
+     &   densneut(8,nbralt)
+
      	real engdd(nbren),Ebot(nbren)
 
 
@@ -810,37 +817,37 @@ c
 
         if(dele.gt.0.)then
           depr = flux*exp(-exa)
-          if(iontype.eq.1) then
+          if(iontype==1) then
 c           case N2 --> N2+  (neutral 1 -->ion 1)
  	    ionspe=1
  	    neutspe=1
  	    nbrelec = 1.
-          elseif(iontype.eq.2) then
+          elseif(iontype==2) then
 c           case O2 --> O2+  (neutral 2 -->ion 2)
  	    ionspe=2
  	    neutspe=2
  	    nbrelec = 1.
-          elseif(iontype.eq.3) then
+          elseif(iontype==3) then
 c           case O --> O+  (neutral 3 -->ion 3)
  	    ionspe=3
  	    neutspe=3
  	    nbrelec = 1.
-          elseif(iontype.eq.4) then
+          elseif(iontype==4) then
 c           Case N2 -->N+ + N  (neutral 1 -->ion 4)
             ionspe=4
  	    neutspe=1
  	    nbrelec = 1.
-          elseif(iontype.eq.5) then
+          elseif(iontype==5) then
 c           Case O2 --> O+ + O  (neutral 2 -->ion 3)
             ionspe=3
  	    neutspe=2
  	    nbrelec = 1.
-          elseif(iontype.eq.6) then
+          elseif(iontype==6) then
 c           Case H --> H+  (neutral 4 -->ion 5)
             ionspe=5
  	    neutspe=4
  	    nbrelec = 1.
-          elseif(iontype.eq.7) then
+          elseif(iontype==7) then
 c           Case He --> He+  (neutral 5 -->ion 6)
             ionspe=6
  	    neutspe=5
@@ -917,7 +924,7 @@ c
         write(stdout,*),'felin.f:prodprt  nen=',nen
 
 
-        if(iprt(8).eq.1)then
+        if(iprt(8)==1)then
       	  write(ifelprt,1000)
       	  write(ifelprt,1010)
       	  do iz=1,nalt
@@ -947,7 +954,7 @@ c     	proelec (alt)
 c     	        = prod. at alt no iz, all species mixed.
 c     	        [cm-3.s-1]
 c
-        if (iprt(9).eq.1)then
+        if (iprt(9)==1)then
       	  write(ifelprt,1040)nen
 	  nnz=(nalt-1)/4
 	  iz=1
@@ -962,7 +969,7 @@ c
           enddo
         endif
 
-        if(iprt(10).eq.1)then
+        if(iprt(10)==1)then
           nalto6 = (nalt+1)/6
           ialt1 = 1
           ialt2 = ialt1 + 5
@@ -985,7 +992,7 @@ c
  	  enddo
         endif
 c
-        if(iprt(11).eq.1)then
+        if(iprt(11)==1)then
       	  write(ifelprt,1110)
       	  do iz=1,nalt
       	   write(ifelprt,1100)altkm(iz),proelec(iz),
@@ -1038,7 +1045,11 @@ c
 
         include 'TRANSPORT.INC'
 
-        real, intent(in) :: f107(3),ap(7)
+        real, intent(in) :: f107(3),ap(7), knm, glong,altkm(nbralt),
+     &     tneutre(nbralt),densneut(8,nbralt),colden(8,nbralt)
+        integer, intent(in) :: nspec
+        integer, intent(out) :: iflux,imod
+        real, intent(out) :: nan
 
       	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
      .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
@@ -1047,19 +1058,18 @@ c
         common /const/ pi,re,recm,bolt,gzero,amu
  	real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
  	integer index(39)
-       	real altkm(nbralt),Ecent(nbren),engdd(nbren),Ebot(nbren)
+       	real Ecent(nbren),engdd(nbren),Ebot(nbren)
        	real centE(nbren),ddeng(nbren),botE(nbren)
         real xchap(nbralt,nbrsp)
  	integer iprt(12),idess(9)
       	real seffion(2000,7),sefftot(2000,5),eVseff(2000),wnmseff(2000)
       	real sigi(39,7),sigt(39,5)
- 	real wave(39),Pflux(39),Eflux(39),eV(39),tneutre(nbralt),
-     .		  densneut(8,nbralt),colden(8,nbralt)
+ 	real wave(39),Pflux(39),Eflux(39),eV(39)
  	real pfluxmin(39),pfluxmax(39)
  	real wwt(7,6,39),threshold(7)
  	integer number(7),iseff
  	real trav(39),eVmid(39),work(39),place,year
- 	integer yyddd
+ 	integer yyddd,nbseff
  	real enflux
         real chapesp(8)
 c
@@ -1164,7 +1174,7 @@ c----   Lecture des sections efficaces
 c 	sefftot = sections eff. totale, N2,O2,O
 c 	sefftion = sections eff. d'ionisation et d'ionisation dissocia
 c 	tive, N2,O2,O,Ndiss,Odiss.
- 	  if(iseff.eq.1)then
+ 	  if(iseff==1)then
 c 	  Fichier Torr et Torr de 39 energies (2 energies rajoutees
 c 	  pour tenir compte du flux solaire de Tobiska, jl 1993)
  	  open(icrsphot,
@@ -1188,7 +1198,7 @@ c 	  pour tenir compte du flux solaire de Tobiska, jl 1993)
      .		          sefftot(i,5),seffion(i,7)
  	  enddo
  	  close(icrsphot)
- 	  elseif(iseff.eq.2)then
+ 	  elseif(iseff==2)then
 c 	  Fichier Fennely et Torr de 1946 energies (dont 2 rajoutees
 c 	  pour tenir compte du flux solaire de Tobiska, jl 1993)
  	  open(icrsphot,
@@ -1226,7 +1236,7 @@ c 	    d'ionis. totale...
 c
 c ----	Estimation du flux solaire sur les 39 energies initiales,
 c 	en photons/cm2/s
- 	  if(iflux.eq.0)then
+ 	  if(iflux == 0)then
 	  do i=1,nwave
  	    pflux(i)= (f107(1)-f107max)*(pfluxmin(i)-pfluxmax(i))/
      . 	   		(f107min-f107max) + pfluxmax(i)
@@ -1234,16 +1244,16 @@ c	    pflux(i)= (130.5-f107max)*(pfluxmin(i)-pfluxmax(i))/
 c    . 	   		(f107min-f107max) + pfluxmax(i)
 
  	  enddo
- 	  elseif (iflux.eq.1)then
+ 	  elseif (iflux==1)then
  	  do i=1,nwave
  	    pflux(i)= pfluxmin(i)
  	  enddo
- 	  elseif (iflux.eq.2)then
+ 	  elseif (iflux==2)then
  	  do i=1,nwave
  	    pflux(i)= pfluxmax(i)
  	  enddo
- 	  elseif (iflux.eq.3)then
- 	  if (nan.gt.99)then
+ 	  elseif (iflux==3)then
+ 	  if (nan > 99)then
  	    yyddd = (nan-1900)*1000+ifix(day)
  	  else
  	    yyddd = nan*1000+ifix(day)
@@ -1259,7 +1269,7 @@ c    . 	   		(f107min-f107max) + pfluxmax(i)
  	  call euv91(ifelprt,yyddd,numday,wavemin,eVmin,wavemax,
      .		     eVmax,eV,wave,Pflux,Eflux,iprt(1))
 
-        elseif (iflux.eq.4)then
+        elseif (iflux==4)then
 c   	  ici le flux EUVAC94 peut etre obtenu.
 c   	  ref: Richards et al, JGR,99,8981,1994
 c   	  modification : OW, 12 dec 1997
@@ -1341,13 +1351,13 @@ c
 c
 c ----	Ecritures
 c
-        if (iprt(6).eq.1) then
+        if (iprt(6)==1) then
           write(ifelprt,2010)tempexo
           write(ifelprt,2020)glat,glong,ap(1)
   	      write(ifelprt,2023)day,nan
           write(ifelprt,2030)f107(3),f107(1)
           write(ifelprt,2050)
-	  if(nspec.le.3)then
+	  if(nspec <= 3)then
 	    iwrite=nspec
 	    do 130 i=1,nalt
               write(ifelprt,2060)i,altkm(i),tneutre(i),
@@ -1369,8 +1379,8 @@ c
 c
 2070    format('total energy contained in the solar flux',
      .          ' [eV/s/cm2]:',1pe10.2)
-        if(kiappel.eq.1)write(6,2070)enflux
-        if(iprt(2).eq.1)then
+        if(kiappel==1)write(6,2070)enflux
+        if(iprt(2)==1)then
   	  write(ifelprt,1020)f107min, f107(1), f107max
 	  do 35 i=1,nwave
 	    write(ifelprt,1030)wavemin(i),wave(i),wavemax(i),eVmin(i),
@@ -1379,10 +1389,10 @@ c
           write(ifelprt,2070)enflux
 	endif
 c
- 	if (iprt(3).eq.1)then
- 	  if(iseff.eq.1) write(ifelprt,*)
+ 	if (iprt(3)==1)then
+ 	  if(iseff==1) write(ifelprt,*)
      .			'Torr and Torr (1985) cross section set'
- 	  if(iseff.eq.2) write(ifelprt,*)
+ 	  if(iseff==2) write(ifelprt,*)
      .			'Fennelly and Torr (1992) cross section set'
  	  write(ifelprt,1130)
  	  do i = 1,39
@@ -1402,14 +1412,14 @@ c
  	  enddo
  	endif
 c
- 	if (iprt(4).eq.1)then
+ 	if (iprt(4)==1)then
       	  write(ifelprt,1050)
       	  do 100 j = 1,nns
             write(ifelprt,1080)threshold(j)
 100  	  continue
  	endif
 c
- 	if (iprt(5).eq.1)then
+ 	if (iprt(5)==1)then
       	  write(ifelprt,*)
       	  write(ifelprt,*)'Normalized branching ratio'
       	  write(ifelprt,*)
@@ -1469,9 +1479,9 @@ c
 c
 c       Chapman:
 c	--------
-c     	if(iprt(7).eq.1)write(ifelprt,1060)
+c     	if(iprt(7)==1)write(ifelprt,1060)
 c
- 	if(ichapman.eq.0) then
+ 	if(ichapman==0) then
       	  do iz = 1,nalt
             call fchap(iyd,UT,altkm(iz),glat,glong,f107,
      &                  ap,chi,chapesp)
@@ -1479,7 +1489,7 @@ c
               xchap(iz,isp)=chapesp(isp)
             enddo
  	  enddo
- 	else if (ichapman.eq.1)then
+ 	else if (ichapman==1)then
       	  do iz = 1,nalt
  	    altcm=altkm(iz)*1.e+05
  	    do  isp=1,ns
@@ -1487,7 +1497,7 @@ c
      .		chapsmith(chi,altcm,tneutre(iz),atomas(isp))
  	    enddo
  	  enddo
-        else if(ichapman.eq.2)then
+        else if(ichapman==2)then
       	  do iz = 1,nalt
  	    altcm=altkm(iz)*1.e+05
  	    do  isp=1,ns
@@ -1497,7 +1507,7 @@ c
  	  enddo
  	endif
 c       Comparison:
- 	if(iprt(7).eq.1)then
+ 	if(iprt(7)==1)then
 	  if(cos(chi).ne.0.) xcos = 1/cos(chi)
  	  do iz=1,nalt
             write(ifelprt, 1070) altkm(iz),xcos,(xchap(iz,j), j = 1,ns)
@@ -1559,12 +1569,12 @@ c
 c 	type = 1 --> total
 c 	type = 2 --> ionisation
 c
- 	if(type.eq.1)then
+ 	if(type==1)then
  	  do i = 1,nbseff
  	    tabin(i) = sefftot(nbseff+1-i,isp)
  	    tabeV(i) = eVseff(nbseff+1-i)
  	  enddo
- 	elseif(type.eq.2)then
+ 	elseif(type==2)then
  	  do i = 1,nbseff
  	    tabin(i) = seffion(nbseff+1-i,isp)
  	    tabeV(i) = eVseff(nbseff+1-i)
@@ -1623,7 +1633,7 @@ c
      .                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
  	common /const/ pi,re,recm,bolt,gzero,amu
 c
- 	real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
+ 	real wavemin(39),wavemax(39),eVmin(39),eVmax(39),f107max
       	real seffion(2000,7),sefftot(2000,5),eVseff(2000),wnmseff(2000)
        	dimension threshold(7),eV(39),wave(39)
  	dimension pfluxmin(39),pfluxmax(39)

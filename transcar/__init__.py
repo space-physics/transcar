@@ -83,7 +83,7 @@ def setuptranscario(rodir:Path, beamEnergy:float):
 
     (odir/'dir.output').mkdir(parents=True, exist_ok=True)
 # %% move files where needed for this instantiation
-    flist = [DATCAR, din / inp['precfile'], ddat / 'type', Path('transcar')/transcarexe]
+    flist = [DATCAR, din / inp['precfile'], ddat / 'type', transcarexe]
     flist += [ddat / 'dir.linux/dir.geomag' / s  for s in ['data_geom.bin','igrf90.dat','igrf90s.dat']]
     flist += [ddat / 'dir.linux/dir.projection/varpot.dat']
     #transcar sigsegv on val_fit_ if FELTRANS is blank!

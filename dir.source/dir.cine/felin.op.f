@@ -1,8 +1,7 @@
-c
         subroutine felin(knm,nspec,hrloc,day,year,UT,
-     .          tempexo,f107,ap,glat,glong,botE,centE,
-     .          ddeng,nalt,altkm,tneutre,densneut,colden,chi,chideg,
-     .		kiappel,phdisso2,pfluxsr,Po1sdisso2)
+     &          tempexo,f107,ap,glat,glong,botE,centE,
+     &          ddeng,nalt,altkm,tneutre,densneut,colden,chi,chideg,
+     &		kiappel,phdisso2,pfluxsr,Po1sdisso2)
 
 c	Computation of the primary photoelectrons, i.e. the electrons
 c 	created by the solar photon flux.(jl,1993).
@@ -76,6 +75,7 @@ c                   du programme.
 c               --> si kiappel = 2, ce sont les donnees necessaires
 c                   au transport fluide
         include 'comm.f'
+        implicit none
         include 'TRANSPORT.INC'
 	
       	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
@@ -120,7 +120,7 @@ c
         integer iz,iwave
         real maxchi
 
-        write(stdout,*),'felin.f: nen=',nen
+        print *,'felin.f: nen=',nen
 
 c ---	Open up files to be used in this program.
         open (unit=ifeldat,file= 'dir.data/dir.linux/dir.cine/DATFEL',
@@ -232,35 +232,41 @@ c ---	Writes the different productions.
 c
 c---------------------- function chap ---------------------------------
 c
-      	function chapsmith (CHI, ZCM, T, AM)
-c
+      real function chapsmith (CHI, ZCM, T, AM)
+        implicit none
+
+        real, intent(in) :: chi, zcm, t, am 
 c 	The Chapman function was given by Stan Solomon, who got it from
 c  	Nagy. Comes from:
 c 	"Numerical evaluation of Chapman's grazing incidence integral
 c 	ch(X,x)", Smithe and Smith, JG, vol 77, 1972, p3592,3597
 c
- 	common /const/ pi,re,recm,bolt,gzero,amu
-c
-      	GR=GZERO*(RECM/(RECM+ZCM))**2
-      	HN=1.38E-16*T/(AM*1.662E-24*GR)
-      	HG=(RECM+ZCM)/HN
-      	HF=0.5*HG*(COS(CHI)**2)
-      	SQHF=SQRT(HF)
- 	if(chi.le.pi/2.)then
+       common /const/ pi,re,recm,bolt,gzero,amu
+       real a,b,c,d
+       real pi,re,recm,bolt,gzero,amu
+       real gr,hf,hg,hn,sqhf
+       real,external :: sperfc
+
+        GR=GZERO*(RECM/(RECM+ZCM))**2
+        HN=1.38E-16*T/(AM*1.662E-24*GR)
+        HG=(RECM+ZCM)/HN
+        HF=0.5*HG*(COS(CHI)**2)
+        SQHF=SQRT(HF)
+        if(chi.le.pi/2.)then
       	  chapsmith=SQRT(0.5*PI*HG)*SPERFC(SQHF)
- 	else
- 	  a = sqrt(0.5*pi*hg)
- 	  c = sqrt(sin(chi))*exp(hg*(1.-sin(chi)))
- 	  d = 0.5*sperfc(sqhf)
- 	  b = c - d
- 	  chapsmith = 2.*a * b
- 	endif
-      	RETURN
-	END
+        else
+          a = sqrt(0.5*pi*hg)
+          c = sqrt(sin(chi))*exp(hg*(1.-sin(chi)))
+          d = 0.5*sperfc(sqhf)
+          b = c - d
+          chapsmith = 2.*a * b
+        endif
+
+      END function chapsmith
 c
 c------------------- function chapgreen -------------------------------
 c
-        function chapgreen (CHI, ZCM, Tneutre, atomas)
+        real function chapgreen (CHI, ZCM, Tneutre, atomas)
 c
         implicit none
         real chi,zcm,Tneutre,atomas
@@ -271,7 +277,7 @@ c
         real pi,re,recm,bolt,gzero,amu
         common /const/ pi,re,recm,bolt,gzero,amu
 c
-        real gr,hn,X,alpha,chapgreen,c
+        real gr,hn,X,alpha,c
 c
 c       gr = gravite a l'atitude zcm [cm.s-2]
         GR=GZERO*(RECM/(RECM+ZCM))**2
@@ -282,18 +288,17 @@ c       hn = kT/mg = hauteur d'echelle [cm]
 c       X = hauteur au centre de la Terre/hauteur d'echelle
         X=(RECM+ZCM)/HN
 
-        if(chi.le.pi/2.)then
+        if(chi <= pi/2.) then
           alpha = 1./c**4 - 0.115/c**2 - 0.5/(c**2*log(sqrt(c*X)))
           chapgreen = exp(0.5*chi**2/1.-0.115*chi**2-alpha*chi**4)
         endif
-c
-        return
-        end
+
+        end function chapgreen
 c
 c----------------------------------------------------------------------
 c
         subroutine branchratio(nwave,eV,threshold,num,wwt)
-c
+
         implicit none
         include 'TRANSPORT.INC'
 
@@ -1531,15 +1536,15 @@ c------------------------ search ------------------------------
 c
 c------------------------ Function sefint ---------------------------
 c
- 	function sefint(ener,isp,type)
+      function sefint(ener,isp,type)
 c
- 	implicit none
- 	include 'TRANSPORT.INC'
+      implicit none
+      include 'TRANSPORT.INC'
 c
       	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
-     .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
-     .		      nwave,ns,nns,f107min,f107max,iseff,wnmseff,lambdasr,
-     .                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
+     &  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
+     &		      nwave,ns,nns,f107min,f107max,iseff,wnmseff,lambdasr,
+     &                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
       	real seffion(2000,7),sefftot(2000,5),eVseff(2000),threshold(7)
         real wnmseff(2000)
         real eV(39),wave(39),pfluxmin(39),pfluxmax(39)
@@ -1570,9 +1575,8 @@ c
  	call intlin(nbseff,tabeV,tabin,1,tabout,seffout)
 c
  	sefint = seffout(1)*1.e-18
-c
- 	return
- 	end
+
+      end function sefint
 
 c
 c------------------------ Function sperfc ---------------------------
@@ -1583,14 +1587,14 @@ c
 c
 c 	Used to compute the Chapman function.
 c
-      	if (dummy .le. 8.) then
+      	if (dummy <= 8.) then
           sperfc = (1.0606963+0.55643831*dummy) /
-     .           (1.0619896+1.7245609*dummy+dummy*dummy)
+     &           (1.0619896+1.7245609*dummy+dummy*dummy)
         else
           sperfc=0.56498823/(0.06651874+dummy)
         endif
 
-        end
+      end function sperfc
 c
 c----------------------------------------------------------------------
 c

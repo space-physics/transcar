@@ -14,7 +14,8 @@
        real kp
        real(dp) EE(2),Ex(2)
        real(dp) ca,sa,re,ctet,dx,dy,clat,transit
-       real(dp) dlatgeo,dlongeo,dlonref,dtmag,distance
+       real(dp) dlatgeo,dlongeo,dlonref,distance
+       real(dp), save :: dtmag
        real(dp) dlonmlt1,lattransi,lateps,dlonmlt0,dcoef
        real(dp) dpsi0,dpsi10,dpsi20,dtheta,dtheta1,dtheta2
        real(dp) psi,psi0,psi1,psi2,dlon0,dlat0
@@ -24,9 +25,9 @@
        real(dp) loc(2,2),dpot(2)
        complex(zp) cpsi
        real zref,year
-       integer i,j,iyd
-       logical flgpot,flgini
-       data flgini/.true./
+       integer i,j,iyd,u
+       logical flgpot
+       logical, save :: flgini=.true.
 
        real latgeo,longeo,pot
        real lonmag,latmag,tmag,cofo,cofh,cofn,Fe0,Ee0,Fi0,Ei0
@@ -40,20 +41,21 @@
      &			Bmag,dipangle,Enord,Eest,
      &			vperpnord,vperpest,vhorizon,vpara,ddp,Jtop
 
-       real(dp) dlonmag0,dlatmag0,dlo0,dla0
+       real(dp), save :: dlonmag0,dlatmag0
+       real(dp) :: dlo0,dla0
 
 
-        real(dp) lat_top
-        data lat_top/89.9_dp/
+        real(dp), save :: lat_top = 89.9_dp
 
-       save dtmag,dlonmag0,dlatmag0
        
-       if (flgini) then
-       open(56,file='trace_conv',form='formatted',status='new')
+      if (flgini) then
+       ! dump some diagnostic ascii data
+       open(newunit=u, file='trace_conv', 
+     &              form='formatted', status='new')
        flgini=.false.
-       endif
+      endif
 
-       re=6.378d6
+       re=6.378e6_dp
        year=1995.
        zref=300.
 
@@ -71,7 +73,7 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
        tmag=dtmag
        dlonmlt=dtmag*15._dp
 
-       write(stdout,*),'convec.f: call potentiel, dlonmag,dlonmlt',
+        print *,'convec.f: call potentiel, dlonmag,dlonmlt',
      &   dlonmag,dlonmlt
        call potentiel(iyd,tu,kp,dlonmlt,dlatmag ,EE(1),EE(2),psi,ddp)
        
@@ -94,14 +96,14 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
         dlon = vpest*dt/re/cos(min(dlatmag,lat_top)*deg2rad)
         dlat =  vh*dt/re
        if (dlon.ne.0.d0 .and. dlat.ne.0.d0) then
-         write(stdout,*),'convec.f: call cor_cnv   dlonmlt,dlatmag ',
+         print *,'convec.f: call cor_cnv   dlonmlt,dlatmag ',
      &                    dlonmlt,dlatmag
      
          dtheta=cor_cnv(iyd,tu,kp,dlonmlt,dlatmag,
      &			   dlat,dlon,psi0)
          dlonmag=dlonmlt-(tu+dt)/240.d0-dlonref
          dlonmag=mod(dlonmag+360.d0,360.d0)
-      write(stdout,*),'convec.f: call mag2geo,',
+         print *,'convec.f: call mag2geo,',
      &                ' dlatmag,dlonmag,dlatgeo,dlongeo:',
      &                   dlatmag,dlonmag,dlatgeo,dlongeo
          call mag2geo(dlatmag,dlonmag,dlatgeo,dlongeo)
@@ -124,8 +126,9 @@ c     &dlatmag,dlonmlt,dlatgeo,dlongeo
 
 c       print*,tu,dlonmlt,dlatmag,dlon*rad2deg,dlat*rad2deg,
 c     &dtheta,psi0
-!       print*,'attempting trace_conv write'
-       write(56,*) tu,dlonmlt,dlatmag,psi0,dlo0,dla0
+
+       write(u,*) tu,dlonmlt,dlatmag,psi0,dlo0,dla0
+       close(u)
 c100       format(a2,10(1x,g15.8))
 100       format(9(1x,g15.8))
 
@@ -145,7 +148,7 @@ c100       format(a2,10(1x,g15.8))
 
         lon=lon+dlon*rad2deg
         lat=lat+dlat*rad2deg
-        if (lat.ge.90.d0) then
+        if (lat >= 90.d0) then
             lat=180._dp-lat
             lon=lon+180._dp
         endif
@@ -176,7 +179,7 @@ c        lon=datan2(sb,cb)*rad2deg
 
 
 
-      double precision function cor_cnv(iyd,tu,kp,lonmlt,latmag,
+      real(dp) function cor_cnv(iyd,tu,kp,lonmlt,latmag,
      &              dlat,dlon,psi0)
        include 'comm.f'
        implicit none
@@ -198,12 +201,12 @@ c        lon=datan2(sb,cb)*rad2deg
         real(dp) ds,a1,a2,delta
         real(dp) dlo,dla
         logical flgini
-        real(dp),parameter :: tol=1.d-8,angle_ref=0._dp,
-     &    angle_max=0.1_dp,coef_ds=1.d-2
+        real(dp),parameter :: tol=1e-8_dp,angle_ref=0._dp,
+     &    angle_max=0.1_dp,coef_ds=1e-2_dp
 
 
 
-        deupi=2.d0*pi
+        deupi=2.0_dp*pi
         a=angle_ref
         lat=latmag
         lon=lonmlt
@@ -254,7 +257,7 @@ c        lon=datan2(sb,cb)*rad2deg
        lon=lonmlt
       
       if (debug) then
-       write(stdout,*),'convec.f: cor_cnv 1st call:',
+        print *,'convec.f: cor_cnv 1st call:',
      & ' call integ  lat,lon,dlat,dlon'
      &, lat,lon,dlat,dlon
       endif
@@ -326,8 +329,8 @@ c        lon=datan2(sb,cb)*rad2deg
        lon=lonmlt
        
       if (debug) then
-      call cpu_time(tic)
-      write(stdout,*),tic,' convec.f: cor_cnv 2nd call:',
+        call cpu_time(tic)
+        print *,tic,' convec.f: cor_cnv 2nd call:',
      & ' call integ  lat,lon,dlat,dlon'
      &, lat,lon,dlat,dlon
       endif
@@ -339,7 +342,7 @@ c        lon=datan2(sb,cb)*rad2deg
        end function cor_cnv
 
 
-       double precision function potar(iyd,tu,kp,lonmlt,latmag,
+       real(dp) function potar(iyd,tu,kp,lonmlt,latmag,
      &      dlat,dlon,dtheta,psi0)
         include 'comm.f'
        implicit none

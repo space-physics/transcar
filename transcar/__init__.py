@@ -53,21 +53,23 @@ def runTranscar(odir:Path, errfn:Path, msgfn:Path):
 
         # Note: subprocess.run() is blocking by design.
         #       subprocess.Popen() is non-blocking (unless commanded to wait)
-        #subprocess.run(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
-        subprocess.Popen(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
+        subprocess.run(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
+
+        # current code error checks rely on serial operation.
+        #subprocess.Popen(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
 
 def transcaroutcheck(odir,errfn):
     fok = odir/fileok
     try:
       with (odir/errfn).open('r') as ferr:
         last = deque(ferr,1)[0].rstrip('\n')
-        with open(fok,'w') as f:
-            if last == 'STOP fin normale':
-                f.write('true')
-            else:
-                f.write('false')
-                logging.warn(f'transcaroutcheck: {odir} got unexpected return value, transcar may not have finished the sim')
-                raise AttributeError(last)
+
+        if last == 'STOP fin normale':
+            fok.write_text('true')
+        else:
+            fok.write_text('false')
+            logging.warn(f'transcaroutcheck: {odir} got unexpected return value, transcar may not have finished the sim')
+            raise AttributeError(last)
     except (IOError) as e:
         logging.error(f'transcaroutcheck: problem reading transcar output.  {e}' )
     except IndexError as e:

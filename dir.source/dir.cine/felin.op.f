@@ -127,17 +127,11 @@ c
         print *,'felin.f: nen=',nen
 
 c ---	Open up files to be used in this program.
-      open (newunit=ifeldat,file='dir.data/dir.linux/dir.cine/DATFEL',
+      open(newunit=ifeldat,file='dir.data/dir.linux/dir.cine/DATFEL',
      &          status='old')
 
-      open (newunit=ifelprt,file='dir.data/dir.linux/dir.cine/FELOUT',
+      open(newunit=ifelprt, file='dir.data/dir.linux/dir.cine/FELOUT',
      &          status='unknown')
-        rewind(ifelprt)
-
-        open (newunit=ifeltrans,
-     .		file='dir.data/dir.linux/dir.cine/FELTRANS',	access='stream',
-     &          status='old')
-        rewind(ifeltrans)
 
       	write(ifelprt,*) 'felin1.f'
 
@@ -157,7 +151,7 @@ c
      .	   f107,ap,glat,glong,nalt,year,
      .	   altkm,centE,botE,ddeng,Ecent,Ebot,engdd,iprt,pflux,knm,
      .	   tneutre,densneut,colden,iflux,wwt,number,xchap,chi,chideg,
-     .	   sigi,sigt,ichapman)
+     .	   sigi,sigt,ichapman,ifelprt)
 c
 c --- 	Calculates primary photoelectron production.
         call depo(kiappel,nalt,ns,nns,nwave,chi,densneut,colden,altkm,
@@ -226,12 +220,14 @@ c --- 	Calculates primary photoelectron production.
 c
 c --- 	Calculates electron density.
         call densout1(nalt,altkm,proelec,denselregE,nregE,altregE,
-     .		    densneut)
+     .		    densneut, ifelprt)
 c
 c ---	Writes the different productions.
         write(stdout,*),'felin.f: call prodprt nen=',nen
         call prodprt(ns,nalt,altkm,Ecent,engdd,produc,proelec,
-     .  	      prodion,proneut,prophel,iprt,ichapman)
+     .  	      prodion,proneut,prophel,iprt,ichapman,ifelprt)
+
+      close(ifelprt)
 
       end subroutine felin
 c
@@ -538,12 +534,13 @@ c
 c---------------------------- densout1 -------------------------------
 c
       subroutine densout1(nalt,altkm,proelec,denselregE,nregE,altregE,
-     &		 densneut)
+     &		 densneut, ifelprt)
 
       include 'TRANSPORT.INC'
 
       real, intent(in) :: altkm(nbralt),densneut(8,nbralt)
       integer,intent(out) :: nregE
+      integer,intent(in) :: ifelprt
 
       real proelec(nbralt),denselregE(nbralt)
 
@@ -567,16 +564,14 @@ c     	calcul de densites
  	enddo
  	write(ifelprt,7050)
  	do ialt = 1,nregE
- 	  write(ifelprt,7051)altregE(ialt),proelec(ialt),
-     .		denselregE(ialt)
+ 	  write(ifelprt,7051) altregE(ialt),proelec(ialt),denselregE(ialt)
  	enddo
 7050 	format(/,'Electron density in the E region',/,' altitude ',
      &    ' e- prod.  Computed [Ne]')
 7051 	format(1f10.2,2(1pe12.3))
-c
- 	return
- 	end
-c
+
+      end subroutine densout1
+
 c------------------------- depo ----------------------------------
 c
       subroutine depo(kiappel,nalt,ns,nns,nwave,chi,densneut,colden,
@@ -882,7 +877,7 @@ c
 c ---------------------------- prodprt -----------------------------
 c
         subroutine prodprt(ns,nalt,altkm,Ecent,engdd,produc,proelec,
-     .  	      prodion,proneut,prophel,iprt,ichapman)
+     .  	      prodion,proneut,prophel,iprt,ichapman,ifelprt)
 
         include 'comm.f'
         implicit none
@@ -891,7 +886,7 @@ c
         include 'TRANSPORT.INC'
 
 
-        integer,intent(in) :: ns,nalt,iprt(12)
+        integer,intent(in) :: ns,nalt,iprt(12),ifelprt
        	real,intent(in) :: altkm(nbralt),Ecent(nbren),engdd(nbren),
      & prophel(nbralt,nbren)
        	
@@ -901,7 +896,7 @@ c
         real zwork(nbralt),qphelev,qphelerg
         
         integer :: ien1,ien2,neutspe,naltO6,ialt1,ialt2,ii,ialt,i,isp,
-     &  ichapman,ien,iz,m,nnz,nalt06,j
+     &  ichapman,ien,iz,m,nnz,nalt06,j,ifeltrans
 
 c
 1000  	format(/,'Electron and ion production(/cm3.s)',/)
@@ -1024,14 +1019,19 @@ c 	write(6,5007) qpheleV,qphelerg
      .  ' eV/cm2/s',/,45x,'or : ',1pe11.4,' erg/cm2/s')
 c
 c     	write in file ifeltrans for transport program.
-      	write(ifeltrans) nen,nalt,ns
-      	write(ifeltrans) (Ecent(i),i=1,nen)
-      	write(ifeltrans) (altkm(i),i=1,nalt)
-      	write(ifeltrans) ((prophel(i,j),j=1,nen),i=1,nalt)
- 	    write(ifeltrans) (proelec(i),i=1,nalt)
-      	write(ifeltrans) ((prodion(ialt,isp),ialt=1,nalt),isp=1,ns+1)
-      	close(ifeltrans)
-      	close(ifelprt)
+      open (newunit=ifeltrans,
+     &		file='dir.data/dir.linux/dir.cine/FELTRANS', access='stream',
+     &          status='new')
+
+      write(ifeltrans) nen,nalt,ns
+      write(ifeltrans) (Ecent(i),i=1,nen)
+      write(ifeltrans) (altkm(i),i=1,nalt)
+      write(ifeltrans) ((prophel(i,j),j=1,nen),i=1,nalt)
+      write(ifeltrans) (proelec(i),i=1,nalt)
+      write(ifeltrans) ((prodion(ialt,isp),ialt=1,nalt),isp=1,ns+1)
+      
+      close(ifeltrans)
+
 
 	  end subroutine prodprt
 c
@@ -1041,7 +1041,7 @@ c
      .	   tempexo,f107,ap,glat,glong,nalt,year,
      .	   altkm,centE,botE,ddeng,Ecent,Ebot,engdd,iprt,pflux,knm,
      .	   tneutre,densneut,colden,iflux,wwt,number,xchap,chi,chideg,
-     .	   sigi,sigt,ichapman)
+     .	   sigi,sigt,ichapman,ifelprt)
 
       include 'comm.f'
 
@@ -1049,7 +1049,7 @@ c
 
         real, intent(in) :: f107(3),ap(7), knm, glong,altkm(nbralt),
      &     tneutre(nbralt),densneut(8,nbralt),colden(8,nbralt)
-        integer, intent(in) :: nspec
+        integer, intent(in) :: nspec,ifelprt
         integer, intent(out) :: iflux,imod
         real, intent(out) :: nan
 

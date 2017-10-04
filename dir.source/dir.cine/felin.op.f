@@ -1,4 +1,4 @@
-        subroutine felin(knm,nspec,hrloc,day,year,UT,
+      subroutine felin(knm,nspec,hrloc,day,year,UT,
      &          tempexo,f107,ap,glat,glong,botE,centE,
      &          ddeng,nalt,altkm,tneutre,densneut,colden,chi,chideg,
      &		kiappel,phdisso2,pfluxsr,Po1sdisso2)
@@ -74,20 +74,20 @@ c                   contenue dans ELEC et NEUTRAL pour un run unique
 c                   du programme.
 c               --> si kiappel = 2, ce sont les donnees necessaires
 c                   au transport fluide
-        include 'comm.f'
-        implicit none
-        include 'TRANSPORT.INC'
+      include 'comm.f'
+      implicit none
+      include 'TRANSPORT.INC'
 
-        real, intent(in) :: knm, tempexo, glong, altkm(nbralt),
+      real, intent(in) :: knm, tempexo, glong, altkm(nbralt),
      &    tneutre(nbralt),densneut(8,nbralt),colden(8,nbralt)
-        integer, intent(in) :: nspec
+      integer, intent(in) :: nspec
 	
-      	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
-     .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
-     .               nwave,ns,nns,f107min,f107max,iseff,wnmseff,
-     .               lambdasr,sigsro2,Isr,lineflux,sigabso2,qyield,
-     .               Isr2
-        integer nalt,ns,nns,nwave,iseff
+      common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
+     &  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
+     &               nwave,ns,nns,f107min,f107max,iseff,wnmseff,
+     &               lambdasr,sigsro2,Isr,lineflux,sigabso2,qyield,
+     &               Isr2
+      integer nalt,ns,nns,nwave,iseff
       real f107max,f107min,wavemin(39),wavemax(39),eVmin(39),eVmax(39)
       	real f107(3),day,ap(7),hrloc,UT,glat,chi,chideg
 c 	wwt (specie, excit, energy) = branching ratio
@@ -103,8 +103,8 @@ c
        	real eV(39),centE(nbren),ddeng(nbren),botE(nbren)
        	real Ecent(nbren),engdd(nbren),Ebot(nbren)
        	real proelec(nbralt),
-     .		  prodion(nbralt,nbrsp*2),proneut(nbralt,nbrsp),
-     . 	  	  prophel(nbralt,nbren),produc(nbralt,nbrsp,nbren)
+     &		  prodion(nbralt,nbrsp*2),proneut(nbralt,nbrsp),
+     & 	  	  prophel(nbralt,nbren),produc(nbralt,nbrsp,nbren)
         real prodcont(nbralt),prodraie(nbralt)
       	real seffion(2000,7),sefftot(2000,5),eVseff(2000),wnmseff(2000)
       	real sigi(39,7),sigt(39,5)         ! Seff sur les en(Torr)
@@ -131,9 +131,9 @@ c ---	Open up files to be used in this program.
      &          status='old')
 
       open(newunit=ifelprt, file='dir.data/dir.linux/dir.cine/FELOUT',
-     &          status='unknown')
+     &     action='write', status='unknown')
 
-      	write(ifelprt,*) 'felin1.f'
+      write(ifelprt,*) 'felin1.f'
 
 c --- 	Resets all output arrays.
 

@@ -789,20 +789,20 @@ c                         = ---------dflx------------.wt
 c                         = -------------depr-----------
 c 	wt = Normalized weight factors. Determine which ion state is
 c 	excited.
-        include 'comm.f'
-        implicit none
-        include 'TRANSPORT.INC'
+      include 'comm.f'
+      implicit none
+      include 'TRANSPORT.INC'
         
-        integer,intent(in) :: nexcit,iontype
-        real,intent(in) :: deV,dele,exa,wt(6),sigion,flux,
+      integer,intent(in) :: nexcit,iontype
+      real,intent(in) :: deV,dele,exa,wt(6),sigion,flux,
      &   densneut(8,nbralt)
 
-     	real engdd(nbren),Ebot(nbren)
+      real engdd(nbren),Ebot(nbren)
 
 
-      	real proelec(nbralt),prodion(nbralt,nbrsp*2),
-     .		produc(nbralt,nbrsp,nbren),proneut(nbralt,nbrsp),
-     .		prophel(nbralt,nbren),prodstion(nbralt,7,6)
+      real proelec(nbralt),prodion(nbralt,nbrsp*2),
+     &		produc(nbralt,nbrsp,nbren),proneut(nbralt,nbrsp),
+     &		prophel(nbralt,nbren),prodstion(nbralt,7,6)
         real prodcont(nbralt),prodraie(nbralt)
 c       nbrelec = nbre d'electrons crees dans l'ionisation
         real nbrelec
@@ -876,38 +876,36 @@ c 	  Makes it in [cm-3.s-1.ev-1].
 c
 c ---------------------------- prodprt -----------------------------
 c
-        subroutine prodprt(ns,nalt,altkm,Ecent,engdd,produc,proelec,
-     .  	      prodion,proneut,prophel,iprt,ichapman,ifelprt)
+      subroutine prodprt(ns,nalt,altkm,Ecent,engdd,produc,proelec,
+     &  	      prodion,proneut,prophel,iprt,ichapman,ifelprt)
 
-        include 'comm.f'
-        implicit none
+      include 'comm.f'
+      implicit none
+
+      include 'TRANSPORT.INC'
 
 
-        include 'TRANSPORT.INC'
-
-
-        integer,intent(in) :: ns,nalt,iprt(12),ifelprt
-       	real,intent(in) :: altkm(nbralt),Ecent(nbren),engdd(nbren),
+      integer,intent(in) :: ns,nalt,iprt(12),ifelprt
+      real,intent(in) :: altkm(nbralt),Ecent(nbren),engdd(nbren),
      & prophel(nbralt,nbren)
        	
-       	real proneut(nbralt,nbrsp),proelec(nbralt),
-     .		prodion(nbralt,nbrsp*2),
-     .		produc(nbralt,nbrsp,nbren)
-        real zwork(nbralt),qphelev,qphelerg
+      real proneut(nbralt,nbrsp),proelec(nbralt),
+     & prodion(nbralt,nbrsp*2), produc(nbralt,nbrsp,nbren)
+      real zwork(nbralt),qphelev,qphelerg
         
         integer :: ien1,ien2,neutspe,naltO6,ialt1,ialt2,ii,ialt,i,isp,
      &  ichapman,ien,iz,m,nnz,nalt06,j,ifeltrans
 
 c
-1000  	format(/,'Electron and ion production(/cm3.s)',/)
-1010  	format(5x,'alt',7x,'Ne',8x,'Nn2+',7x,'No2+',7x,'No+',6x,'Nn+')
-1015  	format(/,5x,'alt',7x,'H+',8x,' He+')
-1020  	format(1h ,6(1pe10.2))
-1040  	format( /,'Production (/cm3.s),at 5 alt., in',i5,
-     .    ' energy boxes,due to N2,O2,O,H,He(produc(iz,neutspe,ien))')
-1050    format(1x,/,'alt=',f6.1)
-1060  	format(2(1x,i2,3(1pe10.2)))
-1070  	format (/,5x,'Produced Photoel. (/cm3.s.eV) at each altitude',
+1000  format(/,'Electron and ion production(/cm3.s)',/)
+1010  format(5x,'alt',7x,'Ne',8x,'Nn2+',7x,'No2+',7x,'No+',6x,'Nn+')
+1015  format(/,5x,'alt',7x,'H+',8x,' He+')
+1020  format(1h ,6(1pe10.2))
+1040  format( /,'Production (/cm3.s),at 5 alt., in',i5,
+     &    ' energy boxes,due to N2,O2,O,H,He(produc(iz,neutspe,ien))')
+1050  format(1x,/,'alt=',f6.1)
+1060  format(2(1x,i2,3(1pe10.2)))
+1070  format (/,5x,'Produced Photoel. (/cm3.s.eV) at each altitude',
      .    ' (prophel(ialt,ien))',
      .    / 12x, 'Altitude  ',
      .    / , 5x, ' E ', 1x, 7f10.2)

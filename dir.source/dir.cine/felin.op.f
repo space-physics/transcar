@@ -89,10 +89,10 @@ c                   au transport fluide
      &               Isr2
       integer nalt,ns,nns,nwave,iseff
       real f107max,f107min,wavemin(39),wavemax(39),eVmin(39),eVmax(39)
-      	real f107(3),day,ap(7),hrloc,UT,glat,chi,chideg
+      real f107(3),day,ap(7),hrloc,UT,glat,chi,chideg
 c 	wwt (specie, excit, energy) = branching ratio
-       	real threshold(7),wwt(7,6,39)
-        integer number(7),nbseff
+      real threshold(7),wwt(7,6,39)
+      integer number(7),nbseff
 c     	Ecent = energy boxes (eV).
 c     	Ebot  = lower boundary of energy boxes (eV).
 c     	engdd = energy boxes width(eV).
@@ -163,68 +163,67 @@ c --- 	Calculates primary photoelectron production.
 !       Compute production of O(1D) from photodissociation of O2
         maxchi=1.7453
 
-          do iz=1,nalt
-                phdisso2(iz)=0.
+      do iz=1,nalt
+        phdisso2(iz)=0.
 
-                if(chi .lt. maxchi) then
-                call fchap(day,UT,altkm(iz),
-     &           glat,glong,f107,ap,chi,chapsp)
+        if(chi < maxchi) then
+          call fchap(day,UT,altkm(iz), glat,glong,f107,ap,chi,chapsp)
 
-                do ilambda=1,8
-                        pfluxsr(ilambda,iz)=Isr2(ilambda)*
+          do ilambda=1,8
+            pfluxsr(ilambda,iz)=Isr2(ilambda) *
      &                   exp(-sigsro2(ilambda)*chapsp(2)*colden(2,iz))
 
-                        phdisso2(iz)=phdisso2(iz)+sigsro2(ilambda)
-     &                   *pfluxsr(ilambda,iz)*densneut(2,iz)
-                enddo
-                endif
-         enddo
+            phdisso2(iz)=phdisso2(iz)+sigsro2(ilambda) *
+     &                   pfluxsr(ilambda,iz)*densneut(2,iz)
+          enddo
+        endif
+      enddo
 
 !       Compute O(1S) production
-         do iz=1,nalt
-                Po1sdisso2(iz)=0.
+      do iz=1,nalt
+        Po1sdisso2(iz)=0.
 
-                if(chi .lt. maxchi) then
-!               Compute production of O(1S) from continuum dissociation of O2
-                Po1sdisso2(iz)=densneut(2,iz)*(
+        if(chi < maxchi) then
+!         Compute production of O(1S) from continuum dissociation of O2
+          Po1sdisso2(iz)=densneut(2,iz)*(
      &                  sflux(iz,34)*12.81e-18*0.029+
      &                  sflux(iz,36)*21.108e-18*0.0575+
      &                  sflux(iz,39)*1.346e-18*0.0865)
 
-!               Compute production of O(1S) from spectral line dissociation of O2
-                call fchap(day,UT,altkm(iz),
-     &           glat,glong,f107,ap,chi,chapsp)
+!         Compute production of O(1S) from spectral line dissociation of O2
+          call fchap(day,UT,altkm(iz),glat,glong,f107,ap,chi,chapsp)
 
-                do ilambda=1,7
-                        pfluxsr(ilambda,iz)=lineflux(ilambda)*
+          do ilambda=1,7
+            pfluxsr(ilambda,iz)=lineflux(ilambda) *
      &                   exp(-sigabso2(ilambda)*chapsp(2)*colden(2,iz))
 
-                        Po1sdisso2(iz)=Po1sdisso2(iz)+sigabso2(ilambda)*
+            Po1sdisso2(iz)=Po1sdisso2(iz)+sigabso2(ilambda)*
      &                    pfluxsr(ilambda,iz)*densneut(2,iz)*
      &                    qyield(ilambda)
-                enddo
+          enddo
 
-!               Compute production of O(1S) from Ly alpha dissociation of O2
-                pfluxsr(1,iz)=251.e9*
+!       Compute production of O(1S) from Ly alpha dissociation of O2
+        pfluxsr(1,iz)=251.e9 *
      &           exp(-1.e-20*chapsp(2)*colden(2,iz))
 
-                Po1sdisso2(iz)=Po1sdisso2(iz)+1.e-20*pfluxsr(1,iz)*
+        Po1sdisso2(iz)=Po1sdisso2(iz)+1.e-20*pfluxsr(1,iz)*
      &           densneut(2,iz)*0.012
-                endif
+        endif
 !                print*,1.e-20*pfluxsr(1,iz)*densneut(2,iz)*0.012
 !                print*,altkm(iz),pfluxsr(1,iz),densneut(2,iz)
 !                print*,1.e-20*0.012,pfluxsr(1,iz)*densneut(2,iz)
-         enddo
+      enddo
 !       -MZ
 
 c
 c --- 	Calculates electron density.
-        call densout1(nalt,altkm,proelec,denselregE,nregE,altregE,
+      call densout1(nalt,altkm,proelec,denselregE,nregE,altregE,
      .		    densneut, ifelprt)
 c
 c ---	Writes the different productions.
-        write(stdout,*),'felin.f: call prodprt nen=',nen
-        call prodprt(ns,nalt,altkm,Ecent,engdd,produc,proelec,
+      print *,'felin.f: call prodprt nen=',nen
+        
+      call prodprt(ns,nalt,altkm,Ecent,engdd,produc,proelec,
      .  	      prodion,proneut,prophel,iprt,ichapman,ifelprt)
 
       close(ifelprt)
@@ -234,9 +233,10 @@ c
 c---------------------- function chap ---------------------------------
 c
       real function chapsmith (CHI, ZCM, T, AM)
-        implicit none
+        
+      implicit none
 
-        real, intent(in) :: chi, zcm, t, am 
+      real, intent(in) :: chi, zcm, t, am 
 c 	The Chapman function was given by Stan Solomon, who got it from
 c  	Nagy. Comes from:
 c 	"Numerical evaluation of Chapman's grazing incidence integral
@@ -267,9 +267,10 @@ c
 c
 c------------------- function chapgreen -------------------------------
 c
-        real function chapgreen (CHI, ZCM, Tneutre, atomas)
+      real function chapgreen (CHI, ZCM, Tneutre, atomas)
 c
         implicit none
+
         real, intent(in) :: chi,zcm,Tneutre,atomas
 c
 c       "Molecular absorption in planetary atmosphere"
@@ -294,19 +295,20 @@ c       X = hauteur au centre de la Terre/hauteur d'echelle
           chapgreen = exp(0.5*chi**2/1.-0.115*chi**2-alpha*chi**4)
         endif
 
-        end function chapgreen
+      end function chapgreen
 c
 c----------------------------------------------------------------------
 c
-        subroutine branchratio(nwave,eV,threshold,num,wwt)
+      subroutine branchratio(nwave,eV,threshold,num,wwt)
 
-        implicit none
-        include 'TRANSPORT.INC'
+      implicit none
 
-        integer, intent(in) :: nwave
-        real, intent(in) :: eV(nwave),threshold(7)
-        integer,intent(out) :: num(7)
-        real,intent(out)::wwt(7,6,39)
+      include 'TRANSPORT.INC'
+
+      integer, intent(in) :: nwave
+      real, intent(in) :: eV(nwave),threshold(7)
+      integer,intent(out) :: num(7)
+      real,intent(out)::wwt(7,6,39)
  	
 c
 c 	Calcule les branching ratio sur les energies des ondes

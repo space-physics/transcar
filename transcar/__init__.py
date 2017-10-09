@@ -3,6 +3,8 @@ from shutil import copy2
 import logging
 from collections import deque
 import subprocess
+from pytz import UTC
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 # %% constants dictacted by legacy Fortran code
 transcarexe = 'transconvec_13.op.out'
@@ -67,12 +69,11 @@ def transcaroutcheck(odir,errfn):
             fok.write_text('true')
         else:
             fok.write_text('false')
-            logging.warn(f'transcaroutcheck: {odir} got unexpected return value, transcar may not have finished the sim')
-            raise AttributeError(last)
+            logging.warn(f'{odir} ended sim early')
     except (IOError) as e:
         logging.error(f'transcaroutcheck: problem reading transcar output.  {e}' )
     except IndexError as e:
-        with open(fok,'w') as f:
+        with open(fok, 'w') as f:
             f.write('false')
             logging.warn(f'transcaroutcheck: {odir} got unexpected return value, transcar may not have finished the sim')
 

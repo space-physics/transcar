@@ -113,10 +113,9 @@
       close(87)
       if (ierr.gt.0) then 
       
-          call cpu_time(tic)
-          write(stderr,*),tic,
-     &  ' WARNING: Error reading varpot.dat, fallback to defaults  kp=',
-     &  kp
+        call cpu_time(tic)
+        print *,tic,
+     &  ' Error reading varpot.dat, fallback to defaults  kp=', kp
     !if there was an error reading varpot.dat, fallback to default param
           ndeg=ndeg0
           mdeg=mdeg0

@@ -3,8 +3,8 @@ conttanh.dat                                input file (initial ionospheric cond
 1.					time step (seconds) (REAL)
 1.				number of seconds between fluid code outputs (seconds, REAL)
 2013090					date of simulation (YYYYDDD)
-32400.					UT start time for simulation (seconds)
-60.					duration of run (seconds)
+32419.					UT start time for simulation (seconds)
+2.					duration of run (seconds)
 2					jpreci, precipation type (see table below, INTEGER)
 65.12,-147.43    				location of simulation, geodetic latitude,longitude
 0.					duration of convection (in seconds) before the reference (<= 0, we do not follow the field lines)  (tempsconv_1, REAL)

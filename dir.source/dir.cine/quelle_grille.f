@@ -200,7 +200,7 @@ c 	efficaces.
  	    else
           write(fic_datdeg,1075)
  	    endif
-1070 	format('.true',11x,
+1070 	format('.true.',11x,
      &    'logint: interpolation type for cross sections')
 1075 	format('.false.',10x,
      &    'logint: interpolation type for cross sections')

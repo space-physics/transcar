@@ -49,7 +49,7 @@
        save dtmag,dlonmag0,dlatmag0
        
        if (flgini) then
-       open(56,file='trace_conv',form='formatted',status='new')
+       open(56,file='trace_conv',form='formatted',status='replace')
        flgini=.false.
        endif
 

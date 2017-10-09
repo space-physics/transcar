@@ -1,0 +1,3 @@
+ifeldat  old/read felin.op.f  (done)
+ifelprt  replace/write  felin.op.f  (done)
+ifeltrans old/read trans.op.f, replace/write felin.op.f

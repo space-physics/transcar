@@ -1690,7 +1690,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
           write(stderr,*),'problem before calling atmos'
           goto 246
         endif
-         call atmos(iyd,real(temps,sp),stl,alt,latgeo,longeo,jpreci,f107,
+        call atmos(iyd,real(temps,sp),stl,alt,latgeo,longeo,jpreci,f107,
      &            ap,Nenew,Tenew,T1new,nx,kiappel,file_cond)
 
         if (vparaB.ne.0.) vtrans=vparaB*100./Ci0
@@ -2106,7 +2106,7 @@ CCCCC                                                                           
      &             +expnu*Unoold(i)
           enddo
           if (isnant(Unonew,nx)) then
-            print*,'probleme lors du calcul de Unonew'
+            write(stderr,*) 'probleme lors du calcul de Unonew'
             goto 246
           endif
 
@@ -2529,30 +2529,30 @@ CCCCC                                                                           
           N5new(np)=min(1.,N5new(nx-1)/N5new(nx-2))*N5new(nx)
           N6new(np)=min(1.,N6new(nx-1)/N6new(nx-2))*N6new(nx)
 
-          if (isnant(N1new,nx)) then
-            print*,'probleme lors du calcul de N1new dans la boucle 1'
-            goto 246
-          endif
-          if (isnant(N2new,nx)) then
-            print*,'probleme lors du calcul de N2new dans la boucle 1'
-            goto 246
-          endif
-          if (isnant(N3new,nx)) then
-            print*,'probleme lors du calcul de N3new dans la boucle 1'
-            goto 246
-          endif
-          if (isnant(N4new,nx)) then
-            print*,'probleme lors du calcul de N4new dans la boucle 1'
-            goto 246
-          endif
-          if (isnant(N5new,nx)) then
-            print*,'probleme lors du calcul de N5new dans la boucle 1'
-            goto 246
-          endif
-          if (isnant(N6new,nx)) then
-            print*,'probleme lors du calcul de N6new dans la boucle 1'
-            goto 246
-          endif
+      if (isnant(N1new,nx)) then
+        write(stderr,*) 'problem N1new dans la boucle 1'
+        goto 246
+      endif
+      if (isnant(N2new,nx)) then
+        write(stderr,*) 'problem N2new dans la boucle 1'
+        goto 246
+      endif
+      if (isnant(N3new,nx)) then
+        write(stderr,*) 'problem N3new dans la boucle 1'
+        goto 246
+      endif
+      if (isnant(N4new,nx)) then
+        write(stderr,*) 'problem N4new dans la boucle 1'
+        goto 246
+      endif
+      if (isnant(N5new,nx)) then
+        write(stderr,*) 'problem N5new dans la boucle 1'
+        goto 246
+      endif
+      if (isnant(N6new,nx)) then
+        write(stderr,*) 'problem N6new dans la boucle 1'
+        goto 246
+      endif
     
     
       do i=1,nx
@@ -2810,7 +2810,7 @@ CCCCC                                                                           
 
           if (isnant(U2new,nx)) then
             call cpu_time(tic)
-            write(stderr,*),tic,'problem calc U2new loop  1'
+            write(stderr,*) tic,'problem calc U2new loop  1'
             goto 246
           endif
 
@@ -2939,7 +2939,7 @@ CCCCC                                                                           
 
           if (isnant(U1new,nx)) then
           call cpu_time(tic)
-         write(stderr,*),tic,'problem calc U1new loop 1'
+         write(stderr,*) tic,'problem calc U1new loop 1'
             goto 246
           endif
 
@@ -3119,7 +3119,7 @@ CCCCC                                                                           
 
           if (isnant(Umnew,nx)) then
           call cpu_time(tic)
-       write(stderr,*),tic,'Heavy Ions problem calc  Umnew loop 1'
+       write(stderr,*) tic,'Heavy Ions problem calc  Umnew loop 1'
             goto 246
           endif
 
@@ -3244,7 +3244,7 @@ CCCCC                                                                           
 
           if (isnant(U3new,nx)) then
           call cpu_time(tic)
-       write(stderr,*),tic,'N+ mom. problem calc U3new in loop 1'
+       write(stderr,*) tic,'N+ mom. problem calc U3new in loop 1'
             goto 246
           endif
 
@@ -3421,7 +3421,7 @@ CCCCC                                                                           
 
           if (isnant(q2new,nx)) then
           call cpu_time(tic)
-      write(stderr,*),tic,'H+ heatflow problem calc q2new loop 1'
+            write(stderr,*) 'H+ heatflow problem calc q2new loop 1'
             goto 246
           endif
 
@@ -3555,7 +3555,7 @@ CCCCC                                                                           
 
           if (isnant(q1new,nx)) then
           call cpu_time(tic)
-      write(stderr,*),tic,'L3557: problem calc q1new in loop 1'
+      write(stderr,*) tic,'L3557: problem calc q1new in loop 1'
             goto 246
           endif
 
@@ -3684,7 +3684,7 @@ CCCCC                                                                           
           q3new(np)=q3new(nx)
 
           if (isnant(q3new,nx)) then
-            print*,'problem when calculating q3new in loop 1'
+            write(stderr,*) 'problem when calculating q3new in loop 1'
             goto 246
           endif
 
@@ -3949,7 +3949,7 @@ CCCCC                                                                           
 
           if (isnant(qenew,nx)) then
             call cpu_time(tic)
-        write(stderr,*),tic,'problem when calculating qenew in loop 1'
+        write(stderr,*) tic,'problem when calculating qenew in loop 1'
             goto 246
           endif
 
@@ -3987,7 +3987,7 @@ CCCCC                                                                           
 
           if (isnant(Tenew,nx)) then
             call cpu_time(tic)
-        write(stderr,*),tic,'problem when calculating Tenew in loop 1'
+        write(stderr,*) tic,'problem when calculating Tenew in loop 1'
             goto 246
           endif
 
@@ -3998,12 +3998,12 @@ CCCCC                                                                           
 
           if (isnant(qenew,nx)) then
             call cpu_time(tic)
-        write(stderr,*),tic,'problem in stabenerg with qe in loop 1'
+        write(stderr,*) tic,'problem in stabenerg with qe in loop 1'
             goto 246
           endif
           if (isnant(Tenew,nx)) then
             call cpu_time(tic)
-        write(stderr,*),tic,'problem in stabenerg with Te in loop 1'
+        write(stderr,*) tic,'problem in stabenerg with Te in loop 1'
             goto 246
           endif
 
@@ -4057,7 +4057,7 @@ CCCCC                                                                           
           qenew(np)=qenew(nx)
 
           if (isnant(qenew,nx)) then
-            print*,'probleme lors du calcul de qenew dans la boucle 1'
+            write(stderr,*) 'problem qenew dans la boucle 1'
             goto 246
           endif
 
@@ -4092,7 +4092,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
 
           if (isnant(Tenew,nx)) then
             call cpu_time(tic)
-      write(stderr,*),tic,'L4076: problem when calc Tenew in loop 1'
+            write(stderr,*) tic,'problem when calc Tenew in loop 1'
             goto 246
           endif
 
@@ -4103,11 +4103,11 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
 
           if (isnant(qenew,nx)) then
             call cpu_time(tic)
-         write(stderr,*),tic,'problem in stabenerg with qe in loop 1'
+         write(stderr,*) tic,'problem in stabenerg with qe in loop 1'
             goto 246
           endif
           if (isnant(Tenew,nx)) then
-            print*,'probleme dans stabenerg avec Te dans la boucle 1'
+            write(stderr,*) 'problem stabenerg Te dans la boucle 1'
             goto 246
           endif
               
@@ -4222,10 +4222,10 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
             T2pnew(i)=max(T2pnew(i),T_min)
       enddo
 
-          if (isnant(T2pnew,nx)) then
-            print*,'probleme lors du calcul de T2pnew dans la boucle 1'
-            goto 246
-          endif
+      if (isnant(T2pnew,nx)) then
+        write(stderr,*) 'problem T2pnew dans la boucle 1'
+        goto 246
+      endif
 
 
 
@@ -4327,10 +4327,10 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
             T2new(i)=(T2pnew(i)+2.*T2tnew(i))/3.
           enddo
 
-          if (isnant(T2tnew,nx)) then
-            print*,'probleme lors du calcul de T2tnew dans la boucle 1'
-            goto 246
-          endif
+      if (isnant(T2tnew,nx)) then
+        write(stderr,*) 'problem T2tnew dans la boucle 1'
+        goto 246
+      endif
 
 
 C]]]
@@ -4434,7 +4434,7 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
           enddo
 
           if (isnant(T1pnew,nx)) then
-            print*,'probleme lors du calcul de T1pnew dans la boucle 1'
+            write(stderr,*) 'problem T1pnew dans la boucle 1'
             goto 246
           endif
 
@@ -4535,10 +4535,10 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
           enddo
 
 
-          if (isnant(T1tnew,nx)) then
-            print*,'probleme lors du calcul de T1tnew dans la boucle 1'
-            goto 246
-          endif
+      if (isnant(T1tnew,nx)) then
+        write(stderr,*) 'problem T1tnew dans la boucle 1'
+        goto 246
+      endif
 
 
 C]]]
@@ -4690,10 +4690,10 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
           enddo
 c    flag=.false.
 
-          if (isnant(Tmpnew,nx)) then
-            print*,'probleme lors du calcul de Tmpnew dans la boucle 1'
-            goto 246
-          endif
+      if (isnant(Tmpnew,nx)) then
+        write(stderr,*) 'problem Tmpnew dans la boucle 1'
+        goto 246
+      endif
 
 
 c    temperature perpendiculaire
@@ -4819,10 +4819,10 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
         Tmnew(i)=(Tmpnew(i)+2.*Tmtnew(i))/3.
           enddo
 
-          if (isnant(Tmtnew,nx)) then
-            print*,'probleme lors du calcul de Tmtnew dans la boucle 1'
-            goto 246
-          endif
+      if (isnant(Tmtnew,nx)) then
+        write(stderr,*) 'problem Tmtnew dans la boucle 1'
+        goto 246
+      endif
 
 
 C]]]
@@ -4920,10 +4920,10 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
 c            T3pnew(i)=T1pnew(i)
       enddo
 
-          if (isnant(T3pnew,nx)) then
-            print*,'probleme lors du calcul de T3pnew dans la boucle 1'
-            goto 246
-          endif
+      if (isnant(T3pnew,nx)) then
+        write(stderr,*) 'problem T3pnew dans la boucle 1'
+        goto 246
+      endif
 
 
 c    temperature perpendiculaire
@@ -5017,10 +5017,10 @@ c            T3tnew(i)=T1tnew(i)
         T3new(i)=(T3pnew(i)+2.*T3tnew(i))/3.
       enddo
 
-          if (isnant(T3tnew,nx)) then
-            print*,'probleme lors du calcul de T3tnew dans la boucle 1'
-            goto 246
-          endif
+      if (isnant(T3tnew,nx)) then
+        write(stderr,*) 'problem T3tnew dans la boucle 1'
+        goto 246
+      endif
 
 123    continue
 
@@ -5534,30 +5534,30 @@ c****************************************
           N5new(np)=min(1.,N5new(nx-1)/N5new(nx-2))*N5new(nx)
           N6new(np)=min(1.,N6new(nx-1)/N6new(nx-2))*N6new(nx)
 
-          if (isnant(N1new,nx)) then
-            print*,'probleme lors du calcul de N1new dans la boucle 1'
-            goto 246
-          endif
-          if (isnant(N2new,nx)) then
-            print*,'probleme lors du calcul de N2new dans la boucle 1'
-            goto 246
-          endif
-          if (isnant(N3new,nx)) then
-            print*,'probleme lors du calcul de N3new dans la boucle 1'
-            goto 246
-          endif
-          if (isnant(N4new,nx)) then
-            print*,'probleme lors du calcul de N4new dans la boucle 1'
-            goto 246
-          endif
-          if (isnant(N5new,nx)) then
-            print*,'probleme lors du calcul de N5new dans la boucle 1'
-            goto 246
-          endif
-          if (isnant(N6new,nx)) then
-            print*,'probleme lors du calcul de N6new dans la boucle 1'
-            goto 246
-          endif
+      if (isnant(N1new,nx)) then
+        write(stderr,*) 'problem N1new dans la boucle 1'
+        goto 246
+      endif
+      if (isnant(N2new,nx)) then
+        write(stderr,*) 'problem  N2new dans la boucle 1'
+        goto 246
+      endif
+      if (isnant(N3new,nx)) then
+        write(stderr,*) 'problem N3new dans la boucle 1'
+        goto 246
+      endif
+      if (isnant(N4new,nx)) then
+        write(stderr,*) 'problem  N4new dans la boucle 1'
+        goto 246
+      endif
+      if (isnant(N5new,nx)) then
+        write(stderr,*) 'problem  N5new dans la boucle 1'
+        goto 246
+      endif
+      if (isnant(N6new,nx)) then
+        write(stderr,*) 'problem  N6new dans la boucle 1'
+        goto 246
+      endif
 
           do  i=1,nx
             Nenew(i)=N2new(i)+N1new(i)+N4new(i)
@@ -5806,10 +5806,10 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
      &             +expnu*U2old(i)
           enddo
 
-          if (isnant(U2new,nx)) then
-            print*,'probleme lors du calcul de U2new dans la boucle 2'
-            goto 246
-          endif
+      if (isnant(U2new,nx)) then
+        write(stderr,*) 'problem U2new dans la boucle 2'
+        goto 246
+      endif
 
 
 C]]]
@@ -5927,10 +5927,10 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
      &             +expnu*U1old(i)
           enddo
 
-          if (isnant(U1new,nx)) then
-            print*,'probleme lors du calcul de U1new dans la boucle 2'
-            goto 246
-          endif
+      if (isnant(U1new,nx)) then
+        write(stderr,*) 'problem U1new dans la boucle 2'
+        goto 246
+      endif
 
 
 C]]]
@@ -6106,10 +6106,10 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
      &             +expnu*Umold(i)
           enddo
 
-          if (isnant(Umnew,nx)) then
-            print*,'probleme lors du calcul de Umnew dans la boucle 2'
-            goto 246
-          endif
+      if (isnant(Umnew,nx)) then
+        write(stderr,*) 'problem  Umnew dans la boucle 2'
+        goto 246
+      endif
 
 
 C[[[[   Boundaries conditions
@@ -6222,10 +6222,10 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
      &             +expnu*U3old(i)
           enddo
 
-          if (isnant(U3new,nx)) then
-            print*,'probleme lors du calcul de U3new dans la boucle 2'
-            goto 246
-          endif
+      if (isnant(U3new,nx)) then
+        write(stderr,*) 'problem U3new dans la boucle 2'
+        goto 246
+      endif
 
 
 C]]]
@@ -6394,10 +6394,10 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
           q2new(nx)=max(0.,q2new(nx))
           q2new(np)=q2new(nx)
 
-          if (isnant(q2new,nx)) then
-            print*,'probleme lors du calcul de q2new dans la boucle 2'
-            goto 246
-          endif
+      if (isnant(q2new,nx)) then
+        write(stderr,*) 'problem q2new dans la boucle 2'
+        goto 246
+      endif
 
 
 C]]]
@@ -6528,10 +6528,10 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
           q1new(nx)=max(0.,q1new(nx))
           q1new(np)=q1new(nx)
 
-          if (isnant(q1new,nx)) then
-            print*,'probleme lors du calcul de q1new dans la boucle 2'
-            goto 246
-          endif
+      if (isnant(q1new,nx)) then
+        write(stderr,*) 'problem q1new dans la boucle 2'
+        goto 246
+      endif
 
 
 
@@ -6656,10 +6656,10 @@ C[[[   Boundaries conditions
           q3new(nx)=max(0.,q3new(nx))
           q3new(np)=q3new(nx)
 
-          if (isnant(q3new,nx)) then
-            print*,'problem when calculating q3new in loop 2'
-            goto 246
-          endif
+      if (isnant(q3new,nx)) then
+        write(stderr,*) 'problem when calculating q3new in loop 2'
+        goto 246
+      endif
 
 
 C]]]
@@ -6926,7 +6926,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3q,0.,0.)
 
           if (isnant(qenew,nx)) then
           call cpu_time(tic)
-        write(stderr,*),tic,'L6910: problem calc  qenew in loop 1'
+        write(stderr,*) tic,'L6910: problem calc  qenew in loop 1'
             goto 246
           endif
 
@@ -6964,7 +6964,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
 
           if (isnant(Tenew,nx)) then
             call cpu_time(tic)
-        write(stderr,*),tic,'L6966: problem when calc Tenew in loop 1'
+            write(stderr,*) tic,'L6966: problem when calc Tenew  loop 1'
             goto 246
           endif
 
@@ -6974,11 +6974,11 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
 
 
           if (isnant(qenew,nx)) then
-            print*,'problem in stabenerg with qe in loop 1'
+            write(stderr,*) 'problem in stabenerg with qe in loop 1'
             goto 246
           endif
           if (isnant(Tenew,nx)) then
-            print*,'probleme dans stabenerg avec Te dans la boucle 1'
+            write(stderr,*) 'problem in stabenerg with Te in loop 1'
             goto 246
           endif
 
@@ -7033,7 +7033,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3q,0.,0.)
 
           if (isnant(qenew,nx)) then
             call cpu_time(tic)
-        write(stderr,*),tic,'L7014: problem when calc qenew in loop 1'
+        write(stderr,*) tic,'L7014: problem when calc qenew in loop 1'
             goto 246
           endif
 
@@ -7068,7 +7068,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
 
           if (isnant(Tenew,nx)) then
             call cpu_time(tic)
-        write(stderr,*),tic,'L7049: problem when calc Tenew in loop 1'
+        write(stderr,*) tic,'L7049: problem when calc Tenew in loop 1'
             goto 246
           endif
 
@@ -7077,14 +7077,14 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
      &            D7e,D7q,Cei,deltat_4)
 
 
-          if (isnant(qenew,nx)) then
-            print*,'probleme dans stabenerg avec qe dans la boucle 1'
-            goto 246
-          endif
-          if (isnant(Tenew,nx)) then
-            print*,'probleme dans stabenerg avec Te dans la boucle 1'
-            goto 246
-          endif
+      if (isnant(qenew,nx)) then
+        write(stderr,*) 'problem stabenerg avec qe dans la boucle 1'
+        goto 246
+      endif
+      if (isnant(Tenew,nx)) then
+        write(stderr,*) 'problem stabenerg avec Te dans la boucle 1'
+        goto 246
+      endif
               
 
 
@@ -7202,10 +7202,10 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
             T2pnew(i)=max(T2pnew(i),T_min)
       enddo
 
-          if (isnant(T2pnew,nx)) then
-            print*,'probleme lors du calcul de T2pnew dans la boucle 2'
-            goto 246
-          endif
+      if (isnant(T2pnew,nx)) then
+        write(stderr,*) 'problem T2pnew dans la boucle 2'
+        goto 246
+      endif
 
 
 
@@ -7308,10 +7308,10 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
         T2new(i)=(T2pnew(i)+2.*T2tnew(i))/3.
       enddo
 
-          if (isnant(T2tnew,nx)) then
-            print*,'probleme lors du calcul de T2tnew dans la boucle 2'
-            goto 246
-          endif
+      if (isnant(T2tnew,nx)) then
+        write(stderr,*) 'problem T2tnew dans la boucle 2'
+        goto 246
+      endif
 
 
 C]]]
@@ -7418,10 +7418,10 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
             T1pnew(i)=max(T1pnew(i),T_min)
           enddo
 
-          if (isnant(T1pnew,nx)) then
-            print*,'probleme lors du calcul de T1pnew dans la boucle 2'
-            goto 246
-          endif
+      if (isnant(T1pnew,nx)) then
+        write(stderr,*) 'problem T1pnew dans la boucle 2'
+        goto 246
+      endif
 
 
 
@@ -7521,11 +7521,11 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
         T1new(i)=(T1pnew(i)+2.*T1tnew(i))/3.
           enddo
 
-          if (isnant(T1tnew,nx)) then
-            call cpu_time(tic)
-        write(stderr,*),tic,'problem when calculating T1tnew in loop 2'
-            goto 246
-          endif
+      if (isnant(T1tnew,nx)) then
+        call cpu_time(tic)
+        write(stderr,*) tic,'problem when calculating T1tnew in loop 2'
+        goto 246
+      endif
 
 
 
@@ -7677,11 +7677,11 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
           enddo
 c    flag=.false.
 
-          if (isnant(Tmpnew,nx)) then
-            call cpu_time(tic)
-        write(stderr,*),tic,'problem when calculating Tmpnew in loop 2'
-            goto 246
-          endif
+      if (isnant(Tmpnew,nx)) then
+        call cpu_time(tic)
+        write(stderr,*) tic,'problem when calculating Tmpnew in loop 2'
+        goto 246
+      endif
 
 c    temperature perpendiculaire
 
@@ -7805,10 +7805,10 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
         Tmnew(i)=(Tmpnew(i)+2.*Tmtnew(i))/3.
           enddo
 
-          if (isnant(Tmtnew,nx)) then
-            print*,'problem calc Tmtnew loop 2'
-            goto 246
-          endif
+      if (isnant(Tmtnew,nx)) then
+        write(stderr,*) 'problem calc Tmtnew loop 2'
+        goto 246
+      endif
 
 
 C]]]
@@ -7907,11 +7907,11 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
 c            T3pnew(i)=T1pnew(i)
       enddo
 
-          if (isnant(T3pnew,nx)) then
-            call cpu_time(tic)
-        write(stderr,*),tic,'problem when calculating T3pnew in loop 2'
-            goto 246
-          endif
+      if (isnant(T3pnew,nx)) then
+        call cpu_time(tic)
+        write(stderr,*) tic,'problem when calculating T3pnew in loop 2'
+        goto 246
+      endif
 
 
 c    temperature perpendiculaire
@@ -8005,11 +8005,11 @@ c            T3tnew(i)=T1tnew(i)
         T3new(i)=(T3pnew(i)+2.*T3tnew(i))/3.
       enddo
 
-          if (isnant(T3tnew,nx)) then
-            call cpu_time(tic)
-        write(stderr,*),tic,'problem when calculating T3tnew in loop 2'
-            goto 246
-          endif
+      if (isnant(T3tnew,nx)) then
+        call cpu_time(tic)
+        write(stderr,*) tic,'problem when calculating T3tnew in loop 2'
+        goto 246
+      endif
 456    continue
 
 C]]]
@@ -8147,118 +8147,120 @@ C    on a debranche ici a cause d'un probleme de NaN
      &                  access='direct',status='replace',recl=longrec)
 
       do i=1,longbuf
-          buffer(i)=0.
-        enddo
-        buffer( 1)=nx
-        buffer( 2)=ncol
-        buffer( 3)=iannee
-        buffer( 4)=imois
-        buffer( 5)=ijour
-        buffer( 6)=iheure
-        buffer( 7)=iminute
-        buffer( 8)=seconde
-        buffer( 9)=intpas
-        buffer(10)=longeo
-        buffer(11)=latgeo
-        buffer(12)=lonmag
-        buffer(13)=latmag
-        buffer(14)=tmag
-        buffer(15)=f107(2)
-        buffer(16)=f107(3)
-        buffer(17)=ap(2)
-        buffer(18)=kptime
-        buffer(19)=dTinf
-        buffer(20)=dUinf
-        buffer(21)=cofo
-        buffer(22)=cofh
-        buffer(23)=cofn
-        buffer(24)=chi0
-        buffer(25)=Fe0
-        buffer(26)=Ee0
-        buffer(27)=Fi0
-        buffer(28)=Ei0
-        buffer(29)=Bmag
-        buffer(30)=dipangle
-        buffer(31)=Enord
-        buffer(32)=Eest
-        buffer(33)=vperpnord
-        buffer(34)=vperpest
-        buffer(35)=vhorizon
-        buffer(36)=vpara
-        buffer(37)=iapprox
-        buffer(38)=ddp
-        buffer(39)=Jtop
-        do i=1,nx
-          ipos=(i+1)*ncol
-          buffer(ipos+ipos_z)=alt(i)
-          buffer(ipos+ipos_n1)=N_0*N1old(i)*1.e6
-          buffer(ipos+ipos_n2)=N_0*N2old(i)*1.e6
-          buffer(ipos+ipos_n3)=N_0*N3old(i)*1.e6
-          buffer(ipos+ipos_n4)=N_0*N4old(i)*1.e6
-          buffer(ipos+ipos_n5)=N_0*N5old(i)*1.e6
-          buffer(ipos+ipos_n6)=N_0*N6old(i)*1.e6
-          buffer(ipos+ipos_u1) =Cj0*U1old(i)/1.e2
-          buffer(ipos+ipos_u2) =Ci0*U2old(i)/1.e2
-          buffer(ipos+ipos_u3)=Cn0*U3old(i)/1.e2
-          buffer(ipos+ipos_um)=Cz0*Umold(i)/1.e2
-          buffer(ipos+ipos_ue)=Ce0*Ueold(i)/1.e2
-          buffer(ipos+ipos_t1p)=T_0*T1pold(i)
-          buffer(ipos+ipos_t1t)=T_0*T1told(i)
-          buffer(ipos+ipos_t2p)=T_0*T2pold(i)
-          buffer(ipos+ipos_t2t)=T_0*T2told(i)
-          buffer(ipos+ipos_t3p)=T_0*T3pold(i)
-          buffer(ipos+ipos_t3t)=T_0*T3told(i)
-          buffer(ipos+ipos_tmp)=T_0*Tmpold(i)
-          buffer(ipos+ipos_tmt)=T_0*Tmtold(i)
-          buffer(ipos+ipos_tep)=T_0*Tepold(i)
-          buffer(ipos+ipos_tet)=T_0*Tetold(i)
-          buffer(ipos+ipos_q1)=Qj0*q1old(i)/1.e3
-          buffer(ipos+ipos_q2)=Qi0*q2old(i)/1.e3
-          buffer(ipos+ipos_q3)=Qn0*q3old(i)/1.e3
-          buffer(ipos+ipos_qe)=Qe0*qeold(i)/1.e3
-          buffer(ipos+ipos_nno)=N_0*Nnoold(i)*1.e6
-          buffer(ipos+ipos_uno)=Cm0*Unoold(i)/1.e2
-          buffer(ipos+ipos_po)=Po(i)*1.e6
-          buffer(ipos+ipos_ph)=Ph(i)*1.e6
-          buffer(ipos+ipos_pn)=Pn(i)*1.e6
-      buffer(ipos+ipos_pn2)=Pn2(i)*1.e6
-      buffer(ipos+ipos_po2)=Po2(i)*1.e6
-      buffer(ipos+ipos_heat)=Heat(i)/10.
-      buffer(ipos+ipos_no)=No(i)*1.e6
-      buffer(ipos+ipos_nh)=Nh(i)*1.e6
-      buffer(ipos+ipos_nn)=Nn(i)*1.e6
-      buffer(ipos+ipos_nn2)=Nn2(i)*1.e6
-      buffer(ipos+ipos_no2)=No2(i)*1.e6
-      buffer(ipos+ipos_tn)=Tn(i)
-      buffer(ipos+ipos_un)=Un(i)/1.e2
-      buffer(ipos+ipos_vn)=Vn(i)/1.e2
-      buffer(ipos+ipos_wn)=Wn(i)/1.e2
-      buffer(ipos+ipos_nes)=Nes(i)*1.e6
-      buffer(ipos+ipos_jes)=Jes(i)*1.e4
-      buffer(ipos+ipos_tes)=Tes(i)
-      buffer(ipos+ipos_qes)=Qes(i)*1.e-7
-        enddo
-        write(fid_NaN,rec=1)(buffer(i),i=1,longbuf)
-        close(fid_NaN)
-        stop 'NaN detected'
-        end program 
-!-----------------------------------------------------------------------
-        pure real function signe(x)
-        implicit none
-        real,intent(in) :: x
+        buffer(i)=0.
+      enddo
+      buffer( 1)=nx
+      buffer( 2)=ncol
+      buffer( 3)=iannee
+      buffer( 4)=imois
+      buffer( 5)=ijour
+      buffer( 6)=iheure
+      buffer( 7)=iminute
+      buffer( 8)=seconde
+      buffer( 9)=intpas
+      buffer(10)=longeo
+      buffer(11)=latgeo
+      buffer(12)=lonmag
+      buffer(13)=latmag
+      buffer(14)=tmag
+      buffer(15)=f107(2)
+      buffer(16)=f107(3)
+      buffer(17)=ap(2)
+      buffer(18)=kptime
+      buffer(19)=dTinf
+      buffer(20)=dUinf
+      buffer(21)=cofo
+      buffer(22)=cofh
+      buffer(23)=cofn
+      buffer(24)=chi0
+      buffer(25)=Fe0
+      buffer(26)=Ee0
+      buffer(27)=Fi0
+      buffer(28)=Ei0
+      buffer(29)=Bmag
+      buffer(30)=dipangle
+      buffer(31)=Enord
+      buffer(32)=Eest
+      buffer(33)=vperpnord
+      buffer(34)=vperpest
+      buffer(35)=vhorizon
+      buffer(36)=vpara
+      buffer(37)=iapprox
+      buffer(38)=ddp
+      buffer(39)=Jtop
+      do i=1,nx
+        ipos=(i+1)*ncol
+        buffer(ipos+ipos_z)=alt(i)
+        buffer(ipos+ipos_n1)=N_0*N1old(i)*1.e6
+        buffer(ipos+ipos_n2)=N_0*N2old(i)*1.e6
+        buffer(ipos+ipos_n3)=N_0*N3old(i)*1.e6
+        buffer(ipos+ipos_n4)=N_0*N4old(i)*1.e6
+        buffer(ipos+ipos_n5)=N_0*N5old(i)*1.e6
+        buffer(ipos+ipos_n6)=N_0*N6old(i)*1.e6
+        buffer(ipos+ipos_u1) =Cj0*U1old(i)/1.e2
+        buffer(ipos+ipos_u2) =Ci0*U2old(i)/1.e2
+        buffer(ipos+ipos_u3)=Cn0*U3old(i)/1.e2
+        buffer(ipos+ipos_um)=Cz0*Umold(i)/1.e2
+        buffer(ipos+ipos_ue)=Ce0*Ueold(i)/1.e2
+        buffer(ipos+ipos_t1p)=T_0*T1pold(i)
+        buffer(ipos+ipos_t1t)=T_0*T1told(i)
+        buffer(ipos+ipos_t2p)=T_0*T2pold(i)
+        buffer(ipos+ipos_t2t)=T_0*T2told(i)
+        buffer(ipos+ipos_t3p)=T_0*T3pold(i)
+        buffer(ipos+ipos_t3t)=T_0*T3told(i)
+        buffer(ipos+ipos_tmp)=T_0*Tmpold(i)
+        buffer(ipos+ipos_tmt)=T_0*Tmtold(i)
+        buffer(ipos+ipos_tep)=T_0*Tepold(i)
+        buffer(ipos+ipos_tet)=T_0*Tetold(i)
+        buffer(ipos+ipos_q1)=Qj0*q1old(i)/1.e3
+        buffer(ipos+ipos_q2)=Qi0*q2old(i)/1.e3
+        buffer(ipos+ipos_q3)=Qn0*q3old(i)/1.e3
+        buffer(ipos+ipos_qe)=Qe0*qeold(i)/1.e3
+        buffer(ipos+ipos_nno)=N_0*Nnoold(i)*1.e6
+        buffer(ipos+ipos_uno)=Cm0*Unoold(i)/1.e2
+        buffer(ipos+ipos_po)=Po(i)*1.e6
+        buffer(ipos+ipos_ph)=Ph(i)*1.e6
+        buffer(ipos+ipos_pn)=Pn(i)*1.e6
+        buffer(ipos+ipos_pn2)=Pn2(i)*1.e6
+        buffer(ipos+ipos_po2)=Po2(i)*1.e6
+        buffer(ipos+ipos_heat)=Heat(i)/10.
+        buffer(ipos+ipos_no)=No(i)*1.e6
+        buffer(ipos+ipos_nh)=Nh(i)*1.e6
+        buffer(ipos+ipos_nn)=Nn(i)*1.e6
+        buffer(ipos+ipos_nn2)=Nn2(i)*1.e6
+        buffer(ipos+ipos_no2)=No2(i)*1.e6
+        buffer(ipos+ipos_tn)=Tn(i)
+        buffer(ipos+ipos_un)=Un(i)/1.e2
+        buffer(ipos+ipos_vn)=Vn(i)/1.e2
+        buffer(ipos+ipos_wn)=Wn(i)/1.e2
+        buffer(ipos+ipos_nes)=Nes(i)*1.e6
+        buffer(ipos+ipos_jes)=Jes(i)*1.e4
+        buffer(ipos+ipos_tes)=Tes(i)
+        buffer(ipos+ipos_qes)=Qes(i)*1.e-7
+      enddo
+      write(fid_NaN,rec=1)(buffer(i),i=1,longbuf)
+      close(fid_NaN)
+      error stop 'NaN detected'
+      end program 
 
-        if (x.ge.0.) then
-          signe=1.
-        else
-          signe=-1.
-        endif
 
-        end function signe
-!-----------------------------------------------------------------------
+      pure real function signe(x)
+      implicit none
+      real,intent(in) :: x
+
+      if (x >= 0.) then
+        signe=1.
+      else
+        signe=-1.
+      endif
+
+      end function signe
+
+
       ! split a string into 2 either side of a delimiter token
-      character(len=80) function split(instr,  delm)
+      character(80) function split(instr,  delm)
         implicit none
-        CHARACTER(len=80),intent(in) :: instr
+        CHARACTER(80),intent(in) :: instr
         character,intent(in) :: delm
         INTEGER :: idx
 

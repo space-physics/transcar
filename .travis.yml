@@ -1,0 +1,23 @@
+language: c
+
+os:
+  - linux
+  
+dist: trusty
+group: edge
+
+notifications:
+  email: false
+
+git:
+  depth: 3
+
+addons:
+  apt:
+    packages:
+      - gfortran
+
+
+script: 
+    - python setup.py develop
+

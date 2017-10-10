@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """
-to run in parallel on multiple PCs, use GNU Parallel to take the place of this serial script.
+Executes Transcar to output "monoenergetic" electron beams.
+Optionally, in parallel.
 """
 from pathlib import Path
 from pandas import read_csv

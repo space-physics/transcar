@@ -1,5 +1,8 @@
 language: python
 
+python:
+  - 3.5
+
 matrix:
   include:
     - os: linux
@@ -20,7 +23,7 @@ addons:
       - gfortran
       
 env:
-  - FC=gfortran TRAVIS_PYTHON_VERSION=3.6 
+  - FC=gfortran
 # workaround for osx
 
 before_install:

@@ -3,12 +3,13 @@ language: python
 python:
   - 3.6
 
-os:
-  - linux
-  - mac
-  
-dist: trusty
-group: edge
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      group: edge
+    - os: osx
+
 
 notifications:
   email: false

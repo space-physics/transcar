@@ -5,6 +5,7 @@ python:
 
 os:
   - linux
+  - mac
   
 dist: trusty
 group: edge
@@ -38,6 +39,7 @@ before_install:
     - pip -q install coveralls
 
 
-script: 
-    - python setup.py develop
+install: python setup.py develop
+
+script: python RunTranscar.py -infn tests/test_E1E2prev.csv
 

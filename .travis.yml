@@ -1,7 +1,4 @@
-language: python
-
-python:
-  - 3.6
+language: c
 
 matrix:
   include:
@@ -24,6 +21,8 @@ addons:
       
 env:
   - FC=gfortran
+  - TRAVIS_PYTHON_VERSION=3.6 
+# workaround for osx
 
 before_install:
     - if [[ $TRAVIS_OS_NAME == osx ]]; then

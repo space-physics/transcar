@@ -8,7 +8,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 # %% constants dictacted by legacy Fortran code
 transcarexe = 'transconvec_13.op.out'
-fileok = 'finish.status'
+FOK = 'finish.status'
 # hard-coded in Fortran
 din = Path('dir.input')
 ddat = Path('dir.data')
@@ -59,23 +59,26 @@ def runTranscar(odir:Path, errfn:Path, msgfn:Path):
         # current code error checks rely on serial operation.
         #subprocess.Popen(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
 
-def transcaroutcheck(odir,errfn):
-    fok = odir/fileok
+def transcaroutcheck(odir:Path,errfn:Path,ok:str='STOP fin normale'):
+    """
+    checks for text at end of file
+    
+    """
+    fok = odir / FOK
     try:
-      with (odir/errfn).open('r') as ferr:
-        last = deque(ferr,1)[0].rstrip('\n')
+        with (odir/errfn).open('r') as ferr:
+            last = deque(ferr,1)[0].rstrip('\n')
 
-        if last == 'STOP fin normale':
+        if last == ok:
             fok.write_text('true')
         else:
             fok.write_text('false')
-            logging.warn(f'{odir} ended sim early')
-    except (IOError) as e:
-        logging.error(f'transcaroutcheck: problem reading transcar output.  {e}' )
-    except IndexError as e:
-        with open(fok, 'w') as f:
-            f.write('false')
-            logging.warn(f'transcaroutcheck: {odir} got unexpected return value, transcar may not have finished the sim')
+            logging.warn(f'{odir} ended sim early:  {last}')
+    except IOError as e:
+        logging.error(f'problem reading transcar output.  {e}' )
+    except IndexError as e: # empty file
+        fok.write_text('false')
+        logging.warn(f'{odir} Transcar may not have finished the sim')
 
 
 def setuptranscario(rodir:Path, beamEnergy:float):

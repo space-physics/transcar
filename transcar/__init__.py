@@ -59,18 +59,21 @@ def runTranscar(odir:Path, errfn:Path, msgfn:Path):
         # current code error checks rely on serial operation.
         #subprocess.Popen(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
 
-def transcaroutcheck(odir:Path,errfn:Path,ok:str='STOP fin normale'):
+def transcaroutcheck(odir:Path,errfn:Path,ok:str='STOP fin normale')->bool:
     """
     checks for text at end of file
     
     """
+    isok = False
     fok = odir / FOK
     try:
         with (odir/errfn).open('r') as ferr:
             last = deque(ferr,1)[0].rstrip('\n')
 
         if last == ok:
+            isok=True
             fok.write_text('true')
+            logging.info(f'{odir} completed successfully.')
         else:
             fok.write_text('false')
             logging.warn(f'{odir} ended sim early:  {last}')
@@ -79,6 +82,8 @@ def transcaroutcheck(odir:Path,errfn:Path,ok:str='STOP fin normale'):
     except IndexError as e: # empty file
         fok.write_text('false')
         logging.warn(f'{odir} Transcar may not have finished the sim')
+        
+    return isok
 
 
 def setuptranscario(rodir:Path, beamEnergy:float):

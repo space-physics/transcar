@@ -3,6 +3,7 @@
 Executes Transcar to output "monoenergetic" electron beams.
 Optionally, in parallel.
 """
+import logging
 from pathlib import Path
 from pandas import read_csv
 #
@@ -15,7 +16,9 @@ def runbeam(rodir:Path, Q0:float, beam, logfn:Path, errfn:Path):
 # %% run the compiled executable
     runTranscar(odir, errfn, logfn)
 #%% check output trivially
-    transcaroutcheck(odir, errfn)
+    isok = transcaroutcheck(odir, errfn)
+    
+    return isok
 
 
 if __name__ == '__main__':
@@ -30,8 +33,22 @@ if __name__ == '__main__':
 
     rodir = Path(p.rodir).expanduser()
     infn = Path(p.infn).expanduser()
+    
+    rodir.mkdir(parents=True,exist_ok=True)
+    logging.basicConfig(filename=rodir/'Beams.log',
+                            filemode='a',
+                            format='%(asctime)s %(levelname)s %(message)s',
+                            datefmt='%H:%M:%S',
+                            level=logging.DEBUG)
 
     beams = read_csv(infn, header=None, names=['E1','E2','pr1','pr2'])
 
+    
     for i,beam in beams.iterrows():
-        runbeam(rodir, p.Q0, beam, p.msgfn, p.errfn)
+        isok = runbeam(rodir, p.Q0, beam, p.msgfn, p.errfn)
+        
+        if not isok:
+            logging.warning(f'retrying beam{beam["E1"]}')
+            isok = runbeam(rodir, p.Q0, beam, p.msgfn, p.errfn)
+            if not isok:
+                logging.error(f'failed on beam{beam["E1"]} on 2nd try, aborting')

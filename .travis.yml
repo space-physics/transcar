@@ -39,7 +39,7 @@ before_install:
 install:
     - python setup.py develop
 
-script: coverage run tests/test.py -v
+script: python RunTranscar.py /tmp/test -infn tests/test_E1E2prev.csv
 
 after_success: coveralls
 

@@ -7,7 +7,7 @@ from transcarread import ExcitationRates
 
 rdir = Path(__file__).parents[1]
 print(rdir)
-rdir = Path('/tmp/test/')
+rdir = Path('newdata')
 refdir = Path('tests/beam947.2')
 odir = rdir/refdir.name
 kinfn = 'dir.output/emissions.dat'

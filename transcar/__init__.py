@@ -46,11 +46,11 @@ def cp_parents(files, target_dir:Path):
 
 
 def runTranscar(odir:Path, errfn:Path, msgfn:Path):
-    odir = Path(odir).expanduser()
+    odir = Path(odir).expanduser().resolve()  # MUST have resolve()!!
 
     with (odir/errfn).open('w')  as ferr, (odir/msgfn).open('w') as fout:
         # remember it must be an iterable, even if only one argument.
-        exe = [odir / transcarexe]
+        exe = [str(odir / transcarexe)]
 
         # Note: subprocess.run() is blocking by design.
         #       subprocess.Popen() is non-blocking (unless commanded to wait)
@@ -62,7 +62,7 @@ def runTranscar(odir:Path, errfn:Path, msgfn:Path):
 def transcaroutcheck(odir:Path,errfn:Path,ok:str='STOP fin normale')->bool:
     """
     checks for text at end of file
-    
+
     """
     isok = False
     fok = odir / FOK
@@ -82,7 +82,7 @@ def transcaroutcheck(odir:Path,errfn:Path,ok:str='STOP fin normale')->bool:
     except IndexError as e: # empty file
         fok.write_text('false')
         logging.warn(f'{odir} Transcar may not have finished the sim')
-        
+
     return isok
 
 

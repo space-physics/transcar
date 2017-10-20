@@ -1,0 +1,169 @@
+ reading parameters from file: conttanh.dat                                                                    
+ reading PRECIPITATION parameters from file: dir.input/precinput.dat                                                         
+   32420.0000    
+   920.015015       366337.719    
+   1098.84998      -1.00000000    
+ Number of energy bins for precip.:             2
+   32440.0000    
+  -1.00000000      -1.00000000    
+ Number of energy bins for precip.:             2
+ Number of time series in precip.:             2
+ record size=         124
+ num,max_num=       26754       22370
+ Error reading file data_geom.bin for record:        26754
+        2013           3          31           9
+   1940    101      1      0      0      0
+   150.000000       150.000000       150.000000       4.00000000       4.00000000       4.00000000       4.00000000       4.00000000       4.00000000       4.00000000    
+ convec.f: call potentiel, dlonmag,dlonmlt   263.23770952467629        38.316876191342963     
+   2.39999988E-03 potentiel.f: call coef_pot
+ len_coef=         153
+   5.92700019E-03 potentiel.f: call val_fit:  lon,lat     38.316876191342963        65.472903725144192     
+ convec.f: call magfild
+ call feldcof
+ call GETSHC
+ opening for reading: dir.data/dir.linux/dir.geomag/igrf90.dat                                        
+ opening for reading: dir.data/dir.linux/dir.geomag/igrf90s.dat                                       
+ call EXTRASHC
+ call feldg
+   6.21199980E-03  atmos: call gtd6, hot O. glat=   65.1200027    
+ call iniflu
+ call column
+ call quelle_grille
+ using detail grid type 2, crs,rdt: dir.cine/dir.seff/crsb8                                                         dir.cine/dir.seff/rdtb8                                                         
+ attempting to open dir.data/dir.linux/dir.cine/dir.seff/crsb8                                      
+ attempting to open dir.data/dir.linux/dir.cine/DATDEG                                              
+ beginning to rewritedir.data/dir.linux/dir.cine/DATDEG                                              
+ call degrad
+     degrad.f : computation of the cross sections
+     felin.f : Production of primary photoelectrons. Sza (deg) :    110.41
+     trans.f : Kinetic transport. jpreci=           0 ut=   9.00527763    
+  open file: dir.data/dir.linux/dir.cine/dir.seff/crsb8                                                         
+  open file: dir.data/dir.linuxdir.cine/dir.seff/rdtb8                                                         
+Input eV/cm2/s (erg/cm2/s): prec: 0.00E+00 ( 0.00E+00) nue-:  1.29E+07 ( 2.06E-05)
+
+ Kinetic Transport execute success
+ call cineout
+ temps de depart:     32419 tube numero:  -1
+ record size=         124
+ num,max_num=       26754       22370
+ Error reading file data_geom.bin for record:        26754
+        2013           3          31           9
+   1940    101      1      0      0      0
+   150.000000       150.000000       150.000000       4.00000000       4.00000000       4.00000000       4.00000000       4.00000000       4.00000000       4.00000000    
+ convec.f: call potentiel, dlonmag,dlonmlt   263.23770952467629        38.321042858009591     
+   3.88010406     potentiel.f: call coef_pot
+ convec.f: call magfild
+ call feldg
+   3.88012600      atmos: call gtd6, hot O. glat=   65.1200027    
+ call iniflu
+ call column
+ quelle_grille
+ using detail grid type 2, crs,rdt: dir.cine/dir.seff/crsb8                                                         dir.cine/dir.seff/rdtb8                                                         
+ attempting to open dir.data/dir.linux/dir.cine/dir.seff/crsb8                                      
+ attempting to open dir.data/dir.linux/dir.cine/DATDEG                                              
+ beginning to rewritedir.data/dir.linux/dir.cine/DATDEG                                              
+ fluxkappa
+ flux_integre
+ call degrad
+     degrad.f : computation of the cross sections
+     trans.f : Kinetic transport. jpreci=           1 ut=   9.00555515    
+  open file: dir.data/dir.linux/dir.cine/dir.seff/crsb8                                                         
+  open file: dir.data/dir.linuxdir.cine/dir.seff/rdtb8                                                         
+Input eV/cm2/s (erg/cm2/s): prec: 4.13E+11 ( 6.62E-01) nue-:  1.29E+07 ( 2.06E-05)
+
+ Kinetic Transport execute success
+ call cineout
+   7.58208609     H+ momentum equation resolution
+   7.58238411     call lcpfct
+   7.58241177     O+ momentum equation resolution
+   7.58261681     H+ momentum LCPFCT
+   7.58265495     Heavy Ions equation resolution
+   7.58308506     N+ momentum equation resolution
+   7.58327007     H+ heatflow equation resolution
+   7.58336210     O+ heat flow equation resolution
+   7.58343792     N+ heat flow
+   7.58352089     e- energy & heat flow eqn resolution (1)
+ utc second:     32420 tube number:  -1
+ record size=         124
+ num,max_num=       26754       22370
+ Error reading file data_geom.bin for record:        26754
+        2013           3          31           9
+   1940    101      1      0      0      0
+   150.000000       150.000000       150.000000       4.00000000       4.00000000       4.00000000       4.00000000       4.00000000       4.00000000       4.00000000    
+ convec.f: call potentiel, dlonmag,dlonmlt   263.23770952467629        38.325209524676325     
+   7.58997726     potentiel.f: call coef_pot
+   7.58997917      Error reading varpot.dat, fallback to defaults  kp=   1.00000000    
+   7.58998108     potentiel.f: call val_fit:  lon,lat     38.325209524676325        65.472903725144192     
+ convec.f: call magfild
+ call feldg
+   7.59000301      atmos: call gtd6, hot O. glat=   65.1200027    
+ call iniflu
+ call column
+ quelle_grille
+ using detail grid type 2, crs,rdt: dir.cine/dir.seff/crsb8                                                         dir.cine/dir.seff/rdtb8                                                         
+ attempting to open dir.data/dir.linux/dir.cine/dir.seff/crsb8                                      
+ attempting to open dir.data/dir.linux/dir.cine/DATDEG                                              
+ beginning to rewritedir.data/dir.linux/dir.cine/DATDEG                                              
+ fluxkappa
+ flux_integre
+ call degrad
+     degrad.f : computation of the cross sections
+     trans.f : Kinetic transport. jpreci=           1 ut=   9.00583363    
+  open file: dir.data/dir.linux/dir.cine/dir.seff/crsb8                                                         
+  open file: dir.data/dir.linuxdir.cine/dir.seff/rdtb8                                                         
+Input eV/cm2/s (erg/cm2/s): prec: 4.13E+11 ( 6.62E-01) nue-:  1.29E+07 ( 2.06E-05)
+
+ Kinetic Transport execute success
+ call cineout
+   11.2604914     H+ momentum equation resolution
+   11.2607727     call lcpfct
+   11.2607994     O+ momentum equation resolution
+   11.2609596     H+ momentum LCPFCT
+   11.2609844     Heavy Ions equation resolution
+   11.2614079     N+ momentum equation resolution
+   11.2615910     H+ heatflow equation resolution
+   11.2616854     O+ heat flow equation resolution
+   11.2617626     N+ heat flow
+   11.2618484     e- energy & heat flow eqn resolution (1)
+ utc second:     32421 tube number:  -1
+ record size=         124
+ num,max_num=       26754       22370
+ Error reading file data_geom.bin for record:        26754
+        2013           3          31           9
+   1940    101      1      0      0      0
+   150.000000       150.000000       150.000000       4.00000000       4.00000000       4.00000000       4.00000000       4.00000000       4.00000000       4.00000000    
+ convec.f: call potentiel, dlonmag,dlonmlt   263.23770952467629        38.329376191342952     
+   11.3054180     potentiel.f: call coef_pot
+   11.3054209      Error reading varpot.dat, fallback to defaults  kp=   1.00000000    
+   11.3054228     potentiel.f: call val_fit:  lon,lat     38.329376191342952        65.472903725144192     
+ convec.f: call magfild
+ call feldg
+   11.3054476      atmos: call gtd6, hot O. glat=   65.1200027    
+ call iniflu
+ call column
+ quelle_grille
+ using detail grid type 2, crs,rdt: dir.cine/dir.seff/crsb8                                                         dir.cine/dir.seff/rdtb8                                                         
+ attempting to open dir.data/dir.linux/dir.cine/dir.seff/crsb8                                      
+ attempting to open dir.data/dir.linux/dir.cine/DATDEG                                              
+ beginning to rewritedir.data/dir.linux/dir.cine/DATDEG                                              
+ fluxkappa
+ flux_integre
+ call degrad
+     degrad.f : computation of the cross sections
+     trans.f : Kinetic transport. jpreci=           1 ut=   9.00611115    
+  open file: dir.data/dir.linux/dir.cine/dir.seff/crsb8                                                         
+  open file: dir.data/dir.linuxdir.cine/dir.seff/rdtb8                                                         
+Input eV/cm2/s (erg/cm2/s): prec: 4.13E+11 ( 6.62E-01) nue-:  1.29E+07 ( 2.06E-05)
+
+ Kinetic Transport execute success
+ call cineout
+   14.9703770     H+ momentum equation resolution
+   14.9706383     call lcpfct
+   14.9706640     O+ momentum equation resolution
+   14.9708357     H+ momentum LCPFCT
+   14.9708595     Heavy Ions equation resolution
+   14.9713507     N+ momentum equation resolution
+   14.9716835     H+ heatflow equation resolution
+   14.9718132     O+ heat flow equation resolution
+   14.9719028     N+ heat flow
+   14.9719992     e- energy & heat flow eqn resolution (1)

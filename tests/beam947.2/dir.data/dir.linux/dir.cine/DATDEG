@@ -1,0 +1,18 @@
+ 2           for iniflu : 1 use detailed grid, 2 coarse grid
+dir.cine/dir.seff/crscoll.dat                                                   
+dir.cine/dir.seff/crsb8                                                         
+dir.cine/dir.seff/rdtb8                                                         
+idess =-1 no plot.
+idess = 0 metacode created, without interactive session.
+idess = 1 metacode not created, but screened plots.
+idess = 2 metacode created, with interactive session.
+   -1   -1     (seff, seff detailled)
+iprint = 1 if print (whatever number otherwise)
+        sigel  siginel  rmatrix diff-sig-test 
+         1         1        -1        -1
+.true.           logint: interpolation type for cross sections
+.true.           lt1   : test without ionization
+.true.           lt2   : test only with ionization
+.true.           lt3   : test without degradation
+.true.           lt4   : test without excitation
+.true.           lopal : sec. distrib. de Opal (Rees sinon)

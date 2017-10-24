@@ -13,7 +13,8 @@ odir = rdir/refdir.name
 kinfn = 'dir.output/emissions.dat'
 
 def test_transcar():
-    subprocess.check_call(['python', 'RunTranscar.py', 'newdata', '-infn', 'tests/test_E1E2prev.csv'],#  cwd=rdir,
+    subprocess.check_call(['python', 'RunTranscar.py',
+                           'newdata', '-infn', 'tests/test_E1E2prev.csv'],
                           timeout=90)
 
     refexc, tref = ExcitationRates(refdir/kinfn)[:2]

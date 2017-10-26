@@ -17,11 +17,14 @@ def runbeam(rodir:Path, Q0:float, beam, logfn:Path, errfn:Path):
     runTranscar(odir, errfn, logfn)
 #%% check output trivially
     isok = transcaroutcheck(odir, errfn)
-    
+
     return isok
 
 
 if __name__ == '__main__':
+    import signal
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+
     from argparse import ArgumentParser
     p = ArgumentParser(description='parallel instance transcar runner')
     p.add_argument('rodir',help='root of beam directory')
@@ -33,7 +36,7 @@ if __name__ == '__main__':
 
     rodir = Path(p.rodir).expanduser()
     infn = Path(p.infn).expanduser()
-    
+
     rodir.mkdir(parents=True,exist_ok=True)
     logging.basicConfig(filename=rodir/'Beams.log',
                             filemode='a',
@@ -43,10 +46,10 @@ if __name__ == '__main__':
 
     beams = read_csv(infn, header=None, names=['E1','E2','pr1','pr2'])
 
-    
+
     for i,beam in beams.iterrows():
         isok = runbeam(rodir, p.Q0, beam, p.msgfn, p.errfn)
-        
+
         if not isok:
             logging.warning(f'retrying beam{beam["E1"]}')
             isok = runbeam(rodir, p.Q0, beam, p.msgfn, p.errfn)

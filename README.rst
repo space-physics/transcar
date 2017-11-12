@@ -46,7 +46,7 @@ Install
 =======
 You'll need Cmake, Make, Gfortran and Python 3::
 
-    python setup.py develop
+    pip install -e .
 
 Manual compile
 --------------

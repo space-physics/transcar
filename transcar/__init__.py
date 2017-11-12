@@ -93,6 +93,8 @@ def setuptranscario(rodir:Path, beamEnergy:float):
 
     (odir/'dir.output').mkdir(parents=True, exist_ok=True)
 # %% move files where needed for this instantiation
+    if not Path(transcarexe).is_file():
+        raise FileNotFoundError('Need to compile Transcar Fortran code.  pip install -e .')
     flist = [DATCAR, din / inp['precfile'], ddat / 'type', transcarexe]
     flist += [ddat / 'dir.linux/dir.geomag' / s  for s in ['data_geom.bin','igrf90.dat','igrf90s.dat']]
     flist += [ddat / 'dir.linux/dir.projection/varpot.dat']

@@ -1,5 +1,14 @@
 .. image:: https://travis-ci.org/scivision/transcar.svg
     :target: https://travis-ci.org/scivision/transcar
+    
+.. image:: https://coveralls.io/repos/github/scivision/transcar/badge.svg?branch=next
+    :target: https://coveralls.io/github/scivision/transcar?branch=next
+
+    
+.. image:: https://api.codeclimate.com/v1/badges/7c237d2870d0611e5df6/maintainability
+   :target: https://codeclimate.com/github/scivision/transcar/maintainability
+   :alt: Maintainability
+
 
 ========
 transcar

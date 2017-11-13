@@ -9,7 +9,7 @@ dist: trusty
 group: edge
   
 env: 
-  - FC=gfortran TRAVIS_PYTHON_VERSION=3.6
+  - FC=gfortran TRAVIS_PYTHON_VERSION=3
 
 notifications:
   email: false

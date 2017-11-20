@@ -1,19 +1,11 @@
 #!/usr/bin/env python
-
-req=['nose','python-dateutil','pandas']
-pipreq=['transcarread']
-
-try:
-    import conda.cli
-    conda.cli.main('install',*req)
-except Exception:
-    pass
+req=['nose','python-dateutil','pandas','transcarread']
 # %%
-from setuptools import setup
+from setuptools import setup,find_packages
 import subprocess
 
 setup(name='transcar',
-      packages=['transcar'],
+      packages=find_packages(),
       version='0.1.0',
       author='Michael Hirsch, Ph.D.',
       url='https://github.com/scivision/transcar',
@@ -25,7 +17,7 @@ setup(name='transcar',
       'Programming Language :: Python :: 3',
       ],
       python_requires='>=3.6',
-      install_requires=req+pipreq,
+      install_requires=req,
 	  )
 
 subprocess.check_call(['cmake','..'],cwd='dir.source/dir.obj')

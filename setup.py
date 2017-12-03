@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-req=['nose','python-dateutil','pandas','transcarread']
+install_requires=['python-dateutil','pandas','transcarread']
+tests_require=['nose','coveralls']
 # %%
 from setuptools import setup,find_packages
 import subprocess
@@ -17,7 +18,9 @@ setup(name='transcar',
       'Programming Language :: Python :: 3',
       ],
       python_requires='>=3.6',
-      install_requires=req,
+      install_requires=install_requires,
+      tests_require=tests_require,
+      extras_require={'tests':tests_require,},
 	  )
 
 subprocess.check_call(['cmake','..'],cwd='dir.source/dir.obj')

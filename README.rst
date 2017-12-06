@@ -55,7 +55,7 @@ Install
 =======
 You'll need Cmake, Make, Gfortran and Python 3::
 
-    pip install -e .
+    python -m pip install -e .
 
 Manual compile
 --------------

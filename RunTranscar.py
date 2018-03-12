@@ -3,11 +3,16 @@
 Executes Transcar to output "monoenergetic" electron beams.
 Optionally, in parallel.
 """
+import multiprocessing
+import concurrent.futures
 import logging
 from pathlib import Path
 from pandas import read_csv
 #
 from transcar import setuptranscario,setupPrecipitation,runTranscar,transcaroutcheck
+#
+Ncpu=multiprocessing.cpu_count() // 2  # //2 makes one thread per CPU for 2 thread Intel Hyperthreading
+
 # %%
 def runbeam(rodir:Path, Q0:float, beam, logfn:Path, errfn:Path):
 # %% copy the Fortran static init files to this directory (simple but robust)
@@ -19,6 +24,19 @@ def runbeam(rodir:Path, Q0:float, beam, logfn:Path, errfn:Path):
     isok = transcaroutcheck(odir, errfn)
 
     return isok
+
+
+def okmain(beam):
+    beam = beam[1]
+    #rint(beam)
+    isok = runbeam(rodir, p.Q0, beam, p.msgfn, p.errfn)
+
+
+    if not isok:
+        logging.warning(f'retrying beam{beam["E1"]}')
+        isok = runbeam(rodir, p.Q0, beam, p.msgfn, p.errfn)
+        if not isok:
+            logging.error(f'failed on beam{beam["E1"]} on 2nd try, aborting')
 
 
 if __name__ == '__main__':
@@ -45,13 +63,10 @@ if __name__ == '__main__':
                             level=logging.DEBUG)
 
     beams = read_csv(infn, header=None, names=['E1','E2','pr1','pr2'])
+    abeam = beams.values
 
+    print(Ncpu,'workers')
 
-    for i,beam in beams.iterrows():
-        isok = runbeam(rodir, p.Q0, beam, p.msgfn, p.errfn)
+    with concurrent.futures.ProcessPoolExecutor(max_workers=Ncpu) as executor:
+        executor.map(okmain, beams.iterrows())
 
-        if not isok:
-            logging.warning(f'retrying beam{beam["E1"]}')
-            isok = runbeam(rodir, p.Q0, beam, p.msgfn, p.errfn)
-            if not isok:
-                logging.error(f'failed on beam{beam["E1"]} on 2nd try, aborting')

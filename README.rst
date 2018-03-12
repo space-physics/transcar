@@ -72,7 +72,9 @@ Run
 Simulations are configured in `transcar/dir.input/DATCAR <transcar/dir.input/DATCAR>`_. Simulations are run from the `transcar/` directory.
 
 The legacy method is using Bash (Linux/Mac specific).
+
 The new method is running via Python (runs on any operating system).
+Python runs Transcar in parallel execution using ``concurrent.futures``, dynamically adapting to the number of CPU cores available.
 
 Python
 ------

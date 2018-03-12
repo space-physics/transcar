@@ -138,7 +138,7 @@ call sources(Ipos1,Iposn,deltat_2,7,zero,D7m1,0.,0.)
 lbc=1.
 call lcpfct(U1old,U1new,Ipos1,Iposn,lbc,0.,0.,U1new(np),.false.,0)
 
-if (isnant(U1new,nx)) then
+if (any(ieee_is_nan(U1new))) then
   print*,'probleme lors du calcul de U1new dans la boucle ',iboucle
   goto 246
 endif
@@ -156,7 +156,7 @@ call sources(Ipos1,Iposn,deltat_2,7,zero,D7m1,0.,0.)
 lbc=1.
 call lcpfct(U2old,U2new,Ipos1,Iposn,lbc,0.,0.,U2new(np),.false.,0)
 
-if (isnant(U2new,nx)) then
+if (any(ieee_is_nan(U2new))) then
   print*,'probleme lors du calcul de U2new dans la boucle ',iboucle
   goto 246
 endif
@@ -174,7 +174,7 @@ call sources(Ipos1,Iposn,deltat_2,7,zero,D7m3,0.,0.)
 lbc=1.
 call lcpfct(U3old,U3new,Ipos1,Iposn,lbc,0.,0.,U3new(np),.false.,0)
 
-if (isnant(U3new,nx)) then
+if (any(ieee_is_nan(U3new))) then
   print*,'probleme lors du calcul de U3new dans la boucle ',iboucle
   goto 246
 endif
@@ -192,7 +192,7 @@ call sources(Ipos1,Iposn,deltat_2,7,zero,D7mm,0.,0.)
 lbc=1.
 call lcpfct(Umold,Umnew,Ipos1,Iposn,lbc,0.,0.,Umnew(np),.false.,0)
 
-if (isnant(Umnew,nx)) then
+if (any(ieee_is_nan(Umnew))) then
   print*,'probleme lors du calcul de Umnew dans la boucle ',iboucle
   goto 246
 endif

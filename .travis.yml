@@ -7,24 +7,30 @@ python:
 os:
   - linux
 
-dist: trusty
-group: edge
-  
-env: FC=gfortran
-
-notifications:
-  email: false
+group: travis_latest
+ 
+env: FC=gfortran-6
 
 git:
   depth: 3
 
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
     packages:
-      - gfortran
+      - gfortran-6
 
-install: python -m pip install -e .[tests]
+before_install:
+  - mkdir -p ~/.local/bin
+  - ln -s /usr/bin/gfortran-6 ~/.local/bin/gfortran
+  - export PATH="$HOME/.local/bin/:$PATH"
 
-script: coverage run tests/test.py -v
+install: pip -q install -e .[tests]
 
-after_success: coveralls
+script: 
+  - pytest -v 
+
+after_success: 
+  - coverage run tests/test_all.py
+  - coveralls

@@ -1,18 +1,17 @@
-        program transconvec_13
+      program transconvec_13
+       
+      use, intrinsic:: ieee_arithmetic, only: ieee_is_nan  
+      include 'comm.f'
+      include 'comm_sp.f'
         
-        include 'comm.f'
-        include 'comm_sp.f'
-        
-!
+
 !     Ce programme demarre le couple de programmes de transports.
 !     Anciennement : eiscat.f
-        character(len=80) split,gridfn
+      character(80) split,gridfn
 
-        parameter (npt=500,xcoeffno=1.,ncol0=50,intemps0=300,nb_ion=6)
-        logical isnant
-        external isnant
-!
-        parameter (nb_position_max=100)         ! Modif DA 02/02 2001
+      integer,parameter :: npt=500,xcoeffno=1.,ncol0=50,intemps0=300,
+     &                     nb_ion=6,
+     &  nb_position_max=100     ! Modif DA 02/02 2001
         logical multi_position                  ! Modif DA 02/02 2001
         real longeo_position(nb_position_max)   ! Modif DA 02/02 2001
         real latgeo_position(nb_position_max)   ! Modif DA 02/02 2001
@@ -1236,9 +1235,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
           temp_m(i)=Tmnew(i)*T_0
         enddo
 
-        if (isnant(nenew,nx)
-     &  .or.isnant(Tenew,nx)
-     &  .or.isnant(T1new,nx)) then
+        if ((any(ieee_is_nan(nenew)))
+     &  .or.(any(ieee_is_nan(Tenew)))
+     &  .or.(any(ieee_is_nan(T1new)))) then
           write(stderr,*),'problem before calling atmos'
           goto 246
         endif
@@ -1684,9 +1683,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 !------MZ
 
 
-        if (isnant(nenew,nx)
-     &  .or.isnant(Tenew,nx)
-     &  .or.isnant(T1new,nx)) then
+        if ((any(ieee_is_nan(nenew)))
+     &  .or.(any(ieee_is_nan(Tenew)))
+     &  .or.(any(ieee_is_nan(T1new)))) then
           write(stderr,*),'problem before calling atmos'
           goto 246
         endif
@@ -2042,7 +2041,7 @@ CCCCC                                                                           
          enddo
          Nnonew(np)=min(1.,Nnonew(nx)/Nnonew(nx-1))*Nnonew(nx)
 
-          if (isnant(Nnonew,nx)) then
+          if (any(ieee_is_nan(Nnonew))) then
             call cpu_time(tic)
         write(stderr,*),tic,'problem when calculating Tenew in loop 1'
             goto 246
@@ -2105,14 +2104,14 @@ CCCCC                                                                           
      &             +D3(i)*xcoeffno*deltat)
      &             +expnu*Unoold(i)
           enddo
-          if (isnant(Unonew,nx)) then
+          if (any(ieee_is_nan(Unonew))) then
             write(stderr,*) 'probleme lors du calcul de Unonew'
             goto 246
           endif
 
-         do i=indno+1,nx
+      do i=indno+1,nx
          Unonew(i)=Unonew(indno)
-         enddo
+      enddo
 
 !]]]
 
@@ -2529,27 +2528,27 @@ CCCCC                                                                           
           N5new(np)=min(1.,N5new(nx-1)/N5new(nx-2))*N5new(nx)
           N6new(np)=min(1.,N6new(nx-1)/N6new(nx-2))*N6new(nx)
 
-      if (isnant(N1new,nx)) then
+      if (any(ieee_is_nan(N1new))) then
         write(stderr,*) 'problem N1new dans la boucle 1'
         goto 246
       endif
-      if (isnant(N2new,nx)) then
+      if (any(ieee_is_nan(N2new))) then
         write(stderr,*) 'problem N2new dans la boucle 1'
         goto 246
       endif
-      if (isnant(N3new,nx)) then
+      if (any(ieee_is_nan(N3new))) then
         write(stderr,*) 'problem N3new dans la boucle 1'
         goto 246
       endif
-      if (isnant(N4new,nx)) then
+      if (any(ieee_is_nan(N4new))) then
         write(stderr,*) 'problem N4new dans la boucle 1'
         goto 246
       endif
-      if (isnant(N5new,nx)) then
+      if (any(ieee_is_nan(N5new))) then
         write(stderr,*) 'problem N5new dans la boucle 1'
         goto 246
       endif
-      if (isnant(N6new,nx)) then
+      if (any(ieee_is_nan(N6new))) then
         write(stderr,*) 'problem N6new dans la boucle 1'
         goto 246
       endif
@@ -2808,7 +2807,7 @@ CCCCC                                                                           
      &             +expnu*U2old(i)
           enddo
 
-          if (isnant(U2new,nx)) then
+          if (any(ieee_is_nan(U2new))) then
             call cpu_time(tic)
             write(stderr,*) tic,'problem calc U2new loop  1'
             goto 246
@@ -2937,7 +2936,7 @@ CCCCC                                                                           
 !      U1new(nx)=max(U1new(nx),-1000./Cj0)
 !      U1new(nx)=max(U1new(nx),0.)
 
-          if (isnant(U1new,nx)) then
+          if (any(ieee_is_nan(U1new))) then
           call cpu_time(tic)
          write(stderr,*) tic,'problem calc U1new loop 1'
             goto 246
@@ -3117,7 +3116,7 @@ CCCCC                                                                           
      &             +expnu*Umold(i)
           enddo
 
-          if (isnant(Umnew,nx)) then
+          if (any(ieee_is_nan(Umnew))) then
           call cpu_time(tic)
        write(stderr,*) tic,'Heavy Ions problem calc  Umnew loop 1'
             goto 246
@@ -3242,7 +3241,7 @@ CCCCC                                                                           
 !      U3new(i)=U1new(i)
 !    enddo
 
-          if (isnant(U3new,nx)) then
+          if (any(ieee_is_nan(U3new))) then
           call cpu_time(tic)
        write(stderr,*) tic,'N+ mom. problem calc U3new in loop 1'
             goto 246
@@ -3419,7 +3418,7 @@ CCCCC                                                                           
           q2new(nx)=max(0.,q2new(nx))
           q2new(np)=q2new(nx)
 
-          if (isnant(q2new,nx)) then
+          if (any(ieee_is_nan(q2new))) then
           call cpu_time(tic)
             write(stderr,*) 'H+ heatflow problem calc q2new loop 1'
             goto 246
@@ -3553,11 +3552,11 @@ CCCCC                                                                           
           q1new(nx)=max(0.,q1new(nx))
           q1new(np)=q1new(nx)
 
-          if (isnant(q1new,nx)) then
+      if (any(ieee_is_nan(q1new))) then
           call cpu_time(tic)
-      write(stderr,*) tic,'L3557: problem calc q1new in loop 1'
+          write(stderr,*) tic,'L3557: problem calc q1new in loop 1'
             goto 246
-          endif
+      endif
 
 
 !]]]
@@ -3683,10 +3682,10 @@ CCCCC                                                                           
           q3new(nx)=max(0.,q3new(nx))
           q3new(np)=q3new(nx)
 
-          if (isnant(q3new,nx)) then
-            write(stderr,*) 'problem when calculating q3new in loop 1'
-            goto 246
-          endif
+      if (any(ieee_is_nan(q3new))) then
+        write(stderr,*) 'problem when calculating q3new in loop 1'
+        goto 246
+      endif
 
 
 !]]]
@@ -3947,11 +3946,11 @@ CCCCC                                                                           
           qenew(nx)=qetop
           qenew(np)=qenew(nx)
 
-          if (isnant(qenew,nx)) then
-            call cpu_time(tic)
+      if (any(ieee_is_nan(qenew))) then
+        call cpu_time(tic)
         write(stderr,*) tic,'problem when calculating qenew in loop 1'
-            goto 246
-          endif
+          goto 246
+      endif
 
 
 
@@ -3985,7 +3984,7 @@ CCCCC                                                                           
           tenew(np)=tenew(nx)
           Tenew(np)=2.*Tenew(nx)-Tenew(nx-1)
 
-          if (isnant(Tenew,nx)) then
+          if (any(ieee_is_nan(Tenew))) then
             call cpu_time(tic)
         write(stderr,*) tic,'problem when calculating Tenew in loop 1'
             goto 246
@@ -3996,12 +3995,12 @@ CCCCC                                                                           
      &            D7e,D7q,Cei,deltat_4)
 
 
-          if (isnant(qenew,nx)) then
+          if (any(ieee_is_nan(qenew))) then
             call cpu_time(tic)
         write(stderr,*) tic,'problem in stabenerg with qe in loop 1'
             goto 246
           endif
-          if (isnant(Tenew,nx)) then
+          if (any(ieee_is_nan(Tenew))) then
             call cpu_time(tic)
         write(stderr,*) tic,'problem in stabenerg with Te in loop 1'
             goto 246
@@ -4056,7 +4055,7 @@ CCCCC                                                                           
           qenew(nx)=qetop
           qenew(np)=qenew(nx)
 
-          if (isnant(qenew,nx)) then
+          if (any(ieee_is_nan(qenew))) then
             write(stderr,*) 'problem qenew dans la boucle 1'
             goto 246
           endif
@@ -4090,7 +4089,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
           tenew(np)=tenew(nx)
           Tenew(np)=2.*Tenew(nx)-Tenew(nx-1)
 
-          if (isnant(Tenew,nx)) then
+          if (any(ieee_is_nan(Tenew))) then
             call cpu_time(tic)
             write(stderr,*) tic,'problem when calc Tenew in loop 1'
             goto 246
@@ -4101,12 +4100,12 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
      &            D7e,D7q,Cei,deltat_4)
 
 
-          if (isnant(qenew,nx)) then
+          if (any(ieee_is_nan(qenew))) then
             call cpu_time(tic)
          write(stderr,*) tic,'problem in stabenerg with qe in loop 1'
             goto 246
           endif
-          if (isnant(Tenew,nx)) then
+          if (any(ieee_is_nan(Tenew))) then
             write(stderr,*) 'problem stabenerg Te dans la boucle 1'
             goto 246
           endif
@@ -4222,7 +4221,7 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
             T2pnew(i)=max(T2pnew(i),T_min)
       enddo
 
-      if (isnant(T2pnew,nx)) then
+      if (any(ieee_is_nan(T2pnew))) then
         write(stderr,*) 'problem T2pnew dans la boucle 1'
         goto 246
       endif
@@ -4327,7 +4326,7 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
             T2new(i)=(T2pnew(i)+2.*T2tnew(i))/3.
           enddo
 
-      if (isnant(T2tnew,nx)) then
+      if (any(ieee_is_nan(T2tnew))) then
         write(stderr,*) 'problem T2tnew dans la boucle 1'
         goto 246
       endif
@@ -4429,14 +4428,14 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
           enddo
           T1pnew(np)=T1pnew(nx)
 
-          do i=1,np
-            T1pnew(i)=max(T1pnew(i),T_min)
-          enddo
+      do i=1,np
+        T1pnew(i)=max(T1pnew(i),T_min)
+      enddo
 
-          if (isnant(T1pnew,nx)) then
-            write(stderr,*) 'problem T1pnew dans la boucle 1'
-            goto 246
-          endif
+      if (any(ieee_is_nan(T1pnew))) then
+        write(stderr,*) 'problem T1pnew dans la boucle 1'
+        goto 246
+      endif
 
 
 
@@ -4535,7 +4534,7 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
           enddo
 
 
-      if (isnant(T1tnew,nx)) then
+      if (any(ieee_is_nan(T1tnew))) then
         write(stderr,*) 'problem T1tnew dans la boucle 1'
         goto 246
       endif
@@ -4690,7 +4689,7 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
           enddo
 c    flag=.false.
 
-      if (isnant(Tmpnew,nx)) then
+      if (any(ieee_is_nan(Tmpnew))) then
         write(stderr,*) 'problem Tmpnew dans la boucle 1'
         goto 246
       endif
@@ -4819,7 +4818,7 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
         Tmnew(i)=(Tmpnew(i)+2.*Tmtnew(i))/3.
           enddo
 
-      if (isnant(Tmtnew,nx)) then
+      if (any(ieee_is_nan(Tmtnew))) then
         write(stderr,*) 'problem Tmtnew dans la boucle 1'
         goto 246
       endif
@@ -4920,7 +4919,7 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
 c            T3pnew(i)=T1pnew(i)
       enddo
 
-      if (isnant(T3pnew,nx)) then
+      if (any(ieee_is_nan(T3pnew))) then
         write(stderr,*) 'problem T3pnew dans la boucle 1'
         goto 246
       endif
@@ -5017,7 +5016,7 @@ c            T3tnew(i)=T1tnew(i)
         T3new(i)=(T3pnew(i)+2.*T3tnew(i))/3.
       enddo
 
-      if (isnant(T3tnew,nx)) then
+      if (any(ieee_is_nan(T3tnew))) then
         write(stderr,*) 'problem T3tnew dans la boucle 1'
         goto 246
       endif
@@ -5534,27 +5533,27 @@ c****************************************
           N5new(np)=min(1.,N5new(nx-1)/N5new(nx-2))*N5new(nx)
           N6new(np)=min(1.,N6new(nx-1)/N6new(nx-2))*N6new(nx)
 
-      if (isnant(N1new,nx)) then
+      if (any(ieee_is_nan(N1new))) then
         write(stderr,*) 'problem N1new dans la boucle 1'
         goto 246
       endif
-      if (isnant(N2new,nx)) then
+      if (any(ieee_is_nan(N2new))) then
         write(stderr,*) 'problem  N2new dans la boucle 1'
         goto 246
       endif
-      if (isnant(N3new,nx)) then
+      if (any(ieee_is_nan(N3new))) then
         write(stderr,*) 'problem N3new dans la boucle 1'
         goto 246
       endif
-      if (isnant(N4new,nx)) then
+      if (any(ieee_is_nan(N4new))) then
         write(stderr,*) 'problem  N4new dans la boucle 1'
         goto 246
       endif
-      if (isnant(N5new,nx)) then
+      if (any(ieee_is_nan(N5new))) then
         write(stderr,*) 'problem  N5new dans la boucle 1'
         goto 246
       endif
-      if (isnant(N6new,nx)) then
+      if (any(ieee_is_nan(N6new))) then
         write(stderr,*) 'problem  N6new dans la boucle 1'
         goto 246
       endif
@@ -5806,7 +5805,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
      &             +expnu*U2old(i)
           enddo
 
-      if (isnant(U2new,nx)) then
+      if (any(ieee_is_nan(U2new))) then
         write(stderr,*) 'problem U2new dans la boucle 2'
         goto 246
       endif
@@ -5927,7 +5926,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
      &             +expnu*U1old(i)
           enddo
 
-      if (isnant(U1new,nx)) then
+      if (any(ieee_is_nan(U1new))) then
         write(stderr,*) 'problem U1new dans la boucle 2'
         goto 246
       endif
@@ -6106,7 +6105,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
      &             +expnu*Umold(i)
           enddo
 
-      if (isnant(Umnew,nx)) then
+      if (any(ieee_is_nan(Umnew))) then
         write(stderr,*) 'problem  Umnew dans la boucle 2'
         goto 246
       endif
@@ -6222,7 +6221,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
      &             +expnu*U3old(i)
           enddo
 
-      if (isnant(U3new,nx)) then
+      if (any(ieee_is_nan(U3new))) then
         write(stderr,*) 'problem U3new dans la boucle 2'
         goto 246
       endif
@@ -6394,7 +6393,7 @@ c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
           q2new(nx)=max(0.,q2new(nx))
           q2new(np)=q2new(nx)
 
-      if (isnant(q2new,nx)) then
+      if (any(ieee_is_nan(q2new))) then
         write(stderr,*) 'problem q2new dans la boucle 2'
         goto 246
       endif
@@ -6528,7 +6527,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
           q1new(nx)=max(0.,q1new(nx))
           q1new(np)=q1new(nx)
 
-      if (isnant(q1new,nx)) then
+      if (any(ieee_is_nan(q1new))) then
         write(stderr,*) 'problem q1new dans la boucle 2'
         goto 246
       endif
@@ -6656,7 +6655,7 @@ C[[[   Boundaries conditions
           q3new(nx)=max(0.,q3new(nx))
           q3new(np)=q3new(nx)
 
-      if (isnant(q3new,nx)) then
+      if (any(ieee_is_nan(q3new))) then
         write(stderr,*) 'problem when calculating q3new in loop 2'
         goto 246
       endif
@@ -6924,19 +6923,17 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3q,0.,0.)
           qenew(nx)=qetop
           qenew(np)=qenew(nx)
 
-          if (isnant(qenew,nx)) then
-          call cpu_time(tic)
+      if (any(ieee_is_nan(qenew))) then
+        call cpu_time(tic)
         write(stderr,*) tic,'L6910: problem calc  qenew in loop 1'
-            goto 246
-          endif
+        goto 246
+      endif
 
+      D2eal=(D2ea(1)+D2ea(2))/2.
+      D2ebl=(D2eb(1)+D2eb(2))/2.
 
-
-          D2eal=(D2ea(1)+D2ea(2))/2.
-          D2ebl=(D2eb(1)+D2eb(2))/2.
-
-          D2ear=.5*(Uenew(np)+Uenew(nx))
-          D2ebr=.5*(qenew(np)+qenew(nx))
+      D2ear=.5*(Uenew(np)+Uenew(nx))
+      D2ebr=.5*(qenew(np)+qenew(nx))
     
       call sources(Ipos1,Iposn,deltat_4,2,C2ea,D2ea,D2eal,D2ear)
       call sources(Ipos1,Iposn,deltat_4,2,C2eb,D2eb,D2ebl,D2ebr)
@@ -6962,25 +6959,25 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
           tenew(np)=tenew(nx)
           Tenew(np)=2.*Tenew(nx)-Tenew(nx-1)
 
-          if (isnant(Tenew,nx)) then
-            call cpu_time(tic)
-            write(stderr,*) tic,'L6966: problem when calc Tenew  loop 1'
-            goto 246
-          endif
+      if (any(ieee_is_nan(Tenew))) then
+        call cpu_time(tic)
+        write(stderr,*) tic,'L6966: problem when calc Tenew  loop 1'
+        goto 246
+      endif
 
 
       call stabenerg(nx,xne,Teold,Tenew,qeold,qenew,
      &            D7e,D7q,Cei,deltat_4)
 
 
-          if (isnant(qenew,nx)) then
-            write(stderr,*) 'problem in stabenerg with qe in loop 1'
-            goto 246
-          endif
-          if (isnant(Tenew,nx)) then
-            write(stderr,*) 'problem in stabenerg with Te in loop 1'
-            goto 246
-          endif
+      if (any(ieee_is_nan(qenew))) then
+        write(stderr,*) 'problem in stabenerg with qe in loop 1'
+        goto 246
+      endif
+      if (any(ieee_is_nan(Tenew))) then
+        write(stderr,*) 'problem in stabenerg with Te in loop 1'
+        goto 246
+      endif
 
 c deuxieme demi-boucle
 
@@ -7031,11 +7028,11 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3q,0.,0.)
           qenew(nx)=qetop
           qenew(np)=qenew(nx)
 
-          if (isnant(qenew,nx)) then
-            call cpu_time(tic)
+      if (any(ieee_is_nan(qenew))) then
+        call cpu_time(tic)
         write(stderr,*) tic,'L7014: problem when calc qenew in loop 1'
-            goto 246
-          endif
+        goto 246
+      endif
 
 
 
@@ -7066,22 +7063,22 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
           tenew(np)=tenew(nx)
           Tenew(np)=2.*Tenew(nx)-Tenew(nx-1)
 
-          if (isnant(Tenew,nx)) then
-            call cpu_time(tic)
+      if (any(ieee_is_nan(Tenew))) then
+        call cpu_time(tic)
         write(stderr,*) tic,'L7049: problem when calc Tenew in loop 1'
-            goto 246
-          endif
+        goto 246
+      endif
 
 
       call stabenerg(nx,xne,Teold,Tenew,qeold,qenew,
      &            D7e,D7q,Cei,deltat_4)
 
 
-      if (isnant(qenew,nx)) then
+      if (any(ieee_is_nan(qenew))) then
         write(stderr,*) 'problem stabenerg avec qe dans la boucle 1'
         goto 246
       endif
-      if (isnant(Tenew,nx)) then
+      if (any(ieee_is_nan(Tenew))) then
         write(stderr,*) 'problem stabenerg avec Te dans la boucle 1'
         goto 246
       endif
@@ -7202,7 +7199,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
             T2pnew(i)=max(T2pnew(i),T_min)
       enddo
 
-      if (isnant(T2pnew,nx)) then
+      if (any(ieee_is_nan(T2pnew))) then
         write(stderr,*) 'problem T2pnew dans la boucle 2'
         goto 246
       endif
@@ -7308,7 +7305,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
         T2new(i)=(T2pnew(i)+2.*T2tnew(i))/3.
       enddo
 
-      if (isnant(T2tnew,nx)) then
+      if (any(ieee_is_nan(T2tnew))) then
         write(stderr,*) 'problem T2tnew dans la boucle 2'
         goto 246
       endif
@@ -7414,11 +7411,11 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
           enddo
           T1pnew(np)=T1pnew(nx)
 
-          do i=1,np
-            T1pnew(i)=max(T1pnew(i),T_min)
-          enddo
+      do i=1,np
+        T1pnew(i)=max(T1pnew(i),T_min)
+      enddo
 
-      if (isnant(T1pnew,nx)) then
+      if (any(ieee_is_nan(T1pnew))) then
         write(stderr,*) 'problem T1pnew dans la boucle 2'
         goto 246
       endif
@@ -7521,7 +7518,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
         T1new(i)=(T1pnew(i)+2.*T1tnew(i))/3.
           enddo
 
-      if (isnant(T1tnew,nx)) then
+      if (any(ieee_is_nan(T1tnew))) then
         call cpu_time(tic)
         write(stderr,*) tic,'problem when calculating T1tnew in loop 2'
         goto 246
@@ -7677,7 +7674,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
           enddo
 c    flag=.false.
 
-      if (isnant(Tmpnew,nx)) then
+      if (any(ieee_is_nan(Tmpnew))) then
         call cpu_time(tic)
         write(stderr,*) tic,'problem when calculating Tmpnew in loop 2'
         goto 246
@@ -7805,7 +7802,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
         Tmnew(i)=(Tmpnew(i)+2.*Tmtnew(i))/3.
           enddo
 
-      if (isnant(Tmtnew,nx)) then
+      if (any(ieee_is_nan(Tmtnew))) then
         write(stderr,*) 'problem calc Tmtnew loop 2'
         goto 246
       endif
@@ -7907,7 +7904,7 @@ c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
 c            T3pnew(i)=T1pnew(i)
       enddo
 
-      if (isnant(T3pnew,nx)) then
+      if (any(ieee_is_nan(T3pnew))) then
         call cpu_time(tic)
         write(stderr,*) tic,'problem when calculating T3pnew in loop 2'
         goto 246
@@ -8005,12 +8002,13 @@ c            T3tnew(i)=T1tnew(i)
         T3new(i)=(T3pnew(i)+2.*T3tnew(i))/3.
       enddo
 
-      if (isnant(T3tnew,nx)) then
+      if (any(ieee_is_nan(T3tnew))) then
         call cpu_time(tic)
         write(stderr,*) tic,'problem when calculating T3tnew in loop 2'
         goto 246
       endif
-456    continue
+
+456   continue
 
 C]]]
         enddo                    ! fin de boucle temporelle

@@ -120,7 +120,7 @@ c	  call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
      &		     +expnu*U2old(i)
           enddo
 
-          if (isnant(U2new,nx)) then
+          if (any(ieee_is_nan(U2new))) then
             print*,'probleme lors du calcul de U2new dans la boucle 1'
             goto 246
           endif
@@ -237,7 +237,7 @@ c	  call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
 c	  U1new(nx)=max(U1new(nx),-1000./Cj0)
 c	  U1new(nx)=max(U1new(nx),0.)
 
-          if (isnant(U1new,nx)) then
+          if (any(ieee_is_nan(U1new))) then
             print*,'probleme lors du calcul de U1new dans la boucle 1'
             goto 246
           endif
@@ -394,7 +394,7 @@ c	  call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
      &		     +expnu*Umold(i)
           enddo
 
-          if (isnant(Umnew,nx)) then
+          if (any(ieee_is_nan(Umnew))) then
             print*,'probleme lors du calcul de Umnew dans la boucle 1'
             goto 246
           endif
@@ -512,7 +512,7 @@ c	do i=1,nx
 c	  U3new(i)=U1new(i)
 c	enddo
 
-          if (isnant(U3new,nx)) then
+          if (any(ieee_is_nan(U3new))) then
             print*,'probleme lors du calcul de U3new dans la boucle 1'
             goto 246
           endif

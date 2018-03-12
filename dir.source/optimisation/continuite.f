@@ -1,15 +1,15 @@
 program modelisation
-
+use,intrinsic:: ieee_arithmetic, only: ieee_is_nan
 Implicit none
 
 
 ! Parametres de normalisation
-Real   ,parameter		:: N_o = 1.e12,T_o = 1000.
-Real   ,parameter		:: Tmin=50.,Nliminf=1.e0
+Real,parameter		:: N_o = 1.e12,T_o = 1000.
+Real,parameter		:: Tmin=50.,Nliminf=1.e0
 Real				:: C_o,P_o,Q_o,to,Ro
 
 ! Constantes terrestres
-Real   ,parameter		:: go=9.80665,rayon=6378.
+Real,parameter		:: go=9.80665,rayon=6378.
 
 Integer,parameter		:: nbpt=500
 
@@ -405,12 +405,12 @@ rbc=(N1old(npoint)/N1old(npoint-1))
 call lcpfct(N1old,N1new,Ipos1,Iposn,lbc,0.,0.,N1new(np),.false.,1)
 
 
-if (isnant(N1new,npoint)) then
+if (any(ieee_is_nan(N1new))) then
   print*,'probleme lors du calcul de N2new dans la boucle 1'
   do i=1,npoint
     print*,alt(i),N1old(i),Vel1c(i),D8n1(i),D7n1(i)
   enddo
-  goto 246
+  error stop
 endif
 do i=1,npoint
   N1new(i)=max(N1new(i),r_min)
@@ -436,7 +436,7 @@ if (isnant(N2new,npoint)) then
   do i=1,npoint
     print*,alt(i),N2old(i),Vel2c(i),D8n2(i),D7n2(i)
   enddo
-  goto 246
+  error stop
 endif
 do i=1,npoint
   N2new(i)=max(N2new(i),r_min)
@@ -462,7 +462,7 @@ if (isnant(N3new,npoint)) then
   do i=1,npoint
     print*,alt(i),N3old(i),Vel3c(i),D8n3(i),D7n3(i)
   enddo
-  goto 246
+  error stop
 endif
 do i=1,npoint
   N3new(i)=max(N3new(i),r_min)
@@ -488,7 +488,7 @@ if (isnant(N4new,npoint)) then
   do i=1,npoint
     print*,alt(i),N4old(i),Velmc(i),D8n4(i),D7n4(i)
   enddo
-  goto 246
+  error stop
 endif
 do i=1,npoint
   N4new(i)=max(N4new(i),r_min)
@@ -512,7 +512,7 @@ if (isnant(N5new,npoint)) then
   do i=1,npoint
     print*,alt(i),N5old(i),Velmc(i),D8n5(i),D7n5(i)
   enddo
-  goto 246
+  error stop
 endif
 do i=1,npoint
   N5new(i)=max(N5new(i),r_min)
@@ -536,7 +536,8 @@ if (isnant(N6new,npoint)) then
   do i=1,npoint
     print*,alt(i),N6old(i),Velmc(i),D8n6(i),D7n6(i)
   enddo
-  goto 246
+  error stop
+  
 endif
 do i=1,npoint
   N6new(i)=max(N6new(i),r_min)

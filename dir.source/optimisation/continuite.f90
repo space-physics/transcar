@@ -405,7 +405,7 @@ rbc=(N1old(npoint)/N1old(npoint-1))
 call lcpfct(N1old,N1new,Ipos1,Iposn,lbc,0.,0.,N1new(np),.false.,1)
 
 
-if (isnant(N1new,npoint)) then
+if (any(ieee_is_nan(N1new))) then
   print*,'probleme lors du calcul de N2new dans la boucle 1'
   do i=1,npoint
     print*,alt(i),N1old(i),Vel1c(i),D8n1(i),D7n1(i)
@@ -431,7 +431,7 @@ rbc=(N2old(npoint)/N2old(npoint-1))
 call lcpfct(N2old,N2new,Ipos1,Iposn,lbc,0.,0.,N2new(np),.false.,1)
 
 
-if (isnant(N2new,npoint)) then
+if (any(ieee_is_nan(N2new))) then
   print*,'probleme lors du calcul de N1new dans la boucle 1'
   do i=1,npoint
     print*,alt(i),N2old(i),Vel2c(i),D8n2(i),D7n2(i)
@@ -457,7 +457,7 @@ rbc=(N3old(npoint)/N3old(npoint-1))
 call lcpfct(N3old,N3new,Ipos1,Iposn,lbc,0.,0.,N3new(np),.false.,1)
 
 
-if (isnant(N3new,npoint)) then
+if (any(ieee_is_nan(N3new))) then
   print*,'probleme lors du calcul de N3new dans la boucle 1'
   do i=1,npoint
     print*,alt(i),N3old(i),Vel3c(i),D8n3(i),D7n3(i)
@@ -483,7 +483,7 @@ rbc=(N4old(npoint)/N4old(npoint-1))
 call lcpfct(N4old,N4new,Ipos1,Iposn,lbc,0.,0.,N4new(np),.false.,1)
 
 
-if (isnant(N4new,npoint)) then
+if (any(ieee_is_nan(N4new))) then
   print*,'probleme lors du calcul de N4new dans la boucle 1'
   do i=1,npoint
     print*,alt(i),N4old(i),Velmc(i),D8n4(i),D7n4(i)
@@ -507,7 +507,7 @@ rbc=(N5old(npoint)/N5old(npoint-1))
 call lcpfct(N5old,N5new,Ipos1,Iposn,lbc,0.,0.,N5new(np),.false.,1)
 
 
-if (isnant(N5new,npoint)) then
+if (any(ieee_is_nan(N5new))) then
   print*,'probleme lors du calcul de N5new dans la boucle 1'
   do i=1,npoint
     print*,alt(i),N5old(i),Velmc(i),D8n5(i),D7n5(i)
@@ -531,7 +531,7 @@ rbc=(N6old(npoint)/N6old(npoint-1))
 call lcpfct(N6old,N4new,Ipos1,Iposn,lbc,0.,0.,N6new(np),.false.,1)
 
 
-if (isnant(N6new,npoint)) then
+if (any(ieee_is_nan(N6new))) then
   print*,'probleme lors du calcul de N6new dans la boucle 1'
   do i=1,npoint
     print*,alt(i),N6old(i),Velmc(i),D8n6(i),D7n6(i)

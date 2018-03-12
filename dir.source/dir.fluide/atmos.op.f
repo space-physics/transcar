@@ -1,13 +1,14 @@
        subroutine atmos(iyd,ces,stl,z,glat,glong,jpreci,f107,
      &            ap,Ne,Te,Tj,nx,kiappel,file_cond)
 
+        use, intrinsic:: ieee_arithmetic,only: ieee_is_nan
         include 'comm.f'
 
         include 'TRANSPORT.INC'
 
-        logical isnant,flgnan
+        logical flgnan
         common/nan/flgnan
-        external isnant
+
 
 C    SIGNIFICATION DES VARIABLES DE CE SOUS-PROGRAMME
 
@@ -567,58 +568,58 @@ c     Transport cinetique. Kinetic transport
 
         if (flgini) then
         flgnan=.true.
-               if (isnan(glat)) then
+               if (ieee_is_nan(glat)) then
                  write(stderr,*),'atmos: NaN detected in glat'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop
-               elseif (isnan(glong)) then
+                 error stop
+               elseif (ieee_is_nan(glong)) then
                  write(stderr,*),'atmos: NaN detected in glong'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 
-               elseif (isnan(sec)) then
+                 error stop 
+               elseif (ieee_is_nan(sec)) then
                  write(stderr,*),'atmos: NaN in sec'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop
-               elseif (isnan(stl)) then
+                 error stop
+               elseif (ieee_is_nan(stl)) then
                  write(stderr,*),'atmos: NaN in stl'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop
-               elseif (isnant(ne,nx)) then
+                 error stop
+               elseif (any(ieee_is_nan(ne))) then
                  write(stderr,*),'atmos: NaN in Ne'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop
-               elseif (isnant(te,nx)) then
+                 error stop
+               elseif (any(ieee_is_nan(te))) then
                  write(stderr,*),'atmos: NaN in Te'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop
-               elseif (isnant(tj,nx)) then
+                 error stop
+               elseif (any(ieee_is_nan(tj))) then
                  write(stderr,*),'problem with tj'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop 
-               elseif (isnant(nh,nx)) then
+                 error stop 
+               elseif (any(ieee_is_nan(nh))) then
                  write(stderr,*),'problem with nh'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop
-               elseif (isnant(no,nx)) then
+                 error stop
+               elseif (any(ieee_is_nan(no))) then
                 write(stderr,*),'problem with no'
                 write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop
-               elseif (isnant(no2,nx)) then
+                 error stop
+               elseif (any(ieee_is_nan(no2))) then
                  write(stderr,*),'problem with no2'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop
-               elseif (isnant(nn2,nx)) then
+                 error stop
+               elseif (any(ieee_is_nan(nn2))) then
                  write(stderr,*),'problem with nn2'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop
-               elseif (isnant(nn,nx)) then
+                 error stop
+               elseif (any(ieee_is_nan(nn))) then
                  write(stderr,*),'problem with nn'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop
-               elseif (isnant(tn,nx)) then
+                 error stop
+               elseif (any(ieee_is_nan(tn))) then
                  write(stderr,*),'problem with tn'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 stop
+                 error stop
                endif
                flgnan=.false.
                flg_err=.false.

@@ -3,40 +3,13 @@
 Executes Transcar to output "monoenergetic" electron beams.
 Optionally, in parallel.
 """
-import multiprocessing
 import concurrent.futures
 import logging
+import itertools
 from pathlib import Path
 from pandas import read_csv
 #
-from transcar import setuptranscario,setupPrecipitation,runTranscar,transcaroutcheck
-#
-Ncpu=multiprocessing.cpu_count() // 2  # //2 makes one thread per CPU for 2 thread Intel Hyperthreading
-
-# %%
-def runbeam(rodir:Path, Q0:float, beam, logfn:Path, errfn:Path):
-# %% copy the Fortran static init files to this directory (simple but robust)
-    datinp,odir = setuptranscario(rodir, beam['E1'])
-    setupPrecipitation(odir, datinp, beam, Q0)
-# %% run the compiled executable
-    runTranscar(odir, errfn, logfn)
-#%% check output trivially
-    isok = transcaroutcheck(odir, errfn)
-
-    return isok
-
-
-def okmain(beam):
-    beam = beam[1]
-    #rint(beam)
-    isok = runbeam(rodir, p.Q0, beam, p.msgfn, p.errfn)
-
-
-    if not isok:
-        logging.warning(f'retrying beam{beam["E1"]}')
-        isok = runbeam(rodir, p.Q0, beam, p.msgfn, p.errfn)
-        if not isok:
-            logging.error(f'failed on beam{beam["E1"]} on 2nd try, aborting')
+import transcar
 
 
 if __name__ == '__main__':
@@ -55,6 +28,12 @@ if __name__ == '__main__':
     rodir = Path(p.rodir).expanduser()
     infn = Path(p.infn).expanduser()
 
+    params = {'rodir':rodir,
+              'Q0':p.Q0,
+              'msgfn':p.msgfn,
+              'errfn':p.errfn
+              }
+
     rodir.mkdir(parents=True,exist_ok=True)
     logging.basicConfig(filename=rodir/'Beams.log',
                             filemode='a',
@@ -63,10 +42,9 @@ if __name__ == '__main__':
                             level=logging.DEBUG)
 
     beams = read_csv(infn, header=None, names=['E1','E2','pr1','pr2'])
-    abeam = beams.values
-
-    print(Ncpu,'workers')
-
-    with concurrent.futures.ProcessPoolExecutor(max_workers=Ncpu) as executor:
-        executor.map(okmain, beams.iterrows())
+# %%
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        executor.map(transcar.iterbeams,
+                     beams.iterrows(), itertools.repeat(params),
+                     timeout=600)
 

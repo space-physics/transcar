@@ -2,6 +2,7 @@
 install_requires=['python-dateutil','pytz','pandas','transcarread']
 tests_require=['pytest','nose','coveralls']
 # %%
+import sys
 from setuptools import setup,find_packages
 import subprocess
 
@@ -24,5 +25,9 @@ setup(name='transcar',
       scripts=['RunTranscar.py'],
 	  )
 
-subprocess.check_call(['cmake','..'],cwd='dir.source/dir.obj')
-subprocess.check_call(['make'],cwd='dir.source/dir.obj')
+if  sys.platform =='win32':
+    subprocess.check_call(['cmake','-G','MinGW Makefiles','..'],cwd='dir.source/dir.obj')
+    subprocess.check_call(['mingw32-make'],cwd='dir.source/dir.obj')
+else:
+    subprocess.check_call(['cmake','..'],cwd='dir.source/dir.obj')
+    subprocess.check_call(['make'],cwd='dir.source/dir.obj')

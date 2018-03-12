@@ -1,7 +1,7 @@
 from pathlib import Path
-from shutil import copy2
+import shutil
 import logging
-from collections import deque
+import collections
 import subprocess
 from pytz import UTC
 from datetime import datetime
@@ -15,8 +15,33 @@ ddat = Path('dir.data')
 DATCAR = din / 'DATCAR'
 precfn = din / 'precinput.dat'
 
-# %%
-def cp_parents(files, target_dir:Path):
+def iterbeams(beam, P:dict):
+    if isinstance(beam,tuple):
+        beam = beam[1]
+
+    isok = runbeam(beam, P)
+
+    print(isok)
+    if not isok:
+        logging.warning(f'retrying beam{beam["E1"]}')
+        isok = runbeam(beam, P)
+        if not isok:
+            logging.error(f'failed on beam{beam["E1"]} on 2nd try, aborting')
+
+
+def runbeam(beam, P:dict) -> bool:
+# %% copy the Fortran static init files to this directory (simple but robust)
+    datinp,odir = setuptranscario(P['rodir'], beam['E1'])
+    setupPrecipitation(odir, datinp, beam, P['Q0'])
+# %% run the compiled executable
+    runTranscar(odir, P['errfn'], P['msgfn'])
+#%% check output trivially
+    isok = transcaroutcheck(odir, P['errfn'])
+
+    return isok
+
+
+def cp_parents(files:list, target_dir:Path):
     """
     This function requires Python >= 3.6.
 
@@ -42,7 +67,7 @@ def cp_parents(files, target_dir:Path):
     for f in files:
         newpath = target_dir / f.parent #to make it work like cp --parents, copying absolute paths if specified
         newpath.mkdir(parents=True, exist_ok=True)
-        copy2(f, newpath)
+        shutil.copy2(f, newpath)
 
 
 def runTranscar(odir:Path, errfn:Path, msgfn:Path):
@@ -68,7 +93,7 @@ def transcaroutcheck(odir:Path,errfn:Path,ok:str='STOP fin normale')->bool:
     fok = odir / FOK
     try:
         with (odir/errfn).open('r') as ferr:
-            last = deque(ferr,1)[0].rstrip('\n')
+            last = collections.deque(ferr,1)[0].rstrip('\n')
 
         if last == ok:
             isok=True

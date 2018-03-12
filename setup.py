@@ -1,13 +1,13 @@
 #!/usr/bin/env python
-install_requires=['python-dateutil','pandas','transcarread']
-tests_require=['nose','coveralls']
+install_requires=['python-dateutil','pytz','pandas','transcarread']
+tests_require=['pytest','nose','coveralls']
 # %%
 from setuptools import setup,find_packages
 import subprocess
 
 setup(name='transcar',
       packages=find_packages(),
-      version='0.1.0',
+      version='0.2.0',
       author='Michael Hirsch, Ph.D.',
       url='https://github.com/scivision/transcar',
       classifiers=[
@@ -21,6 +21,7 @@ setup(name='transcar',
       install_requires=install_requires,
       tests_require=tests_require,
       extras_require={'tests':tests_require,},
+      scripts=['RunTranscar.py'],
 	  )
 
 subprocess.check_call(['cmake','..'],cwd='dir.source/dir.obj')

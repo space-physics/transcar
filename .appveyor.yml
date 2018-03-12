@@ -23,10 +23,8 @@ before_build:
 - sh: sudo apt-get install -yq --no-install-suggests --no-install-recommends gfortran-6 cmake make > /dev/null
 - sh: export FC=/usr/bin/gfortran-6
 
-- cd dir.source/dir.obj
-
 build_script:
-- pip -q install -e .[tests]
+- pip  install -e .[tests]
 
 after_build:
 - pytest -v

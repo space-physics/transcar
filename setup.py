@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-install_requires=['python-dateutil','pytz','pandas','transcarread']
-tests_require=['pytest','nose','coveralls']
+install_requires=['python-dateutil','pytz','pandas']
+tests_require=['pytest','nose','coveralls','transcarread']
 # %%
 import sys
 from setuptools import setup,find_packages

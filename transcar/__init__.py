@@ -7,7 +7,7 @@ from pytz import UTC
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 # %% constants dictacted by legacy Fortran code
-transcarexe = 'transconvec_13.op.out'
+transcarexe = 'transconvec'
 FOK = 'finish.status'
 # hard-coded in Fortran
 din = Path('dir.input')
@@ -78,13 +78,10 @@ def runTranscar(odir:Path, errfn:Path, msgfn:Path):
         exe = [str(odir / transcarexe)]
 
         # Note: subprocess.run() is blocking by design.
-        #       subprocess.Popen() is non-blocking (unless commanded to wait)
-        subprocess.run(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
+        subprocess.run(exe, cwd=odir, stdout=fout, stderr=ferr)
 
-        # current code error checks rely on serial operation.
-        #subprocess.Popen(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
 
-def transcaroutcheck(odir:Path,errfn:Path,ok:str='STOP fin normale')->bool:
+def transcaroutcheck(odir:Path, errfn:Path, ok:str='STOP fin normale')->bool:
     """
     checks for text at end of file
 
@@ -119,7 +116,8 @@ def setuptranscario(rodir:Path, beamEnergy:float):
     (odir/'dir.output').mkdir(parents=True, exist_ok=True)
 # %% move files where needed for this instantiation
     if not Path(transcarexe).is_file():
-        raise FileNotFoundError('Need to compile Transcar Fortran code.  python -m pip install -e .')
+        raise FileNotFoundError(f'could not find {transcarexe}. May need to compile Transcar Fortran code:\n python -m pip install -e .')
+        
     flist = [DATCAR, din / inp['precfile'], ddat / 'type', transcarexe]
     flist += [ddat / 'dir.linux/dir.geomag' / s  for s in ['data_geom.bin','igrf90.dat','igrf90s.dat']]
     flist += [ddat / 'dir.linux/dir.projection/varpot.dat']

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(transcar Fortran)
 
-add_compile_options(-march=native -Wline-truncation -g -fbacktrace)
+add_compile_options(-march=native -O3 -Wline-truncation -g -fbacktrace)
 
 # compiler dependent flags necessary for disk files used (sorry)
 if(${CMAKE_Fortran_COMPILER_ID} MATCHES GNU)
@@ -18,8 +18,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../..)
 
 include_directories(dir.include)
 
-add_executable(transconvec_13.op.out ../transconvec_13.op.f ../reacrates.f)
-target_link_libraries(transconvec_13.op.out fluide numeric system proj
+add_executable(transconvec ../transconvec_13.op.f ../reacrates.f)
+target_link_libraries(transconvec fluide numeric system proj
                        convec geomag transelec imm)
 
 #---- build libraries ----------

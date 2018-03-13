@@ -25,7 +25,7 @@ conttanh.dat                                input file (initial ionospheric cond
 precinput.dat   	                electron precipitation distribution file (energy (eV) in first column, number flux (cm^-2 s^-1 eV^-1 sr^-1) in second column)
 1					precint, precipation energy interpolation (see table below, INTEGER)
 1					precext, precipation energy extrapolation (see table below, INTEGER)
-32420.					precipitation start time (seconds from day start)
+32400.					precipitation start time (seconds from day start)
 32440.					precipitation end time (seconds from day start)
 
 

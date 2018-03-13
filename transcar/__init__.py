@@ -124,7 +124,7 @@ def transcaroutcheck(odir:Path,errfn:Path,ok:str='STOP fin normale')->bool:
 def setuptranscario(rodir:Path, beamEnergy:float):
     inp = readTranscarInput(root/DATCAR)
 
-    odir = rodir / f'beam{beamEnergy:.1f}'
+    odir = Path(rodir).expanduser() / f'beam{beamEnergy:.1f}'
 
     (odir/'dir.output').mkdir(parents=True, exist_ok=True)
 # %% move files where needed for this instantiation
@@ -145,9 +145,9 @@ def setuptranscario(rodir:Path, beamEnergy:float):
     return inp, odir
 
 
-def setupPrecipitation(odir,inp,beam, flux0):
+def setupPrecipitation(odir:Path, inp,beam, flux0):
     """this writes dir.input/precinput.dat for the first time step, for each beam"""
-    ofn = odir / precfn
+    ofn = Path(odir).expanduser() / precfn
 
     E1 = beam['E1']
     E2 = beam['E2']

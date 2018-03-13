@@ -2,13 +2,23 @@
      &            ap,Ne,Te,Tj,nx,kiappel,file_cond)
 
       use, intrinsic:: ieee_arithmetic,only: ieee_is_nan
-      use comm, only: stderr
+      use comm, only: stderr, npt,rad2deg,tic
 
-      include 'TRANSPORT.INC'
+      implicit none
+
+      integer, intent(in) :: iyd,nx
+      integer, intent(inout) :: jpreci
+      real, intent(in) :: glat,glong
 
       logical flgnan
       common/nan/flgnan
 
+
+      real :: b,burnside,coef_cour,coefchamp,coloss,dtz,fact,flag_fct,
+     &   p_0,temploc
+      integer :: i,icira,indlim,indlim_1,nan,njour
+      
+      real,external :: coskhi,ap2kp
 
 C    SIGNIFICATION DES VARIABLES DE CE SOUS-PROGRAMME
 
@@ -179,8 +189,6 @@ C       FLAGOHOT False to omit Hot O, True to simulate Hot O
 C
 C       --MZ
 
-
-        parameter (npt=500)
 
         integer file_cond
         real z(npt),Ne(npt),Te(npt),Tj(npt)

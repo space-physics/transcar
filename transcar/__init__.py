@@ -24,8 +24,9 @@ def iterbeams(beam, P:dict):
 
     isok = runbeam(beam, P)
 
-    print(isok)
-    if not isok:
+    if isok:
+        print(f'OK {beam["E1"]:.0f} eV')
+    else:
         logging.warning(f'retrying beam{beam["E1"]}')
         isok = runbeam(beam, P)
         if not isok:

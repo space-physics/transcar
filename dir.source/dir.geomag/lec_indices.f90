@@ -3,7 +3,6 @@ subroutine lec_indices(ian,imois,ijour,tu,ap,f107)
 ! an      year
 ! mois    month
 ! jour    day
-! chemin  path
 
 implicit none
 integer,intent(in) :: ian,imois,ijour
@@ -11,7 +10,7 @@ real,intent(in)  :: tu
 real,intent(out) :: ap(7),f107(3)
 
 integer   :: recsize=2*62,offset
-integer i,ihe
+integer i,ihe,u
 integer   :: ian_deb,iday_deb,km,kj,k,num_rec
 
 integer*2 :: idat(6),kdat(7,8)
@@ -19,19 +18,18 @@ integer*4 :: ftell,num,max_num
 integer*8 :: ftelli8
 integer*2 ::tempo(124)
 
-include 'CHEMIN.INC'
 
 print*,'record size=',recsize
 
-open(59,file='dir.data/dir.linux/dir.geomag/data_geom.bin', &
+open(newunit=u,file='dir.data/dir.linux/dir.geomag/data_geom.bin', &
         access='direct',recl=recsize,form='unformatted',status='old')
 
-call fseek(59,0,2)
-max_num=(ftell(59)-8)/recsize
+call fseek(u,0,2)
+max_num=(ftell(u)-8)/recsize
 
 
 
-read(59,rec=1) idat
+read(u,rec=1) idat
 ian_deb = idat(1)
 iday_deb = idat(3)
 
@@ -42,7 +40,7 @@ ihe=tu
 print*,'num,max_num=',num,max_num
 if (num<=max_num) then
 
-  read(59,rec=num) idat,kdat
+  read(u,rec=num) idat,kdat
 
 !
 !   Les 6 premiers parametres lus sont respectivement :
@@ -88,7 +86,7 @@ else
 
 endif
 
-close(59)
+ close(u)
 
 print*,idat
 print*,f107,ap

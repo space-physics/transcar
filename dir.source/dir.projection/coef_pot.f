@@ -5,9 +5,6 @@
       implicit none
 
 
-      include 'TRANSPORT.INC'
-      
-
       real(dp),intent(in) :: tu
       real,intent(in) :: kp
       integer,intent(in) :: iyd
@@ -22,7 +19,7 @@
 
       integer len_coef,len_rec,len_buf,irec
       
-      integer iyddeb,iydfin,i
+      integer iyddeb,iydfin,i,u
       real buffer(1000)
       real(dp) phi(3*npt)
 
@@ -94,11 +91,12 @@
           ierr=1
           flgini=.false.
           
-          open(87,file='dir.data/dir.linux/dir.projection/varpot.dat',
-     &       form='unformatted',access='direct',status='old',recl=40,
-     &         iostat=ierr,err=999)
+        open(newunit=u,
+     &   file='dir.data/dir.linux/dir.projection/varpot.dat',
+     &   form='unformatted',access='direct',status='old',recl=40,
+     &     iostat=ierr,err=999)
 
-          read(87,rec=1)(buffer(i),i=1,10)
+          read(u,rec=1)(buffer(i),i=1,10)
           ndeg=buffer(5)
           mdeg=buffer(6)
           len_coef=(2*mdeg+1)*(ndeg+1)
@@ -108,7 +106,7 @@
       endif
 
 999    continue
-      close(87)
+      close(u)
       if (ierr.gt.0) then 
       
         call cpu_time(tic)
@@ -137,9 +135,10 @@
           
       else
 ! continue to read varpot.dat
-           open(87,file='dir.data/dir.linux/dir.projection/varpot.dat',
-     &        form='unformatted',access='direct',status='old',
-     &         recl=len_rec,iostat=ierr)
+       open(newunit=u,
+     &   file='dir.data/dir.linux/dir.projection/varpot.dat',
+     &   form='unformatted',access='direct',status='old',
+     &   recl=len_rec,iostat=ierr)
 
            xt=iyd+tu*1.d-6
               if (iyd.lt.1900000) xt=xt+1900000.d0
@@ -150,7 +149,7 @@
                 if (xtf.gt.xt) irec=max(irec-1,1)
                 if (xtf.le.xt) irec=irec+1
 
-                read(87,rec=irec) (buffer(i),i=1,len_buf)
+                read(u,rec=irec) (buffer(i),i=1,len_buf)
                 iyddeb=buffer(1)
                 tempsdeb=buffer(2)
                 iydfin=buffer(3)
@@ -169,7 +168,7 @@
                   phipot(i)=buffer(10+i)
                 end do
            end do
-           close(87)
+           close(u)
 
       End If
 

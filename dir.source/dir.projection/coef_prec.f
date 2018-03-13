@@ -1,16 +1,14 @@
-	subroutine coef_prec(iyd,tu,kp,ndeg,mdeg,phienerg,phifluxE,
+      subroutine coef_prec(iyd,tu,kp,ndeg,mdeg,phienerg,phifluxE,
      &			     Lmin,Lmax,latequi,ierr)
 
-	implicit none
-
-        include 'TRANSPORT.INC'
+      implicit none
 
         integer ndeg,mdeg,ierr,i
-	integer iyddeb,iydfin,iyd
-	real*8 tu
-	real kp,ddp
-	real*8 latequi,Lmin,Lmax
-	complex*16 phifluxE(1),phienerg(1)
+        integer iyddeb,iydfin,iyd
+        real*8 tu
+        real kp,ddp
+        real*8 latequi,Lmin,Lmax
+        complex*16 phifluxE(1),phienerg(1)
 
 	real*8 temps,tempsdeb,tempsfin,xt,xtd,xtf
 	logical flgini
@@ -63,5 +61,5 @@
 	  close(77)
 	  close(78)
 	endif
-	return
-	end
+
+	end subroutine coef_prec

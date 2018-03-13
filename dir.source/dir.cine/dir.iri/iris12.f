@@ -135,10 +135,6 @@ C*****************************************************************
 C*****************************************************************
 
 
-      include 'CHEMIN.INC'
-
-
-
       INTEGER 		EGNR,AGNR,DAYNR,DDO,DO2,SEASON,SEADAY
       REAL 		LATI,LONGI,MO2,MO,MODIP,NMF2,MAGBR
       REAL  		NMF1,NME,NMD,NEI,MM,MLAT,MLONG,NOBO2

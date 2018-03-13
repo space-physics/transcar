@@ -23,8 +23,6 @@
       real,parameter :: atomas(8) = [28.0134,31.9988,15.9994,1.00797,
      &   4.0026,14.0067, 39.948,30.0061]       
 
-        include 'CHEMIN.INC'
-
       real, parameter :: rayonUA=1.,N_0=1.e4,T_0=1000.
      
        character(*), parameter :: specie(*)=['[N2]','[O2]','[O] ',

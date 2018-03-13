@@ -10,9 +10,13 @@ real(dp),parameter :: rad2deg = 180/pi
 
 integer, parameter :: npt=500
 
+logical :: debug=.false.
+
+
 real :: tic,toc
 
-logical :: debug=.false.
+character(512) :: data_path
+integer :: lpath
 
 
 contains

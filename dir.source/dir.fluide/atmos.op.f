@@ -1,13 +1,13 @@
-       subroutine atmos(iyd,ces,stl,z,glat,glong,jpreci,f107,
+      subroutine atmos(iyd,ces,stl,z,glat,glong,jpreci,f107,
      &            ap,Ne,Te,Tj,nx,kiappel,file_cond)
 
-        use, intrinsic:: ieee_arithmetic,only: ieee_is_nan
-        include 'comm.f'
+      use, intrinsic:: ieee_arithmetic,only: ieee_is_nan
+      use comm, only: stderr
 
-        include 'TRANSPORT.INC'
+      include 'TRANSPORT.INC'
 
-        logical flgnan
-        common/nan/flgnan
+      logical flgnan
+      common/nan/flgnan
 
 
 C    SIGNIFICATION DES VARIABLES DE CE SOUS-PROGRAMME
@@ -446,7 +446,7 @@ C       --MZ
          secOHot=sec
 
          call cpu_time(tic)
-         write(stdout,*),tic,' atmos: call gtd6, hot O. glat=',glat
+         print *,tic,' atmos: call gtd6, hot O. glat=',glat
          call gtd6(iyd,secOHot,zNOHotRef,glat,glong,stl,
      &        f107(3),f107(2),ap,48,d,t)
          NOHotRef=pctOHot*0.01*d(2)

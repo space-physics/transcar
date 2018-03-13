@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(transcar Fortran)
 
-add_compile_options(-march=native -O3 -Wline-truncation -g -fbacktrace)
+add_compile_options(-march=native -O3 -Wline-truncation -g -fbacktrace -fmax-errors=2)
 
 # compiler dependent flags necessary for disk files used (sorry)
 if(${CMAKE_Fortran_COMPILER_ID} MATCHES GNU)

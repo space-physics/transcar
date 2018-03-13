@@ -1,8 +1,7 @@
       program transconvec_13
-      use, intrinsic:: iso_fortran_env, only: real32, real64
+      use, intrinsic:: iso_fortran_env, only: real32, dp=>real64
       use, intrinsic:: ieee_arithmetic, only: ieee_is_nan  
-      use comm, only: stderr,dp,wp
-      include 'comm_sp.f'
+      use comm, only: stderr,dp,wp, npt, debug
       include 'TRANSPORT.INC'
         
 
@@ -10,7 +9,7 @@
 !     Anciennement : eiscat.f
       character(80) split,gridfn
 
-      integer,parameter :: npt=500,xcoeffno=1.,ncol0=50,intemps0=300,
+      integer,parameter :: xcoeffno=1.,ncol0=50,intemps0=300,
      &                     nb_ion=6,
      &  nb_position_max=100     ! Modif DA 02/02 2001
         logical multi_position                  ! Modif DA 02/02 2001
@@ -31,7 +30,7 @@
      
      
        real,parameter ::rx0=0.
-       real(real64), parameter :: dx0=0.d0
+       real(dp), parameter :: dx0=0.0_dp
        integer, parameter :: i1=1
         
       real,parameter :: Aq(*) = [7.883e-6,9.466e-6,1.037e-7],
@@ -41,9 +40,8 @@
      &                 Eq(*) =[227.,326.6,98.9],
      &                 Sq(*) =[2.98e-23,1.91e-23,1.32e-27]
 
-        data zeddy/100./
-
-        data tex0,dte/20000.,0.005/
+      real, parameter :: zeddy=100., dte=0.005
+      real :: tex0=20000.
      
         data B0,sinI0,cosI0/.542,.9848,.1736/
 
@@ -273,9 +271,7 @@
         real nuni0,nunj0,nune0,nunk0,nunl0,nunm0,nunn0
 
         real coefg(npt)
-        real zeddy,Eddy,nueddy,nun,Dmol,Ntot,rhotot,Diff,mred,mmoy
-
-        real tex0,dte
+        real Eddy,nueddy,nun,Dmol,Ntot,rhotot,Diff,mred,mmoy
 
         real coefqk,coefql,coefqm
 

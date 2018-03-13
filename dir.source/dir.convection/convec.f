@@ -1,11 +1,9 @@
-       subroutine convec(iyd,tu,kp,dlongeo,dlatgeo,
+      subroutine convec(iyd,tu,kp,dlongeo,dlatgeo,
      &                   dlonmag,dlatmag,dlonref,dt,psi0,flgpot)
 
-       include 'comm.f'
+      use comm, only: dp, deg2rad
 
        implicit none
-       
-       include 'comm_dp.f'
 
        real(dp),intent(inout) :: dlonmag
 
@@ -22,7 +20,7 @@
        real(dp) dt1,dt2,pideg
        real(dp) vh,vp,vpnord,vpest,dlatmag
        real(dp) loc(2,2),dpot(2)
-       complex(zp) cpsi
+       complex(dp) :: cpsi
        real zref,year
        integer i,j,iyd
        logical flgpot,flgini
@@ -71,7 +69,7 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
        tmag=dtmag
        dlonmlt=dtmag*15._dp
 
-       write(stdout,*),'convec.f: call potentiel, dlonmag,dlonmlt',
+       print *,'convec.f: call potentiel, dlonmag,dlonmlt',
      &   dlonmag,dlonmlt
        call potentiel(iyd,tu,kp,dlonmlt,dlatmag ,EE(1),EE(2),psi,ddp)
        
@@ -93,15 +91,15 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
        
         dlon = vpest*dt/re/cos(min(dlatmag,lat_top)*deg2rad)
         dlat =  vh*dt/re
-       if (dlon.ne.0.d0 .and. dlat.ne.0.d0) then
-         write(stdout,*),'convec.f: call cor_cnv   dlonmlt,dlatmag ',
+       if (dlon.ne.0.0_dp .and. dlat.ne.0.0_dp) then
+         print *,'convec.f: call cor_cnv   dlonmlt,dlatmag ',
      &                    dlonmlt,dlatmag
      
          dtheta=cor_cnv(iyd,tu,kp,dlonmlt,dlatmag,
      &			   dlat,dlon,psi0)
-         dlonmag=dlonmlt-(tu+dt)/240.d0-dlonref
-         dlonmag=mod(dlonmag+360.d0,360.d0)
-      write(stdout,*),'convec.f: call mag2geo,',
+         dlonmag=dlonmlt-(tu+dt)/240.0_dp-dlonref
+         dlonmag=mod(dlonmag+360.0_dp,360.0_dp)
+      print *,'convec.f: call mag2geo,',
      &                ' dlatmag,dlonmag,dlatgeo,dlongeo:',
      &                   dlatmag,dlonmag,dlatgeo,dlongeo
          call mag2geo(dlatmag,dlonmag,dlatgeo,dlongeo)
@@ -133,9 +131,9 @@ c100       format(a2,10(1x,g15.8))
 
 
       subroutine integ(lat,lon,dlat,dlon)
-        include 'comm.f'        
+       use comm, only: dp, deg2rad, rad2deg
         implicit none
-        include 'comm_dp.f'
+
         real(dp),intent(inout) :: lat,lon
         real(dp),intent(in) :: dlat,dlon
 
@@ -145,9 +143,9 @@ c100       format(a2,10(1x,g15.8))
 
         lon=lon+dlon*rad2deg
         lat=lat+dlat*rad2deg
-        if (lat.ge.90.d0) then
-            lat=180._dp-lat
-            lon=lon+180._dp
+        if (lat>=90.0_dp) then
+            lat=180.0_dp-lat
+            lon=lon+180.0_dp
         endif
         return
 
@@ -178,9 +176,9 @@ c        lon=datan2(sb,cb)*rad2deg
 
       double precision function cor_cnv(iyd,tu,kp,lonmlt,latmag,
      &              dlat,dlon,psi0)
-       include 'comm.f'
+       use comm, only: dp, debug, pi, tic
        implicit none
-       include 'comm_dp.f'
+
 
        integer, intent(in) :: iyd
        real(dp), intent(in) :: tu,psi0
@@ -203,7 +201,7 @@ c        lon=datan2(sb,cb)*rad2deg
 
 
 
-        deupi=2.d0*pi
+        deupi=2.0_dp*pi
         a=angle_ref
         lat=latmag
         lon=lonmlt
@@ -215,27 +213,27 @@ c        lon=datan2(sb,cb)*rad2deg
         fb=potar(iyd,tu,kp,lonmlt,latmag,dla,dlo,b,psi0)
         c=-b
         fc=potar(iyd,tu,kp,lonmlt,latmag,dla,dlo,c,psi0)
-        a2=(fb+fc)/2.d0/ds**2
-        a1=(fb-fc)/2.d0/ds
-        delta=a1*a1+4.d0*fa*a2
-        if (a2.ne.0.d0) then
-          delta=a1*a1+4.d0*fa*a2
-          if (delta.gt.0.d0) then
-            if (fb.ge.fc) then
-              b=(a1-sqrt(delta))/2.d0/a2
+        a2=(fb+fc)/2.0_dp/ds**2
+        a1=(fb-fc)/2.0_dp/ds
+        delta=a1*a1+4.0_dp*fa*a2
+        if (a2.ne.0.0_dp) then
+          delta=a1*a1+4.0_dp*fa*a2
+          if (delta > 0.0_dp) then
+            if (fb >= fc) then
+              b=(a1-sqrt(delta))/2.0_dp/a2
             else
-              b=(a1+sqrt(delta))/2.d0/a2
+              b=(a1+sqrt(delta))/2.0_dp/a2
             endif
-            b=2.d0*b/ds*coef_ds
+            b=2.0_dp*b/ds*coef_ds
           else
             b=angle_max
           endif
         else
-          b=2.d0*fa/a1/ds*coef_ds
+          b=2.0_dp*fa/a1/ds*coef_ds
         endif
     	fb=potar(iyd,tu,kp,lonmlt,latmag,dlat,dlon,b,psi0)
         flgini=.true.
-        do while(fa*fb.gt.0.d0)
+        do while(fa*fb.gt.0.0_dp)
           if (flgini) then
             b=1.1*b
             flgini=.false.
@@ -254,7 +252,7 @@ c        lon=datan2(sb,cb)*rad2deg
        lon=lonmlt
       
       if (debug) then
-       write(stdout,*),'convec.f: cor_cnv 1st call:',
+       print *,'convec.f: cor_cnv 1st call:',
      & ' call integ  lat,lon,dlat,dlon'
      &, lat,lon,dlat,dlon
       endif
@@ -263,8 +261,8 @@ c        lon=datan2(sb,cb)*rad2deg
        c=b
        fc=fb
        do 12 iter=1,itmax
-         if((fb.gt.0.d0.and.fc.gt.0.d0)
-     &	     .or.(fb.lt.0.d0.and.fc.lt.0.d0))then
+         if((fb > 0.0_dp .and.fc.gt.0.0_dp)
+     &	     .or.(fb.lt.0.0_dp.and.fc.lt.0.0_dp))then
            c=a
            fc=fa
            d=b-a
@@ -278,23 +276,23 @@ c        lon=datan2(sb,cb)*rad2deg
            fb=fc
            fc=fa
          endif
-         tol1=2.d0*eps*abs(b)+0.5d0*tol
-         xm=.5d0*(c-b)
+         tol1=2.0_dp*eps*abs(b)+0.50_dp*tol
+         xm=.50_dp*(c-b)
          if(abs(xm).le.tol1 .or. fb.eq.0.) goto 999
          if(abs(e).ge.tol1 .and. abs(fa).gt.abs(fb)) then
            s=fb/fa
            if(a.eq.c) then
-             p=2.d0*xm*s
-             q=1.d0-s
+             p=2.0_dp*xm*s
+             q=1.0_dp-s
            else
              q=fa/fc
              r=fb/fc
-             p=s*(2.d0*xm*q*(q-r)-(b-a)*(r-1.d0))
-             q=(q-1.d0)*(r-1.d0)*(s-1.d0)
+             p=s*(2.0_dp*xm*q*(q-r)-(b-a)*(r-1.0_dp))
+             q=(q-1.0_dp)*(r-1.0_dp)*(s-1.0_dp)
            endif
-           if(p.gt.0.d0) q=-q
+           if(p.gt.0.0_dp) q=-q
            p=abs(p)
-           if(2.d0*p .lt. min(3.d0*xm*q-abs(tol1*q),abs(e*q))) then
+           if(2.0_dp*p .lt. min(3.0_dp*xm*q-abs(tol1*q),abs(e*q))) then
              e=d
              d=p/q
            else
@@ -327,7 +325,7 @@ c        lon=datan2(sb,cb)*rad2deg
        
       if (debug) then
       call cpu_time(tic)
-      write(stdout,*),tic,' convec.f: cor_cnv 2nd call:',
+      print *,tic,' convec.f: cor_cnv 2nd call:',
      & ' call integ  lat,lon,dlat,dlon'
      &, lat,lon,dlat,dlon
       endif
@@ -341,7 +339,7 @@ c        lon=datan2(sb,cb)*rad2deg
 
        double precision function potar(iyd,tu,kp,lonmlt,latmag,
      &      dlat,dlon,dtheta,psi0)
-        include 'comm.f'
+       use comm, only: dp
        implicit none
        
        integer,intent(in) :: iyd

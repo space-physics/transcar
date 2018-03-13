@@ -1,9 +1,8 @@
       real function coskhi(lat,long,h,month,day,ioption)
-        include 'comm.f'
-        
+       
+       use comm, only: deg2rad, pi
         implicit none
-        
-        include 'comm_sp.f'
+
         
 c******  calcul de cos(ki) ****
 c**  lat latitude geographic **   degrees decimal
@@ -20,14 +19,14 @@ c
         real decli,pideg,dlat,hloc,temps,tloc,ki
         integer jj
 
-        integer,parameter :: moi(12)=(/0,31,59,90,120,151,181,212,243,
-     &    273, 304, 334/)
+        integer,parameter :: moi(12)=[0,31,59,90,120,151,181,212,243,
+     &    273, 304, 334]
 
         common /decl/decli
 
         dlat = lat * deg2rad
         hloc = (h + mod(long+360.,360.)/15.)/24.
-        if (ioption.eq.1) then
+        if (ioption == 1) then
             jj = day + moi(month)
         else
             jj = day
@@ -40,4 +39,4 @@ c
      &          - cos(decli)  *  cos(dlat) * cos(tloc)
         coskhi=min(coskhi,1.)
 
-        end function coskhi
+      end function coskhi

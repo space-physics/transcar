@@ -1,11 +1,9 @@
       subroutine coef_pot(iyd,tu,kp,
      &              ndeg,mdeg,phipot,Lmin,Lmax,latequi,ddp)
 
-      include 'comm.f'
-
+      use comm, only: dp, tic
       implicit none
-      
-      include 'comm_sp.f'
+
 
       include 'TRANSPORT.INC'
       
@@ -104,7 +102,7 @@
           ndeg=buffer(5)
           mdeg=buffer(6)
           len_coef=(2*mdeg+1)*(ndeg+1)
-          write(stdout,*),'len_coef=',len_coef
+          print *,'len_coef=',len_coef
           len_buf=len_coef+10
           len_rec=4*len_buf
       endif

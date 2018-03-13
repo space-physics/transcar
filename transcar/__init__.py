@@ -10,8 +10,9 @@ from dateutil.relativedelta import relativedelta
 transcarexe = 'transconvec_13.op.out'
 FOK = 'finish.status'
 # hard-coded in Fortran
-din = Path('dir.input')
-ddat = Path('dir.data')
+root = Path(__file__).parents[1]
+din = root / 'dir.input'
+ddat =  root/ 'dir.data'
 DATCAR = din / 'DATCAR'
 precfn = din / 'precinput.dat'
 

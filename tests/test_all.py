@@ -5,14 +5,14 @@ from numpy.testing import assert_allclose
 import tempfile
 #
 import transcar
-from transcarread import ExcitationRates
+import transcarread as tr
 
-rdir = Path(__file__).parents[1]
-print(rdir)
-rdir = Path(tempfile.gettempdir()) / 'newdata'
-refdir = Path('tests/beam947.2')
-odir = rdir/refdir.name
-kinfn = Path('dir.output') / 'emissions.dat'
+root = Path(__file__).parents[1]
+beam =  'beam947.2'
+rdir = Path(tempfile.gettempdir()) / 'newdata' /  beam
+refdir = root / beam
+odir = rdir / beam
+kinfn = 'dir.output/emissions.dat'
 
 def test_transcar():
     odir.mkdir(parents=True, exist_ok=True)
@@ -23,13 +23,13 @@ def test_transcar():
               'errfn': 'transcarError.log'
               }
 
-    beams = pandas.read_csv('tests/test_E1E2prev.csv', header=None, names=['E1','E2','pr1','pr2']).squeeze()
+    beams = pandas.read_csv(root / 'tests/test_E1E2prev.csv', header=None, names=['E1','E2','pr1','pr2']).squeeze()
 
     transcar.iterbeams(beams, params)
 
-    refexc, tref = ExcitationRates(refdir/kinfn)[:2]
+    refexc = tr.ExcitationRates(refdir/kinfn)
 
-    exc, t = ExcitationRates(odir/kinfn)[:2]
+    exc = tr.ExcitationRates(odir/kinfn)
 
     ind=[[1,12,5],[0,62,8]]
 
@@ -37,7 +37,8 @@ def test_transcar():
         assert_allclose(refexc[i[0],i[1],i[2]],
                            exc[i[0],i[1],i[2]], rtol=1e-3)
 
-    assert tref[0]==t[0]
+    assert refexc.time == exc.time
+
 
 if __name__ == '__main__':
     test_transcar()

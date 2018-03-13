@@ -1,7 +1,7 @@
       program transconvec_13
       use, intrinsic:: iso_fortran_env, only: real32, real64
       use, intrinsic:: ieee_arithmetic, only: ieee_is_nan  
-      include 'comm.f'
+      use comm, only: stderr,dp,wp
       include 'comm_sp.f'
       include 'TRANSPORT.INC'
         
@@ -1116,7 +1116,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 !------------
 ! initialisation du temps et ouverture du fichier "initialization time and opening the file"
-      if (debug) write(stdout,*),"initialization time, opening the file"
+      if (debug) print *,"initialization time, opening the file"
 
       tempsint=0.d0
       tempsort=0.d0
@@ -1143,7 +1143,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 
       if (debug) then
           call cpu_time(tic)
-          write(stdout,*),tic,'call convec'
+          print *,tic,'call convec'
       endif
 
       call convec(iyd,temps,kp,dlongeo,dlatgeo,
@@ -1153,7 +1153,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
       
       if (debug) then
       call cpu_time(tic)
-      write(stdout,*),tic,'transconvec: done convec, entering coskhi'
+      print *,tic,'transconvec: done convec, entering coskhi'
      & !,' longeo,latgeo',longeo,latgeo
       endif
 
@@ -1205,7 +1205,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 !
 ! definitions des parametres initiaux et sauvegarde initiale "definitions of initial parameters and initial backup"
        if (debug) then
-       write(stdout,*),"definitions of initial parameters",
+       print *,"definitions of initial parameters",
      & " and initial backup"
        endif
        
@@ -1231,10 +1231,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
     
         if (debug) then
          call cpu_time(tic)
-         write(stdout,*),tic,' transconvec: call atmos'!  latgeo=',latgeo
+         print *,tic,' transconvec: call atmos'!  latgeo=',latgeo
         endif
         
-        call atmos(iyd,real(temps,sp),stl,alt,latgeo,longeo,jpreci,f107,
+        call atmos(iyd,real(temps,wp),stl,alt,latgeo,longeo,jpreci,f107,
      &           ap,Nenew,Tenew,T1new,nx,kiappel,file_cond)
 
         nrectemps=1
@@ -1356,7 +1356,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
         enddo
         dt_max=5.*dt_max/R0
     
-       if (debug)  write(stdout,*),'call pas_de_temps'
+       if (debug)  print *,'call pas_de_temps'
        call pas_de_temps(iyd,temps,dt,postint,dto,postinto)
        tempsint=postint
        tempsort=sortie
@@ -1676,7 +1676,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
           write(stderr,*),'problem before calling atmos'
           goto 246
         endif
-        call atmos(iyd,real(temps,sp),stl,alt,latgeo,longeo,jpreci,f107,
+        call atmos(iyd,real(temps,wp),stl,alt,latgeo,longeo,jpreci,f107,
      &            ap,Nenew,Tenew,T1new,nx,kiappel,file_cond)
 
         if (vparaB.ne.0.) vtrans=vparaB*100./Ci0
@@ -2665,7 +2665,7 @@ CCCCC                                                                           
       call velocity(Velim,Ipos1,Iposnp,deltat_2)
       
       call cpu_time(tic)
-      write(stdout,*),tic,'H+ momentum equation resolution'
+      print *,tic,'H+ momentum equation resolution'
       
       do i=1,nx
 
@@ -2776,7 +2776,7 @@ CCCCC                                                                           
           rbc=1.
           
       call cpu_time(tic)
-      write(stdout,*),tic,'call lcpfct'
+      print *,tic,'call lcpfct'
       call lcpfct(U2old,U2new,Ipos1,Iposn,
      &              lbc,0.,0.,U2new(np),.false.,0)
      
@@ -2805,7 +2805,7 @@ CCCCC                                                                           
 
 ![[[    O+ momentum equation resolution
         call cpu_time(tic)
-      write(stdout,*),tic,'O+ momentum equation resolution'
+      print *,tic,'O+ momentum equation resolution'
 
       call velocity(Veljm,Ipos1,Iposnp,deltat_2)
       
@@ -2903,7 +2903,7 @@ CCCCC                                                                           
           rbc=1.
       
       call cpu_time(tic)
-      write(stdout,*),tic,'H+ momentum LCPFCT'
+      print *,tic,'H+ momentum LCPFCT'
           
       call lcpfct(U1old,U1new,Ipos1,Iposn,
      &              lbc,0.,0.,U1new(np),.false.,0)
@@ -2936,7 +2936,7 @@ CCCCC                                                                           
 
 ![[[    heavy ions momentum equation resolution
       call cpu_time(tic)
-      write(stdout,*),tic,'Heavy Ions equation resolution'
+      print *,tic,'Heavy Ions equation resolution'
       call velocity(Velmm,Ipos1,Iposnp,deltat_2)
     
       do i=1,nx
@@ -3116,7 +3116,7 @@ CCCCC                                                                           
 
 ![[[    N+ momentum equation resolution
       call cpu_time(tic)
-      write(stdout,*),tic,'N+ momentum equation resolution'
+      print *,tic,'N+ momentum equation resolution'
     
       call velocity(Velnm,Ipos1,Iposnp,deltat_2)
       do i=1,nx
@@ -3260,7 +3260,7 @@ CCCCC                                                                           
 
 ![[[    H+ heat flow equation resolution
       call cpu_time(tic)
-      write(stdout,*),tic,'H+ heatflow equation resolution'
+      print *,tic,'H+ heatflow equation resolution'
       do i=1,nx
 
         C2a(i)=-2.2*q2new(i)
@@ -3419,7 +3419,7 @@ CCCCC                                                                           
 
 ![[[    O+ heat flow equation resolution
        call cpu_time(tic)
-       write(stdout,*),tic,'O+ heat flow equation resolution'
+       print *,tic,'O+ heat flow equation resolution'
       do i=1,nx
 
         C2a(i)=-2.2*Cji*q1new(i)
@@ -3548,7 +3548,7 @@ CCCCC                                                                           
 
 !]]]
        call cpu_time(tic)
-       write(stdout,*),tic,'N+ heat flow'
+       print *,tic,'N+ heat flow'
       call velocity(Velnq,Ipos1,Iposnp,deltat_2)
 
 ![[[    N+ heat flow equation resolution
@@ -3682,7 +3682,7 @@ CCCCC                                                                           
 
 ![[[    Electron energy and heat flow equation resolution (1)
       call cpu_time(tic)
-      write(stdout,*),tic,'e- energy & heat flow eqn resolution (1)'
+      print *,tic,'e- energy & heat flow eqn resolution (1)'
     
       do i=1,nx
 

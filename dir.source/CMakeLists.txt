@@ -23,6 +23,9 @@ target_link_libraries(transconvec fluide numeric system proj
                        convec geomag transelec imm)
 
 #---- build libraries ----------
+set(c ../dir.include)
+add_library(common ${c}/comm.f90)
+
 set(c ../dir.fluide)
 add_library(fluide ${c}/atmos.op.f ${c}/vent.f ${c}/msis90.f ${c}/coskhi.f ${c}/fchap.f)
 
@@ -39,6 +42,7 @@ add_library(proj ${c}/projection.f90 ${c}/val_fit.f90 ${c}/plegendr.f
             ${c}/coef_prec.f ${c}/coef_pot.f ${c}/coef_cour.f
             ${c}/precipitation.f90 ${c}/potentiel.f90
             ${c}/courant.f90 ../dir.cine/hardelec.f)
+target_link_libraries(proj PRIVATE common)
 
 set(c ../dir.convection)
 add_library(convec ${c}/convec.f ${c}/convec_1.f ${c}/conv_ar.f)

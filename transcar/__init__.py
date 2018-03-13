@@ -1,5 +1,5 @@
 from pathlib import Path
-import shutil
+import shutil,os
 import logging
 import collections
 import subprocess
@@ -7,10 +7,12 @@ from pytz import UTC
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 # %% constants dictacted by legacy Fortran code
-transcarexe = 'transconvec_13.op.out'
+root = Path(__file__).parents[1]
+transcarexe = root/'transconvec'
+if os.name == 'nt':
+    transcarexe = transcarexe.with_suffix('.exe')
 FOK = 'finish.status'
 # hard-coded in Fortran
-root = Path(__file__).parents[1]
 din = root / 'dir.input'
 ddat =  root/ 'dir.data'
 DATCAR = din / 'DATCAR'

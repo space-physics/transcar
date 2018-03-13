@@ -214,8 +214,8 @@ C       --MZ
         real vartemp,Qetop
         common/fluxtop/Qetop
 
-        real N_0,T_0,Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,Pi0,Pj0,Pe0,Qi0,Qj0,Qe0
-        common/param/    N_0,T_0,P_0,Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,
+        real Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,Pi0,Pj0,Pe0,Qi0,Qj0,Qe0
+        common/param/   P_0,Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,
      &            Qi0,Qj0,Qe0
      &
         real R0,g0,t0
@@ -629,7 +629,7 @@ c         endif
 !              print*,'call transelec'
                call transelec(npt,iyd,sec,glat,glong,stl,f107,
      .          ap,chi,Ne,Te,Tj,nx,Nh,No,No2,Nn2,Nn,Tn,indlim,jpreci,
-     .          N_0,T_0,kiappel,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
+     .          kiappel,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
      .          Nes,Jes,Tes,qes)
 
         endif

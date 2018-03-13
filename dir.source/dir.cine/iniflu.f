@@ -1,6 +1,6 @@
       subroutine iniflu(npt,iyd,UTsec,z,glat,glong,stl,f107,
      .                ap,chi,Ne,Te,Tj,indlim,jpreci,
-     .             Nh,No,No2,Nn2,Nn,Tn,N_0,T_0,Po,Po2,Pn2,Ph,Pn,Heat,
+     .             Nh,No,No2,Nn2,Nn,Tn,Po,Po2,Pn2,Ph,Pn,Heat,
      .
      .                  nspec,knm,nen,nang,nango2,nalt,
      .                  ddeng,botE,centE,gmu,gwt,angzb,altkm,altcm,
@@ -98,8 +98,7 @@ c
 c
         real Nh(npt),No(npt),No2(npt),Nn2(npt),Nn(npt),Tn(npt)
         real Ph(npt),Po(npt),Po2(npt),Pn2(npt),Pn(npt),Heat(npt)
-c
-        real N_0,T_0
+
         real Eave,Flux_elec_int,E,Flux_ener_int,coef_flux,fluxE
 c
         real z(npt),Ne(npt),Te(npt),Tj(npt)

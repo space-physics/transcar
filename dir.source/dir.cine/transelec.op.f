@@ -1,6 +1,6 @@
       subroutine transelec(npt,iyd,UTsec,glat,glong,stl,f107,
      .          ap,chi,Ne,Te,Tj,nx,Nh,No,No2,Nn2,Nn,Tn,indlim,jpreci0,
-     .          N_0,T_0,kiappel,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
+     .          kiappel,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
      .          Ne_sup,courant_sup,Te_sup,Chaleur_sup)
 c
 c 	Ce programme est un driver. 
@@ -138,7 +138,6 @@ c
         real Ph(npt),Po(npt),Po2(npt),Pn2(npt),Pn(npt)
         real Heat(npt)
 
-        real N_0,T_0
         common/exo/dTinf
 
 c
@@ -264,7 +263,7 @@ c	if(kiappel.eq.1)write(6,*)'transelec, appele par transsolo' 'transelec called 
 c	if(kiappel.eq.2)write(6,*)'transelec, appele par transcar'  'transelec called by transcar'
 c	write(6,*)
 c
-       if (kiappel.eq.1) then
+       if (kiappel==1) then
 c
 c 	  On est appele par un transsolo.f. Les entrees sont lues dans 
 c 	  ELEC et NEUTRAL
@@ -287,7 +286,7 @@ c 	  On est appele par le transport fluide
             print*,'call iniflu'
             call iniflu(npt,iyd,UTsec,z,glat,glong,stl,f107,
      .                ap,chi,Ne,Te,Tj,indlim,jpreci,
-     .                Nh,No,No2,Nn2,Nn,Tn,N_0,T_0,Po,Po2,Pn2,Ph,Pn,Heat,
+     .                Nh,No,No2,Nn2,Nn,Tn,Po,Po2,Pn2,Ph,Pn,Heat,
      .
      .                  nspec,knm,nen,nang,nango2,nalt,
      .                  ddeng,botE,centE,gmu,gwt,angzb,altkm,altcm,
@@ -298,7 +297,7 @@ c 	  On est appele par le transport fluide
 c
         else
           write(6,*)'kiappel is false'
-          stop
+          error stop
 c
       endif            ! endif kiappel
 

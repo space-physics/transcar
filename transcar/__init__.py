@@ -1,5 +1,5 @@
 from pathlib import Path
-import shutil
+import shutil,os
 import logging
 import collections
 import subprocess
@@ -8,6 +8,9 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 # %% constants dictacted by legacy Fortran code
 transcarexe = 'transconvec'
+if os.name == 'nt':
+    transcarexe += '.exe'
+    
 FOK = 'finish.status'
 # hard-coded in Fortran
 din = Path('dir.input')

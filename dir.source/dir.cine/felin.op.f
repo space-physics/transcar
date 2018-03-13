@@ -77,9 +77,9 @@ c               --> si kiappel = 2, ce sont les donnees necessaires
 c                   au transport fluide
 
 c
-	include 'TRANSPORT.INC'
+      include 'TRANSPORT.INC'
 c
-      	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
+      common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
      .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
      .               nwave,ns,nns,f107min,f107max,iseff,wnmseff,
      .               lambdasr,sigsro2,Isr,lineflux,sigabso2,qyield,
@@ -847,17 +847,17 @@ c
 c
 c ---------------------------- prodprt -----------------------------
 c
-	subroutine prodprt(ns,nalt,altkm,nen,Ecent,engdd,produc,proelec,
+      subroutine prodprt(ns,nalt,altkm,nen,Ecent,engdd,produc,proelec,
      .  	      prodion,proneut,prophel,iprt,ichapman)
 c
- 	include 'TRANSPORT.INC'
+      include 'TRANSPORT.INC'
 c
        	dimension Ecent(nbren),altkm(nbralt),engdd(nbren)
        	dimension proneut(nbralt,nbrsp),proelec(nbralt),
      .		prodion(nbralt,nbrsp*2),prophel(nbralt,nbren),
      .		produc(nbralt,nbrsp,nbren)
-	integer iprt(12)
- 	real zwork(nbralt)
+      integer iprt(12)
+      real zwork(nbralt)
 
 c
 1000  	format(/,'Electron and ion production(/cm3.s)',/)
@@ -986,21 +986,19 @@ c     	write in file ifeltrans for transport program.
       	write(ifeltrans) ((prodion(ialt,isp),ialt=1,nalt),isp=1,ns+1)
       	close(ifeltrans)
       	close(ifelprt)
-c
- 	    return
+
 	    end
-c
-c------------------------ setpar ------------------------------
-c
-	subroutine setpar(imod,nspec,idess,hrloc,UT,day,nan,tempexo,
+
+
+      subroutine setpar(imod,nspec,idess,hrloc,UT,day,nan,tempexo,
      .	   f107,ap,glat,glong,nalt,year,
      .	   altkm,nen,centE,botE,ddeng,Ecent,Ebot,engdd,iprt,pflux,knm,
      .	   tneutre,densneut,colden,iflux,wwt,number,xchap,chi,chideg,
      .	   sigi,sigt,ichapman)
 c
-	include 'TRANSPORT.INC'
+      include 'TRANSPORT.INC'
 c
-      	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
+      common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
      .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
      .		      nwave,ns,nns, f107min,f107max,iseff,wnmseff, lambdasr,
      .                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
@@ -1488,15 +1486,15 @@ c
       	if (dele.ge.Ebot(1)+engdd(1)) iener = 1
       	if (dele.lt.Ebot(nen)) iener = nen
 
-      	return
+
       	end
 c
 c------------------------ Function sefint ---------------------------
 c
- 	function sefint(ener,isp,type)
+        function sefint(ener,isp,type)
 c
- 	implicit none
- 	include 'TRANSPORT.INC'
+        implicit none
+        include 'TRANSPORT.INC'
 c
       	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
      .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
@@ -1553,35 +1551,33 @@ c
         endif
 
         end
-c
-c----------------------------------------------------------------------
-c
-        subroutine reord(tab,ntab,indx,trav)
-        implicit none
-        integer,intent(in) :: indx(ntab),ntab
-        real,intent(inout)   :: tab(ntab),trav(ntab)
-        integer i
 
-        do i = 1,ntab
-            trav(i) = tab(indx(i))
-        enddo
-        do i = 1,ntab
-           tab(i) = trav(i)
-        enddo
 
-        end subroutine reord
-c
-c-------------------- donnees -------------------------------
-c
- 	block data
+      subroutine reord(tab,ntab,indx,trav)
+      implicit none
+      integer,intent(in) :: indx(ntab),ntab
+      real,intent(inout)   :: tab(ntab),trav(ntab)
+      integer i
+
+      do i = 1,ntab
+          trav(i) = tab(indx(i))
+      enddo
+      do i = 1,ntab
+         tab(i) = trav(i)
+      enddo
+
+      end subroutine reord
+
+
+      block data
 c
 c	include 'TRANSPORT.INC'
 c
-      	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
+    	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
      .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
      .		      nwave,ns,nns,f107min,f107max,iseff,wnmseff,lambdasr,
      .                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
- 	common /const/ pi,re,recm,bolt,gzero,amu
+      common /const/ pi,re,recm,bolt,gzero,amu
 c
  	real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
       	real seffion(2000,7),sefftot(2000,5),eVseff(2000),wnmseff(2000)

@@ -9,15 +9,14 @@ import transcarread as tr
 
 root = Path(__file__).parents[1]
 beam =  'beam947.2'
-rdir = Path(tempfile.gettempdir()) / 'newdata' /  beam
-refdir = root / beam
-odir = rdir / beam
+odir = Path(tempfile.gettempdir()) / 'newdata'
+refdir = root / 'tests'/beam
 kinfn = 'dir.output/emissions.dat'
 
 def test_transcar():
     odir.mkdir(parents=True, exist_ok=True)
 
-    params = {'rodir': rdir,
+    params = {'rodir': odir,
               'Q0': 70114000000.0,
               'msgfn': 'transcar.log',
               'errfn': 'transcarError.log'
@@ -29,7 +28,7 @@ def test_transcar():
 
     refexc = tr.ExcitationRates(refdir/kinfn)
 
-    exc = tr.ExcitationRates(odir/kinfn)
+    exc = tr.ExcitationRates(odir/beam/kinfn)
 
     ind=[[1,12,5],[0,62,8]]
 

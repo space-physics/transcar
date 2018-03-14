@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(transcar Fortran)
 
-add_compile_options(-march=native -O3 -Wline-truncation -g -fbacktrace -fmax-errors=2)
+add_compile_options(-march=native -O3 -Wline-truncation -g -fbacktrace -fmax-errors=3)
 
 # compiler dependent flags necessary for disk files used (sorry)
 if(${CMAKE_Fortran_COMPILER_ID} MATCHES GNU)
@@ -19,15 +19,16 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../..)
 include_directories(dir.include)
 
 add_executable(transconvec ../transconvec_13.op.f ../reacrates.f)
-target_link_libraries(transconvec fluide numeric system proj
-                       convec geomag transelec imm)
+target_link_libraries(transconvec PRIVATE fluid numeric system proj
+                       convec geomag transelec imm common)
 
 #---- build libraries ----------
 set(c ../dir.include)
 add_library(common ${c}/comm.f90)
 
 set(c ../dir.fluide)
-add_library(fluide ${c}/atmos.op.f ${c}/vent.f ${c}/msis90.f ${c}/coskhi.f ${c}/fchap.f)
+add_library(fluid ${c}/atmos.op.f ${c}/vent.f ${c}/msis90.f ${c}/coskhi.f ${c}/fchap.f)
+target_link_libraries(fluid PRIVATE common)
 
 set(c ../dir.numeric)
 add_library(numeric ${c}/lcpfct.f ${c}/stabenerg.f90 ${c}/pas_de_temps.f
@@ -61,6 +62,6 @@ add_library(transelec ${c}/transelec.op.f ${c}/lect.f  ${c}/iniflu.f
             ${c}/dir.iri/iris12.f ${c}/dir.iri/irif12.f ${c}/dir.iri/cira86_pour_iri.f 
             ${c}/ecr.f ${c}/prec_time.f ${c}/conduc.f
             ${c}/dE_dt.f ${c}/low_proton.f ${c}/prot.f)
-target_link_libraries(transelec system fluide)
+target_link_libraries(transelec PRIVATE system fluid common)
 
 add_library(imm ../dir.imm/IMM2.f90 ../dir.imm/IMM_routines.f90)

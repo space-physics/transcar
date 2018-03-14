@@ -17,6 +17,7 @@ before_build:
 - cmd: set FC=%MINGW_DIR%\gfortran
 - cmd: set CXX=%MINGW_DIR%\g++
 - cmd: set CC=%MINGW_DIR%\gcc
+- cmd: mklink bin\make.exe %MINGW_DIR%\mingw32-make.exe
 
 - sh: sudo -E apt-add-repository -y "ppa:ubuntu-toolchain-r/test" > /dev/null
 - sh: sudo apt-get -yq update > /dev/null

@@ -47,7 +47,7 @@ target_link_libraries(proj PRIVATE common)
 
 set(c ../dir.convection)
 add_library(convec ${c}/convec.f ${c}/convec_1.f ${c}/conv_ar.f)
-target_link_libraries(convec proj)
+target_link_libraries(convec PRIVATE proj)
 
 set(c ../dir.geomag)
 add_library(geomag ${c}/geo2mag.f ${c}/lec_indices.f90 ${c}/ap2kp.f
@@ -65,3 +65,13 @@ add_library(transelec ${c}/transelec.op.f ${c}/lect.f  ${c}/iniflu.f
 target_link_libraries(transelec PRIVATE system fluid common)
 
 add_library(imm ../dir.imm/IMM2.f90 ../dir.imm/IMM_routines.f90)
+
+#---------------
+enable_testing()
+
+find_package(PythonInterp)
+if(PYTHON_VERSION_STRING STRGREATER_EQUAL 3.6)
+#if(PYTHONINTERP_FOUND)
+  add_test(NAME Python COMMAND pytest -v
+         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/..)
+endif()

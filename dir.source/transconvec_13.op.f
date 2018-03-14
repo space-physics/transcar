@@ -1,22 +1,49 @@
       program transconvec_13
-       
+      use, intrinsic:: iso_fortran_env, only: real32, dp=>real64
       use, intrinsic:: ieee_arithmetic, only: ieee_is_nan  
-      include 'comm.f'
-      include 'comm_sp.f'
+      use comm, only: stderr,dp,wp, npt, debug
+      include 'TRANSPORT.INC'
         
 
 !     Ce programme demarre le couple de programmes de transports.
 !     Anciennement : eiscat.f
       character(80) split,gridfn
 
-      integer,parameter :: npt=500,xcoeffno=1.,ncol0=50,intemps0=300,
+      integer,parameter :: xcoeffno=1.,ncol0=50,intemps0=300,
      &                     nb_ion=6,
      &  nb_position_max=100     ! Modif DA 02/02 2001
         logical multi_position                  ! Modif DA 02/02 2001
         real longeo_position(nb_position_max)   ! Modif DA 02/02 2001
         real latgeo_position(nb_position_max)   ! Modif DA 02/02 2001
-        character lecture_lat_lon*80            ! Modif DA 02/02 2001
+        character(80) lecture_lat_lon            ! Modif DA 02/02 2001
 
+
+!cc
+![      Different altitude levels used in the program
+
+      real, parameter :: amu=1.667e-24,kb=1.38e-16,
+     &  Re=637800000.,  Rekm=Re*1.e-5, 
+     &  z0  = 100000000., zflu= 600., zinf= 20000000., zsup=862200000.,
+     &  zhplus  = 400., cofterp=3.*amu/kb, Nliminf=1.e-1/N_0,
+     &  T_min=100./T_0, r_min=1.e-33
+     
+     
+     
+       real,parameter ::rx0=0.
+       real(dp), parameter :: dx0=0.0_dp
+       integer, parameter :: i1=1
+        
+      real,parameter :: Aq(*) = [7.883e-6,9.466e-6,1.037e-7],
+     &                 Bq(*)= [1.021,.8458,1.633],
+     &                 Cq(*)= [1.009,.9444,1.466],
+     &                 epsq(*)=[.02,.028,.008],
+     &                 Eq(*) =[227.,326.6,98.9],
+     &                 Sq(*) =[2.98e-23,1.91e-23,1.32e-27]
+
+      real, parameter :: zeddy=100., dte=0.005
+      real :: tex0=20000.
+     
+        data B0,sinI0,cosI0/.542,.9848,.1736/
 
 !       indice des ions 
 !       ---------------
@@ -38,7 +65,7 @@
 
           Real     SOURCE(npt)
           Common  /FCT_test/ SOURCE
-        Integer Ipos1,Iposn,Iposnp,alpha,np,fid_NaN
+        Integer Ipos1,Iposn,Iposnp,alpha,np
         logical flag,flagatmos,flgconv,flgpot
 
         real*8 temps,tempsini,tempsconv,tempsconv_1,tempsdeb
@@ -56,7 +83,7 @@
         real N4new(npt),N6new(npt),N5new(npt),Nmnew(npt)
         real N3new(npt),N3old(npt)
         real xn1(npt),xn2(npt),xn3(npt),xne(npt)
-        real xn4(npt),xn5(npt),xn6(npt),xnm(npt),Nliminf
+        real xn4(npt),xn5(npt),xn6(npt),xnm(npt)
         real xn1_1(npt),xn2_1(npt),xn3_1(npt),xne_1(npt)
         real xn4_1(npt),xn5_1(npt),xn6_1(npt),xnm_1(npt)
         real N1tot,N2tot,N3tot,N4tot,N5tot,N6tot
@@ -128,7 +155,7 @@
         real NOHot(npt),TnOHot(npt),q_NOHot(npt)                !MZ
         real TrHot                                !MZ
 
-        real N_0,T_0,P_0,Ci0,Cj0,Ce0,Ck0,Cl0,Cm0,Qi0,Qj0,Qe0
+        real P_0,Ci0,Cj0,Ce0,Ck0,Cl0,Cm0,Qi0,Qj0,Qe0
 
 
         real t0,R0,G0
@@ -164,7 +191,7 @@
         real nuiOHot(npt),nujOHot(npt),nukOHot(npt),nulOHot(npt)   !MZ
         real numOHot(npt),nunOHot(npt),nueOHot(npt)                !MZ
         
-        real amb,kb,ak1,ak2,ak3,ak4,ak5,kjN2,kjO2,TjN2,TjO2
+        real amb,ak1,ak2,ak3,ak4,ak5,kjN2,kjO2,TjN2,TjO2
         real Tperp(npt),Ter_1(npt)
         real Terh,Ter,dTen,dTen_1
         real akk1,akk2,akk3,akk4,akk5
@@ -173,7 +200,6 @@
         real nuN2O2,nuN2N2,nuN2O,TN2O,TN2N2,kN2O,Tjr,Tr,Trh,lTr,amN2
         real Tmr,Tr1
         real klO2,kmN2,TlO2,TmN2,TONO,kONO,TN2O2
-        real cofterp
 
         real nuii(npt),nuij(npt),nuie(npt),nuiH(npt)
         real nuik(npt),nuil(npt),nuim(npt)
@@ -186,7 +212,7 @@
 
         real Lenrot,LeN2vib,LeO2vib,LeOexc,dd,f,gg,h,Len(npt)
         real Heat(npt),LeOfin
-        real Aq(3),Bq(3),Cq(3),Dx(3),Eq(3),epsq(3),Sq(3)
+        real Dx(3)
 
 
         real q_Nh(npt),q_No(npt),q_No2(npt),q_Nn2(npt),q_Nn(npt)
@@ -215,7 +241,7 @@
         real kstep(npt)
         real alt_geo (npt),alt_geo_1(npt),G(npt),alt(npt)
         real Radn(npt)
-        real mi,mj,me,dr,Re,z0,deltat,deltat_2,deltat_4,zflu,Rflu
+        real mi,mj,me,dr,deltat,deltat_2,deltat_4,Rflu
 
         real mk,ml,mm,mz
 
@@ -245,9 +271,7 @@
         real nuni0,nunj0,nune0,nunk0,nunl0,nunm0,nunn0
 
         real coefg(npt)
-        real zeddy,Eddy,nueddy,nun,Dmol,Ntot,rhotot,Diff,mred,mmoy
-
-        real tex0,dte
+        real Eddy,nueddy,nun,Dmol,Ntot,rhotot,Diff,mred,mmoy
 
         real coefqk,coefql,coefqm
 
@@ -260,7 +284,7 @@
         real coefelec,coefini
         real Nibot,Njbot,Uibot,Ujbot,Tibot,Tjbot,ones(npt)
         real Tebot,Qibot,Qjbot,Qebot,Qitop,Qjtop,Qetop
-        real f107(3),ap(7),d(8),t(2),zhplus,zinf,zsup,stl,sec,JJ(npt)
+        real f107(3),ap(7),d(8),t(2),stl,sec,JJ(npt)
         real vartemp,prodtemp
         real ai(6),bij(6,5),ci(6),cis(6),af(6,npt)
 
@@ -287,12 +311,9 @@
         real el_dens(npt),O_plus(npt),N2_plus(npt),NO_plus(npt)
         real O2_plus(npt),temp_o(npt),temp_m(npt),temp_e(npt)
 
-        real rx0
-        real*8 dx0
-        integer i1
         real thermodiff,thermacc(npt)
 
-        integer fid_temp
+        integer u
         integer kiappel,file_cond
 !
         integer itype
@@ -311,7 +332,7 @@
         real incE
 
         common/neutral/Nh,No,No2,Nn2,Nn,Tn,Un,Vn,Wn
-        common/param/    N_0,T_0,P_0,Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,                
+        common/param/    P_0,Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,                
      &            Qi0,Qj0,Qe0
         common/adim/R0,t0,G0
         common/prodion/Ph,Po,Po2,Pn2,Pn
@@ -376,26 +397,6 @@
         character*80 tempchar
 !-------MZ
 
-        include 'TRANSPORT.INC'
-    
-
-        data rx0,dx0,i1/0.,0.d0,1/
-        
-        data amu/1.667e-24/
-        data Aq/7.883e-6,9.466e-6,1.037e-7/
-        data Bq/1.021,.8458,1.633/
-        data Cq/1.009,.9444,1.466/
-        data epsq/.02,.028,.008/
-        data Eq/227.,326.6,98.9/
-        data Sq/2.98e-23,1.91e-23,1.32e-27/
-
-        data zeddy/100./
-
-        data tex0,dte/20000.,0.005/
-
-        data fid_temp/73/
-        
-        data B0,sinI0,cosI0/.542,.9848,.1736/
 ! 
 
 
@@ -555,23 +556,6 @@
      &        form='unformatted',              
      &                  access='direct',status='old',recl=longrec)
 
-        N_0=1.e4
-        T_0=1000.
-!cc
-![      Different altitude levels used in the program
-
-        kb=   1.38e-16
-        Re  =637800000.
-        Rekm=Re*1.e-5
-        z0  = 100000000.
-        zflu= 600.
-        zinf= 20000000.
-        zsup=862200000.
-        zhplus  = 400.
-        cofterp=3.*amu/kb
-        Nliminf=1.e-1/N_0
-        T_min=100./T_0
-        r_min=1.e-33
 
 !
 ![      Altitude and Time step initialisation
@@ -583,7 +567,6 @@
 !]      
 ![      Physical constant initialisation
 
-        amu=1.66e-24
         mi=   1.66e-24
         mj=16.*1.66e-24
         me=   9.11e-28
@@ -1129,7 +1112,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 !------------
 ! initialisation du temps et ouverture du fichier "initialization time and opening the file"
-      if (debug) write(stdout,*),"initialization time, opening the file"
+      if (debug) print *,"initialization time, opening the file"
 
       tempsint=0.d0
       tempsort=0.d0
@@ -1156,7 +1139,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 
       if (debug) then
           call cpu_time(tic)
-          write(stdout,*),tic,'call convec'
+          print *,tic,'call convec'
       endif
 
       call convec(iyd,temps,kp,dlongeo,dlatgeo,
@@ -1166,7 +1149,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
       
       if (debug) then
       call cpu_time(tic)
-      write(stdout,*),tic,'transconvec: done convec, entering coskhi'
+      print *,tic,'transconvec: done convec, entering coskhi'
      & !,' longeo,latgeo',longeo,latgeo
       endif
 
@@ -1218,7 +1201,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 !
 ! definitions des parametres initiaux et sauvegarde initiale "definitions of initial parameters and initial backup"
        if (debug) then
-       write(stdout,*),"definitions of initial parameters",
+       print *,"definitions of initial parameters",
      & " and initial backup"
        endif
        
@@ -1244,10 +1227,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
     
         if (debug) then
          call cpu_time(tic)
-         write(stdout,*),tic,' transconvec: call atmos'!  latgeo=',latgeo
+         print *,tic,' transconvec: call atmos'!  latgeo=',latgeo
         endif
         
-        call atmos(iyd,real(temps,sp),stl,alt,latgeo,longeo,jpreci,f107,
+        call atmos(iyd,real(temps,wp),stl,alt,latgeo,longeo,jpreci,f107,
      &           ap,Nenew,Tenew,T1new,nx,kiappel,file_cond)
 
         nrectemps=1
@@ -1350,11 +1333,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
           buffer(ipos+ipos_no1d)=N_0*No1dnew(i)*1.e6
           buffer(ipos+ipos_uo1d)=Cj0*Uo1dnew(i)/1.e2
        enddo
-       open(fid_temp,file=filetemps,
+       open(newunit=u,file=filetemps,
      &           form='unformatted',access='direct',recl=longrec,
      &           status='unknown')
-       write(fid_temp,rec=nrectemps)(buffer(i),i=1,longbuf)
-       close(fid_temp)
+       write(u,rec=nrectemps)(buffer(i),i=1,longbuf)
+       close(u)
        flagatmos=.true.
 
 1001       format(' temps de depart:  ',i8,' tube numero: ',i3)
@@ -1369,7 +1352,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
         enddo
         dt_max=5.*dt_max/R0
     
-       if (debug)  write(stdout,*),'call pas_de_temps'
+       if (debug)  print *,'call pas_de_temps'
        call pas_de_temps(iyd,temps,dt,postint,dto,postinto)
        tempsint=postint
        tempsort=sortie
@@ -1489,11 +1472,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
              buffer(ipos+ipos_no1d)=N_0*No1dnew(i)*1.e6
              buffer(ipos+ipos_uo1d)=Cj0*Uo1dnew(i)/1.e2
            enddo
-           open(fid_temp,file=filetemps,
+           open(newunit=u,file=filetemps,
      &           form='unformatted',access='direct',recl=longrec,
      &           status='unknown')
-           write(fid_temp,rec=nrectemps)(buffer(i),i=1,longbuf)
-           close(fid_temp)
+           write(u,rec=nrectemps)(buffer(i),i=1,longbuf)
+           close(u)
 1000       format(' utc second:  ',i8,' tube number: ',i3)
            write(*,1000) int(temps),itube
        tempsort=tempsort+sortie
@@ -1689,7 +1672,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
           write(stderr,*),'problem before calling atmos'
           goto 246
         endif
-        call atmos(iyd,real(temps,sp),stl,alt,latgeo,longeo,jpreci,f107,
+        call atmos(iyd,real(temps,wp),stl,alt,latgeo,longeo,jpreci,f107,
      &            ap,Nenew,Tenew,T1new,nx,kiappel,file_cond)
 
         if (vparaB.ne.0.) vtrans=vparaB*100./Ci0
@@ -2678,7 +2661,7 @@ CCCCC                                                                           
       call velocity(Velim,Ipos1,Iposnp,deltat_2)
       
       call cpu_time(tic)
-      write(stdout,*),tic,'H+ momentum equation resolution'
+      print *,tic,'H+ momentum equation resolution'
       
       do i=1,nx
 
@@ -2789,7 +2772,7 @@ CCCCC                                                                           
           rbc=1.
           
       call cpu_time(tic)
-      write(stdout,*),tic,'call lcpfct'
+      print *,tic,'call lcpfct'
       call lcpfct(U2old,U2new,Ipos1,Iposn,
      &              lbc,0.,0.,U2new(np),.false.,0)
      
@@ -2818,7 +2801,7 @@ CCCCC                                                                           
 
 ![[[    O+ momentum equation resolution
         call cpu_time(tic)
-      write(stdout,*),tic,'O+ momentum equation resolution'
+      print *,tic,'O+ momentum equation resolution'
 
       call velocity(Veljm,Ipos1,Iposnp,deltat_2)
       
@@ -2916,7 +2899,7 @@ CCCCC                                                                           
           rbc=1.
       
       call cpu_time(tic)
-      write(stdout,*),tic,'H+ momentum LCPFCT'
+      print *,tic,'H+ momentum LCPFCT'
           
       call lcpfct(U1old,U1new,Ipos1,Iposn,
      &              lbc,0.,0.,U1new(np),.false.,0)
@@ -2949,7 +2932,7 @@ CCCCC                                                                           
 
 ![[[    heavy ions momentum equation resolution
       call cpu_time(tic)
-      write(stdout,*),tic,'Heavy Ions equation resolution'
+      print *,tic,'Heavy Ions equation resolution'
       call velocity(Velmm,Ipos1,Iposnp,deltat_2)
     
       do i=1,nx
@@ -3129,7 +3112,7 @@ CCCCC                                                                           
 
 ![[[    N+ momentum equation resolution
       call cpu_time(tic)
-      write(stdout,*),tic,'N+ momentum equation resolution'
+      print *,tic,'N+ momentum equation resolution'
     
       call velocity(Velnm,Ipos1,Iposnp,deltat_2)
       do i=1,nx
@@ -3273,7 +3256,7 @@ CCCCC                                                                           
 
 ![[[    H+ heat flow equation resolution
       call cpu_time(tic)
-      write(stdout,*),tic,'H+ heatflow equation resolution'
+      print *,tic,'H+ heatflow equation resolution'
       do i=1,nx
 
         C2a(i)=-2.2*q2new(i)
@@ -3432,7 +3415,7 @@ CCCCC                                                                           
 
 ![[[    O+ heat flow equation resolution
        call cpu_time(tic)
-       write(stdout,*),tic,'O+ heat flow equation resolution'
+       print *,tic,'O+ heat flow equation resolution'
       do i=1,nx
 
         C2a(i)=-2.2*Cji*q1new(i)
@@ -3561,7 +3544,7 @@ CCCCC                                                                           
 
 !]]]
        call cpu_time(tic)
-       write(stdout,*),tic,'N+ heat flow'
+       print *,tic,'N+ heat flow'
       call velocity(Velnq,Ipos1,Iposnp,deltat_2)
 
 ![[[    N+ heat flow equation resolution
@@ -3695,7 +3678,7 @@ CCCCC                                                                           
 
 ![[[    Electron energy and heat flow equation resolution (1)
       call cpu_time(tic)
-      write(stdout,*),tic,'e- energy & heat flow eqn resolution (1)'
+      print *,tic,'e- energy & heat flow eqn resolution (1)'
     
       do i=1,nx
 
@@ -8115,9 +8098,9 @@ C]]]
               buffer(ipos+ipos_no1d)=N_0*No1dnew(i)*1.e6
               buffer(ipos+ipos_uo1d)=Cj0*Uo1dnew(i)/1.e2
             enddo
-            write(fid_temp,rec=nrectemps)(buffer(i),i=1,longbuf)
+            write(u,rec=nrectemps)(buffer(i),i=1,longbuf)
           endif
-       close(fid_temp)
+       close(u)
       nrec_ecr=nrec_ecr+1
         write(unfic_out_transcar,rec=nrec_ecr)(buffer(i),i=1,longbuf)
       endif
@@ -8127,7 +8110,7 @@ C]]]
 
         close(unfic_out_transcar)
         close(unfic_in_transcar)
-        close(fid_temp)
+        close(u)
 
       stop 'fin normale'
     
@@ -8138,9 +8121,9 @@ C    on a debranche ici a cause d'un probleme de NaN
         print*,'pas de temps et params de norm',dt,deltat,R0,Ci0
         close(unfic_out_transcar)
         close(unfic_in_transcar)
-        close(fid_temp)
+        close(u)
         fid_NaN=unfic_out_transcar
-        open(fid_NaN,file='dir.output/transcar.dump',
+        open(newunit=u,file='dir.output/transcar.dump',
      &            form='unformatted',
      &                  access='direct',status='replace',recl=longrec)
 
@@ -8236,8 +8219,8 @@ C    on a debranche ici a cause d'un probleme de NaN
         buffer(ipos+ipos_tes)=Tes(i)
         buffer(ipos+ipos_qes)=Qes(i)*1.e-7
       enddo
-      write(fid_NaN,rec=1)(buffer(i),i=1,longbuf)
-      close(fid_NaN)
+      write(u,rec=1)(buffer(i),i=1,longbuf)
+      close(u)
       error stop 'NaN detected'
       end program 
 

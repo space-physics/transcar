@@ -25,8 +25,9 @@ def iterbeams(beam, P:dict):
 
     isok = runbeam(beam, P)
 
-    print(isok)
-    if not isok:
+    if isok:
+        print(f'OK {beam["E1"]:.0f} eV')
+    else:
         logging.warning(f'retrying beam{beam["E1"]}')
         isok = runbeam(beam, P)
         if not isok:
@@ -67,7 +68,6 @@ def cp_parents(files:list, target_dir:Path, origin:Path=None):
 
     cp_parents('/tmp/a/b/c/d/boo','/tmp/e/f')
     cp_parents('x/hi','/tmp/e/f/g')  --> copies ./x/hi to /tmp/e/f/g/x/hi
-
     """
 #%% make list if it's a string
     if isinstance(files,(str,Path)):
@@ -122,15 +122,15 @@ def transcaroutcheck(odir:Path,errfn:Path,ok:str='STOP fin normale')->bool:
 
 
 def setuptranscario(rodir:Path, beamEnergy:float):
-    inp = readTranscarInput(root/DATCAR)
+    inp = readTranscarInput(DATCAR)
 
     odir = Path(rodir).expanduser() / f'beam{beamEnergy:.1f}'
 
     (odir/'dir.output').mkdir(parents=True, exist_ok=True)
 # %% move files where needed for this instantiation
     if not Path(transcarexe).is_file():
-        raise FileNotFoundError('Need to compile Transcar Fortran code.  python -m pip install -e .')
-
+        raise FileNotFoundError(f'could not find {transcarexe}. May need to compile Transcar Fortran code:\n python -m pip install -e .')
+        
     # precfn is NOT included here!
     flist = [DATCAR, din / inp['precfile'], ddat / 'type', transcarexe]
     flist += [ddat / 'dir.linux/dir.geomag' / s  for s in ['data_geom.bin','igrf90.dat','igrf90s.dat']]

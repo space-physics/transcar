@@ -1,4 +1,4 @@
-        subroutine fchap(iyd,tu,z,lat,lon,f107,ap,chi,chapesp)
+      subroutine fchap(iyd,tu,z,lat,lon,f107,ap,chi,chapesp)
         
         implicit none
 
@@ -55,10 +55,9 @@
 
       subroutine grille(z,lat,lon,tu,chi,decli,
      &                   zi,lati,loni,wi,ni,zj,wj,nj)
-     
-      include 'comm.f'
+      use comm, only: dp,pi,deg2rad,rad2deg
       implicit none
-      include 'comm_sp.f'
+
      
       integer,parameter :: nlaguer=15 , ngauss=16 , nmax=31
      
@@ -69,7 +68,7 @@
      
       
       real latref,lonref
-      real(dp) xl(nlaguer),wl(nlaguer),xg(ngauss),wg(ngauss)
+      real(dp) :: xl(nlaguer),wl(nlaguer)
       real absc(nmax),cfi,cki,clat,cosdec,dl,h,hver,rlim,rmax,rmin,rz,
      &  sfi,sindec,ski,slat,zmax,zmin
       integer i
@@ -79,22 +78,25 @@
       real,parameter :: pis2=pi/2, re=6356.766
     
 c    abscisses et poids de Gauss ( a 16 points )
-        data xg/-0.989400934991649932596,-0.944575023073232576078,
+      real, parameter:: xg(*)=
+     &            [-0.989400934991649932596,-0.944575023073232576078,
      &            -0.865631202387831743880,-0.755404408355003033895,
      &          -0.617876244402643748447,-0.458016777657227386342,
      &        -0.281603550779258913230,-0.095012509837637440185,
      &             0.095012509837637440185, 0.281603550779258913230,
      &           0.458016777657227386342, 0.617876244402643748447,
      &             0.755404408355003033895, 0.865631202387831743880,
-     &         0.944575023073232576078, 0.989400934991649932596/
-        data wg/ 0.027152459411754094852, 0.062253523938647892863,
+     &         0.944575023073232576078, 0.989400934991649932596]
+     
+      real, parameter :: wg(*)=
+     &        [0.027152459411754094852, 0.062253523938647892863,
      &         0.095158511682492784810, 0.124628971255533872052,
      &          0.149595988816576732081, 0.169156519395002538189,
      &             0.182603415044923588867, 0.189450610455068496285,
      &             0.189450610455068496285, 0.182603415044923588867,
      &          0.169156519395002538189, 0.149595988816576732081,
      &         0.124628971255533872052, 0.095158511682492784810,
-     &         0.062253523938647892863, 0.027152459411754094852/
+     &         0.062253523938647892863, 0.027152459411754094852]
 
 c    abscisses et poids de Laguerre ( a 15 points )
 

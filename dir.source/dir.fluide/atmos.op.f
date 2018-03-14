@@ -1,14 +1,24 @@
-       subroutine atmos(iyd,ces,stl,z,glat,glong,jpreci,f107,
+      subroutine atmos(iyd,ces,stl,z,glat,glong,jpreci,f107,
      &            ap,Ne,Te,Tj,nx,kiappel,file_cond)
 
-        use, intrinsic:: ieee_arithmetic,only: ieee_is_nan
-        include 'comm.f'
+      use, intrinsic:: ieee_arithmetic,only: ieee_is_nan
+      use comm, only: stderr, npt,rad2deg,tic
 
-        include 'TRANSPORT.INC'
+      implicit none
 
-        logical flgnan
-        common/nan/flgnan
+      integer, intent(in) :: iyd,nx
+      integer, intent(inout) :: jpreci
+      real, intent(in) :: glat,glong
 
+      logical flgnan
+      common/nan/flgnan
+
+
+      real :: b,burnside,coef_cour,coefchamp,coloss,dtz,fact,flag_fct,
+     &   p_0,temploc
+      integer :: i,icira,indlim,indlim_1,nan,njour
+      
+      real,external :: coskhi,ap2kp
 
 C    SIGNIFICATION DES VARIABLES DE CE SOUS-PROGRAMME
 
@@ -180,8 +190,6 @@ C
 C       --MZ
 
 
-        parameter (npt=500)
-
         integer file_cond
         real z(npt),Ne(npt),Te(npt),Tj(npt)
         real t(2),d(8),f107(3),ap(7),w(2)
@@ -214,8 +222,8 @@ C       --MZ
         real vartemp,Qetop
         common/fluxtop/Qetop
 
-        real N_0,T_0,Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,Pi0,Pj0,Pe0,Qi0,Qj0,Qe0
-        common/param/    N_0,T_0,P_0,Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,
+        real Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,Pi0,Pj0,Pe0,Qi0,Qj0,Qe0
+        common/param/   P_0,Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,
      &            Qi0,Qj0,Qe0
      &
         real R0,g0,t0
@@ -446,7 +454,7 @@ C       --MZ
          secOHot=sec
 
          call cpu_time(tic)
-         write(stdout,*),tic,' atmos: call gtd6, hot O. glat=',glat
+         print *,tic,' atmos: call gtd6, hot O. glat=',glat
          call gtd6(iyd,secOHot,zNOHotRef,glat,glong,stl,
      &        f107(3),f107(2),ap,48,d,t)
          NOHotRef=pctOHot*0.01*d(2)
@@ -629,7 +637,7 @@ c         endif
 !              print*,'call transelec'
                call transelec(npt,iyd,sec,glat,glong,stl,f107,
      .          ap,chi,Ne,Te,Tj,nx,Nh,No,No2,Nn2,Nn,Tn,indlim,jpreci,
-     .          N_0,T_0,kiappel,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
+     .          kiappel,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
      .          Nes,Jes,Tes,qes)
 
         endif

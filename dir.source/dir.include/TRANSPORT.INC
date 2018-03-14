@@ -10,42 +10,29 @@
 ! nbren    =    IPN: maximum length of the energy grid
 !
 !
-         integer nbralt,nbrsp,nbrango2,nbrang,nbrexc,nbrionst,nbren
-         PARAMETER (nbralt=201,nbrsp=5,nbrango2 = 16,nbrang=32,         
-     &               nbrexc=15,nbrionst=5,nbren=400)
+      integer,parameter :: nbralt=201,nbrsp=5,nbrango2 = 16,nbrang=32,     
+     &                    nbrexc=15,nbrionst=5,nbren=400
 !
 !       Nom de la planete d'application, et distance au soleil (UA)
-        character*10 planete
-        real rayonUA
+
 !
 !     For each specie:
 !       . Name.
 !       . Atomic mass (number).
 !
-        real atomas(8)
-!
-        character*5 specie(8)
-!
-         integer unfic_crsout_degrad,unfic_rdtout_degrad
-         integer icrsin,irdtin,icrsphot
-        integer ifeldat,ifelprt,ifeltrans
-        integer fic_euvcoeff,fic_euvindex
-!
-        include 'CHEMIN.INC'
+      real,parameter :: atomas(8) = [28.0134,31.9988,15.9994,1.00797,
+     &   4.0026,14.0067, 39.948,30.0061]       
 
-
-        data planete/'Terre'/
-        data rayonUA /1./
+      real, parameter :: rayonUA=1.,N_0=1.e4,T_0=1000.
      
-        data atomas /28.0134,31.9988,15.9994,1.00797,4.0026,14.0067,        
-     &             39.948,30.0061/
-       data specie/'[N2]','[O2]','[O]','[H]','[He]','[N]','[A]','[NO]'/
+       character(*), parameter :: specie(*)=['[N2]','[O2]','[O] ',
+     &  '[H] ', '[He]','[N] ','[A] ','[NO]']
      
       integer,parameter :: ineutr=10,ielec=12,iindat=14,transcar_dat=15,
      &  unfic_in_transcar=16,unfic_out_transcar=18,
      &  fic_datdeg=20,fic_degout=22,fic_transout=24,
-     &  fic_crsin_degrad=26,fic_dattrans=28
-         data unfic_crsout_degrad/30/,unfic_rdtout_degrad/32/
-         data icrsin/34/,irdtin/36/,icrsphot/38/
-        data ifeldat/40/,ifelprt/50/,ifeltrans/52/
-        data fic_euvcoeff/54/,fic_euvindex/56/
+     &  fic_crsin_degrad=26,fic_dattrans=28,
+     &  unfic_crsout_degrad=30,unfic_rdtout_degrad=32,
+     &  icrsin=34,irdtin=36,icrsphot=38,
+     &  ifeldat=40,ifelprt=50,ifeltrans=52,
+     & fic_euvcoeff=54,fic_euvindex=56

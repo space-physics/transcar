@@ -1,36 +1,36 @@
 c
 c-----------------------------------------------------------------
 c
-        subroutine conductivite(nalt,altkm,denelc,densneut,
+      subroutine conductivite(nalt,altkm,denelc,densneut,
      &		tneutre,temelc,temion,chideg,glat,glong,year,day,
      &		hrloc,cped,chal,ratHoP,cpedsum,chalsum,cpedCS,chalCS,
      &		ratHoPsum,gyreave,gyriave,collOp,collNOp,collO2p,
      &		collionSN,collionRG,collen2,colleo2,colleo1,colle,iprt,
      &		f107,icolin)
-c
+
         implicit none
         include 'TRANSPORT.INC'
-c
+
         integer nalt,ialt,iprt(40),icolin
-        integer file_cond
+        integer u
         real altkm(nbralt),denelc(nbralt),O1prate(nbralt),
      &	     densneut(8,nbralt)
         real tneutre(nbralt),temelc(nbralt),temion(nbralt)
         real cped(nbralt),chal(nbralt),ratHoP(nbralt)
- 	real omegae(nbralt), omegai(nbralt),gyreave,gyriave
- 	real collionSN(nbralt),colle(nbralt),collionRG(nbralt)
- 	real collOp(nbralt),collNOp(nbralt),collO2p(nbralt)
- 	real collen2(nbralt),colleo2(nbralt),colleo1(nbralt)
- 	real ratHoPsum,cpedsum,chalsum,cpedCS,chalCS
- 	real glat,glong,day,date,chideg,f107
- 	real denne,denn2,deno2,deno1
-      	real aionmas,gyre,gyri
- 	real fcOp,fcO2p,fcNOp,fci,fciRG,fciSN,fcen2,fceo2,fceo1,fce
- 	real ti,te,tn,hrloc,year
- 	real pi,cx,conp,conh,field,field120,uma,z50
+        real omegae(nbralt), omegai(nbralt),gyreave,gyriave
+        real collionSN(nbralt),colle(nbralt),collionRG(nbralt)
+        real collOp(nbralt),collNOp(nbralt),collO2p(nbralt)
+        real collen2(nbralt),colleo2(nbralt),colleo1(nbralt)
+        real ratHoPsum,cpedsum,chalsum,cpedCS,chalCS
+        real glat,glong,day,date,chideg,f107
+        real denne,denn2,deno2,deno1
+        real aionmas,gyre,gyri
+        real fcOp,fcO2p,fcNOp,fci,fciRG,fciSN,fcen2,fceo2,fceo1,fce
+        real ti,te,tn,hrloc,year
+        real pi,cx,conp,conh,field,field120,uma,z50
         real xbid,ybid,zbid,xmbid,decbid
- 	real dOp,dO2p,dNOp
- 	real xmO1,xmO2,xmNO
+        real dOp,dO2p,dNOp
+        real xmO1,xmO2,xmNO
 c
 
 c 	ENTREES :
@@ -83,7 +83,6 @@ c 	conditions qu'elle, et 0 sinon
 c
  	integer senior
  	data senior/1/
- 	file_cond = 48
 
         write(6,*)'Calcul de conductivite                     ' ,'[A'
 c
@@ -237,15 +236,15 @@ c 	positionne l'ecriture en fin de fichier (ajout des nouvelles
 c 	donnees). En lecture, la ligne lue est la premiere.
 c	Ceci est une specificite aix, car la norme ANSII ne specifie
 c 	rien.
- 	open(file_cond,file = chemin(1:lpath)//'dir.output/conduc.res',
+      open(newunit=u,file ='dir.output/conduc.res',
      .		status = 'old')
-        write(file_cond,1030)glat,hrloc,chideg,chalsum,cpedsum,
+        write(u,1030)glat,hrloc,chideg,chalsum,cpedsum,
      .		ratHoPsum,chalCS,cpedCS
 c       do ialt=1,nalt
-c         write(file_cond,1010)altkm(ialt),chal(ialt),cped(ialt),
+c         write(u,1010)altkm(ialt),chal(ialt),cped(ialt),
 c    . 		ratHoP(ialt),denelc(ialt),temelc(ialt),temion(ialt)
 c       enddo
- 	close(file_cond)
+        close(u)
 c
 c       write(6,1030)glat,hrloc,chideg,chalsum,cpedsum,ratHoPsum,
 c    .		chalCS,cpedCS
@@ -269,34 +268,30 @@ c
 1060  	format('Gyrofrequences moyennes      :',2(1pe10.2))
 2000 	format(1f10.2,3f7.4,1f10.2,3(1p1e10.2))
 
-      return
-      end       
-c
-c---------------------------------------------------------------
-c	
- 	subroutine conduct(denn2,deno2,deno1,denne,dOp,dO2p,
+      end subroutine conductivite     
+
+	
+      subroutine conduct(denn2,deno2,deno1,denne,dOp,dO2p,
      .		dNOp,te,ti,tn,conP,conH,field,aionmas,gyre,gyri,
      .		fcOp,fcNOp,fcO2p,fci,fciRG,fciSN,
      .		fcen2,fceo2,fceo1,fce,icolin)
-c
- 	implicit none
-c
- 	real e,elmas,aionmas,pi,esb,srt,gyre,gyri,field
- 	real denn2,deno2,deno1,denne
- 	real dOp,dO2p,dNOp
- 	real fcOp,fcOpO,fcOpN2,fcOpO2,burnside
-        real fcNOp,fcNOpO,fcNOpN2,fcNOpO2
- 	real fcO2p,fcO2pO,fcO2pN2,fcO2pO2
- 	real fci,fciRG,fciSN
- 	real fcen2,fceo2,fceo1,fce
- 	real te,ti,tn,ae,ai,conP,conH
- 	integer icolin
+
+      implicit none
+
+        real e,elmas,aionmas,pi,esb,srt,gyre,gyri,field
+        real denn2,deno2,deno1,denne
+        real dOp,dO2p,dNOp
+        real fcOp,fcOpO,fcOpN2,fcOpO2,burnside
+            real fcNOp,fcNOpO,fcNOpN2,fcNOpO2
+        real fcO2p,fcO2pO,fcO2pN2,fcO2pO2
+        real fci,fciRG,fciSN
+        real fcen2,fceo2,fceo1,fce
+        real te,ti,tn,ae,ai,conP,conH
+        integer icolin
 c
 	e=1.6021e-19
 	elmas=9.1091e-31
-c
- 	pi = 4.*atan(1.)
-c
+
 	esb=e/field
 	srt=sqrt(tn)
 c
@@ -310,10 +305,10 @@ c
  	call o2ion(fcO2p,fcO2pO,fcO2pN2,fcO2pO2,ti,tn,denO1,denN2,
      .		 	denO2)
 c 	On passe de frequences reduites aux frequences reelles.
- 	fcOp  = dOp*fcOp
- 	fcO2p = dO2p*fcO2p
- 	fcNOp = dNOp*fcNOp
- 	fciSN   = fcOp+fcO2p+fcNOp
+        fcOp  = dOp*fcOp
+        fcO2p = dO2p*fcO2p
+        fcNOp = dNOp*fcNOp
+        fciSN   = fcOp+fcO2p+fcNOp
 c
  	fciRG=3.75e-10*(denn2+deno2+deno1)
 c
@@ -332,25 +327,24 @@ c
 c 	frequence de collision electrons-neutres from Banks et Kockarts,
 c	1973, et Schunk et Walker, 1973 :
 c 	Ce sont les memes que dans l'article de Catherine.
-	fcen2=2.33e-11*denn2*(1.-1.21e-4*tn)*tn
-	fceo2=1.22e-10*deno2*(1.+3.6e-2*srt)*srt
-	fceo1=2.8e-10*deno1*srt
+        fcen2=2.33e-11*denn2*(1.-1.21e-4*tn)*tn
+        fceo2=1.22e-10*deno2*(1.+3.6e-2*srt)*srt
+        fceo1=2.8e-10*deno1*srt
 c 	On passe de frequences reduites aux frequences reelles. Les
 c 	frequences e/neutre tiennent deja compte des densite neutres.
 c 	(These Catherine, p23)
-	fce=fcen2+fceo2+fceo1
-c
- 	ae=gyre**2+fce**2
- 	ai=gyri**2+fci**2
- 	conP=denne*1.e+06*esb*(fci*gyri/ai+fce*gyre/ae)
-	conH=denne*1.e+06*esb*(gyre*gyre/ae-gyri*gyri/ai)
-c
-	return
-	end
+        fce=fcen2+fceo2+fceo1
+        
+        ae=gyre**2+fce**2
+        ai=gyri**2+fci**2
+        conP=denne*1.e+06*esb*(fci*gyri/ai+fce*gyre/ae)
+        conH=denne*1.e+06*esb*(gyre*gyre/ae-gyri*gyri/ai)
+
+      end subroutine conduct
 c
 c----------------------------------------------------------------------
 c
- 	subroutine vin2mil(zkm,tn,denn2,deno2,deno1)
+      subroutine vin2mil(zkm,tn,denn2,deno2,deno1)
 c
 c 	Sous programme d'atmosphere neutre de Denis Alcayde. Pour le
 c 	fonctionnement et tous les commentaires, voir
@@ -500,47 +494,44 @@ c
  	  deno1 = xn(3)/1.e+06		!conversion en cm-3
  	  tn = tdz
  	endif
-c
- 	return
- 	end
-c
-c ----------------------------------------------------------------------
-c
- 	subroutine fzbztoz(alt,amas,tdz,fact,gg,alfa)
-c
- 	implicit none
- 	real paresse,gtzbaz
- 	common/outpt2/ paresse,gtzbaz
- 	real amu,r,gzer,re,amsol
- 	common /cstes/ amu,r,gzer,re,amsol
- 	real texo,tzbaz,tm,ts
- 	common /modtemp/texo,tzbaz,tm,ts
- 	real zbaz,zref,zm,zs
- 	common /modalts/ zbaz,zref,zm,zs
-c
- 	real x,y,z,g,gg,t,csi,amas,alt,tdz
- 	real e,c,f,d,h,gam,alfa,sig,gzbaz,csy,rezbaz,fact
-c
- 	g(x) = gzer*(1.+x/re)**(-2)
- 	t(x) = texo -(texo-tzbaz)*exp(-sig*x)
- 	csi(x,y) = (x-y)*(re+y)/(re+x)
-c
- 	gg = g(alt)
- 	gzbaz = g(zbaz)
- 	rezbaz = re + zbaz
- 	sig = paresse + 1./rezbaz
- 	gam = amas*gzbaz/r/texo/sig*1.e+03
- 	csy = csi(alt,zbaz)
- 	tdz = t(csy)
- 	e = -sig *csy
- 	c = tzbaz / tdz
- 	f = e*gam
- 	d = exp(f)
- 	h = gam + alfa
- 	fact = d*c**h
-c
- 	return
- 	end
+
+      end subroutine vin2mil
+
+
+      subroutine fzbztoz(alt,amas,tdz,fact,gg,alfa)
+
+        implicit none
+        real paresse,gtzbaz
+        common/outpt2/ paresse,gtzbaz
+        real amu,r,gzer,re,amsol
+        common /cstes/ amu,r,gzer,re,amsol
+        real texo,tzbaz,tm,ts
+        common /modtemp/texo,tzbaz,tm,ts
+        real zbaz,zref,zm,zs
+        common /modalts/ zbaz,zref,zm,zs
+
+        real x,y,z,g,gg,t,csi,amas,alt,tdz
+        real e,c,f,d,h,gam,alfa,sig,gzbaz,csy,rezbaz,fact
+
+        g(x) = gzer*(1.+x/re)**(-2)
+        t(x) = texo -(texo-tzbaz)*exp(-sig*x)
+        csi(x,y) = (x-y)*(re+y)/(re+x)
+
+        gg = g(alt)
+        gzbaz = g(zbaz)
+        rezbaz = re + zbaz
+        sig = paresse + 1./rezbaz
+        gam = amas*gzbaz/r/texo/sig*1.e+03
+        csy = csi(alt,zbaz)
+        tdz = t(csy)
+        e = -sig *csy
+        c = tzbaz / tdz
+        f = e*gam
+        d = exp(f)
+        h = gam + alfa
+        fact = d*c**h
+
+      end subroutine fzbztoz
 c
 c----------------------------------------------------------------------
 c

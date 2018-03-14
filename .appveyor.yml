@@ -1,6 +1,6 @@
 image:
 - Visual Studio 2017
-- Ubuntu
+
 
 stack: python 3
 
@@ -24,10 +24,7 @@ before_build:
 - sh: export FC=/usr/bin/gfortran-6
 
 build_script:
-- cmd: cmake -G "MinGW Makefiles" ..
-- cmd: mingw32-make
-
-- pip  install -e .[tests]
+- pip install -e .[tests]
 
 after_build:
 - pytest -v

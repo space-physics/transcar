@@ -5,31 +5,32 @@ from numpy.testing import assert_allclose
 import tempfile
 #
 import transcar
-from transcarread import ExcitationRates
+import transcarread as tr
 
-rdir = Path(__file__).parents[1]
-print(rdir)
-rdir = Path(tempfile.gettempdir()) / 'newdata'
-refdir = Path('tests/beam947.2')
-odir = rdir/refdir.name
-kinfn = Path('dir.output') / 'emissions.dat'
+root = Path(__file__).parents[1]
+beam =  'beam947.2'
+refdir = root / 'tests'/beam
+kinfn = 'dir.output/emissions.dat'
 
 def test_transcar():
-    odir.mkdir(parents=True, exist_ok=True)
 
-    params = {'rodir': rdir,
-              'Q0': 70114000000.0,
-              'msgfn': 'transcar.log',
-              'errfn': 'transcarError.log'
-              }
+    with tempfile.TemporaryDirectory() as odir:
 
-    beams = pandas.read_csv('tests/test_E1E2prev.csv', header=None, names=['E1','E2','pr1','pr2']).squeeze()
+        odir = Path(odir).expanduser()
 
-    transcar.iterbeams(beams, params)
+        params = {'rodir': odir,
+                  'Q0': 70114000000.0,
+                  'msgfn': 'transcar.log',
+                  'errfn': 'transcarError.log'
+                  }
 
-    refexc, tref = ExcitationRates(refdir/kinfn)[:2]
+        beams = pandas.read_csv(root / 'tests/test_E1E2prev.csv', header=None, names=['E1','E2','pr1','pr2']).squeeze()
 
-    exc, t = ExcitationRates(odir/kinfn)[:2]
+        transcar.iterbeams(beams, params)
+
+        refexc = tr.ExcitationRates(refdir/kinfn)
+
+        exc = tr.ExcitationRates(odir/beam/kinfn)
 
     ind=[[1,12,5],[0,62,8]]
 
@@ -37,7 +38,9 @@ def test_transcar():
         assert_allclose(refexc[i[0],i[1],i[2]],
                            exc[i[0],i[1],i[2]], rtol=1e-3)
 
-    assert tref[0]==t[0]
+    assert (refexc.time.shape == refexc.time.shape),'did you rerun the test without clearing the output directory first?'
+    assert (refexc.time == exc.time).all(),'simultation time of current run did not match reference run'
+
 
 if __name__ == '__main__':
     test_transcar()

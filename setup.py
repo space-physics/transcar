@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 install_requires=['python-dateutil','pytz','pandas']
 tests_require=['pytest','nose','coveralls','transcarread']
+OBJ = 'dir.source/dir.obj'
 # %%
 import os
 from setuptools import setup,find_packages
@@ -11,12 +12,15 @@ setup(name='transcar',
       version='0.2.0',
       author='Michael Hirsch, Ph.D.',
       url='https://github.com/scivision/transcar',
+      long_description=open('README.rst').read(),
+      description='Parallel-executing Transcar 1-D particle precipitation ionospheric model.',
       classifiers=[
+      'Development Status :: 4 - Beta',
+      'Environment :: Console',
       'Intended Audience :: Science/Research',
-      'Development Status :: 3 - Alpha',
-      'License :: OSI Approved :: MIT License',
-      'Topic :: Scientific/Engineering :: Atmospheric Science',
+      'Operating System :: OS Independent',
       'Programming Language :: Python :: 3',
+      'Topic :: Scientific/Engineering :: Atmospheric Science',
       ],
       python_requires='>=3.6',
       install_requires=install_requires,
@@ -26,8 +30,8 @@ setup(name='transcar',
 	  )
 
 if os.name =='nt':
-    subprocess.check_call(['cmake','-G','MinGW Makefiles','..'],cwd='dir.source/dir.obj')
-    subprocess.check_call(['mingw32-make'],cwd='dir.source/dir.obj')
-else: #'posix'
-    subprocess.check_call(['cmake','..'],cwd='dir.source/dir.obj')
-    subprocess.check_call(['make'],cwd='dir.source/dir.obj')
+    subprocess.check_call(['cmake','-G','MinGW Makefiles','..'],cwd=OBJ)
+    subprocess.check_call(['mingw32-make'],cwd=OBJ)
+else:
+    subprocess.check_call(['cmake','..'],cwd=OBJ)
+    subprocess.check_call(['make'],cwd=OBJ)

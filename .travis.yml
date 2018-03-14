@@ -26,7 +26,7 @@ before_install:
   - ln -s /usr/bin/gfortran-6 ~/.local/bin/gfortran
   - export PATH="$HOME/.local/bin/:$PATH"
 
-install: pip -q install -e .[tests]
+install: pip install -e .[tests]
 
 script: 
   - pytest -v 

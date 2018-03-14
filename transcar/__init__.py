@@ -7,19 +7,20 @@ from pytz import UTC
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 # %% constants dictacted by legacy Fortran code
-transcarexe = 'transconvec'
+root = Path(__file__).parents[1]
+transcarexe = root/'transconvec'
 if os.name == 'nt':
-    transcarexe += '.exe'
-    
+    transcarexe = transcarexe.with_suffix('.exe')
 FOK = 'finish.status'
 # hard-coded in Fortran
-din = Path('dir.input')
-ddat = Path('dir.data')
+din =  root / 'dir.input'
+dout = Path('dir.output')
+ddat = root / 'dir.data'
 DATCAR = din / 'DATCAR'
-precfn = din / 'precinput.dat'
+precfn =  'dir.input/precinput.dat'  # NOT based on root, MUST be relative!!
 
 def iterbeams(beam, P:dict):
-    if isinstance(beam,tuple):
+    if isinstance(beam,tuple):  # due to .iterrows()
         beam = beam[1]
 
     isok = runbeam(beam, P)
@@ -34,6 +35,7 @@ def iterbeams(beam, P:dict):
 
 
 def runbeam(beam, P:dict) -> bool:
+    """Run a particular beam energy vs. time"""
 # %% copy the Fortran static init files to this directory (simple but robust)
     datinp,odir = setuptranscario(P['rodir'], beam['E1'])
     setupPrecipitation(odir, datinp, beam, P['Q0'])
@@ -45,8 +47,14 @@ def runbeam(beam, P:dict) -> bool:
     return isok
 
 
-def cp_parents(files:list, target_dir:Path):
+def cp_parents(files:list, target_dir:Path, origin:Path=None):
     """
+    inputs
+    ------
+    files: list of files to copy (source)
+    target_dir: directory to copy into
+    origin: non-relative path of source, that needs to be trimmed.
+
     This function requires Python >= 3.6.
 
     This acts like bash cp --parents in Python
@@ -69,7 +77,12 @@ def cp_parents(files:list, target_dir:Path):
     target_dir = Path(target_dir).expanduser()
 #%% work
     for f in files:
-        newpath = target_dir / f.parent #to make it work like cp --parents, copying absolute paths if specified
+        if origin:
+            fsource = f.relative_to(origin).parent
+        else:
+            fsource = f.parent
+
+        newpath = target_dir / fsource #to make it work like cp --parents, copying absolute paths if specified
         newpath.mkdir(parents=True, exist_ok=True)
         shutil.copy2(f, newpath)
 
@@ -78,14 +91,10 @@ def runTranscar(odir:Path, errfn:Path, msgfn:Path):
     odir = Path(odir).expanduser().resolve()  # MUST have resolve()!!
 
     with (odir/errfn).open('w')  as ferr, (odir/msgfn).open('w') as fout:
-        # remember it must be an iterable, even if only one argument.
-        exe = [str(odir / transcarexe)]
-
-        # Note: subprocess.run() is blocking by design.
-        subprocess.run(exe, cwd=odir, stdout=fout, stderr=ferr)
+        subprocess.run(f'.{os.sep}{transcarexe.name}', cwd=odir, stdout=fout, stderr=ferr)
 
 
-def transcaroutcheck(odir:Path, errfn:Path, ok:str='STOP fin normale')->bool:
+def transcaroutcheck(odir:Path,errfn:Path,ok:str='STOP fin normale')->bool:
     """
     checks for text at end of file
 
@@ -115,13 +124,14 @@ def transcaroutcheck(odir:Path, errfn:Path, ok:str='STOP fin normale')->bool:
 def setuptranscario(rodir:Path, beamEnergy:float):
     inp = readTranscarInput(DATCAR)
 
-    odir = rodir / f'beam{beamEnergy:.1f}'
+    odir = Path(rodir).expanduser() / f'beam{beamEnergy:.1f}'
 
     (odir/'dir.output').mkdir(parents=True, exist_ok=True)
 # %% move files where needed for this instantiation
     if not Path(transcarexe).is_file():
         raise FileNotFoundError(f'could not find {transcarexe}. May need to compile Transcar Fortran code:\n python -m pip install -e .')
         
+    # precfn is NOT included here!
     flist = [DATCAR, din / inp['precfile'], ddat / 'type', transcarexe]
     flist += [ddat / 'dir.linux/dir.geomag' / s  for s in ['data_geom.bin','igrf90.dat','igrf90s.dat']]
     flist += [ddat / 'dir.linux/dir.projection/varpot.dat']
@@ -130,13 +140,14 @@ def setuptranscario(rodir:Path, beamEnergy:float):
     flist += [ddat / 'dir.linux/dir.cine/dir.euvac/EUVAC.dat']
     flist += [ddat / 'dir.linux/dir.cine/dir.seff' /s  for s in ['crsb8','crsphot1.dat','rdtb8']]
 
-    cp_parents(flist, odir)
+    cp_parents(flist, odir, root)
 
     return inp, odir
 
 
-def setupPrecipitation(odir,inp,beam, flux0):
-    ofn = odir / precfn
+def setupPrecipitation(odir:Path, inp,beam, flux0):
+    """this writes dir.input/precinput.dat for the first time step, for each beam"""
+    ofn = Path(odir).expanduser() / precfn
 
     E1 = beam['E1']
     E2 = beam['E2']

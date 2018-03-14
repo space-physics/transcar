@@ -27,6 +27,6 @@ build_script:
 - pip install -e .[tests]
 
 after_build:
-- cd bin
+- cd dir.source/dir.obj
 - make test
 

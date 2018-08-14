@@ -37,7 +37,7 @@ def test_transcar():
     ind = [[1, 12, 5], [0, 62, 8]]
 
     for i in ind:
-        assert refexc[i[0], i[1], i[2]] == approx(exc[i[0], i[1], i[2]], rel=1e-3)
+        assert refexc[i[0], i[1], i[2]].values == approx(exc[i[0], i[1], i[2]].values, rel=1e-3)
 
     assert refexc.time.shape == refexc.time.shape, 'did you rerun the test without clearing the output directory first?'
     assert (refexc.time == exc.time).all(), 'simultation time of current run did not match reference run'

@@ -1,37 +1,29 @@
 language: python
-fast_finish: true
-
-python:
-  - 3.6
-
-os:
-  - linux
-
 group: travis_latest
- 
-env: FC=gfortran-6
 
 git:
   depth: 3
+  quiet: true
+
+python:
+- 3.6
+
+os:
+- linux
 
 addons:
   apt:
-    sources:
-      - ubuntu-toolchain-r-test
     packages:
-      - gfortran-6
-
-before_install:
-  - mkdir -p ~/.local/bin
-  - ln -s /usr/bin/gfortran-6 ~/.local/bin/gfortran
-  - export PATH="$HOME/.local/bin/:$PATH"
+    - gfortran
 
 install: pip install -e .[tests]
 
 script: 
-  - cd dir.source/dir.obj
-  - make test
+- pytest -xrsv
+- flake8
+- mypy . --ignore-missing-imports
+
 
 after_success: 
-  - coverage run ../../tests/test_all.py
-  - coveralls
+- pytest --cov --cov-config=setup.cfg 
+- coveralls

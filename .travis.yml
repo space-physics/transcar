@@ -11,10 +11,14 @@ python:
 os:
 - linux
 
+env: FC=gfortran-6
+
 addons:
   apt:
+    sources:
+    - ubuntu-toolchain-r-test
     packages:
-    - gfortran
+    - gfortran-6
 
 install: pip install -e .[tests]
 

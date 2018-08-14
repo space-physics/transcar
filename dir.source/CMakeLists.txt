@@ -1,14 +1,17 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.0)
 project(transcar Fortran)
 
-add_compile_options(-march=native -O3 -Wline-truncation -g -fbacktrace -fmax-errors=3)
+add_compile_options(-O3)
 
 # compiler dependent flags necessary for disk files used (sorry)
 if(${CMAKE_Fortran_COMPILER_ID} MATCHES GNU)
-    add_compile_options(-frecord-marker=4 -std=legacy)# -Warray-bounds=2)
+    add_compile_options(-frecord-marker=4 -std=legacy 
+          -march=native -Wline-truncation -g -fbacktrace -fmax-errors=3)# -Warray-bounds=2)
 elseif(${CMAKE_Fortran_COMPILER_ID} MATCHES Intel)
     add_compile_options(-assume byterecl)
 elseif(${CMAKE_Fortran_COMPILER_ID} MATCHES PGI)
+    #already assumes byterecl
+elseif(${CMAKE_Fortran_COMPILER_ID} MATCHES Flang)
     #already assumes byterecl
 else()
     message(WARNING "${CMAKE_Fortran_COMPILER_ID} unknown compiler type, disk options may be invalid")
@@ -66,12 +69,3 @@ target_link_libraries(transelec PRIVATE system fluid common)
 
 add_library(imm ../dir.imm/IMM2.f90 ../dir.imm/IMM_routines.f90)
 
-#---------------
-enable_testing()
-
-find_package(PythonInterp)
-if(PYTHON_VERSION_STRING STRGREATER_EQUAL 3.6)
-#if(PYTHONINTERP_FOUND)
-  add_test(NAME Python COMMAND pytest -v
-         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/..)
-endif()

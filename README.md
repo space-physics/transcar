@@ -9,35 +9,50 @@ Fortran Authors: P.L. Blelly, J. Lilensten, M. Zettergren
 
 Python Author, Fortran cleanup:  Michael Hirsch
 
-TRANSCAR 1D flux tube ionospheric energy deposition flux transport model. 
+TRANSCAR 1D flux tube ionospheric energy deposition flux transport model.
 Considers solar input and background conditions via MSIS, HWM.
 Models disturbance propagation in ionosphere via models including LCPFCT.
 
 ## Prereqs
 
 Because Transcar is Python & Fortran based, it runs on any PC/Mac with Linux, OS X, Windows, etc.
-
-You can use your preferred Python >= 3.6. 
-I use [Anaconda Python](http://continuum.io/downloads).
+Any Fortran compiler can be used, including Gfortran, Intel, Flang and PGI.
 
 -   Linux: `apt install gfortran cmake make`
 -   Mac: `brew install gcc cmake make`
--   Windows: use either:
-    -   [Windows Subsystem for Linux](https://www.scivision.co/install-windows-subsystem-for-linux/),
-        a full Ubuntu system made by Microsoft in the Windows App Store.
-    -   install gfortran, cmake and make [natively on Windows](https://www.scivision.co/brew-install-scoop-for-windows/)
+
+### Windows
+
+Windows users in general can use
+[Windows Subsystem for Linux](https://www.scivision.dev/install-windows-subsystem-for-linux/),
+a full Ubuntu system made by Microsoft in the Windows App Store.
+
+Otherwise, from native Windows, install CMake and any one of:
+
+* [Gfortran](https://www.scivision.dev/brew-install-scoop-for-windows/)
+* [PGI Community Edition](https://www.scivision.dev/install-pgi-free-compiler/) compilers
+* [Intel Parallel Studio](https://www.scivision.dev/install-intel-compiler-icc-icpc-ifort/) compilers
+
 
 ## Install
 
-You'll need Cmake, Gfortran and Python 3:
+from Terminal / Command Prompt
 
-    python -m pip install -e .
+```sh
+git clone https://github.com/scivision/transcar
+
+cd transcar
+
+python -m pip install -e .
+
+python build.py
+```
 
 ## Usage
 
 Simulations are configured in
-[transcar/dir.input/DATCAR](transcar/dir.input/DATCAR). 
-Simulations are run from the top directory. 
+[transcar/dir.input/DATCAR](transcar/dir.input/DATCAR).
+Simulations are run from the top directory.
 Python runs Transcar in parallel execution using `concurrent.futures`, dynamically adapting to the number
 of CPU cores available:
 ```sh
@@ -55,7 +70,7 @@ This is not normally needed, just for reference:
 ```sh
 cd dir.source/dir.obj
 cmake ..
-cmake --build .
+cmake --build . -j
 
 cd ..
 ```

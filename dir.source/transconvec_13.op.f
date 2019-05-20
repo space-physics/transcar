@@ -1,9 +1,9 @@
       program transconvec_13
       use, intrinsic:: iso_fortran_env, only: real32, dp=>real64
-      use, intrinsic:: ieee_arithmetic, only: ieee_is_nan  
-      use comm, only: stderr,dp,wp, npt, debug
+      use, intrinsic:: ieee_arithmetic, only: ieee_is_nan
+      use comm, only: stderr, wp, npt, debug
       include 'TRANSPORT.INC'
-        
+
 
 !     Ce programme demarre le couple de programmes de transports.
 !     Anciennement : eiscat.f
@@ -22,17 +22,17 @@
 ![      Different altitude levels used in the program
 
       real, parameter :: amu=1.667e-24,kb=1.38e-16,
-     &  Re=637800000.,  Rekm=Re*1.e-5, 
+     &  Re=637800000.,  Rekm=Re*1.e-5,
      &  z0  = 100000000., zflu= 600., zinf= 20000000., zsup=862200000.,
      &  zhplus  = 400., cofterp=3.*amu/kb, Nliminf=1.e-1/N_0,
      &  T_min=100./T_0, r_min=1.e-33
-     
-     
-     
+
+
+
        real,parameter ::rx0=0.
        real(dp), parameter :: dx0=0.0_dp
        integer, parameter :: i1=1
-        
+
       real,parameter :: Aq(*) = [7.883e-6,9.466e-6,1.037e-7],
      &                 Bq(*)= [1.021,.8458,1.633],
      &                 Cq(*)= [1.009,.9444,1.466],
@@ -42,13 +42,13 @@
 
       real, parameter :: zeddy=100., dte=0.005
       real :: tex0=20000.
-     
+
         data B0,sinI0,cosI0/.542,.9848,.1736/
 
-!       indice des ions 
+!       indice des ions
 !       ---------------
 !            (le premier indice faisant toujours refence a l espece)
-!       
+!
 !       1 O+     2 H+   3 N+    4 N2+    5 NO+   6 O2+
 !
 
@@ -71,7 +71,7 @@
         real*8 temps,tempsini,tempsconv,tempsconv_1,tempsdeb
 
         common /timeinfo/ temps
-        
+
         real*8 tempsfin,tempslim,tempsint,tempsort,tempstube
         real*8 step,postinto,duree,sortie,dto,dt,postint
         real*8 expnu,dexpnu,xnu,mat(nb_ion,nb_ion)
@@ -104,10 +104,10 @@
         real xno1d(npt)
         real nuo1di(npt),nuo1dj(npt),nuo1dk(npt),nuo1dl(npt)
         real nuo1dm(npt),nuo1dn(npt),nuo1de(npt)
-       
+
         real Po1s(npt),Pn2a(npt),No1snew(npt),Nn2anew(npt)
         real Po1sdisso2(npt)
- 
+
         real No1dold(npt),Uo1dold(npt),velo1dc(npt),velo1dm(npt)
         real nuo1dN2(npt),nuo1dO2(npt),nuo1dO(npt)
 
@@ -182,7 +182,7 @@
 
         real nuni(npt),nunj (npt),nune (npt),nunk(npt),nunl(npt)
         real nunO (npt),nunO2(npt),nunN2(npt),nunH(npt),nunm(npt)
-        real nunn(npt)  
+        real nunn(npt)
 
         !2 cell convection
         real tmotion,omegaf,lonstart
@@ -190,7 +190,7 @@
 
         real nuiOHot(npt),nujOHot(npt),nukOHot(npt),nulOHot(npt)   !MZ
         real numOHot(npt),nunOHot(npt),nueOHot(npt)                !MZ
-        
+
         real amb,ak1,ak2,ak3,ak4,ak5,kjN2,kjO2,TjN2,TjO2
         real Tperp(npt),Ter_1(npt)
         real Terh,Ter,dTen,dTen_1
@@ -305,7 +305,7 @@
         real Bmag,dipangle,Enord,Eest,vperpnord,vperpest,vhorizon,vpara
         real ddp,Jtop
         integer ikp
-        real*8 dlongeo,dlatgeo,pot,dlonmag,dlatmag,dlonref
+        real(dp) dlongeo,dlatgeo,pot,dlonmag,dlatmag,dlonref
         real dTinf,dUinf,dtz,gradTn
         real Nes(npt),Jes(npt),Tes(npt),qes(npt)
         real el_dens(npt),O_plus(npt),N2_plus(npt),NO_plus(npt)
@@ -323,7 +323,7 @@
         !-----MZ
 
         !Coefficients for molecular species
-        real cofn2,cofo2        
+        real cofn2,cofo2
 
         real or1
 
@@ -332,7 +332,7 @@
         real incE
 
         common/neutral/Nh,No,No2,Nn2,Nn,Tn,Un,Vn,Wn
-        common/param/    P_0,Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,                
+        common/param/    P_0,Ci0,Cj0,Ck0,Cl0,Cm0,Ce0,
      &            Qi0,Qj0,Qe0
         common/adim/R0,t0,G0
         common/prodion/Ph,Po,Po2,Pn2,Pn
@@ -347,9 +347,9 @@
         common/fluxtop/Qetop
 
 
-        common/buff/lonmag,latmag,tmag,ikp,cofo,cofh,cofn,chi0,         
-     &                  Fe0,Ee0,Fi0,Ei0,                                
-     &                  Bmag,dipangle,Enord,Eest,                       
+        common/buff/lonmag,latmag,tmag,ikp,cofo,cofh,cofn,chi0,
+     &                  Fe0,Ee0,Fi0,Ei0,
+     &                  Bmag,dipangle,Enord,Eest,
      &                  vperpnord,vperpest,vhorizon,vpara,ddp,Jtop
 
 !-------Control of MSIS90 dens.
@@ -362,7 +362,7 @@
 
         common /supra/Nes,Jes,Tes,qes
 
-        common /noel/el_dens,O_plus,N2_plus,NO_plus,                    
+        common /noel/el_dens,O_plus,N2_plus,NO_plus,
      &               O2_plus,temp_o,temp_m,temp_e
 
         common /avril/vparaB
@@ -375,7 +375,7 @@
         real zTnOHotRef,TnOHotRef,TnOHotDecay,TnOHotInf                !MZ
         logical chkOHot,flagOHot                        !MZ
         common /flagsOHot/ chkOHot,flagOHot                    !MZ
-        common /OHotParams/ zNOHotRef,pctOHot,NOHotRef,zTnOHotRef,          
+        common /OHotParams/ zNOHotRef,pctOHot,NOHotRef,zTnOHotRef,
      &        TnOHotRef,TnOHotDecay,TnOHotInf
 
         real Eprec,Fprec
@@ -389,15 +389,15 @@
         real timeser(1024), edist(1024)
         real fluxdist(1024,1024)
         integer ntimeser,nfluxdist,precint,precext
-        common /precdist/ nfluxdist,ntimeser,timeser,                   
+        common /precdist/ nfluxdist,ntimeser,timeser,
      &                  edist,fluxdist,precint,precext
         integer ioerr
-        character*80 prec_fname 
+        character*80 prec_fname
         real fluxstat,timestat
         character*80 tempchar
 !-------MZ
 
-! 
+!
 
 
 !       Ignore the hot O stuff for now
@@ -418,7 +418,7 @@
 !-------MZ
         print *, 'reading parameters from file: ',gridfn
         open(unfic_in_transcar,file='dir.input/'//gridfn,
-     &        form='unformatted',          
+     &        form='unformatted',
      &                access='direct',status='old',recl=4*2*ncol0)
 
 
@@ -553,7 +553,7 @@
         longrec=itype*longbuf
 
         open(unfic_in_transcar,file='dir.input/'//gridfn,
-     &        form='unformatted',              
+     &        form='unformatted',
      &                  access='direct',status='old',recl=longrec)
 
 
@@ -564,7 +564,7 @@
         ielecini=10
         coefini=1./float(ielecini)
         coefelec=coefini
-!]      
+!]
 ![      Physical constant initialisation
 
         mi=   1.66e-24
@@ -586,7 +586,7 @@
 
         tex0=tex0+dte
 
-!]      
+!]
 
 ![      Normalization coefficients initialisation
 
@@ -705,7 +705,7 @@
 
 !------Continue reading input file
         read(transcar_dat,*)dto         ! pas d'integration numerique
-        read(transcar_dat,*)sortie      ! intervalle de temps entre deux sorties 
+        read(transcar_dat,*)sortie      ! intervalle de temps entre deux sorties
         read(transcar_dat,*)iyd_ini     ! date de la periode simulee
         read(transcar_dat,*)tempsini    ! UT de debut (en secondes)
         read(transcar_dat,*)tempslim    ! UT limite (en secondes)
@@ -755,7 +755,7 @@
 
         read(transcar_dat,1010) prec_fname
         prec_fname = split(prec_fname,' ')
-        
+
         read(transcar_dat,*) precint
         read(transcar_dat,*) precext
 !        read(transcar_dat,*) tstartprec
@@ -773,17 +773,17 @@
        print *, 'reading PRECIPITATION parameters from file: ',
      &   prec_fname
         open(313,file=prec_fname,status='old')
- 
+
         ioerr=1; ntimeser=1; timestat=1;
-        do while(timestat .ge. 0 .and. ioerr>-1 .and.                  
+        do while(timestat .ge. 0 .and. ioerr>-1 .and.
      &            ntimeser .le. 1024)                         !this loops over the different distributions in the time series
           read(313,*,iostat=ioerr) timeser(ntimeser)
           print*,timeser(ntimeser)
 
           m=1; fluxstat=1.e0
           do while(fluxstat .ge. 0. .and. m .le. 1024)        !this loops over the different energy bins in each distribution
-            read(313,*,iostat=ioerr) timestat,                          
-     &                  fluxdist(m,ntimeser) 
+            read(313,*,iostat=ioerr) timestat,
+     &                  fluxdist(m,ntimeser)
             print*,timestat,fluxdist(m,ntimeser)
 
             if (timestat .ge. 0.) then
@@ -813,11 +813,11 @@
         if (tempsconv_1.gt.0.) then
           flgconv=.true.
         endif
-        
+
         if (tempsconv.gt.0.) then
           flgconv=.true.
         endif
-        
+
         if (flgconv) then
           itube=-1
           ntubmax=int(tempslim/step)+1
@@ -922,7 +922,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 !         Heat(i)= Heat(i)/Nenew(i)/N_0*10.
          Heat(i)= Heat(i)*10.
-!]      
+!]
 ![           Time independant parameters initialisation
 
          alt_geo(i)=(Re+100000.*alt(i)/sinI0)/R0
@@ -933,10 +933,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
          ones(i)=1.
 
          if (alt(i).le.500.) indno=i
-!]      
+!]
 
         enddo
-    
+
 !        nx=128
 !        nligne=nx+2
         ncol=63
@@ -990,14 +990,14 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 ![      Grid initialisation
 
 
-    
+
         np=nx+1
         Ipos1=1
         Iposn=nx
         Iposnp=np
         alpha=1
-        
-        
+
+
         T1pnew(np)=T1pnew(nx)
         T1tnew(np)=T1tnew(nx)
         T1new(np)=T1new(nx)
@@ -1018,12 +1018,12 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
         q2new(np)=q2new(nx)
         q3new(np)=q3new(nx)
         qenew(np)=qenew(nx)
-    
-    
-    
+
+
+
         Radn(1)=(3.*alt_geo(1)-alt_geo(2))/2.
         Radn(np)=(3.*alt_geo(nx)-alt_geo(nx-1))/2.
-        
+
             do i=2,nx
              Radn(i)=.5*(alt_geo(i)+alt_geo(i-1))
             enddo
@@ -1058,9 +1058,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
              longeo=longeo_ini
              latgeo=latgeo_ini
          endif                                          ! Modif DA 0202 2001 - fin
-    
+
          call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
-        
+
          iyd=iyd_ini
          iydfin=iyd_ini
          iydtube=iydfin
@@ -1120,7 +1120,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
       itmp=int(tempstube)
 
       flgpot=.true.
-    
+
       stl=mod(temps/3600.+longeo/15.,24.d0)
       iannee=iyd/1000
       call jour_mois(iyd,
@@ -1146,7 +1146,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
      &              dlonmag,dlatmag,dlonref,dx0,pot,flgpot)
           longeo=dlongeo
           latgeo=dlatgeo
-      
+
       if (debug) then
       call cpu_time(tic)
       print *,tic,'transconvec: done convec, entering coskhi'
@@ -1189,7 +1189,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
             else if (iw_tube.lt.1000) then                  ! Modif DA 0202 2001
                write(filetemps(26:28),'(i3)')iw_tube        ! Modif DA 0202 2001 - fin
             endif
-    
+
       else
 
         filetemps='dir.output/transcar_output'
@@ -1204,7 +1204,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
        print *,"definitions of initial parameters",
      & " and initial backup"
        endif
-       
+
         flagatmos=.true.
 
         do i=1,nx
@@ -1224,12 +1224,12 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
           write(stderr,*),'problem before calling atmos'
           goto 246
         endif
-    
+
         if (debug) then
          call cpu_time(tic)
          print *,tic,' transconvec: call atmos'!  latgeo=',latgeo
         endif
-        
+
         call atmos(iyd,real(temps,wp),stl,alt,latgeo,longeo,jpreci,f107,
      &           ap,Nenew,Tenew,T1new,nx,kiappel,file_cond)
 
@@ -1328,7 +1328,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
           buffer(ipos+ipos_qes)=Qes(i)*1.e-7
           buffer(ipos+ipos_NOHot)=NOHot(i)*1.e6
           buffer(ipos+ipos_TnOHot)=phdisso2(i)*1.e6
-          
+
           buffer(ipos+ipos_po1d)=Po1d(i)*1.e6
           buffer(ipos+ipos_no1d)=N_0*No1dnew(i)*1.e6
           buffer(ipos+ipos_uo1d)=Cj0*Uo1dnew(i)/1.e2
@@ -1351,7 +1351,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
           dt_max=max(dt_max,vmax*rln(i))
         enddo
         dt_max=5.*dt_max/R0
-    
+
        if (debug)  print *,'call pas_de_temps'
        call pas_de_temps(iyd,temps,dt,postint,dto,postinto)
        tempsint=postint
@@ -1368,7 +1368,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
            dt_max=max(dt_max,vmax*rln(i))
          enddo
          dt_max=5.*dt_max/R0
-    
+
         call pas_de_temps(iyd,temps,dt,postint,dto,postinto)
 
       if (duree.ge.tempsort) then
@@ -1491,10 +1491,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
           open(43,file='dir.output/emissions.dat',status='new')
         endif
 !-------MZ
-          
-!-------Output the values for the lines/bands 
+
+!-------Output the values for the lines/bands
         write(43,*) iyd,temps,dipangle,indlim,nen               !day, time, flux tube dip angle in degrees, and indices for alt. and en.
-        write(43,*) (alt(m),                                    !altitude  
+        write(43,*) (alt(m),                                    !altitude
      &         No1dnew(m)*N_0,No1snew(m),Noii2P(m),Nn2Anew(m),  !metastable concentrations
      &         Po3p3P(m),Po3p5P(m),P1NG(m),PMein(m),P2PG(m),
      &         P1PG(m),m=1,indlim)
@@ -1524,7 +1524,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
           do m=1,indlim,inc
             write(44,*) alt(indlim+1-m)
             do ien=1,nen
-              write(44,*) fhemd(ien,m)/2./3.1416,                       
+              write(44,*) fhemd(ien,m)/2./3.1416,
      &            fhemu(ien,m)/2./3.1416
             enddo
           enddo
@@ -1566,7 +1566,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
          call lec_indices(iannee,imois,ijour,tu,ap,f107)
          kp=ap2kp(ap(2))
          ikp=kp*3
-    
+
 
          if (flgconv) then
            call convec(iyd,temps,kp,dlongeo,dlatgeo,
@@ -1600,7 +1600,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 !       tmotion=23.6294*3600.
 !       omegaf=0.0090
 !
-!        if (temps .ge. tmotion .or. 
+!        if (temps .ge. tmotion .or.
 !     &          temps .lt. 1.05*3600.) then          !convect across polar cap
 !                if (temps .lt. tmotion) then
 !                  latgeo=67.+omegaf*(temps+86400.-tmotion)
@@ -1631,7 +1631,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 !                  endif
 !                  Enord=25.
 !                endif
-!        elseif (temps .lt. tmotion .and. 
+!        elseif (temps .lt. tmotion .and.
 !     &          temps .gt. tempsini) then            !stay at noon SLT
 !                longeo=
 !     &            mod(lonstart-0.0041667*(temps-tempsini),360.)
@@ -1884,7 +1884,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
         Veljm(i)=.5*(Veljc(i)+vtrans)
         Velnm(i)=.5*(Velnc(i)+vtrans)
         Velmm(i)=.5*(Velmc(i)+vtrans)
-    
+
         velie(i)=Velic(i)
         velje(i)=Veljc(i)
         velme(i)=Velmc(i)
@@ -1923,9 +1923,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 !c      NO continuity equation
 
       call velocity(Velnoc,Ipos1,indno,xcoeffno*deltat)
-    
+
        do i=1,indno
-    
+
           Tr=(T_0*T1new(i)+Tn(i))/2.
       TrHot=(T_0*T1new(i)+TnOHot(i))/2.                    !MZ
 
@@ -1989,7 +1989,7 @@ CCCCC                                                                           
          enddo
         goto 147
 
-    
+
 !      call sources(Ipos1,indno,xcoeffno*deltat,3,zero,D3,0.,0.)
       call sources(Ipos1,indno,xcoeffno*deltat,7,zero,D7,0.,0.)
           lbc=sqrt(Nnoold(2)/Nnoold(3))
@@ -2012,7 +2012,7 @@ CCCCC                                                                           
           enddo
 
 
-          
+
          do i=1,indno
          Nnonew(i)=max(Nnonew(i),r_min)
          enddo
@@ -2035,11 +2035,11 @@ CCCCC                                                                           
 ![[[
 !    NO velocity equation
 
-    
+
       call velocity(Velnom,Ipos1,indno,xcoeffno*deltat)
 
        do i=1,indno
-    
+
 !cc   calcul de nueddy
              Eddy=exp(-.05*(alt(i)-zeddy)**2)
              if (alt(i).le.zeddy) then
@@ -2055,7 +2055,7 @@ CCCCC                                                                           
          Diff=Dmol+Eddy
          nun=kb*Tn(i)/mm/Diff*t0
          mred=(Dmol+mmoy*amu/mm*Eddy)/Diff
-    
+
          C2a(i)=-Cmi*Tn(i)/T_0
          D2a(i)=log(Nnonew(i)*Tn(i))
          D3(i)=-Cim*mred*G(i)+nun*Un(i)/Cm0
@@ -2063,7 +2063,7 @@ CCCCC                                                                           
          D7(i)=-nun
 
        enddo
-    
+
           D2al=(D2a(1)+D2a(2))/2.
           D2ar=.5*(log(Nnonew(indno+1)*Tn(indno+1))
      &           +log(Nnonew(indno)*Tn(indno)))
@@ -2145,7 +2145,7 @@ CCCCC                                                                           
      &         2.9e-11*exp(67.5/Tn(i))*No2(i)+
      &         (3.73+.11965*sqrt(Tn(i))*(-6.5898e-4)*Tn(i))*10.**(-12.)
      &         )*t0
-     
+
         enddo
 
         do i=1,indlim
@@ -2167,7 +2167,7 @@ CCCCC                                                                           
 !        enddo
 !        No1dnew(np)=min(1.,No1dnew(nx-1)/No1dnew(nx-2))*No1dnew(nx)
 !        No1dnew(nx)=min(1.,No1dnew(nx-2)/No1dnew(nx-3))*No1dnew(nx-1)
-        
+
 !        do i=1,nx
 !                xno1d(i)=No1dnew(i)+Nliminf
 !        enddo
@@ -2187,7 +2187,7 @@ CCCCC                                                                           
      &    N6new(i)*N_0*Nenew(i)*N_0+
      &    2.5e-11*Nn(i)*N6new(i)*N_0+
 !     &    0.36*2.8e-11*Nn2anew(i)*No(i)+               !this braching is recommended by dayglow literature
-     &    0.2*2.8e-11*Nn2anew(i)*No(i)+               
+     &    0.2*2.8e-11*Nn2anew(i)*No(i)+
      &    4.7e-33*(300./Tn(i))**2.*
      &    No(i)**3.*(Nn2(i)+No2(i))/(12.75*No2(i)+205.75*No(i))
 
@@ -2217,7 +2217,7 @@ CCCCC                                                                           
         enddo
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      
+
 
 !-------------------------------------!
 !       equations de continuite       !
@@ -2231,7 +2231,7 @@ CCCCC                                                                           
       rbc=(N1old(nx)/N1old(nx-1))
       call lcpfct(N1old,N1new,Ipos1,Iposn,
      &              lbc,0.,0.,N1new(np),.false.,1)
-    
+
 !    ion H+
 
       call velocity(Velic,Ipos1,Iposnp,deltat_2)
@@ -2240,7 +2240,7 @@ CCCCC                                                                           
       rbc=sqrt(N2old(nx-1)/N2old(nx-2))
       call lcpfct(N2old,N2new,Ipos1,Iposn,
      &              lbc,0.,0.,N2new(np),.false.,1)
-    
+
 !    ion N+
 
       call velocity(Velnc,Ipos1,Iposnp,deltat_2)
@@ -2249,7 +2249,7 @@ CCCCC                                                                           
       rbc=(N3old(nx)/N3old(nx-1))
       call lcpfct(N3old,N3new,Ipos1,Iposn,
      &              lbc,0.,0.,N3new(np),.false.,1)
-    
+
 !    ion N2+
 
       call velocity(Velmc,Ipos1,Iposnp,deltat_2)
@@ -2258,7 +2258,7 @@ CCCCC                                                                           
       rbc=(N4old(nx)/N4old(nx-1))
       call lcpfct(N4old,N4new,Ipos1,Iposn,
      &              lbc,0.,0.,N4new(np),.false.,1)
-    
+
 !    ion NO+
 
           lbc=sqrt(N5old(2)/N5old(3))
@@ -2266,7 +2266,7 @@ CCCCC                                                                           
       rbc=(N5old(nx)/N5old(nx-1))
       call lcpfct(N5old,N5new,Ipos1,Iposn,
      &              lbc,0.,0.,N5new(np),.false.,1)
-    
+
 !    ion O2+
 
           lbc=sqrt(N6old(2)/N6old(3))
@@ -2274,10 +2274,10 @@ CCCCC                                                                           
       rbc=(N6old(nx)/N6old(nx-1))
       call lcpfct(N6old,N6new,Ipos1,Iposn,
      &              lbc,0.,0.,N6new(np),.false.,1)
-    
+
       do i=1,nx
 
-    
+
         Tjr=T_0*T1new(i)
         Tmr=T_0*Tmnew(i)
         Tr=(Tn(i)+Tmr)/2.
@@ -2302,7 +2302,7 @@ CCCCC                                                                           
         coef_conv=1./(1.+nu_omega**2)
         Tperp(i)=cofterp*coef_conv*Vm_2(i)
 
-    
+
         TjO2=(Tjr*32.+Tn(i)*16.)/48.+(16.*32./48.*Tperp(i))
         kjO2=TjO2/300.
         TjN2=(Tjr*28.+Tn(i)*16.)/44.+(16.*28./44.*Tperp(i))
@@ -2339,7 +2339,7 @@ CCCCC                                                                           
 !*****************************************
       if (TjN2 .ge. 100. .and. TjN2 .le. 5500.) then
       ak1 = 1.417e-12 - 3.223e-13*kN2O - 2.362e-14*kN2O**2
-     &         + 1.247e-14*kN2O**3 - 3.030e-16*kN2O**4    
+     &         + 1.247e-14*kN2O**3 - 3.030e-16*kN2O**4
       elseif(TjN2 .gt. 5500. .and. TjN2 .le. 29000.) then
       ak1 =-4.74e-11 + 3.74e-12*kN2O + 2.80e-14*kN2O**2
      &         - 1.88e-16*kN2O**3
@@ -2407,7 +2407,7 @@ CCCCC                                                                           
         elseif( TONO .gt. 30000.) then
           ak4 =-2.22e-11 + 1.64e-12*kONO - 6.7e-17*kONO**2
       endif
-          
+
 !****************************************
 !  O+ + O2 -> O2+ + O in an N2 buffer:  *
 !****************************************
@@ -2420,7 +2420,7 @@ CCCCC                                                                           
               akl2 =-2.57e-11 + 3.48e-12*klO2 - 1.01e-14*klO2**2
         endif
 
-          
+
               y0  (1  )=N1old(i)
               y1  (1  )=(N1new(i)-N1old(i))/deltat_2+Po(i)/N_0*t0
               chim(1,1)=-(ak1*Nn2(i)+ak2*No2(i)+ak4*N_0*Nnonew(i)
@@ -2433,7 +2433,7 @@ CCCCC                                                                           
               chim(1,4)=ak3*No(i)*t0
               chim(1,5)=0.d0
               chim(1,6)=0.d0
-          
+
               y0  (2  )=N2old(i)
               y1  (2  )=(N2new(i)-N2old(i))/deltat_2+Ph(i)/N_0*t0
               chim(2,1)=2.5d-11*sqrt(Tn(i)+T1new(i)*T_0/16.+1.2e-8*
@@ -2445,7 +2445,7 @@ CCCCC                                                                           
               chim(2,4)=0.d0
               chim(2,5)=0.d0
               chim(2,6)=0.d0
-          
+
               y0  (3  )=N3old(i)
               y1  (3  )=(N3new(i)-N3old(i))/deltat_2+0.21*Pn2(i)*t0/N_0
               chim(3,1)=0.d0
@@ -2457,9 +2457,9 @@ CCCCC                                                                           
               chim(3,4)=0.d0
               chim(3,5)=0.d0
               chim(3,6)=0.d0
-          
+
               y0  (4  )=N4old(i)
-              y1  (4  )=(N4new(i)-N4old(i))/deltat_2+Pn2(i)*0.79*t0/N_0          
+              y1  (4  )=(N4new(i)-N4old(i))/deltat_2+Pn2(i)*0.79*t0/N_0
         chim(4,1)=0.d0
               chim(4,2)=0.d0
               chim(4,3)=0.d0
@@ -2469,9 +2469,9 @@ CCCCC                                                                           
      &              -3.*Czi*Umnew(i)*alt_geo_1(i)
               chim(4,5)=0.d0
               chim(4,6)=0.d0
-          
+
               y0  (5  )=N5old(i)
-              y1  (5  )=(N5new(i)-N5old(i))/deltat_2+6.e-7*Nnonew(i)*t0          
+              y1  (5  )=(N5new(i)-N5old(i))/deltat_2+6.e-7*Nnonew(i)*t0
               chim(5,1)=(ak4*N_0*Nnonew(i)+ak1*Nn2(i))*t0
               chim(5,2)=0.d0
               chim(5,3)=(No2(i)*2.6e-10+2.e-11*N_0*Nnonew(i))*t0
@@ -2480,7 +2480,7 @@ CCCCC                                                                           
      &              -3.*Czi*Umnew(i)*alt_geo_1(i)
               chim(5,6)=(5.e-16*Nn2(i)+1.2e-10*Nn(i)
      &                 +4.5e-10*N_0*Nnonew(i))*t0
-           
+
               y0  (6  )=N6old(i)
               y1  (6  )=(N6new(i)-N6old(i))/deltat_2+Po2(i)/N_0*t0
               chim(6,1)=akl2*No2(i)*t0
@@ -2494,7 +2494,7 @@ CCCCC                                                                           
      &              -3.*Czi*Umnew(i)*alt_geo_1(i)
 
         call solve_ODE(nb_ion,y0,y1,chim,mat,deltat_2)
-    
+
         N1new(i)=max(y0(1),r_min)
         N2new(i)=max(y0(2),r_min)
         N3new(i)=max(y0(3),r_min)
@@ -2503,7 +2503,7 @@ CCCCC                                                                           
         N6new(i)=max(y0(6),r_min)
 
       enddo
-    
+
           N1new(np)=min(1.,N1new(nx-1)/N1new(nx-2))*N1new(nx)
           N2new(np)=min(1.,N2new(nx-1)/N2new(nx-2))*N2new(nx)
           N3new(np)=min(1.,N3new(nx-1)/N3new(nx-2))*N3new(nx)
@@ -2535,8 +2535,8 @@ CCCCC                                                                           
         write(stderr,*) 'problem N6new dans la boucle 1'
         goto 246
       endif
-    
-    
+
+
       do i=1,nx
         Nenew(i)=N2new(i)+N1new(i)+N4new(i)
      &              +N6new(i)+N5new(i)+N3new(i)
@@ -2549,7 +2549,7 @@ CCCCC                                                                           
           xn5(i)=N5new(i)+Nliminf
           xn6(i)=N6new(i)+Nliminf
           xnm(i)=Nmnew(i)+Nliminf
-    
+
           xne_1(i)=Nenew(i)/xne(i)/xne(i)
           xn1_1(i)=N1new(i)/xn1(i)/xn1(i)
           xn2_1(i)=N2new(i)/xn2(i)/xn2(i)
@@ -2567,7 +2567,7 @@ CCCCC                                                                           
           xn5(i)=N5new(i)
           xn6(i)=N6new(i)
           xnm(i)=Nmnew(i)
-    
+
           xne_1(i)=1./Nenew(i)
           xn1_1(i)=1./N1new(i)
           xn2_1(i)=1./N2new(i)
@@ -2600,19 +2600,19 @@ CCCCC                                                                           
           Tr=(Tn(i)+T_0*T1new(i))/2.
           nuo1dj(i)=N_0*N1new(i)*3.67e-11*sqrt(Tr)
      &               *(1.-0.064*alog10(Tr))**2                 *t0
-     
+
           nuo1di(i)=N_0*N2new(i)*1/16*6.61e-11*
      &       sqrt(T_0*T2new(i))*(1.-0.047*
      &       alog10(T_0*T2new(i)))**2                          *t0
-          
+
           nuo1dn(i)=N_0*N3new(i)*14./16.*4.42e-10              *t0
-          
+
           nuo1dk(i)=N_0*N4new(i)*28./16.*2.58e-10              *t0
-          
+
           nuo1dm(i)=N_0*N5new(i)*30./26.*2.44e-10              *t0
-          
+
           nuo1dl(i)=N_0*N6new(i)*2.*2.31e-10                   *t0
-          
+
           nuo1de(i)=N_0*Nenew(i)*8.9e-11*3.428e-5
      &          *(1.+5.7e-4*T_0*Tenew(i))
      &          *sqrt(T_0*Tenew(i))                            *t0
@@ -2626,16 +2626,16 @@ CCCCC                                                                           
           D7(i)=-(nuo1d+
      &          nuo1dj(i)+nuo1di(i)+nuo1dk(i)+nuo1dl(i)+
      &          nuo1dm(i)+nuo1dn(i)+nuo1de(i))
-          
+
           C2a(i)=-Cji*Tn(i)/T_0*No1dnew(i)/xno1d(i)
           D2a(i)=log(xno1d(i)*Tn(i)/T_0)
         enddo
-        
+
         D2al=(D2a(1)+D2a(2))/2.
         D2ar=(xno1d(np)*Tn(np)/T_0*xno1d(nx)*Tn(i)/T_0)
         call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
         call sources(Ipos1,Iposn,deltat_2,7,zero,D7,0.,0.)
-        
+
         lbc=1.
         call lcpfct(Uo1dold,Uo1dnew,ipos1,iposnp,
      &           lbc,0.,0.,Uo1dnew(np),.false.,0)
@@ -2659,10 +2659,10 @@ CCCCC                                                                           
 ![[[    H+ momentum equation resolution
 
       call velocity(Velim,Ipos1,Iposnp,deltat_2)
-      
+
       call cpu_time(tic)
       print *,tic,'H+ momentum equation resolution'
-      
+
       do i=1,nx
 
           Tr1=T_0*T2new(i)
@@ -2673,7 +2673,7 @@ CCCCC                                                                           
       T3_15(i)=T3new(i)**(-1.5)/nu_0
       Tm_15(i)=Tmnew(i)**(-1.5)/nu_0
       Te_15(i)=Tenew(i)**(-1.5)/nu_0
-    
+
       thermacc(i)=thermodiff*qenew(i)/Tenew(i)**2.5
 
           nuiN2(i)=3.36e-9*Nn2(i)                               *t0
@@ -2683,7 +2683,7 @@ CCCCC                                                                           
      &             *(1.-.047*alog10(Tr1))**2*sqrt(Tr1)          *t0
           nuiOHot(i)=6.61e-11*NOHot(i)                        !MZ
      &             *(1.-.047*alog10(Tr1))**2*sqrt(Tr1)          *t0        !MZ
- 
+
           nuiH (i)=2.65e-10*Nh (i)
      &             *(1.-.083*alog10(Tr))**2*sqrt(Tr)            *t0
           nuij (i) = 1.23*N1new(i)
@@ -2734,7 +2734,7 @@ CCCCC                                                                           
 
         D3(i)=D3(i)-.6*q3new(i)*xn3_1(i)*Cni
      &              *nuin(i)/(T3new(i)+14.*T2new(i))
-    
+
         D3(i)=D3(i)+(nuiN2(i)+nuiO2(i)+nuiO(i)+nuiOHot(i)+nuiH(i))        !MZ
      &                    *(Un(i)/Ci0)
      &                 -.6*nuiN2(i)/(Tn(i)/T_0+28.*T2new(i))
@@ -2758,7 +2758,7 @@ CCCCC                                                                           
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*log(Nenew(np)*Tepnew(np)*Nenew(nx)*Tepnew(nx))
       D2br=.5*log(xn2(np)*T2pnew(np)*xn2(nx)*T2pnew(nx))
 
@@ -2770,12 +2770,12 @@ CCCCC                                                                           
       call sources(Ipos1,Iposn,deltat_2,7,zero,D7,0.,0.)
           lbc=1.
           rbc=1.
-          
+
       call cpu_time(tic)
       print *,tic,'call lcpfct'
       call lcpfct(U2old,U2new,Ipos1,Iposn,
      &              lbc,0.,0.,U2new(np),.false.,0)
-     
+
           do i=1,nx
             dexpnu=D7(i)*deltat_2
             if (abs(dexpnu).lt.1.e-7) then
@@ -2804,8 +2804,8 @@ CCCCC                                                                           
       print *,tic,'O+ momentum equation resolution'
 
       call velocity(Veljm,Ipos1,Iposnp,deltat_2)
-      
-    
+
+
       do i=1,nx
 
           Tr=(T_0*T1new(i)+Tn(i))/2.
@@ -2887,20 +2887,20 @@ CCCCC                                                                           
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*log(Nenew(np)*Tepnew(np)*Nenew(nx)*Tepnew(nx))
       D2br=.5*log(xn1(np)*T1pnew(np)*xn1(nx)*T1pnew(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
 !      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
       call sources(Ipos1,Iposn,deltat_2,7,zero,D7,0.,0.)
           lbc=1.
           rbc=1.
-      
+
       call cpu_time(tic)
       print *,tic,'H+ momentum LCPFCT'
-          
+
       call lcpfct(U1old,U1new,Ipos1,Iposn,
      &              lbc,0.,0.,U1new(np),.false.,0)
           do i=1,nx
@@ -2934,7 +2934,7 @@ CCCCC                                                                           
       call cpu_time(tic)
       print *,tic,'Heavy Ions equation resolution'
       call velocity(Velmm,Ipos1,Iposnp,deltat_2)
-    
+
       do i=1,nx
 
           Tr=(T_0*Tmnew(i)+Tn(i))/2.
@@ -3065,7 +3065,7 @@ CCCCC                                                                           
      &            +nuli(i)+nule(i)+nulj(i)+nuln(i)
      &            +numN2(i)+numO2(i)+numO(i)+numOHot(i)                !MZ
      &            +numi(i)+nume(i)+numj(i)+numn(i))/3.
-    
+
 
       enddo
 
@@ -3073,10 +3073,10 @@ CCCCC                                                                           
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*log(Nenew(np)*Tepnew(np)*Nenew(nx)*Tepnew(nx))
       D2br=.5*log(xnm(np)*Tmpnew(np)*xnm(nx)*Tmpnew(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
 !      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
@@ -3113,7 +3113,7 @@ CCCCC                                                                           
 ![[[    N+ momentum equation resolution
       call cpu_time(tic)
       print *,tic,'N+ momentum equation resolution'
-    
+
       call velocity(Velnm,Ipos1,Iposnp,deltat_2)
       do i=1,nx
 
@@ -3147,7 +3147,7 @@ CCCCC                                                                           
      &            -3.*Cni*(T3pnew(i)-T3tnew(i))*alt_geo_1(i)
      &          +nuni(i)*Cin*U2new(i)+nunj(i)*Cjn*U1new(i)
      &          +(nunk(i)+nunl(i)+nunm(i))*Czn*Umnew(i)
-    
+
       D3(i)=D3(i)-.6*q2new(i)*xn2_1(i)*Cin*14.
      &            *nuni(i)/(14.*T2new(i)+T3new(i))
 
@@ -3193,10 +3193,10 @@ CCCCC                                                                           
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*log(Nenew(np)*Tepnew(np)*Nenew(nx)*Tepnew(nx))
       D2br=.5*log(xn3(np)*T3pnew(np)*xn3(nx)*T3pnew(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
 !      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
@@ -3369,12 +3369,12 @@ CCCCC                                                                           
           D2cr=ylimd(Radn(np),D2c,extra,nx)
           D2dl=(D2d(1)+D2d(2))/2.
           D2dr=ylimd(Radn(np),D2d,extra,nx)
-    
+
       D2ar=.5*(U2new(np)+U2new(nx))
       D2br=.5*(T2pnew(np)+T2pnew(nx))
       D2cr=.5*(T2tnew(np)+T2tnew(nx))
       D2dr=sqrt(N2new(np)*N2new(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
       call sources(Ipos1,Iposn,deltat_2,2,C2c,D2c,D2cl,D2cr)
@@ -3503,12 +3503,12 @@ CCCCC                                                                           
           D2cr=ylimd(Radn(np),D2c,extra,nx)
           D2dl=(D2d(1)+D2d(2))/2.
           D2dr=ylimd(Radn(np),D2d,extra,nx)
-    
+
       D2ar=.5*(U1new(np)+U1new(nx))
       D2br=.5*(T1pnew(np)+T1pnew(nx))
       D2cr=.5*(T1tnew(np)+T1tnew(nx))
       D2dr=sqrt(N1new(np)*N1new(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
       call sources(Ipos1,Iposn,deltat_2,2,C2c,D2c,D2cl,D2cr)
@@ -3630,12 +3630,12 @@ CCCCC                                                                           
           D2cr=ylimd(Radn(np),D2c,extra,nx)
           D2dl=(D2d(1)+D2d(2))/2.
           D2dr=ylimd(Radn(np),D2d,extra,nx)
-    
+
       D2ar=.5*(U3new(np)+U3new(nx))
       D2br=.5*(T3pnew(np)+T3pnew(nx))
       D2cr=.5*(T3tnew(np)+T3tnew(nx))
       D2dr=sqrt(N3new(np)*N3new(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
       call sources(Ipos1,Iposn,deltat_2,2,C2c,D2c,D2cl,D2cr)
@@ -3673,13 +3673,13 @@ CCCCC                                                                           
 
 !]]]
 
-    
-    
+
+
 
 ![[[    Electron energy and heat flow equation resolution (1)
       call cpu_time(tic)
       print *,tic,'e- energy & heat flow eqn resolution (1)'
-    
+
       do i=1,nx
 
         Ter=T_0*Tenew(i)
@@ -3711,7 +3711,7 @@ CCCCC                                                                           
         !compression term
             C2qa(i)=-11./5.*Cei*qenew(i)
             D2qa(i)=Uenew(i)
-            
+
         !Temperature gradient (thermal conduction)
         C2qb(i)=-2.5*Cei*Nenew(i)*Tenew(i)
             D2qb(i)=Tenew(i)
@@ -3830,17 +3830,17 @@ CCCCC                                                                           
      &          *((1.+Bq(j))*Dx(j)+Ex*(Eq(j)/Ter+1.+Bq(j)))
             LeOfin=LeOfin+Aq(j)*Cq(j)*F*(Ter)**(Bq(j)-.5)
           enddo
-    
+
           Z=5.+3.*Dx(1)+Dx(2)
           LeOfin=1.38e-17*No(i)/Z*LeOfin
 
           LeOfin=Sq(3)*Ter**.6*exp(Eq(3)/Tn(i))
      &              *(exp(Eq(3)*dTen_1)-1.)
-    
+
           do j=1,2
         LeOfin=LeOfin+Sq(j)*(exp(Eq(j)*dTen_1)-1.)
       enddo
-    
+
           Z=5.+3.*Dx(1)+Dx(2)
           LeOfin=No(i)/Z*LeOfin
 
@@ -3863,7 +3863,7 @@ CCCCC                                                                           
      &            nueH(i))/omega(i)*ome
         coef_conv=1./(1.+nu_omega**2)
         terme_Joule=.5*coef_conv*Vm_2(i)/Ce0**2
-    
+
           D3e(i)=D3e(i)+1.09e-3*(nueN2(i)/28.+nueO2(i)/32.+nueO(i)/16.
      &                 +nueH(i))*Tn(i)/T_0
      &            +1.09e-3*nueOHot(i)/16.*TnOHot(i)/T_0            !MZ
@@ -3901,7 +3901,7 @@ CCCCC                                                                           
 
           D2qar=.5*(Uenew(np)+Uenew(nx))
           D2qbr=.5*(Tenew(np)+Tenew(nx))
-    
+
       call velocity(Veleq,Ipos1,Iposnp,deltat_4)
       call sources(Ipos1,Iposn,deltat_4,2,C2qa,D2qa,D2qal,D2qar)
       call sources(Ipos1,Iposn,deltat_4,2,C2qb,D2qb,D2qbl,D2qbr)
@@ -3913,7 +3913,7 @@ CCCCC                                                                           
      &              lbc,0.,rbc,0.,.false.,0)
           qenew(nx)=qetop
 
-     
+
           do i=1,nx
             dexpnu=D7q(i)*deltat_4
             if (abs(dexpnu).lt.1.e-7) then
@@ -3942,7 +3942,7 @@ CCCCC                                                                           
 
           D2ear=.5*(Uenew(np)+Uenew(nx))
           D2ebr=.5*(qenew(np)+qenew(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_4,2,C2ea,D2ea,D2eal,D2ear)
       call sources(Ipos1,Iposn,deltat_4,2,C2eb,D2eb,D2ebl,D2ebr)
 !      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
@@ -4011,7 +4011,7 @@ CCCCC                                                                           
 
           D2qbl=(D2qb(1)+D2qb(2))/2.
           D2qbr=.5*(Tenew(np)+Tenew(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_4,2,C2qa,D2qa,D2qal,D2qar)
       call sources(Ipos1,Iposn,deltat_4,2,C2qb,D2qb,D2qbl,D2qbr)
 !      call sources(Ipos1,Iposn,deltat_4,3,zero,D3q,0.,0.)
@@ -4022,7 +4022,7 @@ CCCCC                                                                           
      &              lbc,0.,rbc,0.,.false.,0)
           qenew(nx)=qetop
 
-     
+
           do i=1,nx
             dexpnu=D7q(i)*deltat_4
             if (abs(dexpnu).lt.1.e-7) then
@@ -4047,7 +4047,7 @@ CCCCC                                                                           
 
           D2ebl=(D2eb(1)+D2eb(2))/2.
           D2ebr=.5*(qenew(np)+qenew(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_4,2,C2ea,D2ea,D2eal,D2ear)
       call sources(Ipos1,Iposn,deltat_4,2,C2eb,D2eb,D2ebl,D2ebr)
 c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
@@ -4092,7 +4092,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
             write(stderr,*) 'problem stabenerg Te dans la boucle 1'
             goto 246
           endif
-              
+
 
 
           do i=1,np
@@ -4173,10 +4173,10 @@ c    temperature parallele
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
           D2ar=.5*(U2new(np)+U2new(nx))
           D2br=.5*(q2new(np)+q2new(nx))
-        
+
           call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
           call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
@@ -4248,7 +4248,7 @@ c    temperature perpendiculaire
      &         +T3pnew(i)* .0267*nuin(i)
      &           +.4*nuii(i)*T2pnew(i)
 
-        nu_omega=(nuiN2(i)+nuiO2(i)+nuiO(i)+nuiOHot(i)+ 
+        nu_omega=(nuiN2(i)+nuiO2(i)+nuiO(i)+nuiOHot(i)+
      &            nuiH(i))/omega(i)*omi    !MZ
         coef_conv=1./(1.+nu_omega**2)
         terme_Joule=.5*coef_conv*Vm_2(i)/Ci0**2
@@ -4277,10 +4277,10 @@ c    temperature perpendiculaire
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
           D2ar=.5*(U2new(np)+U2new(nx))
           D2br=.5*(q2new(np)+q2new(nx))
-        
+
            call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
           call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
@@ -4384,10 +4384,10 @@ c    temperature parallele
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*(U1new(np)+U1new(nx))
       D2br=.5*(q1new(np)+q1new(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
@@ -4484,10 +4484,10 @@ c    temperature perpendiculaire
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
           D2ar=.5*(U1new(np)+U1new(nx))
           D2br=.5*(q1new(np)+q1new(nx))
-        
+
           call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
           call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
@@ -4635,15 +4635,15 @@ c    temperature parallele
      &               *(Cez*Uenew(i)-Umnew(i))**2
      &          )
 
- 
+
         enddo
 
           D2al=(D2a(1)+D2a(2))/2.
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2ar=(D2a(nx)+D2a(nx-1))/2.
-    
+
           D2ar=.5*(Umnew(np)+Umnew(nx))
-        
+
           call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
 c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
         call sources(Ipos1,Iposn,deltat_2,7,zero,D7,0.,0.)
@@ -4770,9 +4770,9 @@ c    temperature perpendiculaire
 
           D2al=(D2a(1)+D2a(2))/2.
           D2ar=ylimd(Radn(np),D2a,extra,nx)
-    
+
       D2ar=.5*(Umnew(np)+Umnew(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
 c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
       call sources(Ipos1,Iposn,deltat_2,7,zero,D7,0.,0.)
@@ -4870,10 +4870,10 @@ c    temperature parallele
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*(U3new(np)+U3new(nx))
       D2br=.5*(q3new(np)+q3new(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
@@ -4966,10 +4966,10 @@ c    temperature perpendiculaire
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=U3new(np)
       D2br=q3new(np)
-    
+
       call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat_2,3,zero,D3,0.,0.)
@@ -5139,7 +5139,7 @@ C      Velic(np)=(U2new(np)+vtrans)
         Veljm(i)=.5*(Veljc(i)+vtrans)
         Velnm(i)=.5*(Velnc(i)+vtrans)
         Velmm(i)=.5*(Velmc(i)+vtrans)
-    
+
         velie(i)=Velic(i)
         velje(i)=Veljc(i)
         velme(i)=Velmc(i)
@@ -5218,11 +5218,11 @@ c          velnq(np)=max(velnq(np),0.)
 !        enddo
 !        No1dnew(np)=min(1.,No1dnew(nx-1)/No1dnew(nx-2))*No1dnew(nx)
 !        No1dnew(nx)=min(1.,No1dnew(nx-2)/No1dnew(nx-3))*No1dnew(nx-1)
-!        
+!
 !        do i=1,nx
 !                xno1d(i)=No1dnew(i)+Nliminf
 !        enddo
-      
+
 
 !-------------------------------------!
 !       equations de continuite       !
@@ -5236,7 +5236,7 @@ c          velnq(np)=max(velnq(np),0.)
       rbc=(N1old(nx)/N1old(nx-1))
       call lcpfct(N1old,N1new,Ipos1,Iposn,
      &              lbc,0.,0.,N1new(np),.false.,1)
-    
+
 !    ion H+
 
       call velocity(Velic,Ipos1,Iposnp,deltat)
@@ -5245,7 +5245,7 @@ c          velnq(np)=max(velnq(np),0.)
       rbc=sqrt(N2old(nx-1)/N2old(nx-2))
       call lcpfct(N2old,N2new,Ipos1,Iposn,
      &              lbc,0.,0.,N2new(np),.false.,1)
-    
+
 !    ion N+
 
       call velocity(Velnc,Ipos1,Iposnp,deltat)
@@ -5254,7 +5254,7 @@ c          velnq(np)=max(velnq(np),0.)
       rbc=(N3old(nx)/N3old(nx-1))
       call lcpfct(N3old,N3new,Ipos1,Iposn,
      &              lbc,0.,0.,N3new(np),.false.,1)
-    
+
 !    ion N2+
 
       call velocity(Velmc,Ipos1,Iposnp,deltat)
@@ -5263,7 +5263,7 @@ c          velnq(np)=max(velnq(np),0.)
       rbc=(N4old(nx)/N4old(nx-1))
       call lcpfct(N4old,N4new,Ipos1,Iposn,
      &              lbc,0.,0.,N4new(np),.false.,1)
-    
+
 !    ion NO+
 
           lbc=sqrt(N5old(2)/N5old(3))
@@ -5271,7 +5271,7 @@ c          velnq(np)=max(velnq(np),0.)
       rbc=(N5old(nx)/N5old(nx-1))
       call lcpfct(N5old,N5new,Ipos1,Iposn,
      &              lbc,0.,0.,N5new(np),.false.,1)
-    
+
 !    ion O2+
 
           lbc=sqrt(N6old(2)/N6old(3))
@@ -5279,10 +5279,10 @@ c          velnq(np)=max(velnq(np),0.)
       rbc=(N6old(nx)/N6old(nx-1))
       call lcpfct(N6old,N6new,Ipos1,Iposn,
      &              lbc,0.,0.,N6new(np),.false.,1)
-    
+
       do i=1,nx
 
-    
+
         Tjr=T_0*T1new(i)
         Tmr=T_0*Tmnew(i)
         Tr=(Tn(i)+Tmr)/2.
@@ -5307,7 +5307,7 @@ c          velnq(np)=max(velnq(np),0.)
         coef_conv=1./(1.+nu_omega**2)
         Tperp(i)=cofterp*coef_conv*Vm_2(i)
 
-    
+
         TjO2=(Tjr*32.+Tn(i)*16.)/48.+(16.*32./48.*Tperp(i))
         kjO2=TjO2/300.
         TjN2=(Tjr*28.+Tn(i)*16.)/44.+(16.*28./44.*Tperp(i))
@@ -5344,7 +5344,7 @@ c O+ + N2 -> NO+ + N  in an N2 buffer:   *
 c*****************************************
       if (TjN2 .ge. 100. .and. TjN2 .le. 5500.) then
       ak1 = 1.417e-12 - 3.223e-13*kN2O - 2.362e-14*kN2O**2
-     &         + 1.247e-14*kN2O**3 - 3.030e-16*kN2O**4    
+     &         + 1.247e-14*kN2O**3 - 3.030e-16*kN2O**4
       elseif(TjN2 .gt. 5500. .and. TjN2 .le. 29000.) then
       ak1 =-4.74e-11 + 3.74e-12*kN2O + 2.80e-14*kN2O**2
      &         - 1.88e-16*kN2O**3
@@ -5412,7 +5412,7 @@ c****************************************
         elseif( TONO .gt. 30000.) then
           ak4 =-2.22e-11 + 1.64e-12*kONO - 6.7e-17*kONO**2
       endif
-          
+
 c****************************************
 c  O+ + O2 -> O2+ + O in an N2 buffer:  *
 c****************************************
@@ -5425,7 +5425,7 @@ c****************************************
               akl2 =-2.57e-11 + 3.48e-12*klO2 - 1.01e-14*klO2**2
         endif
 
-          
+
               y0  (1  )=N1old(i)
               y1  (1  )=(N1new(i)-N1old(i))/deltat+Po(i)/N_0*t0
               chim(1,1)=-(ak1*Nn2(i)+ak2*No2(i)+ak4*N_0*Nnonew(i)
@@ -5438,7 +5438,7 @@ c****************************************
               chim(1,4)=ak3*No(i)*t0
               chim(1,5)=0.d0
               chim(1,6)=0.d0
-          
+
               y0  (2  )=N2old(i)
               y1  (2  )=(N2new(i)-N2old(i))/deltat+Ph(i)/N_0*t0
               chim(2,1)=2.5d-11*sqrt(Tn(i)+T1new(i)*T_0/16.+1.2e-8*
@@ -5450,7 +5450,7 @@ c****************************************
               chim(2,4)=0.d0
               chim(2,5)=0.d0
               chim(2,6)=0.d0
-          
+
               y0  (3  )=N3old(i)
               y1  (3  )=(N3new(i)-N3old(i))/deltat+0.21*Pn2(i)*t0/N_0
               chim(3,1)=0.d0
@@ -5462,9 +5462,9 @@ c****************************************
               chim(3,4)=0.d0
               chim(3,5)=0.d0
               chim(3,6)=0.d0
-          
+
               y0  (4  )=N4old(i)
-              y1  (4  )=(N4new(i)-N4old(i))/deltat+Pn2(i)*0.79*t0/N_0          
+              y1  (4  )=(N4new(i)-N4old(i))/deltat+Pn2(i)*0.79*t0/N_0
         chim(4,1)=0.d0
               chim(4,2)=0.d0
               chim(4,3)=0.d0
@@ -5474,9 +5474,9 @@ c****************************************
      &              -3.*Czi*Umnew(i)*alt_geo_1(i)
               chim(4,5)=0.d0
               chim(4,6)=0.d0
-          
+
               y0  (5  )=N5old(i)
-              y1  (5  )=(N5new(i)-N5old(i))/deltat+6.e-7*Nnonew(i)*t0          
+              y1  (5  )=(N5new(i)-N5old(i))/deltat+6.e-7*Nnonew(i)*t0
               chim(5,1)=(ak4*N_0*Nnonew(i)+ak1*Nn2(i))*t0
               chim(5,2)=0.d0
               chim(5,3)=(No2(i)*2.6e-10+2.e-11*N_0*Nnonew(i))*t0
@@ -5485,7 +5485,7 @@ c****************************************
      &              -3.*Czi*Umnew(i)*alt_geo_1(i)
               chim(5,6)=(5.e-16*Nn2(i)+1.2e-10*Nn(i)
      &                 +4.5e-10*N_0*Nnonew(i))*t0
-          
+
               y0  (6  )=N6old(i)
               y1  (6  )=(N6new(i)-N6old(i))/deltat+Po2(i)/N_0*t0
               chim(6,1)=akl2*No2(i)*t0
@@ -5499,7 +5499,7 @@ c****************************************
      &              -3.*Czi*Umnew(i)*alt_geo_1(i)
 
         call solve_ODE(nb_ion,y0,y1,chim,mat,deltat)
-    
+
         N1new(i)=max(y0(1),r_min)
         N2new(i)=max(y0(2),r_min)
         N3new(i)=max(y0(3),r_min)
@@ -5508,7 +5508,7 @@ c****************************************
         N6new(i)=max(y0(6),r_min)
 
        enddo
-    
+
           N1new(np)=min(1.,N1new(nx-1)/N1new(nx-2))*N1new(nx)
           N2new(np)=min(1.,N2new(nx-1)/N2new(nx-2))*N2new(nx)
           N3new(np)=min(1.,N3new(nx-1)/N3new(nx-2))*N3new(nx)
@@ -5553,7 +5553,7 @@ c****************************************
           xn5(i)=N5new(i)+Nliminf
           xn6(i)=N6new(i)+Nliminf
           xnm(i)=Nmnew(i)+Nliminf
-    
+
           xne_1(i)=Nenew(i)/xne(i)/xne(i)
           xn1_1(i)=N1new(i)/xn1(i)/xn1(i)
           xn2_1(i)=N2new(i)/xn2(i)/xn2(i)
@@ -5571,7 +5571,7 @@ c****************************************
           xn5(i)=N5new(i)
           xn6(i)=N6new(i)
           xnm(i)=Nmnew(i)
-    
+
           xne_1(i)=1./Nenew(i)
           xn1_1(i)=1./N1new(i)
           xn2_1(i)=1./N2new(i)
@@ -5604,19 +5604,19 @@ c****************************************
           Tr=(Tn(i)+T_0*T1new(i))/2.
           nuo1dj(i)=N_0*N1new(i)*3.67e-11*sqrt(Tr)
      &               *(1.-0.064*alog10(Tr))**2                 *t0
-     
+
           nuo1di(i)=N_0*N2new(i)*1/16*6.61e-11*
      &       sqrt(T_0*T2new(i))*(1.-0.047*
      &       alog10(T_0*T2new(i)))**2                          *t0
-          
+
           nuo1dn(i)=N_0*N3new(i)*14./16.*4.42e-10              *t0
-          
+
           nuo1dk(i)=N_0*N4new(i)*28./16.*2.58e-10              *t0
-          
+
           nuo1dm(i)=N_0*N5new(i)*30./26.*2.44e-10              *t0
-          
+
           nuo1dl(i)=N_0*N6new(i)*2.*2.31e-10                   *t0
-          
+
           nuo1de(i)=N_0*Nenew(i)*8.9e-11*3.428e-5
      &          *(1.+5.7e-4*T_0*Tenew(i))
      &          *sqrt(T_0*Tenew(i))                            *t0
@@ -5631,16 +5631,16 @@ c****************************************
           D7(i)=-(nuo1d+
      &          nuo1dj(i)+nuo1di(i)+nuo1dk(i)+nuo1dl(i)+
      &          nuo1dm(i)+nuo1dn(i)+nuo1de(i))
-        
+
           C2a(i)=-Cji*Tn(i)/T_0*No1dnew(i)/xno1d(i)
           D2a(i)=log(xno1d(i)*Tn(i)/T_0)
         enddo
-        
+
         D2al=(D2a(1)+D2a(2))/2.
         D2ar=(xno1d(np)*Tn(np)/T_0*xno1d(nx)*Tn(np)/T_0)
         call sources(Ipos1,Iposn,deltat,2,C2a,D2a,D2al,D2ar)
         call sources(Ipos1,Iposn,deltat,7,zero,D7,0.,0.)
-        
+
         lbc=1.
         call lcpfct(Uo1dold,Uo1dnew,ipos1,iposnp,
      &           lbc,0.,0.,Uo1dnew(np),.false.,0)
@@ -5760,12 +5760,12 @@ C[[[    H+ momentum equation resolution
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*log(Nenew(np)*Tepnew(np)*Nenew(nx)*Tepnew(nx))
       D2br=.5*log(xn2(np)*T2pnew(np)*xn2(nx)*T2pnew(nx))
 
       D2br=log(xn2(nx)*T2pnew(nx))                        !MZ
-    
+
       call sources(Ipos1,Iposn,deltat,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
@@ -5883,10 +5883,10 @@ C[[[    O+ momentum equation resolution
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*log(Nenew(np)*Tepnew(np)*Nenew(nx)*Tepnew(nx))
       D2br=.5*log(xn1(np)*T1pnew(np)*xn1(nx)*T1pnew(nx))
-    
+
       call sources(Ipos1,Iposn,deltat,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
@@ -6062,10 +6062,10 @@ C[[[    heavy ions momentum equation resolution
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*log(Nenew(np)*Tepnew(np)*Nenew(nx)*Tepnew(nx))
       D2br=.5*log(xnm(np)*Tmpnew(np)*xnm(nx)*Tmpnew(nx))
-    
+
       call sources(Ipos1,Iposn,deltat,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
@@ -6099,7 +6099,7 @@ C[[[[   Boundaries conditions
 C]]]
 
 C[[[    N+ momentum equation resolution
-    
+
       call velocity(Velnm,Ipos1,Iposnp,deltat)
 
           do i=1,nx
@@ -6178,10 +6178,10 @@ C[[[    N+ momentum equation resolution
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*log(Nenew(np)*Tepnew(np)*Nenew(nx)*Tepnew(nx))
       D2br=.5*log(xn3(np)*T3pnew(np)*xn3(nx)*T3pnew(nx))
-    
+
       call sources(Ipos1,Iposn,deltat,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
@@ -6344,12 +6344,12 @@ C[[[    H+ heat flow equation resolution
           D2cr=ylimd(Radn(np),D2c,extra,nx)
           D2dl=(D2d(1)+D2d(2))/2.
           D2dr=ylimd(Radn(np),D2d,extra,nx)
-    
+
       D2ar=.5*(U2new(np)+U2new(nx))
       D2br=.5*(T2pnew(np)+T2pnew(nx))
       D2cr=.5*(T2tnew(np)+T2tnew(nx))
       D2dr=sqrt(N2new(np)*N2new(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_2,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat_2,2,C2b,D2b,D2bl,D2br)
       call sources(Ipos1,Iposn,deltat_2,2,C2c,D2c,D2cl,D2cr)
@@ -6478,12 +6478,12 @@ C[[[    O+ heat flow equation resolution
           D2cr=ylimd(Radn(np),D2c,extra,nx)
           D2dl=(D2d(1)+D2d(2))/2.
           D2dr=ylimd(Radn(np),D2d,extra,nx)
-    
+
       D2ar=.5*(U1new(np)+U1new(nx))
       D2br=.5*(T1pnew(np)+T1pnew(nx))
       D2cr=.5*(T1tnew(np)+T1tnew(nx))
       D2dr=sqrt(N1new(np)*N1new(nx))
-    
+
       call sources(Ipos1,Iposn,deltat,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat,2,C2b,D2b,D2bl,D2br)
       call sources(Ipos1,Iposn,deltat,2,C2c,D2c,D2cl,D2cr)
@@ -6603,12 +6603,12 @@ C[[[    N+ heat flow equation resolution
           D2cr=ylimd(Radn(np),D2c,extra,nx)
           D2dl=(D2d(1)+D2d(2))/2.
           D2dr=ylimd(Radn(np),D2d,extra,nx)
-    
+
       D2ar=.5*(U3new(np)+U3new(nx))
       D2br=.5*(T3pnew(np)+T3pnew(nx))
       D2cr=.5*(T3tnew(np)+T3tnew(nx))
       D2dr=sqrt(N3new(np)*N3new(nx))
-    
+
       call sources(Ipos1,Iposn,deltat,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat,2,C2b,D2b,D2bl,D2br)
       call sources(Ipos1,Iposn,deltat,2,C2c,D2c,D2cl,D2cr)
@@ -6652,7 +6652,7 @@ C[[[
 
 C[[[    Electron energy and heat flow equation resolution (2)
 
-    
+
 
       do i=1,nx
 
@@ -6681,7 +6681,7 @@ C[[[    Electron energy and heat flow equation resolution (2)
             D2ea(i)=Uenew(i)
             C2eb(i)=-.667*Cei*xne_1(i)
             D2eb(i)=qenew(i)
-        
+
         !compression term
             C2qa(i)=-11./5.*Cei*qenew(i)
             D2qa(i)=Uenew(i)
@@ -6759,9 +6759,9 @@ C[[[    Electron energy and heat flow equation resolution (2)
       else
          dTen=Tn(i)-Ter
       endif
-    
+
       dTen_1=(Tn(i)-Ter)/Ter/Tn(i)
-    
+
           Lenrot=(4.6e-26*Nn2(i)+1.1e-25*No2(i))
      &            *dTen/sqrt(Ter)
 
@@ -6810,11 +6810,11 @@ C[[[    Electron energy and heat flow equation resolution (2)
 
           LeOfin=Sq(3)*Ter**.6*exp(Eq(3)/Tn(i))
      &              *(exp(Eq(3)*dTen_1)-1.)
-    
+
           do j=1,2
         LeOfin=LeOfin+Sq(j)*(exp(Eq(j)*dTen_1)-1.)
       enddo
-    
+
           Z=5.+3.*Dx(1)+Dx(2)
           LeOfin=No(i)/Z*LeOfin
 
@@ -6839,7 +6839,7 @@ c    fin de modif
      &        nueOHot(i)+nueH(i))/omega(i)*ome                !MZ
          coef_conv=1./(1.+nu_omega**2)
          terme_Joule=.5*coef_conv*Vm_2(i)/Ce0**2
-    
+
           D3e(i)=D3e(i)+1.09e-3*(nueN2(i)/28.+nueO2(i)/32.+nueO(i)/16.
      &                        +nueH(i))*Tn(i)/T_0
      &            +1.09e-3*nueOHot(i)/16.*TnOHot(i)/T_0            !MZ
@@ -6870,7 +6870,7 @@ c     &          - 2.*(Cei*Uenew(i)*alt_geo_1(i))
 
        enddo
 
-    
+
 c    premiere demi-boucle
 
           D2qal=(D2qa(1)+D2qa(2))/2.
@@ -6878,7 +6878,7 @@ c    premiere demi-boucle
 
           D2qar=.5*(Uenew(np)+Uenew(nx))
           D2qbr=.5*(Tenew(np)+Tenew(nx))
-    
+
           call velocity(Veleq,Ipos1,Iposnp,deltat_4)
           call sources(Ipos1,Iposn,deltat_4,2,C2qa,D2qa,D2qal,D2qar)
           call sources(Ipos1,Iposn,deltat_4,2,C2qb,D2qb,D2qbl,D2qbr)
@@ -6890,7 +6890,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3q,0.,0.)
      &              lbc,0.,rbc,0.,.false.,0)
           qenew(nx)=qetop
 
-     
+
           do i=1,nx
             dexpnu=D7q(i)*deltat_4
             if (abs(dexpnu).lt.1.e-7) then
@@ -6917,7 +6917,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3q,0.,0.)
 
       D2ear=.5*(Uenew(np)+Uenew(nx))
       D2ebr=.5*(qenew(np)+qenew(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_4,2,C2ea,D2ea,D2eal,D2ear)
       call sources(Ipos1,Iposn,deltat_4,2,C2eb,D2eb,D2ebl,D2ebr)
 c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
@@ -6984,7 +6984,7 @@ c deuxieme demi-boucle
 
           D2qbl=(D2qb(1)+D2qb(2))/2.
           D2qbr=.5*(Tenew(np)+Tenew(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_4,2,C2qa,D2qa,D2qal,D2qar)
       call sources(Ipos1,Iposn,deltat_4,2,C2qb,D2qb,D2qbl,D2qbr)
 c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3q,0.,0.)
@@ -6995,7 +6995,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3q,0.,0.)
      &              lbc,0.,rbc,0.,.false.,0)
           qenew(nx)=qetop
 
-     
+
           do i=1,nx
             dexpnu=D7q(i)*deltat_4
             if (abs(dexpnu).lt.1.e-7) then
@@ -7021,7 +7021,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3q,0.,0.)
 
           D2ebl=(D2eb(1)+D2eb(2))/2.
           D2ebr=.5*(qenew(np)+qenew(nx))
-    
+
       call sources(Ipos1,Iposn,deltat_4,2,C2ea,D2ea,D2eal,D2ear)
       call sources(Ipos1,Iposn,deltat_4,2,C2eb,D2eb,D2ebl,D2ebr)
 c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
@@ -7065,7 +7065,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
         write(stderr,*) 'problem stabenerg avec Te dans la boucle 1'
         goto 246
       endif
-              
+
 
 
           do i=1,np
@@ -7075,7 +7075,7 @@ c      call sources(Ipos1,Iposn,deltat_4,3,zero,D3e,0.,0.)
             qeold(i)=qenew(i)
             Teold(i)=Tenew(i)
           enddo
-    
+
 
 C ]]]
 
@@ -7151,10 +7151,10 @@ c    temperature parallele
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*(U2new(np)+U2new(nx))
       D2br=.5*(q2new(np)+q2new(nx))
-    
+
       call sources(Ipos1,Iposn,deltat,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
@@ -7256,10 +7256,10 @@ c    temperature perpendiculaire
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*(U2new(np)+U2new(nx))
       D2br=.5*(q2new(np)+q2new(nx))
-    
+
       call sources(Ipos1,Iposn,deltat,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
@@ -7367,10 +7367,10 @@ c    temperature parallele
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*(U1new(np)+U1new(nx))
       D2br=.5*(q1new(np)+q1new(nx))
-    
+
       call sources(Ipos1,Iposn,deltat,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
@@ -7469,10 +7469,10 @@ c    temperature perpendiculaire
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*(U1new(np)+U1new(nx))
       D2br=.5*(q1new(np)+q1new(nx))
-    
+
       call sources(Ipos1,Iposn,deltat,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
@@ -7627,9 +7627,9 @@ c    temperature parallele
           D2al=(D2a(1)+D2a(2))/2.
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2ar=(D2a(nx)+D2a(nx-1))/2.
-    
+
       D2ar=.5*(Umnew(np)+Umnew(nx))
-    
+
       call sources(Ipos1,Iposn,deltat,2,C2a,D2a,D2al,D2ar)
 c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
       call sources(Ipos1,Iposn,deltat,7,zero,D7,0.,0.)
@@ -7755,9 +7755,9 @@ c    temperature perpendiculaire
 
           D2al=(D2a(1)+D2a(2))/2.
           D2ar=ylimd(Radn(np),D2a,extra,nx)
-    
+
       D2ar=.5*(Umnew(np)+Umnew(nx))
-    
+
       call sources(Ipos1,Iposn,deltat,2,C2a,D2a,D2al,D2ar)
 c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
       call sources(Ipos1,Iposn,deltat,7,zero,D7,0.,0.)
@@ -7855,10 +7855,10 @@ c    temperature parallele
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*(U3new(np)+U3new(nx))
       D2br=.5*(q3new(np)+q3new(nx))
-    
+
       call sources(Ipos1,Iposn,deltat,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
@@ -7952,10 +7952,10 @@ c    temperature perpendiculaire
           D2ar=ylimd(Radn(np),D2a,extra,nx)
           D2bl=(D2b(1)+D2b(2))/2.
           D2br=ylimd(Radn(np),D2b,extra,nx)
-    
+
       D2ar=.5*(U3new(np)+U3new(nx))
       D2br=.5*(q3new(np)+q3new(nx))
-    
+
       call sources(Ipos1,Iposn,deltat,2,C2a,D2a,D2al,D2ar)
       call sources(Ipos1,Iposn,deltat,2,C2b,D2b,D2bl,D2br)
 c      call sources(Ipos1,Iposn,deltat,3,zero,D3,0.,0.)
@@ -7995,7 +7995,7 @@ c            T3tnew(i)=T1tnew(i)
 
 C]]]
         enddo                    ! fin de boucle temporelle
-    
+
       if (flgconv) then
 
       if (abs(duree-tempsort).le.sortie/2.) then
@@ -8105,7 +8105,7 @@ C]]]
         write(unfic_out_transcar,rec=nrec_ecr)(buffer(i),i=1,longbuf)
       endif
         enddo           ! Modif DA 0202 2001: fin de boucle sur i_position
-    
+
       enddo        ! fin de boucle sur les lignes de champ
 
         close(unfic_out_transcar)
@@ -8113,7 +8113,7 @@ C]]]
         close(u)
 
       stop 'fin normale'
-    
+
 
 C    on a debranche ici a cause d'un probleme de NaN
 246    continue
@@ -8222,7 +8222,7 @@ C    on a debranche ici a cause d'un probleme de NaN
       write(u,rec=1)(buffer(i),i=1,longbuf)
       close(u)
       error stop 'NaN detected'
-      end program 
+      end program
 
 
       pure real function signe(x)

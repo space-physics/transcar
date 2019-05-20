@@ -21,7 +21,7 @@ FOK = 'finish.status'
 PREC = 'dir.input/precinput.dat'  # NOT based on root, MUST be relative!!
 
 
-def cp_parents(files: Sequence[Path], target_dir: Path, origin: Path=None):
+def cp_parents(files: Sequence[Path], target_dir: Path, origin: Path = None):
     """
     inputs
     ------
@@ -62,7 +62,7 @@ def cp_parents(files: Sequence[Path], target_dir: Path, origin: Path=None):
 
 
 def transcaroutcheck(odir: Path, errfn: Path,
-                     ok: str='STOP fin normale') -> bool:
+                     ok: str = 'STOP fin normale') -> bool:
     """
     checks for text at end of file
 
@@ -84,7 +84,7 @@ def transcaroutcheck(odir: Path, errfn: Path,
         logging.error(f'problem reading transcar output.  {e}')
     except IndexError as e:  # empty file
         fok.write_text('false')
-        logging.warn(f'{odir} Transcar may not have finished the sim')
+        logging.warn(f'{odir} Transcar may not have finished the sim   {e}')
 
     return isok
 

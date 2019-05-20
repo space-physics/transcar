@@ -19,7 +19,9 @@ addons:
     sources: ubuntu-toolchain-r-test
     packages: gfortran-6
 
-install: pip install -e .[tests]
+install:
+- pip install -e .[tests]
+- python build.py
 
 script:
 - pytest -xrsv

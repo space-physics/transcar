@@ -20,7 +20,7 @@ addons:
     packages: gfortran-6
 
 install:
-- pip install -e .[tests]
+- pip install -e .[tests,cov]
 - cd $TRAVIS_BUILD_DIR/dir.source/dir.obj
 - cmake ..
 - cmake --build . -j

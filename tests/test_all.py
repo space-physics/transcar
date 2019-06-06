@@ -2,7 +2,6 @@
 import pandas
 from pathlib import Path
 import pytest
-import tempfile
 from pytest import approx
 import transcar.base as transcar
 import transcarread as tr
@@ -13,26 +12,24 @@ refdir = root / 'tests'/beam
 kinfn = 'dir.output/emissions.dat'
 
 
-def test_transcar():
+def test_transcar(tmp_path):
 
-    with tempfile.TemporaryDirectory() as odir:
+    odir = tmp_path
 
-        odir = Path(odir).expanduser()
+    params = {'rodir': odir,
+              'Q0': 70114000000.0,
+              'msgfn': 'transcar.log',
+              'errfn': 'transcarError.log'
+              }
 
-        params = {'rodir': odir,
-                  'Q0': 70114000000.0,
-                  'msgfn': 'transcar.log',
-                  'errfn': 'transcarError.log'
-                  }
+    beams = pandas.read_csv(root / 'tests/test_E1E2prev.csv', header=None,
+                            names=['E1', 'E2', 'pr1', 'pr2']).squeeze()
 
-        beams = pandas.read_csv(root / 'tests/test_E1E2prev.csv', header=None,
-                                names=['E1', 'E2', 'pr1', 'pr2']).squeeze()
+    transcar.mono_beam_arbiter(beams, params)
 
-        transcar.mono_beam_arbiter(beams, params)
+    refexc = tr.ExcitationRates(refdir/kinfn)
 
-        refexc = tr.ExcitationRates(refdir/kinfn)
-
-        exc = tr.ExcitationRates(odir/beam/kinfn)
+    exc = tr.ExcitationRates(odir/beam/kinfn)
 
     ind = [[1, 12, 5], [0, 62, 8]]
 

@@ -7,7 +7,7 @@
 
 Fortran Authors: P.L. Blelly, J. Lilensten, M. Zettergren
 
-Python Author, Fortran cleanup:  Michael Hirsch
+Python front-end, and Fortran interfacing:  Michael Hirsch
 
 TRANSCAR 1D flux tube ionospheric energy deposition flux transport model.
 Considers solar input and background conditions via MSIS, HWM.
@@ -15,23 +15,20 @@ Models disturbance propagation in ionosphere via models including LCPFCT.
 
 ## Prereqs
 
-Because Transcar is Python & Fortran based, it runs on any PC/Mac with Linux, OS X, Windows, etc.
-Any Fortran compiler can be used, including Gfortran, Intel, Flang and PGI.
+Because Transcar is Python & Fortran based, it runs on any PC/Mac with Linux, MacOS, Windows, etc.
+Most Fortran compilers can be used, including Gfortran and Intel.
 
--   Linux: `apt install gfortran cmake make`
--   Mac: `brew install gcc cmake make`
+* Linux / Windows Subsystem for Linux: `apt install gfortran cmake make`
+* Mac: `brew install gcc cmake make`
 
 ### Windows
 
-Windows users in general can use
-[Windows Subsystem for Linux](https://www.scivision.dev/install-windows-subsystem-for-linux/),
-a full Ubuntu system made by Microsoft in the Windows App Store.
+From native Windows
+[install CMake](https://cmake.org/download)
+and either of:
 
-Otherwise, from native Windows, install CMake and any one of:
-
-* [Gfortran](https://www.scivision.dev/brew-install-scoop-for-windows/)
-* [PGI Community Edition](https://www.scivision.dev/install-pgi-free-compiler/) compilers
-* [Intel Parallel Studio](https://www.scivision.dev/install-intel-compiler-icc-icpc-ifort/) compilers
+* [Gfortran](https://www.scivision.dev/install-msys2-windows/)
+* [Intel Parallel Studio](https://www.scivision.dev/install-intel-compiler-icc-icpc-ifort/)
 
 
 ## Install
@@ -51,18 +48,19 @@ python build.py
 ## Usage
 
 Simulations are configured in
-[transcar/dir.input/DATCAR](transcar/dir.input/DATCAR).
+[dir.input/DATCAR](./dir.input/DATCAR).
 Simulations are run from the top directory.
-Python runs Transcar in parallel execution using `concurrent.futures`, dynamically adapting to the number
-of CPU cores available:
+Python runs Transcar in parallel using
+[concurrent.futures.ThreadPoolExecutor](https://docs.python.org/3/library/concurrent.futures.html),
+dynamically adapting to the number of CPU cores available:
+
 ```sh
-python RunTranscar.py /tmp/tc
+python MonoenergeticBeams.py /tmp/tc
 ```
 
-## Reference
+## Notes
 
 [transconvec](https://github.com/scivision/transcar/blob/master/transcar/dir.source/transconvec_13.op.f)
-Main Program
 
 ### Manual compile
 
@@ -75,14 +73,6 @@ cmake --build . -j
 cd ..
 ```
 
-### Bash
-
-This is the Mac/Linux only legacy way of running Transcar:
-
-    ./run_beams_parallel.sh /tmp/tc
-
-where `/tmp/tc` is the output directory. Files are automatically erased
-there, so be careful!
 
 ### Specify compiler
 
@@ -91,9 +81,3 @@ another compiler, set environment variable FC in the Cmake call. For
 example, Intel `ifort`:
 
     FC=ifort cmake ..
-
-### Parallel remote execution
-
-install the latest GNU Parallel into ~/bin by:
-
-    wget -O - pi.dk/3 | bash

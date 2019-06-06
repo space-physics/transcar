@@ -20,9 +20,10 @@ elseif(${CMAKE_Fortran_COMPILER_ID} MATCHES Flang)
     #already assumes byterecl
 endif()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../..)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..)
 
-add_executable(transconvec ../transconvec_13.op.f ../reacrates.f)
+add_executable(transconvec ${CMAKE_CURRENT_SOURCE_DIR}/transconvec_13.op.f
+  ${CMAKE_CURRENT_SOURCE_DIR}/reacrates.f)
 target_link_libraries(transconvec PRIVATE fluid numeric system proj
                        convec geomag transelec imm common)
 target_include_directories(transconvec PRIVATE ${CMAKE_SOURCE_DIR}/dir.include)

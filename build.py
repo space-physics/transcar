@@ -1,37 +1,37 @@
 #!/usr/bin/env python
 """
+build.py makes building projects with CMake or Meson + Ninja even simpler.
+It facilitates easy testing across operating systems and compiler vendors.
+Michael Hirsch, Ph.D.
 
-## PGI
+## Per-compiler tips
 
-We assume you're running from the PGI console on Windows, or otherwise have PATH set
-to PGI compilers in environment before running this script.
+### PGI
 
+PATH must include the PGI compilers bin/ directory before running build.py.
 
-## Intel
+### Intel
 
-We assume you've already:
+The Intel compiler environment must be configured before running build.py:
 
 * Windows: compilervars.bat intel64
 * Linux / Mac: source compilervars.sh intel64
-
-or otherwise set environment variable MKLROOT.
-This is how Numpy finds Intel MKL / compilers as well.
-
-## MKL
-
-MSVC requires MKL too
-
 """
 from pathlib import Path
 import os
+import sys
 import shutil
 import subprocess
 from typing import Dict, List, Tuple
 from argparse import ArgumentParser
 
+if sys.version_info < (3, 6):
+    raise RuntimeError('build.py requires Python >= 3.6')
+
 MESON = shutil.which('meson')
 NINJA = shutil.which('ninja')
 CMAKE = shutil.which('cmake')
+CTEST = shutil.which('ctest')
 
 MSVC = 'Visual Studio 15 2017'
 
@@ -40,43 +40,49 @@ SRC = Path(__file__).parent.resolve() / 'dir.source'
 BUILD = SRC / 'dir.obj'
 
 
-# %% function
 def do_build(buildsys: str, compilers: Dict[str, str],
-             args: List[str],
-             wipe: bool = True,
-             dotest: bool = True,
-             install: str = None):
+             args: List[str], **kwargs):
     """
     attempts build with Meson or CMake
     """
     if buildsys == 'meson' and MESON and NINJA:
-        meson_setup(compilers, args, wipe, dotest, install)
+        meson_setup(compilers, args, **kwargs)
     elif buildsys == 'cmake' and CMAKE:
-        cmake_setup(compilers, args, wipe, dotest, install)
+        cmake_setup(compilers, args, **kwargs)
     else:
         raise FileNotFoundError('Could not find CMake or Meson + Ninja')
 
 
 def _needs_wipe(fn: Path, wipe: bool) -> bool:
+    """
+    This detection of regeneration needed is not perfect.
+    """
     if not fn.is_file():
         return False
+
+    if wipe:
+        return True
 
     with fn.open() as f:
         for line in f:
             if line.startswith('CMAKE_C_COMPILER:FILEPATH'):
-                cc = line.split('/')[-1]
+                cc = line.split('/')[-1].strip()  # must have strip() for junk in cache
                 if cc != compilers['CC']:
+                    print('regenerating due to C compiler change:', cc, '=>', compilers['CC'])
                     wipe = True
                     break
             elif line.startswith('CMAKE_GENERATOR:INTERNAL'):
                 gen = line.split('=')[-1]
                 if gen.startswith('Unix') and os.name == 'nt':
+                    print('regenerating due to OS change: Unix => Windows')
                     wipe = True
                     break
                 elif gen.startswith(('MinGW', 'Visual')) and os.name != 'nt':
+                    print('regenerating due to OS change: Windows => Unix')
                     wipe = True
                     break
                 elif gen.startswith('Visual') and compilers['CC'] != 'cl':
+                    print('regenerating due to C compiler change: MSVC =>', compilers['CC'])
                     wipe = True
                     break
 
@@ -84,32 +90,28 @@ def _needs_wipe(fn: Path, wipe: bool) -> bool:
 
 
 def cmake_setup(compilers: Dict[str, str],
-                args: List[str],
-                wipe: bool = True, dotest: bool = True,
-                install: str = None):
+                args: List[str], **kwargs):
     """
     attempt to build using CMake >= 3
-
-    The automatic detection of when a wipe of CMakeCache.txt is needed isn't perfect.
     """
     if compilers['CC'] == 'cl':
         wopts = ['-G', MSVC, '-A', 'x64']
     elif os.name == 'nt':
-        wopts = ['-G', 'MinGW Makefiles', '-DCMAKE_SH="CMAKE_SH-NOTFOUND']
+        wopts = ['-G', 'MinGW Makefiles', '-DCMAKE_SH=CMAKE_SH-NOTFOUND']
     else:
         wopts = []
 
     wopts += args
 
-    if isinstance(install, str) and install.strip():  # path specified
-        wopts.append('-DCMAKE_INSTALL_PREFIX:PATH='+str(Path(install).expanduser()))
+    if kwargs.get('install'):  # path specified
+        wopts.append('-DCMAKE_INSTALL_PREFIX:PATH=' +
+                     str(Path(kwargs['install']).expanduser()))
 
     cachefile = BUILD / 'CMakeCache.txt'
 
-    wipe = _needs_wipe(cachefile, wipe)
-
-    if wipe and cachefile.is_file():
+    if _needs_wipe(cachefile, kwargs.get('wipe')):
         cachefile.unlink()
+        shutil.rmtree(BUILD/'CMakeFiles', ignore_errors=True)
 
     # we didn't use -S -B to be compatible with CMake < 3.12
     ret = subprocess.run([CMAKE] + wopts + [str(SRC)],
@@ -117,35 +119,38 @@ def cmake_setup(compilers: Dict[str, str],
     if ret.returncode:
         raise SystemExit(ret.returncode)
 
-    ret = subprocess.run([CMAKE, '--build', str(BUILD)], universal_newlines=True)
+    ret = subprocess.run([CMAKE, '--build', str(BUILD), '--parallel'])
 
     test_result(ret)
 
 # %% test
-    if dotest:
-        ctest_exe = shutil.which('ctest')
-        if not ctest_exe:
-            raise FileNotFoundError('CTest not available')
-
-        if compilers['CC'] == 'cl':
-            ret = subprocess.run([CMAKE, '--build', str(BUILD), '--target', 'RUN_TESTS'])
-            if ret.returncode:
-                raise SystemExit(ret.returncode)
-        else:
-            subprocess.run([ctest_exe, '--output-on-failure'], cwd=BUILD)
-            if ret.returncode:
-                raise SystemExit(ret.returncode)
+    _cmake_test(kwargs.get('dotest'))
 # %% install
-    if install is not None:  # blank '' or ' ' etc. will use dfault install path
-        subprocess.run([CMAKE, '--build', str(BUILD), '--target', 'install'])
+    if kwargs.get('install'):
+        subprocess.run([CMAKE, '--build', str(BUILD), '--parallel', '--target', 'install'])
+        if ret.returncode:
+            raise SystemExit(ret.returncode)
+
+
+def _cmake_test(dotest: bool):
+    if not dotest:
+        return
+
+    if not CTEST:
+        raise FileNotFoundError('CTest not available')
+
+    if compilers['CC'] == 'cl':
+        ret = subprocess.run([CMAKE, '--build', str(BUILD), '--target', 'RUN_TESTS'])
+        if ret.returncode:
+            raise SystemExit(ret.returncode)
+    else:
+        ret = subprocess.run([CTEST, '--parallel', '--output-on-failure'], cwd=BUILD)
         if ret.returncode:
             raise SystemExit(ret.returncode)
 
 
 def meson_setup(compilers: Dict[str, str],
-                args: List[str],
-                wipe: bool = True, dotest: bool = True,
-                install: str = None):
+                args: List[str], **kwargs):
     """
     attempt to build with Meson + Ninja
     """
@@ -153,30 +158,30 @@ def meson_setup(compilers: Dict[str, str],
 
     meson_setup = [MESON] + ['setup'] + args
 
-    if isinstance(install, str) and install.strip():  # path specified
-        meson_setup.append('--prefix '+str(Path(install).expanduser()))
+    if kwargs.get('install'):
+        meson_setup.append('--prefix '+str(Path(kwargs['install']).expanduser()))
 
-    if wipe and build_ninja.is_file():
+    if kwargs.get('wipe') and build_ninja.is_file():
         meson_setup.append('--wipe')
+
     meson_setup += [str(BUILD), str(SRC)]
 
-    if wipe or not build_ninja.is_file():
+    if kwargs.get('wipe') or not build_ninja.is_file():
         ret = subprocess.run(meson_setup, env=os.environ.update(compilers))
         if ret.returncode:
             raise SystemExit(ret.returncode)
 
-    ret = subprocess.run([NINJA, '-C', str(BUILD)], stderr=subprocess.PIPE,
-                         universal_newlines=True)
+    ret = subprocess.run([NINJA, '-C', str(BUILD)])
 
     test_result(ret)
 
-    if dotest:
+    if kwargs.get('dotest'):
         if not ret.returncode:
             ret = subprocess.run([MESON, 'test', '-C', str(BUILD)])  # type: ignore     # MyPy bug
             if ret.returncode:
                 raise SystemExit(ret.returncode)
 
-    if install:
+    if kwargs.get('install'):
         if not ret.returncode:
             ret = subprocess.run([MESON, 'install', '-C', str(BUILD)])  # type: ignore     # MyPy bug
             if ret.returncode:
@@ -191,7 +196,7 @@ def test_result(ret: subprocess.CompletedProcess):
 
 
 # %% compilers
-def clang_params(impl: str) -> Tuple[Dict[str, str], List[str]]:
+def clang_params() -> Tuple[Dict[str, str], List[str]]:
     """
     LLVM compilers e.g. Clang, Flang
     """
@@ -202,7 +207,7 @@ def clang_params(impl: str) -> Tuple[Dict[str, str], List[str]]:
     return compilers, args
 
 
-def gnu_params(impl: str) -> Tuple[Dict[str, str], List[str]]:
+def gnu_params() -> Tuple[Dict[str, str], List[str]]:
     """
     GNU compilers e.g. GCC, Gfortran
     """
@@ -224,7 +229,7 @@ def intel_params() -> Tuple[Dict[str, str], List[str]]:
     compilers = {'FC': 'ifort'}
 
     if os.name == 'nt':
-        compilers['CC'] = compilers['CXX'] = 'icl'
+        compilers['CC'] = compilers['CXX'] = 'icl.exe'
     else:
         compilers['CC'] = 'icc'
         compilers['CXX'] = 'icpc'
@@ -251,7 +256,7 @@ def msvc_params() -> Tuple[Dict[str, str], List[str]]:
     return compilers, args
 
 
-def pgi_params(impl: str) -> Tuple[Dict[str, str], List[str]]:
+def pgi_params() -> Tuple[Dict[str, str], List[str]]:
     """
     Nvidia PGI compilers
 
@@ -274,26 +279,28 @@ if __name__ == '__main__':
     p = ArgumentParser()
     p.add_argument('vendor', help='compiler vendor [clang, gnu, intel, msvc, pgi]', nargs='?', default='gnu')
     p.add_argument('-wipe', help='wipe and rebuild from scratch', action='store_true')
-    p.add_argument('-b', '--buildsys', help='default build system', default='cmake')
-    p.add_argument('-i', '--implementation',
-                   help='which LAPACK implementation')
-    p.add_argument('-n', '--no-test', help='do not run self-test / example', action='store_false')
+    p.add_argument('-buildsys', help='default build system', default='cmake')
+    p.add_argument('-args', help='preprocessor arguments', nargs='+', default=[])
+    p.add_argument('-debug', help='debug (-O0) instead of release (-O3) build', action='store_true')
+    p.add_argument('-test', help='run self-test / example', action='store_true')
     p.add_argument('-install', help='specify directory to install to')
     a = p.parse_args()
 
-    dotest = a.no_test
-
     if a.vendor == 'clang':
-        compilers, args = clang_params(a.implementation)
+        compilers, args = clang_params()
     elif a.vendor in ('gnu', 'gcc'):
-        compilers, args = gnu_params(a.implementation)
+        compilers, args = gnu_params()
     elif a.vendor == 'intel':
         compilers, args = intel_params()
     elif a.vendor == 'msvc':
         compilers, args = msvc_params()
     elif a.vendor == 'pgi':
-        compilers, args = pgi_params(a.implementation)
+        compilers, args = pgi_params()
     else:
-        raise ValueError('unknown compiler vendor {}'.format(a.vendor))
+        raise ValueError(a.vendor)
 
-    do_build(a.buildsys, compilers, args, a.wipe, dotest, a.install)
+    args += a.args
+    if a.debug:
+        args.append('-DCMAKE_BUILD_TYPE=Debug')
+
+    do_build(a.buildsys, compilers, args, wipe=a.wipe, dotest=a.test, install=a.install)

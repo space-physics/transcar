@@ -1,33 +1,33 @@
 #!/usr/bin/env python
 """
-Executes Transcar to output "monoenergetic" electron beams.
-Optionally, in parallel.
+Executes Transcar with user-defined input particle flux spectrum
+
+python SpectrumBeam.py flux.csv /tmp/spectrumout
+
+python SpectrumBeam.py flux.csv c:/temp/spectrumout
 """
-import concurrent.futures
 import logging
 from pathlib import Path
+import numpy as np
 from pandas import read_csv
-import os
+from argparse import ArgumentParser
 #
-import transcar
+import transcar.base as transcar
 
 
 def main():
-    import signal
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
-
-    from argparse import ArgumentParser
     p = ArgumentParser(description='parallel instance transcar runner')
-    p.add_argument('rodir', help='root of beam directory')
+    p.add_argument('fluxfn',  help='particle flux csv filename')
+    p.add_argument('rodir', help='output directory')
     p.add_argument('-Q0', help='Assumed particle flux', type=float, default=70114000000.0)
     p.add_argument('-infn', help='energy bin CSV file', default='BT_E1E2prev.csv')
     p.add_argument('--msgfn', help='file to write transcar messages to', default='transcar.log')
     p.add_argument('--errfn', help='file to write transcar Errors to', default='transcarError.log')
-    p.add_argument('-np', help='number of concurrent processes', type=int, default=os.cpu_count())
     p = p.parse_args()
 
     rodir = Path(p.rodir).expanduser()
     infn = Path(p.infn).expanduser()
+    fluxfn = Path(p.fluxfn).expanduser()
 
     params = {'rodir': rodir,
               'Q0': p.Q0,
@@ -43,13 +43,9 @@ def main():
                         level=logging.DEBUG)
 
     beams = read_csv(infn, header=None, names=['E1', 'E2', 'pr1', 'pr2'])
+    beams['flux'] = np.loadtxt(fluxfn, delimiter=',')
 
-    print('using', p.np, 'concurrent Transcar runs')
-# %%
-    with concurrent.futures.ThreadPoolExecutor(max_workers=p.np) as executor:
-        future_beam = (executor.submit(transcar.iterbeams, beam, params) for _, beam in beams.iterrows())
-        for future in concurrent.futures.as_completed(future_beam):
-            future.result()
+    transcar.beam_spectrum_arbiter(beams, params)
 
 
 if __name__ == '__main__':

@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import logging
 import collections
 import shutil
+import pandas
 from typing import Sequence, Tuple, Any, Dict
 # hard-coded in Fortran
 ROOT = Path(__file__).resolve().parents[1]
@@ -78,7 +79,7 @@ def transcaroutcheck(odir: Path, errfn: Path,
             logging.info(f'{odir} completed successfully.')
         else:
             fok.write_text('false')
-            logging.warn(f'{odir} ended sim early:  {last}')
+            logging.warning(f'{odir} ended sim early:  {last}')
     except IOError as e:
         logging.error(f'problem reading transcar output.  {e}')
     except IndexError as e:  # empty file
@@ -88,11 +89,9 @@ def transcaroutcheck(odir: Path, errfn: Path,
     return isok
 
 
-def setuptranscario(rodir: Path, beamEnergy: float) -> Tuple[Dict[str, Any], Path]:
+def setup_dirs(odir: Path) -> Tuple[Dict[str, Any], Path]:
 
     inp = readTranscarInput(DATCAR)
-
-    odir = Path(rodir).expanduser() / f'beam{beamEnergy:.1f}'
 # %% cleanup bad runs
     out = odir / 'dir.output'
     out.mkdir(parents=True, exist_ok=True)
@@ -114,7 +113,10 @@ def setuptranscario(rodir: Path, beamEnergy: float) -> Tuple[Dict[str, Any], Pat
     return inp, odir
 
 
-def setupPrecipitation(odir: Path, inp: Dict[str, Any], beam: Dict[str, float], flux0: float):
+def setup_monoprec(odir: Path,
+                   inp: Dict[str, Any],
+                   beam: Dict[str, float],
+                   flux0: float):
     """this writes dir.input/precinput.dat for the first time step, for each beam"""
     ofn = Path(odir).expanduser() / PREC
 
@@ -137,6 +139,36 @@ def setupPrecipitation(odir: Path, inp: Dict[str, Any], beam: Dict[str, float], 
     print('writing', ofn)
 
     ofn.write_text(precout)
+
+
+def setup_spectrum_prec(odir: Path,
+                        inp: Dict[str, Any],
+                        beam: pandas.DataFrame):
+    """this writes dir.input/precinput.dat for the first time step, for each beam"""
+    ofn = Path(odir).expanduser() / PREC
+
+    dat = str(inp['precipstartsec'])
+
+    for _, ebin in beam.iterrows():
+        E1 = ebin['E1']
+        E2 = ebin['E2']
+        pr1 = ebin['pr1']
+        pr2 = ebin['pr2']
+
+        dE = E2 - E1
+        Esum = E2 + E1
+        flux = ebin['flux'] / 0.5 / Esum / dE
+        Elow = E1 - 0.5*(E1 - pr1)
+        Ehigh = E2 - 0.5*(E2 - pr2)
+
+        dat += '\n'.join((f'{Elow} {flux}',
+                          f'{Ehigh} -1.0'))
+
+    dat += f"\n{inp['precipendsec']}\n-1.0 -1.0"
+
+    print('writing', ofn)
+
+    ofn.write_text(dat)
 
 
 def readTranscarInput(infn: Path) -> Dict[str, Any]:

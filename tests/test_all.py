@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 import tempfile
 from pytest import approx
-import transcar
+import transcar.base as transcar
 import transcarread as tr
 
 root = Path(__file__).parents[1]
@@ -28,7 +28,7 @@ def test_transcar():
         beams = pandas.read_csv(root / 'tests/test_E1E2prev.csv', header=None,
                                 names=['E1', 'E2', 'pr1', 'pr2']).squeeze()
 
-        transcar.iterbeams(beams, params)
+        transcar.mono_beam_arbiter(beams, params)
 
         refexc = tr.ExcitationRates(refdir/kinfn)
 

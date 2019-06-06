@@ -1,21 +1,21 @@
 cmake_minimum_required(VERSION 3.1)
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release CACHE STRING "Debug or Release")
-endif()
+# allow default to debug build due to non-standard Fortran used, will segfault with -O3 and GCC 7-9 at least
+# -O2 is OK for GCC.  Do not use -march=native for GCC7 on SCC, weird compiler errors (with any program)
+
 project(transcar Fortran)
 
 # compiler dependent flags necessary for disk files used (sorry)
 if(${CMAKE_Fortran_COMPILER_ID} MATCHES GNU)
   add_compile_options(-frecord-marker=4 -std=legacy
-          -march=native -Wline-truncation -fmax-errors=3)# -Warray-bounds=2)
+          -O2 -Wline-truncation -fmax-errors=3)# -Warray-bounds=2)
 elseif(${CMAKE_Fortran_COMPILER_ID} MATCHES Intel)
   if(WIN32)
-    add_compile_options(/assume:byterecl)
+    add_compile_options(/O2 /assume:byterecl)
   else()
-    add_compile_options(-assume byterecl)
+    add_compile_options(-O2 -assume byterecl)
   endif()
 elseif(${CMAKE_Fortran_COMPILER_ID} MATCHES PGI)
-    #already assumes byterecl
+    #already assumes byterecl -- currently not compiling due to non-standard code
 elseif(${CMAKE_Fortran_COMPILER_ID} MATCHES Flang)
     #already assumes byterecl
 endif()

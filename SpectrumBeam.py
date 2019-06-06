@@ -11,11 +11,13 @@ from pathlib import Path
 import numpy as np
 from pandas import read_csv
 from argparse import ArgumentParser
+import signal
 #
 import transcar.base as transcar
 
 
 def main():
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
     p = ArgumentParser(description='parallel instance transcar runner')
     p.add_argument('fluxfn',  help='particle flux csv filename')
     p.add_argument('rodir', help='output directory')

@@ -51,10 +51,10 @@ def mono_beam_arbiter(beam: Dict[str, float], P: Dict[str, Any]):
     if isok:
         print(f'OK {beam["E1"]:.1f} eV')
     else:
-        logging.warning(f'retrying beam{beam["E1"]}')
+        logging.warning(f'retrying beam{beam["E1"]:.1f}')
         isok = run_monobeam(beam, P)
         if not isok:
-            logging.error(f'failed on beam{beam["E1"]} on 2nd try, aborting')
+            logging.error(f'failed on beam{beam["E1"]:.1f} on 2nd try, aborting')
 
 
 def run_monobeam(beam: Dict[str, float], P: Dict[str, Any]) -> bool:
@@ -75,4 +75,7 @@ def runTranscar(odir: Path, errfn: Path, msgfn: Path):
     odir = Path(odir).expanduser().resolve()  # MUST have resolve()!!
 
     with (odir/errfn).open('w') as ferr, (odir/msgfn).open('w') as fout:
-        subprocess.run(str(TRANSCAREXE), cwd=odir, stdout=fout, stderr=ferr)
+        ret = subprocess.run(str(TRANSCAREXE), cwd=odir, stdout=fout, stderr=ferr)
+
+    if ret.returncode:
+        logging.error(f'{odir.name} error code {ret.returncode}')

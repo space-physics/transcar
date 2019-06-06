@@ -11,16 +11,19 @@ import os
 from argparse import ArgumentParser
 #
 import transcar.base as transcar
+import signal
 
 
 def main():
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
     p = ArgumentParser(description='parallel instance transcar runner')
     p.add_argument('rodir', help='root of beam directory')
     p.add_argument('-Q0', help='Assumed particle flux', type=float, default=70114000000.0)
     p.add_argument('-infn', help='energy bin CSV file', default='BT_E1E2prev.csv')
     p.add_argument('--msgfn', help='file to write transcar messages to', default='transcar.log')
     p.add_argument('--errfn', help='file to write transcar Errors to', default='transcarError.log')
-    p.add_argument('-np', help='number of concurrent processes', type=int, default=os.cpu_count())
+    p.add_argument('-np', help='number of concurrent processes', type=int,
+                   default=max(1, os.cpu_count()-1))
     p = p.parse_args()
 
     rodir = Path(p.rodir).expanduser()

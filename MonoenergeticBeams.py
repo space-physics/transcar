@@ -24,6 +24,7 @@ def main():
     p.add_argument('--errfn', help='file to write transcar Errors to', default='transcarError.log')
     p.add_argument('-np', help='number of concurrent processes', type=int,
                    default=max(1, os.cpu_count()-1))
+    p.add_argument('--serial', help='do not execute concurrently for debugging', action='store_true')
     p = p.parse_args()
 
     rodir = Path(p.rodir).expanduser()
@@ -46,14 +47,14 @@ def main():
 
     print('using', p.np, 'concurrent Transcar runs')
 # %%
-    if 0:
+    if p.serial:
+        for _, beam in beams.iterrows():
+            transcar.mono_beam_arbiter(beam, params)
+    else:
         with concurrent.futures.ThreadPoolExecutor(max_workers=p.np) as executor:
             future_beam = (executor.submit(transcar.mono_beam_arbiter, beam, params) for _, beam in beams.iterrows())
             for future in concurrent.futures.as_completed(future_beam):
                 future.result()
-    else:
-        for _, beam in beams.iterrows():
-            transcar.mono_beam_arbiter(beam, params)
 
 
 if __name__ == '__main__':

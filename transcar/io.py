@@ -2,18 +2,17 @@ from pathlib import Path
 from datetime import datetime, timedelta
 import logging
 import collections
-import os
 import shutil
 from typing import Sequence, Tuple, Any, Dict
 # hard-coded in Fortran
-root = Path(__file__).resolve().parents[1]
-transcarexe = root/'transconvec'
-if os.name == 'nt':
-    transcarexe = transcarexe.with_suffix('.exe')
+ROOT = Path(__file__).resolve().parents[1]
+TRANSCAREXE = shutil.which('transconvec', path=str(ROOT))
+if not TRANSCAREXE:
+    raise FileNotFoundError(f'could not find transconvec executable in {ROOT}')
 
-din = root / 'dir.input'
+din = ROOT / 'dir.input'
 dout = Path('dir.output')
-ddat = root / 'dir.data'
+ddat = ROOT / 'dir.data'
 DATCAR = din / 'DATCAR'
 FOK = 'finish.status'
 
@@ -101,12 +100,8 @@ def setuptranscario(rodir: Path, beamEnergy: float) -> Tuple[Dict[str, Any], Pat
         if (out/fn).is_file():
             (out/fn).unlink()
 # %% move files where needed for this instantiation
-    if not Path(transcarexe).is_file():
-        raise FileNotFoundError(
-            f'could not find {transcarexe}. May need to compile Transcar Fortran code:\n python -m pip install -e .')
-
     # precfn is NOT included here!
-    flist = [DATCAR, din / inp['precfile'], ddat / 'type', transcarexe]
+    flist = [DATCAR, din / inp['precfile'], ddat / 'type']
     flist += [ddat / 'dir.linux/dir.geomag' / s for s in ['data_geom.bin', 'igrf90.dat', 'igrf90s.dat']]
     flist += [ddat / 'dir.linux/dir.projection/varpot.dat']
     # transcar sigsegv on val_fit_ if FELTRANS is blank!
@@ -114,7 +109,7 @@ def setuptranscario(rodir: Path, beamEnergy: float) -> Tuple[Dict[str, Any], Pat
     flist += [ddat / 'dir.linux/dir.cine/dir.euvac/EUVAC.dat']
     flist += [ddat / 'dir.linux/dir.cine/dir.seff' / s for s in ['crsb8', 'crsphot1.dat', 'rdtb8']]
 
-    cp_parents(flist, odir, root)
+    cp_parents(flist, odir, ROOT)
 
     return inp, odir
 

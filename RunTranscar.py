@@ -5,9 +5,9 @@ Optionally, in parallel.
 """
 import concurrent.futures
 import logging
-import itertools
 from pathlib import Path
 from pandas import read_csv
+import os
 #
 import transcar
 
@@ -23,6 +23,7 @@ def main():
     p.add_argument('-infn', help='energy bin CSV file', default='BT_E1E2prev.csv')
     p.add_argument('--msgfn', help='file to write transcar messages to', default='transcar.log')
     p.add_argument('--errfn', help='file to write transcar Errors to', default='transcarError.log')
+    p.add_argument('-np', help='number of concurrent processes', type=int, default=os.cpu_count())
     p = p.parse_args()
 
     rodir = Path(p.rodir).expanduser()
@@ -42,11 +43,13 @@ def main():
                         level=logging.DEBUG)
 
     beams = read_csv(infn, header=None, names=['E1', 'E2', 'pr1', 'pr2'])
+
+    print('using', p.np, 'concurrent Transcar runs')
 # %%
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        executor.map(transcar.iterbeams,
-                     beams.iterrows(), itertools.repeat(params),
-                     timeout=600)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=p.np) as executor:
+        future_beam = (executor.submit(transcar.iterbeams, beam, params) for _, beam in beams.iterrows())
+        for future in concurrent.futures.as_completed(future_beam):
+            future.result()
 
 
 if __name__ == '__main__':

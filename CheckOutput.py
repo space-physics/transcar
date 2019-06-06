@@ -17,7 +17,7 @@ def main():
     # %%
     rodir = Path(p.rodir).expanduser()
 
-    dlist = [d for d in rodir.iterdir() if d.is_dir() and d.stem.startswith('beam')]
+    dlist = (d for d in rodir.iterdir() if d.is_dir() and d.stem.startswith('beam'))
 
     for d in dlist:
         transcaroutcheck(d, p.errfn, 'STOP fin normale')

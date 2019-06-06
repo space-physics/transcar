@@ -2,16 +2,12 @@ import subprocess
 from pathlib import Path
 import logging
 import pandas
-import os
 from typing import Dict, Any
 # %% constants dictacted by legacy Fortran code
-from .io import setuptranscario, setupPrecipitation, transcaroutcheck, transcarexe
+from .io import setuptranscario, setupPrecipitation, transcaroutcheck, TRANSCAREXE
 
 
 def iterbeams(beam: Dict[str, float], P: Dict[str, Any]):
-    if isinstance(beam, tuple):  # due to .iterrows()
-        beam = beam[1]
-
     if isinstance(beam, pandas.Series):
         beam = beam.to_dict()
 
@@ -44,4 +40,4 @@ def runTranscar(odir: Path, errfn: Path, msgfn: Path):
     odir = Path(odir).expanduser().resolve()  # MUST have resolve()!!
 
     with (odir/errfn).open('w') as ferr, (odir/msgfn).open('w') as fout:
-        subprocess.run(f'.{os.sep}{transcarexe.name}', cwd=odir, stdout=fout, stderr=ferr)
+        subprocess.run(str(TRANSCAREXE), cwd=odir, stdout=fout, stderr=ferr)

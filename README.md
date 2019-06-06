@@ -1,6 +1,6 @@
-[![image](https://travis-ci.org/scivision/transcar.svg)](https://travis-ci.org/scivision/transcar)
+[![Build Status](https://travis-ci.org/space-physics/transcar.svg?branch=next)](https://travis-ci.org/space-physics/transcar)
 [![image](https://coveralls.io/repos/github/scivision/transcar/badge.svg?branch=next)](https://coveralls.io/github/scivision/transcar?branch=next)
-[![image](https://ci.appveyor.com/api/projects/status/d4y6eqqjjq4uq2sw?svg=true)](https://ci.appveyor.com/project/scivision/transcar)
+[![Build status](https://ci.appveyor.com/api/projects/status/ij3jskpvfvprm185?svg=true)](https://ci.appveyor.com/project/scivision/transcar-yhafk)
 [![Maintainability](https://api.codeclimate.com/v1/badges/7c237d2870d0611e5df6/maintainability)](https://codeclimate.com/github/scivision/transcar/maintainability)
 
 # Transcar

@@ -21,9 +21,12 @@ addons:
 
 install:
 - pip install -e .[tests]
-- python build.py
+- cd $TRAVIS_BUILD_DIR/dir.source/dir.obj
+- cmake ..
+- cmake --build . -j
 
 script:
+- cd $TRAVIS_BUILD_DIR
 - pytest -xrsv
 - flake8
 - mypy .

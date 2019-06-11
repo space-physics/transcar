@@ -37,8 +37,11 @@ def main():
               'errfn': p.errfn
               }
 
+    logfn = rodir/'Beams.log'
+
+    print('logging to', logfn)
     rodir.mkdir(parents=True, exist_ok=True)
-    logging.basicConfig(filename=rodir/'Beams.log',
+    logging.basicConfig(filename=logfn,
                         filemode='a',
                         format='%(asctime)s %(levelname)s %(message)s',
                         datefmt='%H:%M:%S',

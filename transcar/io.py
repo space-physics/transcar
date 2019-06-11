@@ -161,8 +161,9 @@ def setup_spectrum_prec(odir: Path,
         Elow = E1 - 0.5*(E1 - pr1)
         Ehigh = E2 - 0.5*(E2 - pr2)
 
-        dat += '\n'.join((f'{Elow} {flux}',
-                          f'{Ehigh} -1.0'))
+        dat += f'\n{Elow:.3f} {flux:.3f}'
+
+    dat += f'\n{Ehigh:.3f} -1.0'
 
     dat += f"\n{inp['precipendsec']}\n-1.0 -1.0"
 

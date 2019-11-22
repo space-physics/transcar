@@ -4,7 +4,6 @@ omit =
   /home/travis/virtualenv/*
   */site-packages/*
   */bin/*
-  */transcarread/*
 
 [report]
 exclude_lines =

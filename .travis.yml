@@ -1,37 +1,18 @@
 language: python
 group: travis_latest
-dist: xenial
 
-git:
-  depth: 25
-  quiet: true
+env:
+- CMAKE_GENERATOR=Ninja
 
-python:
-- 3.6
-
-os:
-- linux
-
-env: FC=gfortran-6
-
-addons:
-  apt:
-    sources: ubuntu-toolchain-r-test
-    packages: gfortran-6
+before_install:
+- pip install -e .[tests,cov]
+- pip install cmake ninja
 
 install:
-- pip install -e .[tests,cov]
-- cd $TRAVIS_BUILD_DIR/dir.source/dir.obj
-- cmake ..
-- cmake --build . -j
+- cmake -S dir.source -B dir.source/dir.obj
+- cmake --build dir.source/dir.obj
 
 script:
-- cd $TRAVIS_BUILD_DIR
-- pytest -xrsv
 - flake8
 - mypy .
-
-
-after_success:
-- pytest --cov
-- coveralls
+- pytest

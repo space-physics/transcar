@@ -1,5 +1,5 @@
 from pathlib import Path
-from shutil import copy2
+import shutil
 import logging
 from collections import deque
 import subprocess
@@ -8,7 +8,8 @@ import subprocess
 from transcarread import readTranscarInput
 
 # %% constants dictacted by legacy Fortran code
-transcarexe = "transconvec_13.op.out"
+R = Path(__file__).resolve().parents[1]
+exe = shutil.which("transconvec_13.op.out", path=str(R))
 fileok = "finish.status"
 # hard-coded in Fortran
 din = Path("dir.input")
@@ -43,19 +44,14 @@ def cp_parents(files, target_dir: Path):
     for f in files:
         newpath = target_dir / f.parent  # to make it work like cp --parents, copying absolute paths if specified
         newpath.mkdir(parents=True, exist_ok=True)
-        copy2(f, newpath)
+        shutil.copy2(f, newpath)
 
 
 def runTranscar(odir: Path, errfn: Path, msgfn: Path):
     odir = Path(odir).expanduser()
 
     with (odir / errfn).open("w") as ferr, (odir / msgfn).open("w") as fout:
-        # remember it must be an iterable, even if only one argument.
-        exe = [odir / transcarexe]
-
-        # Note: subprocess.run() is blocking by design.
-        #       subprocess.Popen() is non-blocking (unless commanded to wait)
-        subprocess.run(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
+        subprocess.run(args=[exe], cwd=odir, stdout=fout, stderr=ferr, shell=False, universal_newlines=True)
 
         # current code error checks rely on serial operation.
         # subprocess.Popen(args=exe, cwd=odir, stdout=fout, stderr=ferr, shell=False)
@@ -67,12 +63,12 @@ def transcaroutcheck(odir, errfn):
         with (odir / errfn).open("r") as ferr:
             last = deque(ferr, 1)[0].rstrip("\n")
 
-            if last == "STOP fin normale":
-                fok.write_text("true")
-            else:
-                fok.write_text("false")
-                logging.warn(f"transcaroutcheck: {odir} got unexpected return value, transcar may not have finished the sim")
-                raise AttributeError(last)
+        if last == "STOP fin normale":
+            fok.write_text("true")
+        else:
+            fok.write_text("false")
+            logging.warn(f"transcaroutcheck: {odir} got unexpected return value, transcar may not have finished the sim")
+            raise AttributeError((odir / errfn).read_text())
     except (IOError) as e:
         logging.error(f"transcaroutcheck: problem reading transcar output.  {e}")
     except IndexError:
@@ -88,7 +84,7 @@ def setuptranscario(rodir: Path, beamEnergy: float):
 
     (odir / "dir.output").mkdir(parents=True, exist_ok=True)
     # %% move files where needed for this instantiation
-    flist = [DATCAR, din / inp["precfile"], ddat / "type", transcarexe]
+    flist = [DATCAR, din / inp["precfile"], ddat / "type"]
     flist += [ddat / "dir.linux/dir.geomag" / s for s in ["data_geom.bin", "igrf90.dat", "igrf90s.dat"]]
     flist += [ddat / "dir.linux/dir.projection/varpot.dat"]
     # transcar sigsegv on val_fit_ if FELTRANS is blank!

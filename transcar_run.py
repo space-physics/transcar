@@ -30,8 +30,8 @@ if __name__ == "__main__":
     p.add_argument("--errfn", help="file to write transcar Errors to", default="transcarError.log")
     p = p.parse_args()
 
-    rodir = Path(p.rodir).expanduser()
-    infn = Path(p.infn).expanduser()
+    rodir = Path(p.rodir).expanduser().resolve()
+    infn = Path(p.infn).expanduser().resolve()
 
     beams = read_csv(infn, header=None, names=["E1", "E2", "pr1", "pr2"])
 

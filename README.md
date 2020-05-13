@@ -56,6 +56,6 @@ dynamically adapting to the number of CPU cores available:
 python MonoenergeticBeams.py /tmp/tc
 ```
 
-## Notes
+### Plotting
 
-[transconvec](https://github.com/scivision/transcar/blob/master/transcar/dir.source/transconvec_13.op.f)
+The simulation results are loaded and plotted by the [transcarread](https://github.com/space-physics/transcarread) Python package.

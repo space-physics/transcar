@@ -33,7 +33,6 @@ def main():
     p.add_argument("--msgfn", help="file to write transcar messages to", default="transcar.log")
     p.add_argument("--errfn", help="file to write transcar Errors to", default="transcarError.log")
     p.add_argument("-np", help="number of concurrent processes", type=int, default=Ncpu)
-    p.add_argument("--serial", help="do not execute concurrently for debugging", action="store_true")
     p = p.parse_args()
 
     rodir = Path(p.rodir).expanduser().resolve()
@@ -54,8 +53,9 @@ def main():
     beams = read_csv(infn, header=None, names=["E1", "E2", "pr1", "pr2"])
 
     print("using", p.np, "concurrent Transcar runs")
-    # %%
-    if p.serial:
+
+    # %% do run
+    if p.np == 1:
         for _, beam in beams.iterrows():
             transcar.mono_beam_arbiter(beam, params)
     else:

@@ -11,7 +11,7 @@ from argparse import ArgumentParser
 import time
 
 #
-import transcar.base as transcar
+import transcar
 import signal
 
 try:

@@ -8,7 +8,7 @@ from typing import Sequence, Tuple, Any, Dict
 
 # hard-coded in Fortran
 ROOT = Path(__file__).resolve().parents[1]
-TRANSCAREXE = Path(shutil.which("transconvec", path=str(ROOT))).resolve()
+TRANSCAREXE = Path(shutil.which("transconvec", path=str(ROOT))).resolve()  # needs the last resolve too
 if not TRANSCAREXE:
     raise FileNotFoundError(f"could not find transconvec executable in {ROOT}")
 
@@ -89,9 +89,14 @@ def transcaroutcheck(odir: Path, errfn: Path, ok: str = "STOP fin normale") -> b
     return isok
 
 
-def setup_dirs(odir: Path) -> Tuple[Dict[str, Any], Path]:
+def setup_dirs(odir: Path, params: Dict[str, Any]) -> Tuple[Dict[str, Any], Path]:
+    """
+    prepare output directory for a beam
+    """
 
-    inp = readTranscarInput(DATCAR)
+    datcar = params["datcar"] if "datcar" in params else DATCAR
+
+    inp = readTranscarInput(datcar)
     # %% cleanup bad runs
     out = odir / "dir.output"
     out.mkdir(parents=True, exist_ok=True)
@@ -101,7 +106,7 @@ def setup_dirs(odir: Path) -> Tuple[Dict[str, Any], Path]:
     # %% move files where needed for this instantiation
     # precfn is NOT included here!
     flist = [TRANSCAREXE]  # does not operate consistently (segfault) if not in same directory, verified by hand June 2019.
-    flist += [DATCAR, din / inp["precfile"], ddat / "type"]
+    flist += [din / inp["precfile"], ddat / "type"]
     flist += [ddat / "dir.linux/dir.geomag" / s for s in ["data_geom.bin", "igrf90.dat", "igrf90s.dat"]]
     flist += [ddat / "dir.linux/dir.projection/varpot.dat"]
     # transcar sigsegv on val_fit_ if FELTRANS is blank!
@@ -110,6 +115,9 @@ def setup_dirs(odir: Path) -> Tuple[Dict[str, Any], Path]:
     flist += [ddat / "dir.linux/dir.cine/dir.seff" / s for s in ["crsb8", "crsphot1.dat", "rdtb8"]]
 
     cp_parents(flist, odir, ROOT)
+    # may have uniquely named input DATCAR, that always needs to be in output dir as
+    # dir.input/DATCAR due to legacy Fortran hardcoding
+    shutil.copy2(datcar, odir / "dir.input/DATCAR")
 
     return inp, odir
 

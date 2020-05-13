@@ -5,7 +5,6 @@ import pandas
 from typing import Dict, Any
 import shutil
 
-# %% constants dictacted by legacy Fortran code
 from .io import setup_dirs, setup_monoprec, setup_spectrum_prec, transcaroutcheck
 
 
@@ -13,7 +12,7 @@ def beam_spectrum_arbiter(beam: pandas.DataFrame, P: Dict[str, Any]):
     """
     run beam with user-defined flux spectrum
     """
-    MAX_TRY = 10
+    MAX_TRY = 3
     isok = False
     odir = P["rodir"]
 
@@ -35,7 +34,7 @@ def run_spectrum(beam: pandas.DataFrame, P: Dict[str, Any]) -> bool:
     Run beam spectrum
     """
     # %% copy the Fortran static init files to this directory (simple but robust)
-    datinp, odir = setup_dirs(P["rodir"])
+    datinp, odir = setup_dirs(P["rodir"], P)
     setup_spectrum_prec(odir, datinp, beam)
     # %% run the compiled executable
     runTranscar(odir, P["errfn"], P["msgfn"])
@@ -66,7 +65,7 @@ def mono_beam_arbiter(beam: Dict[str, float], P: Dict[str, Any]):
 def run_monobeam(beam: Dict[str, float], P: Dict[str, Any]) -> bool:
     """Run a particular beam energy vs. time"""
     # %% copy the Fortran static init files to this directory (simple but robust)
-    datinp, odir = setup_dirs(P["rodir"] / f'beam{beam["E1"]:.1f}')
+    datinp, odir = setup_dirs(P["rodir"] / f'beam{beam["E1"]:.1f}', P)
     setup_monoprec(odir, datinp, beam, P["Q0"])
     # %% run the compiled executable
     runTranscar(odir, P["errfn"], P["msgfn"])

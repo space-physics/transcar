@@ -3,8 +3,6 @@
 Executes Transcar with user-defined input particle flux spectrum
 
 python SpectrumBeam.py flux.csv /tmp/spectrumout
-
-python SpectrumBeam.py flux.csv c:/temp/spectrumout
 """
 import logging
 from pathlib import Path
@@ -14,7 +12,7 @@ from argparse import ArgumentParser
 import signal
 
 #
-import transcar.base as transcar
+import transcar
 
 
 def main():
@@ -24,15 +22,16 @@ def main():
     p.add_argument("rodir", help="output directory")
     p.add_argument("-Q0", help="Assumed particle flux", type=float, default=70114000000.0)
     p.add_argument("-infn", help="energy bin CSV file", default="BT_E1E2prev.csv")
+    p.add_argument("-datcar", help="DATCAR input file to copy", default="DATCAR_spectrum.asc")
     p.add_argument("--msgfn", help="file to write transcar messages to", default="transcar.log")
     p.add_argument("--errfn", help="file to write transcar Errors to", default="transcarError.log")
     p = p.parse_args()
 
-    rodir = Path(p.rodir).expanduser()
-    infn = Path(p.infn).expanduser()
-    fluxfn = Path(p.fluxfn).expanduser()
+    rodir = Path(p.rodir).expanduser().resolve()
+    infn = Path(p.infn).expanduser().resolve()
+    fluxfn = Path(p.fluxfn).expanduser().resolve()
 
-    params = {"rodir": rodir, "Q0": p.Q0, "msgfn": p.msgfn, "errfn": p.errfn}
+    params = {"rodir": rodir, "Q0": p.Q0, "msgfn": p.msgfn, "errfn": p.errfn, "datcar": p.datcar}
 
     # logfn = rodir / "Beams.log"
 

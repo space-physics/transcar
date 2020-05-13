@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.13)
 # allow default to debug build due to non-standard Fortran used, will segfault with -O3 and GCC 7-9 at least
-# -O2 is OK for GCC.  Do not use -march=native for GCC7 on SCC, weird compiler errors (with any program)
+# -O2 is OK for GCC.
 
 project(transcar Fortran)
 
@@ -14,10 +14,6 @@ elseif(${CMAKE_Fortran_COMPILER_ID} MATCHES Intel)
   else()
     add_compile_options(-O2 -assume byterecl)
   endif()
-elseif(${CMAKE_Fortran_COMPILER_ID} MATCHES PGI)
-    #already assumes byterecl -- currently not compiling due to non-standard code
-elseif(${CMAKE_Fortran_COMPILER_ID} MATCHES Flang)
-    #already assumes byterecl
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..)

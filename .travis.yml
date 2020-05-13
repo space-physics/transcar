@@ -1,26 +1,15 @@
-language: c
-
-os:
-  - linux
-  
-dist: trusty
-group: edge
-
-notifications:
-  email: false
-
-git:
-  depth: 3
+language: python
+group: travis_latest
 
 addons:
   apt:
     packages:
       - gfortran
 
+before_install:
+- pip install cmake
+- pip install -e .
 
-script: 
-    - cd transcar/dir.source/dir.obj
-    - cmake ..
-    - make 
-    - cd ../..
-
+install:
+- cmake -B dir.source -S dir.source/dir.obj
+- cmake --build dir.source/dir.obj

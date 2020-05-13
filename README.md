@@ -1,9 +1,6 @@
-[![Build Status](https://travis-ci.org/space-physics/transcar.svg?branch=next)](https://travis-ci.org/space-physics/transcar)
-[![image](https://coveralls.io/repos/github/scivision/transcar/badge.svg?branch=next)](https://coveralls.io/github/scivision/transcar?branch=next)
-[![Build status](https://ci.appveyor.com/api/projects/status/ij3jskpvfvprm185?svg=true)](https://ci.appveyor.com/project/scivision/transcar-yhafk)
-[![Maintainability](https://api.codeclimate.com/v1/badges/7c237d2870d0611e5df6/maintainability)](https://codeclimate.com/github/scivision/transcar/maintainability)
-
 # Transcar
+
+[![Build Status](https://travis-ci.org/space-physics/transcar.svg?branch=next)](https://travis-ci.org/space-physics/transcar)
 
 Fortran Authors: P.L. Blelly, J. Lilensten, M. Zettergren
 
@@ -30,7 +27,6 @@ and either of:
 * [Gfortran](https://www.scivision.dev/install-msys2-windows/)
 * [Intel Parallel Studio](https://www.scivision.dev/install-intel-compiler-icc-icpc-ifort/)
 
-
 ## Install
 
 from Terminal / Command Prompt
@@ -42,7 +38,9 @@ cd transcar
 
 python -m pip install -e .
 
-python build.py
+cmake -S dir.source -B dir.source/dir.obj
+
+cmake --build dir.source/dir.obj
 ```
 
 ## Usage
@@ -61,23 +59,3 @@ python MonoenergeticBeams.py /tmp/tc
 ## Notes
 
 [transconvec](https://github.com/scivision/transcar/blob/master/transcar/dir.source/transconvec_13.op.f)
-
-### Manual compile
-
-This is not normally needed, just for reference:
-```sh
-cd dir.source/dir.obj
-cmake ..
-cmake --build . -j
-
-cd ..
-```
-
-
-### Specify compiler
-
-Cmake uses your system default Fortran compiler, but if you wish to use
-another compiler, set environment variable FC in the Cmake call. For
-example, Intel `ifort`:
-
-    FC=ifort cmake ..

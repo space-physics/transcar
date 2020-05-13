@@ -4,6 +4,10 @@ group: travis_latest
 env:
 - CMAKE_GENERATOR=Ninja
 
+addons:
+  apt:
+    packages: gfortran
+
 before_install:
 - pip install -e .[tests,cov]
 - pip install cmake ninja

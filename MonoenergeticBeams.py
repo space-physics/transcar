@@ -8,6 +8,7 @@ import logging
 from pathlib import Path
 from pandas import read_csv
 from argparse import ArgumentParser
+import time
 
 #
 import transcar.base as transcar
@@ -16,7 +17,7 @@ import signal
 try:
     import psutil
 
-    Ncpu = psutil.cpu_count(logical=True)
+    Ncpu = psutil.cpu_count(logical=False)
 except ImportError:
     import os
 
@@ -25,8 +26,8 @@ except ImportError:
 
 def main():
     signal.signal(signal.SIGINT, signal.SIG_DFL)
-    p = ArgumentParser(description="parallel instance transcar runner")
-    p.add_argument("rodir", help="root of beam directory")
+    p = ArgumentParser(description="parallel Transcar runner")
+    p.add_argument("rodir", help="root of beam directory to output")
     p.add_argument("-Q0", help="Assumed particle flux", type=float, default=70114000000.0)
     p.add_argument("-infn", help="energy bin CSV file", default="BT_E1E2prev.csv")
     p.add_argument("--msgfn", help="file to write transcar messages to", default="transcar.log")
@@ -35,8 +36,8 @@ def main():
     p.add_argument("--serial", help="do not execute concurrently for debugging", action="store_true")
     p = p.parse_args()
 
-    rodir = Path(p.rodir).expanduser()
-    infn = Path(p.infn).expanduser()
+    rodir = Path(p.rodir).expanduser().resolve()
+    infn = Path(p.infn).expanduser().resolve()
 
     params = {"rodir": rodir, "Q0": p.Q0, "msgfn": p.msgfn, "errfn": p.errfn}
 
@@ -49,6 +50,7 @@ def main():
         level=logging.DEBUG,
     )
 
+    tic = time.time()
     beams = read_csv(infn, header=None, names=["E1", "E2", "pr1", "pr2"])
 
     print("using", p.np, "concurrent Transcar runs")
@@ -61,6 +63,8 @@ def main():
             future_beam = (executor.submit(transcar.mono_beam_arbiter, beam, params) for _, beam in beams.iterrows())
             for future in concurrent.futures.as_completed(future_beam):
                 future.result()
+
+    print(f"DONE in {time.time() - tic:.1f} seconds")
 
 
 if __name__ == "__main__":

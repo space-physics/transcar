@@ -2,7 +2,7 @@ add_executable(transconvec ${CMAKE_CURRENT_SOURCE_DIR}/transconvec_13.op.f
   ${CMAKE_CURRENT_SOURCE_DIR}/reacrates.f)
 target_link_libraries(transconvec PRIVATE fluid numeric system proj
                        convec geomag transelec imm common)
-target_include_directories(transconvec PRIVATE ${PROJECT_SOURCE_DIR}/dir.source/dir.include)
+target_include_directories(transconvec PRIVATE ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/dir.source/dir.include)
 
 add_subdirectory(dir.include)
 

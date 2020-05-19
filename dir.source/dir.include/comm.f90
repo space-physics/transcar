@@ -23,5 +23,3 @@ contains
 
 
 end module comm
-
-

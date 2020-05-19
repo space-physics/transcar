@@ -1,6 +1,6 @@
 # Transcar
 
-[![Build Status](https://travis-ci.org/space-physics/transcar.svg?branch=next)](https://travis-ci.org/space-physics/transcar)
+![Actions Status](https://github.com/space-physics/transcar/workflows/ci_unix/badge.svg)
 
 Fortran Authors: P.L. Blelly, J. Lilensten, M. Zettergren
 
@@ -16,7 +16,7 @@ Because Transcar is Python & Fortran based, it runs on any PC/Mac with Linux, Ma
 Most Fortran compilers can be used, including Gfortran and Intel.
 
 * Linux / Windows Subsystem for Linux: `apt install gfortran cmake make`
-* Mac: `brew install gcc cmake make`
+* MacOS / Homebrew: `brew install gcc cmake make`
 
 ### Windows
 

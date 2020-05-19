@@ -1,0 +1,36 @@
+name: ci_unix
+
+on:
+  push:
+    paths:
+      - "**.txt"
+      - "**.cmake"
+      - "**.f90"
+      - "**.py"
+      - ".github/workflows/ci_unix.yml"
+
+
+jobs:
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+
+    - name: Install prereqs
+      run: |
+        pip install -e .[tests,lint]
+        pip install cmake
+
+    - run: flake8
+    - run: mypy .
+
+    - name: Build
+      run: |
+        cmake -B build
+        cmake --build build --parallel
+
+    - run: pytest

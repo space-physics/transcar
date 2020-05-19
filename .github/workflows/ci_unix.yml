@@ -32,5 +32,7 @@ jobs:
       run: |
         cmake -B build
         cmake --build build --parallel
+      env:
+        FC: gfortran-9
 
     - run: pytest

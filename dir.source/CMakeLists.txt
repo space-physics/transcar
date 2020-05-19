@@ -1,28 +1,8 @@
-cmake_minimum_required(VERSION 3.13)
-# allow default to debug build due to non-standard Fortran used, will segfault with -O3 and GCC 7-9 at least
-# -O2 is OK for GCC.
-
-project(transcar Fortran)
-
-# compiler dependent flags necessary for disk files used (sorry)
-if(${CMAKE_Fortran_COMPILER_ID} MATCHES GNU)
-  add_compile_options(-frecord-marker=4 -std=legacy
-          -O2 -Wline-truncation -fmax-errors=3)# -Warray-bounds=2)
-elseif(${CMAKE_Fortran_COMPILER_ID} MATCHES Intel)
-  if(WIN32)
-    add_compile_options(/O2 /assume:byterecl)
-  else()
-    add_compile_options(-O2 -assume byterecl)
-  endif()
-endif()
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..)
-
 add_executable(transconvec ${CMAKE_CURRENT_SOURCE_DIR}/transconvec_13.op.f
   ${CMAKE_CURRENT_SOURCE_DIR}/reacrates.f)
 target_link_libraries(transconvec PRIVATE fluid numeric system proj
                        convec geomag transelec imm common)
-target_include_directories(transconvec PRIVATE ${CMAKE_SOURCE_DIR}/dir.include)
+target_include_directories(transconvec PRIVATE ${PROJECT_SOURCE_DIR}/dir.source/dir.include)
 
 add_subdirectory(dir.include)
 
@@ -41,4 +21,3 @@ add_subdirectory(dir.geomag)
 add_subdirectory(dir.cine)
 
 add_subdirectory(dir.imm)
-

@@ -38,9 +38,9 @@ cd transcar
 
 python -m pip install -e .
 
-cmake -S dir.source -B dir.source/dir.obj
+cmake -B build
 
-cmake --build dir.source/dir.obj
+cmake --build build
 ```
 
 ## Usage

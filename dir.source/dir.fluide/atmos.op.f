@@ -17,7 +17,7 @@
       real :: b,burnside,coef_cour,coefchamp,coloss,dtz,fact,flag_fct,
      &   p_0,temploc
       integer :: i,icira,indlim,indlim_1,nan,njour
-      
+
       real,external :: coskhi,ap2kp
 
 C    SIGNIFICATION DES VARIABLES DE CE SOUS-PROGRAMME
@@ -399,7 +399,8 @@ C       --MZ
 
 
 !       Added for simulation of electron precpitation
-        if(sec.ge.tstartprec.and.sec.le.tstopprec) then
+        if(sec >= tstartprec .and. sec <= tstopprec) then
+          print *, 'atmos: Precip. ON @ t=',sec
           precflag=.true.
           jpreci=2
 
@@ -408,10 +409,12 @@ C       --MZ
             prect=prect+1
           enddo
           if(prect .eq. ntimeser) then
+            print *, 'atmos: Precip. OFF @ t=',sec
             precflag=.false.
             jpreci=0
           endif
         else
+          print *, 'atmos: Precip. OFF @ t=',sec
           precflag=.false.
           jpreci=0
         endif
@@ -583,7 +586,7 @@ c     Transport cinetique. Kinetic transport
                elseif (ieee_is_nan(glong)) then
                  write(stderr,*),'atmos: NaN detected in glong'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 error stop 
+                 error stop
                elseif (ieee_is_nan(sec)) then
                  write(stderr,*),'atmos: NaN in sec'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
@@ -603,7 +606,7 @@ c     Transport cinetique. Kinetic transport
                elseif (any(ieee_is_nan(tj))) then
                  write(stderr,*),'problem with tj'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
-                 error stop 
+                 error stop
                elseif (any(ieee_is_nan(nh))) then
                  write(stderr,*),'problem with nh'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi

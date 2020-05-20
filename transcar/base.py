@@ -14,10 +14,10 @@ def beam_spectrum_arbiter(beam: pandas.DataFrame, P: T.Dict[str, T.Any]):
     """
     MAX_TRY = 3
     odir = P["rodir"]
-    check_file = odir / "dir.output/transcar_output"
 
-    print("Running Transcar single-threaded. Runtime is proportional to simulation duration.")
-    print(check_file, "final filesize is also proportional to simulation duration.")
+    print("Running Transcar single-threaded.")
+    print(odir / P["errfn"], "logs the simulation output text, watch this file to see simulation progress.")
+
     if run_spectrum(beam, P):
         print("Transcar finished OK on first try")
         return

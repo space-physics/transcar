@@ -32,7 +32,7 @@
           do while(energ .ge. edist(m) .and. m .le. nfluxdist)
             m=m+1
           enddo
-        endif 
+        endif
 
         !Compute value of flux
         if(m .eq. 0 .or. m .gt. nfluxdist) then         !perform extrapolation
@@ -56,7 +56,7 @@
             if(m .ne. 0 .or. energ .lt. 5.0) then
               flux_val=0
             endif
-!---MZ 
+!---MZ
           elseif(precext .eq. 1) then                                   !truncate
             flux_val=0.
           else                                                          !hold
@@ -77,7 +77,7 @@
             fm=fluxdist(li,prect)
             em1=edist(li-1)
             em=edist(li)
-        
+
             logslope=(log10(fm)-log10(fm1))/(log10(em)-log10(em1))
             flux_val=10**(logslope*(log10(energ)-log10(em))+log10(fm))
           else                                          !sample and hold
@@ -85,8 +85,7 @@
           endif
         endif
 
-        return
-        end
+        end function flux_val
 
 
 
@@ -118,4 +117,3 @@ c       Compute input energy in eV/cm2/sec/sr
         E0=F0/E0
         return
         end
-

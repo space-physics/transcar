@@ -1511,14 +1511,15 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccc
 !-------MZ
 
 !-------Output upward and downward suprathermal fluxes during aurora
-        if(temps.gt.tstartprec .and. temps.le.tstopprec) then
+        if(temps > tstartprec .and. temps <= tstopprec) then
           !Create/open output file
           inquire(file='dir.output/ediffnumflux.dat',exist=exval)
           if(exval) then
             open(44,file='dir.output/ediffnumflux.dat'
-     &       ,status='old',position='append')
+     &       ,status='old',position='append', action='write')
           else
-            open(44,file='dir.output/ediffnumflux.dat',status='new')
+            open(44,file='dir.output/ediffnumflux.dat',status='new',
+     &        action='write')
           endif
 
           !Loop over altitudes of interest

@@ -12,23 +12,16 @@ def beam_spectrum_arbiter(beam: pandas.DataFrame, P: T.Dict[str, T.Any]):
     """
     run beam with user-defined flux spectrum
     """
-    MAX_TRY = 3
     odir = P["rodir"]
 
     print("Running Transcar single-threaded.")
-    print(odir / P["errfn"], "logs the simulation output text, watch this file to see simulation progress.")
+    print(odir / P["msgfn"], "logs the simulation output text, watch this file to see simulation progress.")
 
     if run_spectrum(beam, P):
-        print("Transcar finished OK on first try")
+        print("OK: Transcar complete")
         return
 
-    for i in range(1, MAX_TRY):
-        logging.warning(f"Transcar sim retry {i}")
-        runTranscar(odir, P["errfn"], P["msgfn"])
-        if transcaroutcheck(odir, P["errfn"]):
-            return
-
-    raise RuntimeError(f"Transcar failed after {MAX_TRY} tries, giving up")
+    raise RuntimeError(f"Transcar run failed. See {odir / P['errfn']} for clues")
 
 
 def run_spectrum(beam: pandas.DataFrame, P: T.Dict[str, T.Any]) -> bool:

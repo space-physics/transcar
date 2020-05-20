@@ -19,7 +19,7 @@ DATCAR = din / "DATCAR"
 FOK = "finish.status"
 
 
-PREC = "dir.input/precinput.dat"  # NOT based on root, MUST be relative!!
+PREC = "dir.input/precinput.asc"  # NOT based on root, MUST be relative!!
 
 
 def cp_parents(files: T.Sequence[Path], target_dir: Path, origin: Path = None) -> None:
@@ -124,7 +124,7 @@ def setup_dirs(odir: Path, params: T.Dict[str, T.Any]) -> T.Tuple[T.Dict[str, T.
 
 def setup_monoprec(odir: Path, inp: T.Dict[str, T.Any], beam: T.Dict[str, float], flux0: float) -> None:
     """
-    write dir.input/precinput.dat for monoenergetic beam case
+    write dir.input/precinput.asc for monoenergetic beam case
     """
     ofn = Path(odir).expanduser() / PREC
 
@@ -148,7 +148,7 @@ def setup_monoprec(odir: Path, inp: T.Dict[str, T.Any], beam: T.Dict[str, float]
 
 def setup_spectrum_prec(odir: Path, inp: T.Dict[str, T.Any], beam: pandas.DataFrame) -> None:
     """
-    write dir.input/precinput.dat for beam with shaped differential number flux
+    write dir.input/precinput.asc for beam with shaped differential number flux
     """
     ofn = Path(odir).expanduser() / PREC
 

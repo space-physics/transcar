@@ -1,5 +1,6 @@
-# Transcar
+# Transcar 1-D time-dependent ionosphere flux tube model
 
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/space-physics/transcar.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/space-physics/transcar/context:python)
 ![Actions Status](https://github.com/space-physics/transcar/workflows/ci_unix/badge.svg)
 
 Fortran Authors: P.L. Blelly, J. Lilensten, M. Zettergren

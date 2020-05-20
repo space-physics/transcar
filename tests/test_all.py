@@ -12,7 +12,7 @@ refdir = root / "tests" / beam
 kinfn = "dir.output/emissions.dat"
 
 
-def test_transcar(tmp_path):
+def test_run_transcar(tmp_path):
 
     odir = tmp_path
 

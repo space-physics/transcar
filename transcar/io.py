@@ -122,8 +122,10 @@ def setup_dirs(odir: Path, params: Dict[str, Any]) -> Tuple[Dict[str, Any], Path
     return inp, odir
 
 
-def setup_monoprec(odir: Path, inp: Dict[str, Any], beam: Dict[str, float], flux0: float):
-    """this writes dir.input/precinput.dat for the first time step, for each beam"""
+def setup_monoprec(odir: Path, inp: Dict[str, Any], beam: Dict[str, float], flux0: float) -> None:
+    """
+    write dir.input/precinput.dat for the first time step, for each beam
+    """
     ofn = Path(odir).expanduser() / PREC
 
     E1 = beam["E1"]
@@ -145,7 +147,9 @@ def setup_monoprec(odir: Path, inp: Dict[str, Any], beam: Dict[str, float], flux
 
 
 def setup_spectrum_prec(odir: Path, inp: Dict[str, Any], beam: pandas.DataFrame):
-    """this writes dir.input/precinput.dat for the first time step, for each beam"""
+    """
+    write dir.input/precinput.dat for the first time step, for each beam
+    """
     ofn = Path(odir).expanduser() / PREC
 
     dat = str(inp["precipstartsec"])

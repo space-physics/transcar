@@ -13,18 +13,17 @@ def beam_spectrum_arbiter(beam: pandas.DataFrame, P: Dict[str, Any]):
     run beam with user-defined flux spectrum
     """
     MAX_TRY = 3
-    isok = False
     odir = P["rodir"]
 
-    isok = run_spectrum(beam, P)
-    if isok:
+    if run_spectrum(beam, P):
         print("Transcar finished OK on first try")
         return
 
     for i in range(1, MAX_TRY):
         logging.warning(f"Transcar sim retry {i}")
         runTranscar(odir, P["errfn"], P["msgfn"])
-        isok = transcaroutcheck(odir, P["errfn"])
+        if transcaroutcheck(odir, P["errfn"]):
+            return
 
     raise RuntimeError(f"Transcar failed after {MAX_TRY} tries, giving up")
 
@@ -39,9 +38,7 @@ def run_spectrum(beam: pandas.DataFrame, P: Dict[str, Any]) -> bool:
     # %% run the compiled executable
     runTranscar(odir, P["errfn"], P["msgfn"])
     # %% check output trivially
-    isok = transcaroutcheck(odir, P["errfn"])
-
-    return isok
+    return transcaroutcheck(odir, P["errfn"])
 
 
 def mono_beam_arbiter(beam: Dict[str, float], P: Dict[str, Any]):
@@ -70,9 +67,7 @@ def run_monobeam(beam: Dict[str, float], P: Dict[str, Any]) -> bool:
     # %% run the compiled executable
     runTranscar(odir, P["errfn"], P["msgfn"])
     # %% check output trivially
-    isok = transcaroutcheck(odir, P["errfn"])
-
-    return isok
+    return transcaroutcheck(odir, P["errfn"])
 
 
 def runTranscar(odir: Path, errfn: Path, msgfn: Path):

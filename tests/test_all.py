@@ -32,7 +32,7 @@ def test_transcar(tmp_path):
         assert refexc[i[0], i[1], i[2]].values == approx(exc[i[0], i[1], i[2]].values, rel=1e-3)
 
     assert refexc.time.shape == refexc.time.shape, "did you rerun the test without clearing the output directory first?"
-    assert (refexc.time == exc.time).all(), "simultation time of current run did not match reference run"
+    assert (refexc.time == exc.time).all(), "simulation time of current run did not match reference run"
 
 
 if __name__ == "__main__":

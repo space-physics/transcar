@@ -4,7 +4,7 @@ import logging
 import collections
 import shutil
 import pandas
-from typing import Sequence, Tuple, Any, Dict
+import typing as T
 
 # hard-coded in Fortran
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,7 +22,7 @@ FOK = "finish.status"
 PREC = "dir.input/precinput.dat"  # NOT based on root, MUST be relative!!
 
 
-def cp_parents(files: Sequence[Path], target_dir: Path, origin: Path = None):
+def cp_parents(files: T.Sequence[Path], target_dir: Path, origin: Path = None) -> None:
     """
     inputs
     ------
@@ -89,7 +89,7 @@ def transcaroutcheck(odir: Path, errfn: Path, ok: str = "STOP fin normale") -> b
     return isok
 
 
-def setup_dirs(odir: Path, params: Dict[str, Any]) -> Tuple[Dict[str, Any], Path]:
+def setup_dirs(odir: Path, params: T.Dict[str, T.Any]) -> T.Tuple[T.Dict[str, T.Any], Path]:
     """
     prepare output directory for a beam
     """
@@ -100,7 +100,7 @@ def setup_dirs(odir: Path, params: Dict[str, Any]) -> Tuple[Dict[str, Any], Path
     # %% cleanup bad runs
     out = odir / "dir.output"
     out.mkdir(parents=True, exist_ok=True)
-    for fn in ["ediffnumflux.dat", "emissions.dat", "flux.output", "transcar_output"]:
+    for fn in ("ediffnumflux.dat", "emissions.dat", "flux.output", "transcar_output"):
         if (out / fn).is_file():
             (out / fn).unlink()
     # %% move files where needed for this instantiation
@@ -122,9 +122,9 @@ def setup_dirs(odir: Path, params: Dict[str, Any]) -> Tuple[Dict[str, Any], Path
     return inp, odir
 
 
-def setup_monoprec(odir: Path, inp: Dict[str, Any], beam: Dict[str, float], flux0: float) -> None:
+def setup_monoprec(odir: Path, inp: T.Dict[str, T.Any], beam: T.Dict[str, float], flux0: float) -> None:
     """
-    write dir.input/precinput.dat for the first time step, for each beam
+    write dir.input/precinput.dat for monoenergetic beam case
     """
     ofn = Path(odir).expanduser() / PREC
 
@@ -146,25 +146,16 @@ def setup_monoprec(odir: Path, inp: Dict[str, Any], beam: Dict[str, float], flux
     ofn.write_text(precout)
 
 
-def setup_spectrum_prec(odir: Path, inp: Dict[str, Any], beam: pandas.DataFrame):
+def setup_spectrum_prec(odir: Path, inp: T.Dict[str, T.Any], beam: pandas.DataFrame) -> None:
     """
-    write dir.input/precinput.dat for the first time step, for each beam
+    write dir.input/precinput.dat for beam with shaped differential number flux
     """
     ofn = Path(odir).expanduser() / PREC
 
     dat = str(inp["precipstartsec"])
 
     for _, ebin in beam.iterrows():
-        E1 = ebin["E1"]
-        E2 = ebin["E2"]
-        pr1 = ebin["pr1"]
-        pr2 = ebin["pr2"]
-
-        dE = E2 - E1
-        Esum = E2 + E1
-        flux = ebin["flux"] / 0.5 / Esum / dE
-        Elow = E1 - 0.5 * (E1 - pr1)
-        Ehigh = E2 - 0.5 * (E2 - pr2)
+        Elow, Ehigh, flux = compute_Ebin(ebin)
 
         dat += f"\n{Elow:.3f} {flux:.3f}"
 
@@ -177,13 +168,28 @@ def setup_spectrum_prec(odir: Path, inp: Dict[str, Any], beam: pandas.DataFrame)
     ofn.write_text(dat)
 
 
-def readTranscarInput(infn: Path) -> Dict[str, Any]:
+def compute_Ebin(ebin: pandas.Series) -> T.Tuple[float, float, float]:
+    E1 = ebin["E1"]
+    E2 = ebin["E2"]
+    pr1 = ebin["pr1"]
+    pr2 = ebin["pr2"]
+
+    dE = E2 - E1
+    Esum = E2 + E1
+    flux = ebin["flux"] / 0.5 / Esum / dE
+    Elow = E1 - 0.5 * (E1 - pr1)
+    Ehigh = E2 - 0.5 * (E2 - pr2)
+
+    return Elow, Ehigh, flux
+
+
+def readTranscarInput(infn: Path) -> T.Dict[str, T.Any]:
     """
     The transcar input file is indexed by line number --this is what the Fortran
       #  code of transcar does, and it's what we do here as well.
     """
     infn = Path(infn).expanduser()
-    hd: Dict[str, Any] = {}
+    hd: T.Dict[str, T.Any] = {}
     with infn.open("r") as f:
         hd["kiappel"] = int(f.readline().split()[0])
         hd["precfile"] = f.readline().split()[0]

@@ -2,6 +2,7 @@
       use, intrinsic:: iso_fortran_env, only: real32, dp=>real64
       use, intrinsic:: ieee_arithmetic, only: ieee_is_nan
       use comm, only: stderr, wp, npt, debug
+
       include 'TRANSPORT.INC'
 
 
@@ -773,29 +774,29 @@
 
        print *, 'reading PRECIPITATION parameters from file: ',
      &   prec_fname
-        open(313,file=prec_fname,status='old')
+        open(313, file=prec_fname, status='old', action='read')
 
         ioerr=1; ntimeser=1; timestat=1;
-        do while(timestat .ge. 0 .and. ioerr>-1 .and.
-     &            ntimeser .le. 1024)                         !this loops over the different distributions in the time series
+        do while(timestat >= 0 .and. ioerr==0 .and.
+     &            ntimeser <= 1024)                         !this loops over the different distributions in the time series
           read(313,*,iostat=ioerr) timeser(ntimeser)
-          print*,timeser(ntimeser)
+          print *, 'precipitation time: ', timeser(ntimeser)
 
           m=1; fluxstat=1.e0
-          do while(fluxstat .ge. 0. .and. m .le. 1024)        !this loops over the different energy bins in each distribution
+          do while(fluxstat >= 0. .and. m <= 1024)        !this loops over the different energy bins in each distribution
             read(313,*,iostat=ioerr) timestat,
      &                  fluxdist(m,ntimeser)
-            print*,timestat,fluxdist(m,ntimeser)
+            print *, 'timestat, fluxdist:',timestat,fluxdist(m,ntimeser)
 
-            if (timestat .ge. 0.) then
+            if (timestat >= 0.) then
               edist(m)=timestat
               nfluxdist=m
             endif
             fluxstat=fluxdist(m,ntimeser)
 
-            m=m+1
+            m = m+1
           enddo
-          print*,'Number of energy bins for precip.:  ',nfluxdist
+          print *, 'Number of energy bins for precip.:  ',nfluxdist
 
           ntimeser=ntimeser+1
         enddo
@@ -804,8 +805,8 @@
         close(313)
 !        print*,'Interpolation:  ',precint
 !        print*,'Extrapolation:  ',precext
-        tstartprec=timeser(1)
-        tstopprec=timeser(ntimeser)
+        tstartprec = timeser(1)
+        tstopprec = timeser(ntimeser)
 !-------MZ
 
 

@@ -408,7 +408,8 @@
 
         itype=4                         !machine IBM
 
-        open(transcar_dat, file='dir.input/DATCAR', status='old')
+        open(transcar_dat, file='dir.input/DATCAR', status='old',
+     &    action='read')
             rewind(transcar_dat)
             read(transcar_dat,*)kiappel
             read(transcar_dat,1010) gridfn
@@ -418,7 +419,7 @@
 !-------MZ
         print *, 'reading parameters from file: ',gridfn
         open(unfic_in_transcar,file='dir.input/'//gridfn,
-     &        form='unformatted',
+     &        form='unformatted', action='read',
      &                access='direct',status='old',recl=4*2*ncol0)
 
 
@@ -553,7 +554,7 @@
         longrec=itype*longbuf
 
         open(unfic_in_transcar,file='dir.input/'//gridfn,
-     &        form='unformatted',
+     &        form='unformatted', action='read',
      &                  access='direct',status='old',recl=longrec)
 
 

@@ -1,4 +1,4 @@
-add_library(transelec transelec.op.f lect.f  iniflu.f
+add_library(transelec OBJECT transelec.op.f lect.f  iniflu.f
             degrad.f felin.op.f
             solflux.f trans.op.f disort.f cineout.op.f
             linsub.f quelle_grille.f quel_flux.f

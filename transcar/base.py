@@ -2,19 +2,22 @@ import subprocess
 from pathlib import Path
 import logging
 import pandas
-from typing import Dict, Any
+import typing as T
 import shutil
 
 from .io import setup_dirs, setup_monoprec, setup_spectrum_prec, transcaroutcheck
 
 
-def beam_spectrum_arbiter(beam: pandas.DataFrame, P: Dict[str, Any]):
+def beam_spectrum_arbiter(beam: pandas.DataFrame, P: T.Dict[str, T.Any]):
     """
     run beam with user-defined flux spectrum
     """
     MAX_TRY = 3
     odir = P["rodir"]
+    check_file = odir / "dir.output/transcar_output"
 
+    print("Running Transcar single-threaded. Runtime is proportional to simulation duration.")
+    print(check_file, "final filesize is also proportional to simulation duration.")
     if run_spectrum(beam, P):
         print("Transcar finished OK on first try")
         return
@@ -28,7 +31,7 @@ def beam_spectrum_arbiter(beam: pandas.DataFrame, P: Dict[str, Any]):
     raise RuntimeError(f"Transcar failed after {MAX_TRY} tries, giving up")
 
 
-def run_spectrum(beam: pandas.DataFrame, P: Dict[str, Any]) -> bool:
+def run_spectrum(beam: pandas.DataFrame, P: T.Dict[str, T.Any]) -> bool:
     """
     Run beam spectrum
     """
@@ -41,7 +44,7 @@ def run_spectrum(beam: pandas.DataFrame, P: Dict[str, Any]) -> bool:
     return transcaroutcheck(odir, P["errfn"])
 
 
-def mono_beam_arbiter(beam: Dict[str, float], P: Dict[str, Any]):
+def mono_beam_arbiter(beam: T.Dict[str, float], P: T.Dict[str, T.Any]):
     """
     run monoenergetic beam
     """
@@ -59,7 +62,7 @@ def mono_beam_arbiter(beam: Dict[str, float], P: Dict[str, Any]):
             logging.error(f'failed on beam{beam["E1"]:.1f} on 2nd try, aborting')
 
 
-def run_monobeam(beam: Dict[str, float], P: Dict[str, Any]) -> bool:
+def run_monobeam(beam: T.Dict[str, float], P: T.Dict[str, T.Any]) -> bool:
     """Run a particular beam energy vs. time"""
     # %% copy the Fortran static init files to this directory (simple but robust)
     datinp, odir = setup_dirs(P["rodir"] / f'beam{beam["E1"]:.1f}', P)

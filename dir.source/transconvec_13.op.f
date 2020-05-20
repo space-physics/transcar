@@ -776,11 +776,13 @@
      &   prec_fname
         open(313, file=prec_fname, status='old', action='read')
 
-        ioerr=1; ntimeser=1; timestat=1;
+        ioerr=0
+        ntimeser=1
+        timestat=1
         do while(timestat >= 0 .and. ioerr==0 .and.
      &            ntimeser <= 1024)                         !this loops over the different distributions in the time series
           read(313,*,iostat=ioerr) timeser(ntimeser)
-          print *, 'precipitation time: ', timeser(ntimeser)
+          print *, 'READ: precipitation time: ', timeser(ntimeser)
 
           m=1; fluxstat=1.e0
           do while(fluxstat >= 0. .and. m <= 1024)        !this loops over the different energy bins in each distribution
@@ -796,17 +798,20 @@
 
             m = m+1
           enddo
-          print *, 'Number of energy bins for precip.:  ',nfluxdist
+          print *, 'Number of energy bins for precip.:  ',nfluxdist-1
 
           ntimeser=ntimeser+1
         enddo
-        ntimeser=ntimeser-1
-        print*,'Number of time series in precip.:  ',ntimeser
+        ntimeser = ntimeser-1
+        print*,'Number of precipitation times:  ', ntimeser-1
         close(313)
 !        print*,'Interpolation:  ',precint
 !        print*,'Extrapolation:  ',precext
         tstartprec = timeser(1)
         tstopprec = timeser(ntimeser)
+
+        print *, 'precipitation start, stop times:',
+     &    tstartprec, tstopprec
 !-------MZ
 
 

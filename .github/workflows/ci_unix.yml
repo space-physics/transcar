@@ -3,7 +3,7 @@ name: ci_unix
 on:
   push:
     paths:
-      - "**.txt"
+      - "**/CMakeLists.txt"
       - "**.cmake"
       - "**.f90"
       - "**.py"
@@ -16,23 +16,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v1
+    - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
 
     - name: Install prereqs
-      run: |
-        pip install -e .[tests,lint]
-        pip install cmake
+      run: pip install -e .[tests,lint]
 
     - run: flake8
-    - run: mypy .
+    - run: mypy
 
-    - name: Build
-      run: |
-        cmake -B build
-        cmake --build build --parallel
-      env:
-        FC: gfortran-9
+    - run: cmake -B build
+    - run: cmake --build build --parallel
 
     - run: pytest

@@ -212,7 +212,7 @@ el=dipangle;
 if ncol>47
    NOHot=data(:,48);
    TnOHot=data(:,49);
-   
+
    if ncol>49
      n7=data(:,50);
      v7=data(:,51);
@@ -221,9 +221,9 @@ if ncol>47
      t7=(t7p+2*t7t)/3;
      q7=data(:,54);
      POHot=data(:,55);
-     
+
      ne=ne+n7;
-     
+
      if ncol>55
         nOHot=data(:,56);
         vOHot=data(:,57);
@@ -231,7 +231,7 @@ if ncol>47
         tOHott=data(:,59);
         tOHot=(tOHotp+2*tOHott)/3;
         qOHot=data(:,60);
-        
+
         if ncol>60
            Po1d=data(:,61);
            no1d=data(:,62);
@@ -241,4 +241,3 @@ if ncol>47
    end
 end
 %-MZ
-

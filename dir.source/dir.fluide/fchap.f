@@ -1,24 +1,24 @@
       subroutine fchap(iyd,tu,z,lat,lon,f107,ap,chi,chapesp)
-        
+
         implicit none
 
         integer,parameter :: nlaguer=15 , ngauss=8 , nmax=31,nesp=7
         real,intent(in) :: iyd,tu,z,lat,lon,f107(3),ap(7),chi
         real,intent(out) :: chapesp(nesp)
 
-        
+
         real zi(nmax),lati(nmax),loni(nmax),wi(nmax),decli
         real zj(nlaguer),wj(nlaguer)
         integer ni,nj,i,j
         real dn(8),tn(2),sec,stl,chap1(nesp),chap2(nesp),indesp(nesp)
-            
+
 
         data indesp/3,4,2,7,1,8,5/
         common /decl/decli
-        
+
         stl=tu + lon/15. !wow big mistake in prior code due to no implicit none
         call grille(z,lat,lon,tu,chi,decli,zi,lati,loni,wi,ni,zj,wj,nj)
-    
+
         if (ni.gt.0) then
           do i=1,nesp
             chap1(i)=0.
@@ -58,25 +58,25 @@
       use comm, only: dp,pi,deg2rad,rad2deg
       implicit none
 
-     
+
       integer,parameter :: nlaguer=15 , ngauss=16 , nmax=31
-     
+
       real,intent(in) :: z,lat,lon,tu,chi,decli
       real,intent(out) :: zi(nmax),lati(nmax),loni(nmax), wi(nmax),
      &                 zj(nlaguer),wj(nlaguer)
       integer,intent(out) :: ni,nj
-     
-      
+
+
       real latref,lonref
       real(dp) :: xl(nlaguer),wl(nlaguer)
       real absc(nmax),cfi,cki,clat,cosdec,dl,h,hver,rlim,rmax,rmin,rz,
      &  sfi,sindec,ski,slat,zmax,zmin
       integer i
-      
-      
-    
+
+
+
       real,parameter :: pis2=pi/2, re=6356.766
-    
+
 c    abscisses et poids de Gauss ( a 16 points )
       real, parameter:: xg(*)=
      &            [-0.989400934991649932596,-0.944575023073232576078,
@@ -87,7 +87,7 @@ c    abscisses et poids de Gauss ( a 16 points )
      &           0.458016777657227386342, 0.617876244402643748447,
      &             0.755404408355003033895, 0.865631202387831743880,
      &         0.944575023073232576078, 0.989400934991649932596]
-     
+
       real, parameter :: wg(*)=
      &        [0.027152459411754094852, 0.062253523938647892863,
      &         0.095158511682492784810, 0.124628971255533872052,

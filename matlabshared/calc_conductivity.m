@@ -83,7 +83,7 @@ for k=1:ls
     nk=ne_time;
   end
   nuk=nui(:,:,k);
-  
+
   sigmak=nk*q(k)^2/m(k)./nuk;
   sigmaP=sigmaP+sigmak.*nuk.^2./(nuk.^2+omega(k)^2);
   sigmaH=sigmaH-sigmak.*nuk*omega(k)./(nuk.^2+omega(k)^2);
@@ -113,6 +113,6 @@ joulediss=JPmag.*EmagVmmat; %#ok<NASGU>
 condFN = [datadir,'/',confile];
 display(['CALC_CONDUCTIVITY: Saving conductivities and energy dissipation calculations to: ',condFN])
 save(condFN,'EmagVm','BmagT','Kperpmag','joule*','Joule*','JPmag','JHmag','z',...
-            'time','Sigma*','sigma*','nuin','m','q','nui','omega') 
+            'time','Sigma*','sigma*','nuin','m','q','nui','omega')
 
 end

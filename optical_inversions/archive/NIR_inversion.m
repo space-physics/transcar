@@ -20,7 +20,7 @@ for k=1:length(filelist)
     %INVERSION PARAMS
 %    w=100*ones(size(b)); w(2:4)=1; w=w/sum(w);          %give little weight to 1PG, does well for 17Feb2001
 %    w=ones(size(b)); w=w/sum(w);                        %works well for 19Nov2001... sort of
-    w=100*ones(size(b)); w(2:4)=1; w=w/sum(w);                        %works well for 20Nov2001.    
+    w=100*ones(size(b)); w(2:4)=1; w=w/sum(w);                        %works well for 20Nov2001.
     beta=2.5;                                           %works quite well for BOT and 20Nov2001
 %    beta=2;                                             %works well for 11Feb2002
     ic=ones(nphi,1)./phiNbin(:)*1e20;                   %works for FT and BOT
@@ -34,8 +34,8 @@ for k=1:length(filelist)
     [phimem(:,k),chir]=meberg(b,M,ic,beta,w,sigman);
     phibasis(:,k)=phimem(:,k);
     phimem(:,k)=phimem(:,k).*phiNbin(:);
-    
-    
+
+
     %RELATIVE ERROR COMPUTATION
     relerr_binned(:,k)=abs(M*phibasis(:,k)-b)./b;
     errbinned(k)=sum(relerr_binned(:,k).*w);
@@ -134,7 +134,7 @@ close all;
 %   phiEmem(:,k)=erplot(:).*phimem(:,k);
 %   phiEmemplot(:,k)=interpolate(phiEmem(:,k),erplot,espec,'loglin','loglin');
 % end
-% 
+%
 % figure;
 % set(gcf,'PaperPosition',[0,0,8.5,3.5]);
 % imagesc(tset,log10(espec),flipud(log10(phiEmemplot)));

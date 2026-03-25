@@ -1,6 +1,6 @@
 function sumploth=sumplot_conduct(datadir,timingfile,confile,onsettime,plotAllSimTime)
 
-%% loading data 
+%% loading data
 timingFN = [datadir,'/',timingfile];
 display(['sumplot_conduct: loading ',timingFN])
 load(timingFN,'maxtime','mintime','maxtime')
@@ -17,7 +17,7 @@ set(sumploth,'pos',[cp(1), cp(2), 950, 520])
 %% CORRECT TIME VARIABLE FOR PLOTTING PURPOSES
 if plotAllSimTime
     tInds = 1:length(time); %take all values
-else %restrict to around precipitation time 
+else %restrict to around precipitation time
     tspan=maxtime-mintime;
     tpad=1/6*tspan;                 %show quiescent ionosphere before event is switched on
     tInds=find(time>=mintime+tpad & time<=maxtime);

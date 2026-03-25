@@ -1,7 +1,7 @@
 	program tube
-	
+
 	include 'TRANSPORT.INC'
-	
+
 	parameter(nbuf=8)
 
         parameter (nb_position_max=100)         ! Modif DA 02/02 2001
@@ -35,14 +35,14 @@
      &			vperpnord,vperpest,vhorizon,vpara,ddp,Jtop
 
 
-        open(transcar_dat, 
+        open(transcar_dat,
      &       file='dir.input/DATCAR.tube',
      &       status='old')
         rewind(transcar_dat)
 
 	open(31,file='trace.dat',form='unformatted',
      &                access='direct',status='new',recl=4*nbuf)
-     	
+
      	irec=0
 
 	read(transcar_dat,*)dto     	! pas d'integration numerique
@@ -51,7 +51,7 @@
 	read(transcar_dat,*)tempsini    ! UT de debut (en secondes)
 	read(transcar_dat,*)tempslim    ! UT limite (en secondes)
 	read(transcar_dat,*)iar    	! (iar=1, convection_1+convection; ar = 0,convection_1)
-	
+
 
 	read(transcar_dat,*)latgeo_ini,longeo_ini
 
@@ -80,7 +80,7 @@
        endif                                                            ! Modif DA 0202 2001 - fin
 	close(transcar_dat)
 
-	
+
 	  itube=0
 	  ntubmax=int(tempslim/step)
 
@@ -139,7 +139,7 @@ c determination du point de depart de la convection
      &			  dto,pot,flgpot)
 c	      write(31,100) temps,tmag,latmag,dlongeo,dlatgeo,pot
 c	      write(*,100) temps,tmag,latmag,dlongeo,dlatgeo,pot
-c	write(*,*) itube,i_position,tempsdeb,tempsfin,tempstube	
+c	write(*,*) itube,i_position,tempsdeb,tempsfin,tempstube
 
 c	  write(31,100) itube,temps,tmag,latmag,dlongeo,dlatgeo,
 c     &		pot,i_position

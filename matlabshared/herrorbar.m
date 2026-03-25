@@ -21,7 +21,7 @@ function hh = herrorbar(x, y, l, u, symbol)
 %      herrorbar(x,y,e)
 %   draws symmetric horizontal error bars of unit standard deviation.
 %
-%   This code is based on ERRORBAR provided in MATLAB.   
+%   This code is based on ERRORBAR provided in MATLAB.
 %
 %   See also ERRORBAR
 
@@ -31,7 +31,7 @@ function hh = herrorbar(x, y, l, u, symbol)
 %   File history:
 %   August 2006 (Jos): I have taken back ownership. I like to thank Greg Aloe from
 %   The MathWorks who originally introduced this piece of code to the
-%   Matlab File Exchange. 
+%   Matlab File Exchange.
 %   September 2003 (Greg Aloe): This code was originally provided by Jos
 %   from the newsgroup comp.soft-sys.matlab:
 %   http://newsreader.mathworks.com/WebX?50@118.fdnxaJz9btF^1@.eea3ff9

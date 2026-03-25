@@ -1,7 +1,7 @@
 #!/bin/bash
 # upgraded to Bash 4 by Michael Hirsch 2014
 # original by Matt Zettergren 2013
-# this script for loops transcar, making a new precinput.dat each time for the 
+# this script for loops transcar, making a new precinput.dat each time for the
 # respective beam energies.
 
 runBeams()
@@ -43,23 +43,23 @@ PrecFN="$CurrDir/dir.input/precinput.dat"
   Esum=$(echo "$E2 + $E1" | bc)
 
   # bc will not give any decimal without scale argument in this case
-  flux=$(echo "scale=4; $flux0 / 0.5 / $Esum / $dE" | bc) 
+  flux=$(echo "scale=4; $flux0 / 0.5 / $Esum / $dE" | bc)
 
   #get 'padding' so that beams are truncated correctly in energy
   pr=$pr1
   dElow=$(echo "$E1 - $pr" | bc)
   Elow=$(echo "scale=4; $E1 - 0.5 * $dElow" | bc)
-  ne=$pr2 
+  ne=$pr2
   dEhigh=$(echo "$E2 - $ne" | bc)
   Ehigh=$(echo "scale=4; $E2 - 0.5 * $dEhigh" | bc)
 
-[[ $DebugMsg -ne 0 ]] && echo $E1 $E2 $dE $Esum $flux $pr $dElow $Elow $ne $dEhigh $Ehigh 
+[[ $DebugMsg -ne 0 ]] && echo $E1 $E2 $dE $Esum $flux $pr $dElow $Elow $ne $dEhigh $Ehigh
 
   #generate TRANSCAR input file for this beam
   ThisPrecParam="$tstart\\n$Elow $flux\\n$Ehigh -1.0\\n$tfin\\n-1.0 -1.0"
   echo "writing $ThisPrecParam to $PrecFN"
   echo -e "$ThisPrecParam" > "$PrecFN" # the -e option was in the original script
-  
+
   echo "transconvec_13.op is running for a differential number flux of "
   echo "$flux eV cm-2 s-1 sR-1"
   echo "in the energy range $E1 to $E2 eV"
@@ -81,9 +81,9 @@ PrecFN="$CurrDir/dir.input/precinput.dat"
 
 }
 
-teea () 
-{ 
-tee --append "$1" 
+teea ()
+{
+tee --append "$1"
 }
 
 #input argument is root output directory

@@ -1,7 +1,7 @@
 #!/bin/bash
 # upgraded to Bash 4 by Michael Hirsch 2014
 # original by Matt Zettergren 2013
-# this script for loops transcar, making a new precinput.dat each time for the 
+# this script for loops transcar, making a new precinput.dat each time for the
 # respective beam energies.
 
 runBeams()
@@ -20,7 +20,7 @@ BMlog=$RODIR/Beams.log
 flux0=70114000000.0
 
 energies=(52.726	63.557	76.487	91.921	110.34	132.34	158.59	189.93)
-energies+=( 227.34	272.	325.3	388.94	464.9	555.57)	
+energies+=( 227.34	272.	325.3	388.94	464.9	555.57)
 energies=(${energies[@]} 663.81 793.02	947.25	1131.4	1351.1	1613.5)
 energies=(${energies[@]} 1926.7	2300.5  2746.8	3279.5	3915.4	4674.4)
 energies=(${energies[@]} 5580.6	6662.2	7953.4  9494.7	11335.	13531.)
@@ -51,7 +51,7 @@ echo "computing energy # $i1" | teea $BMlog
   Esum=$(echo "$E2 + $E1" | bc)
 
   # bc will not give any decimal without scale argument in this case
-  flux=$(echo "scale=4; $flux0 / 0.5 / $Esum / $dE" | bc) 
+  flux=$(echo "scale=4; $flux0 / 0.5 / $Esum / $dE" | bc)
   #get 'padding' so that beams are truncated correctly in energy
   pr=${prev[$i]};
   dElow=$(echo "$E1 - $pr" | bc)

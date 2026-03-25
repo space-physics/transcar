@@ -19,7 +19,7 @@ real*4, dimension(dpar11) :: utem2, FEtem2, Etem2, alite2,&
 				FEtem3,Etem3,FEion,Fion
 real*8,dimension(dpar11) :: u2,FE2,E2,A2,utem2_fit,FEtem2_fit,Etem2_fit,&
 				Alite2_fit
-				
+
 common/transm/utem2,FEtem3,Etem3,alite2
 common/pot/FEtem2,Etem2
 
@@ -34,8 +34,8 @@ Real*8  :: A(rang*npt),B(rang*npt)
 
 complex*16 :: coefpot(rangcoef),coefflux(rangcoef),coefte(rangcoef),coefalg(rangcoef),&
 	      phipot(rangcoef),phicour(rangcoef),phienerg(rangcoef),phifluxF(rangcoef)
-	      
-				
+
+
 common/phi/coefpot,coefflux,coefte,coefalg,Lmin,Lmax,ndg,mdg
 
 Logical :: continu
@@ -61,7 +61,7 @@ open(unit=4,file='dir.in_out/longitude.lis',form='formatted',status='unknown')
 read(4,*) (longitude(i),i=1,dpar11)
 
 do i=1,dpar11
-	longitude(i)=longitude(i)*180.d0/pi	
+	longitude(i)=longitude(i)*180.d0/pi
 end do
 
 close(4)
@@ -77,7 +77,7 @@ ie=0
 continu=.true.
 
 do while(continu)
- 
+
 	CALL DRIVE11(ie,continu)
 
 	!open(unit=4,file='dir.source/dir.imm/dir.in_out/Electro.dat',form='formatted',status='unknown')
@@ -95,17 +95,17 @@ do while(continu)
 	A2=dble(alite2)
 
 	do i=1,dpar11
-	
+
 		FE2(i)=FE2(i)*1000.
 		E2(i)=E2(i)*1000.
-	
+
 		if (FE2(i)< rmin) FE2(i)=1.
 		if (E2(i) < rmin) E2(i)=1.
-	
+
 		FE2(i)=log(FE2(i))
 		E2(i) =log(E2(i))
 
-		A2(i)=A2(i)*1.E7		
+		A2(i)=A2(i)*1.E7
 
 	end do
 
@@ -151,7 +151,7 @@ do while(continu)
 
 	call coefficient(ndeg,mdeg,rang,dpar11,nb_data,ind_data,B,A2,coef_r,coef_i)
 
-	do i=1,rang1 
+	do i=1,rang1
 		coefalg(i)=(-coef_r(i),coef_i(i))
 	end do
 

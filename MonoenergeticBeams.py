@@ -1,8 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Executes Transcar to output "monoenergetic" electron beams.
 Optionally, in parallel.
 """
+
 import concurrent.futures
 import logging
 from pathlib import Path
@@ -30,8 +31,12 @@ def main():
     p.add_argument("outroot", help="root of beam directory to output")
     p.add_argument("-Q0", help="total particle flux", type=float, default=70114000000.0)
     p.add_argument("-infn", help="energy bin CSV file", default="BT_E1E2prev.csv")
-    p.add_argument("-msgfn", help="file to write transcar messages to", default="transcar.log")
-    p.add_argument("-errfn", help="file to write transcar Errors to", default="transcarError.log")
+    p.add_argument(
+        "-msgfn", help="file to write transcar messages to", default="transcar.log"
+    )
+    p.add_argument(
+        "-errfn", help="file to write transcar Errors to", default="transcarError.log"
+    )
     p.add_argument("-np", help="number of concurrent processes", type=int, default=Ncpu)
     p = p.parse_args()
 
@@ -60,7 +65,10 @@ def main():
             transcar.mono_beam_arbiter(beam, params)
     else:
         with concurrent.futures.ThreadPoolExecutor(max_workers=p.np) as executor:
-            future_beam = (executor.submit(transcar.mono_beam_arbiter, beam, params) for _, beam in beams.iterrows())
+            future_beam = (
+                executor.submit(transcar.mono_beam_arbiter, beam, params)
+                for _, beam in beams.iterrows()
+            )
             for future in concurrent.futures.as_completed(future_beam):
                 future.result()
 

@@ -33,14 +33,14 @@ for k=1:length(lambdams)
    elseif k<=4
      ppl=no1d;
    else
-     ppl=noii2p;  
+     ppl=noii2p;
    end
-       
+
    VERtmp(:,:,k)=Ams(k)*ppl;
    [integ,dr]=intrap(VERtmp(:,:,k),r);                                 %integrate along flux tube
    [nrow,ncol]=size(integ);
    blambdams(k,:)=integ(nrow,:);                             %this array has wavelength (dim 1) and time (dim 2)
-end 
+end
 
 %add the metastable emissions to the group
 lambda=lambdams;
@@ -60,14 +60,14 @@ for k=1:length(lambdapa)
    if k==1
      ppl=po3p3p;
    else
-     ppl=po3p5p;  
+     ppl=po3p5p;
    end
-       
+
    VERtmp(:,:,k)=ppl;
    [integ,dr]=intrap(VERtmp(:,:,k),r);                                 %integrate along flux tube
    [nrow,ncol]=size(integ);
    blambdapa(k,:)=integ(nrow,:);                             %this array has wavelength (dim 1) and time (dim 2)
-end 
+end
 
 %add the prompt atomic emissions to the group
 lambda=[lambda;lambdapa];
@@ -219,7 +219,7 @@ VER=cat(3,VER,VERtmp);
 
 
 %N2 1PG (this one is a bit tricky)
-fprintf('\nVER_CALC.M --> Computing N2 1PG emissions.'); 
+fprintf('\nVER_CALC.M --> Computing N2 1PG emissions.');
 A1PG=[.625e5, .356e5, .112e5, .247e4, .397e3, .424e2,      0,      0,      0,      0,      0,      0,      0;
       .872e5, .412e3, .185e5, .148e5, .569e4, .140e4, .227e3,      0,      0,      0,      0,      0,      0;
       .444e5, .617e5, .125e5, .268e4, .105e5, .729e4, .217e4, .639e3, .887e2,      0,      0,      0,      0;

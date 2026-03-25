@@ -29,7 +29,7 @@ cmp=reshape(cmp,size(z));
 % for k=1:length(z)
 %     x  = 3.*(z(k)-180.) * T_exos / H_inf ...
 %         /( T_exos - (T_exos-T_120)*exp(-S*(z(k)-120.)) );
-% 
+%
 %     if x < -85.
 %         cmp(k)=0.
 %     else

@@ -9,7 +9,7 @@ function calc_aurora(datadir,infile,outfile)
 %  0) run process_transcar(), which reads emissions.dat and converts
 %  variables to Matlab format, and resaves the variables into excrates.mat,
 %  a Matlab HDF5 data file.
-%  1) 
+%  1)
 
 %% LOAD EXCITATION/POPULATION RATES OBTAINED DIRECTLY FROM KINETIC CODE
 kinFN = [datadir,'/',infile]; %excrates.mat
@@ -36,15 +36,15 @@ for k=1:length(lambdams)
    elseif k<=4
      ppl=no1d;
    else
-     ppl=noii2p;  
+     ppl=noii2p;
    end
-       
+
    VER=Ams(k)*ppl;
    %[integ,dr]=intrap(VER,r);     %integrate along flux tube
    %[nrow,ncol]=size(integ);
    %blambdams(k,:)=integ(nrow,:); %this array has wavelength (dim 1) and time (dim 2)
    blambdams(k,:) = trapz(r,VER);    %TODO: verify that trapz was an appropriate replacment
-end 
+end
 
 %add the metastable emissions to the group
 lambda=lambdams;
@@ -57,15 +57,15 @@ for k=1:length(lambdapa)
    if k==1
      ppl=po3p3p;
    else
-     ppl=po3p5p;  
+     ppl=po3p5p;
    end
-       
+
    VER=ppl;
    %[integ,dr]=intrap(VER,r);       %integrate along flux tube
    %[nrow,ncol]=size(integ);
    %blambdapa(k,:)=integ(nrow,:);   %this array has wavelength (dim 1) and time (dim 2)
-   blambdapa(k,:)=trapz(r,VER); 
-end 
+   blambdapa(k,:)=trapz(r,VER);
+end
 
 %add the prompt atomic emissions to the group
 lambda=[lambda;lambdapa];

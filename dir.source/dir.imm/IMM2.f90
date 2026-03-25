@@ -1,6 +1,6 @@
-SUBROUTINE IMM 
+SUBROUTINE IMM
 
-! Lire les sorties ELECTRO et les ecrire dans un fichier 
+! Lire les sorties ELECTRO et les ecrire dans un fichier
 ! Transformer cettes sorties au TRANSCAR
 
 Implicit none
@@ -12,7 +12,7 @@ real*8,dimension(dpar11) :: latitude
 real*8,dimension(dpar11) :: longitude
 character*20 :: nomf
 real*8, dimension(dpar11) :: utem2, FEtem2, Etem2, alite2,&
-			utem2_fit,FEtem2_fit,Etem2_fit,alite2_fit	
+			utem2_fit,FEtem2_fit,Etem2_fit,alite2_fit
 
 Integer, parameter :: npt=49*80,ndeg=8,mdeg=8,rang=(2*mdeg+1)*(ndeg+1),&
 			rang1=(ndeg+1)*(mdeg+1),rangcoef=1000
@@ -26,7 +26,7 @@ Real*8	:: coef(rang)
 
 real*8 :: coefpot(rangcoef),coefflux(rangcoef),coefte(rangcoef),coefalg(rangcoef),&
 	      phipot(rangcoef),phicour(rangcoef),phienerg(rangcoef),phifluxF(rangcoef)
-					
+
 common/phi/coefpot,coefflux,coefte,coefalg,Lmin,Lmax,ndg,mdg
 
 Lmin=latmin
@@ -67,7 +67,7 @@ close(4)
 open(unit=4,file='dir.source/dir.imm/longitude.lis',form='formatted',status='unknown')
 read(4,*) (longitude(i),i=1,dpar11)
 do i=1,dpar11
-	longitude(i)=longitude(i)*180.d0/pi	
+	longitude(i)=longitude(i)*180.d0/pi
 end do
 close(4)
 

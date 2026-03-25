@@ -1,9 +1,9 @@
       real function coskhi(lat,long,h,month,day,ioption)
-       
+
        use comm, only: deg2rad, pi
         implicit none
 
-        
+
 c******  calcul de cos(ki) ****
 c**  lat latitude geographic **   degrees decimal
 c**  long longitude **  degrees decimal
@@ -31,7 +31,7 @@ c
         else
             jj = day
         endif
-        
+
         temps = ((jj - 172.625) + hloc)/365.25 * (2*pi)
         tloc = hloc  * (2*pi)
         decli = 23.45 * deg2rad * cos(temps)

@@ -11,7 +11,7 @@ E=1/2*(energies(1:le)+energies(2:le+1));
 %FORM CHARACTERISTIC MATRICES COLUMN BY COLUMN (EACH COLUMN COMES FROM A DIFFERENT SIM)
 for ie=1:length(idlist)
     fprintf('\nKERNEL_BUILD_BG3.M --> loading files for simulation:  %s', idlist{ie});
-    
+
     %load data for this beam
     load([idlist{ie},'/plasma.mat']);
     load([idlist{ie},'/dat.mat']);
@@ -25,8 +25,8 @@ for ie=1:length(idlist)
         Mp=zeros(lz,le,ll);                             %for wavelength il, the forward model is M=Mp(:,:,il)
         Mb=zeros(ll,le);
     end
-    
-    
+
+
     %characteristic plasma resp.  +1 b/c of the delay of fluid code
     techr(:,ie)=te_time(:,it+1)-te_time(:,it);
     tichr(:,ie)=t1_time(:,it+1)-t1_time(:,it);
@@ -34,14 +34,14 @@ for ie=1:length(idlist)
     phiichr(:,ie)=n1_time(:,it+1).*v1_time(:,it+1)-n1_time(:,it).*v1_time(:,it);
     nechr(:,ie)=ne_time(:,it+1)-ne_time(:,it);
     nichr(:,ie)=n1_time(:,it+1)-n1_time(:,it);
-    
-    
+
+
     %characteristic optical response
     tmp=squeeze(VER(:,it,:));
     tmp=reshape(tmp,[lz 1 ll]);
     Mp(:,ie,:)=tmp;
     Mb(:,ie)=b(:,it);
-    
+
     %beam intensity
     load([idlist{ie},'/aurora.mat']);
     precchr(:,ie)=fluxdown1(:,1);                   %Be careful here.  The flux variable depends on how the energy binning is set in the simulation

@@ -38,8 +38,8 @@ CC	D'ETRE TRANSMIS A LA ROUTINE ELLCONI QUI N'UTILISE EN
 CC	FAIT QUE Ti ET Rni DANS LE SECOND MEMBRE DE L'EQUATION
 CC	ELLIPTIQUE DU POTENTIEL POUR PRENDRE EN COMPTE L'EFFET
 CC	DES COURANTS ALIGNES".
-		integer*4 iecompteur	 	
-		logical	continu	
+		integer*4 iecompteur
+		logical	continu
       integer*4 par1,par2,par3,dpar1,dpar2,dpar3
       integer*4	dpar11,dpar22,dpar33
       integer*4 dn1,dn2,dnt,dndl
@@ -75,14 +75,14 @@ CC	DES COURANTS ALIGNES".
      %Rnitemp(dpar1),Titemp(dpar1)
 
       common/conductances/sptemp(dpar1),shtemp(dpar1)
- 
+
 cesr
-      
+
       common/dea/ideaele,ideaion,ideapot
 
 cesr
 
-cHAO97	
+cHAO97
 	common/fluxioni/FEion(dpar11),Fion(dpar11)
 cHAO97
 
@@ -96,13 +96,13 @@ c	close(4)
 
 c	open(4,file='dir.source/dir.imm/dir.in_out/Teg.lis',status='unknown')
 c	close(4)
-	ie=iecompteur	
+	ie=iecompteur
 	if (ie.eq.0)then
 
-cc		open(4,file='dir.source/dir.imm/dir.in_out/donnees.dat',status='unknown')		
+cc		open(4,file='dir.source/dir.imm/dir.in_out/donnees.dat',status='unknown')
 		open(4,file='dir.in_out/donnees.dat',status='unknown')
 cc		On lit l'heure finale ou s'arrete le run
-		read(4,*)fheure						
+		read(4,*)fheure
 
 cc		On lit les temperatures et densites du plasma
 cc		dans la source. On lit aussi la valeur de la moitie
@@ -111,44 +111,44 @@ cc		de la ddp a travers la calotte polaire.
 cc		Pour les electrons, la densite rnmax et la temperature
 cc		emax sont:
 
-		read(4,*)rnmax						
-		read(4,*)emax						
+		read(4,*)rnmax
+		read(4,*)emax
 
 
 cc		Pour les ions, la densite est la meme que celle des
 cc		electrons et leur temperature vaut:
 
-		read(4,*)rtmax						
+		read(4,*)rtmax
 
 cc		La moitie de la ddp vaut:
 
-		read(4,*)phiopt						
+		read(4,*)phiopt
 
 cc		Si ideaele=1, on prend en compte l'effet des precipitations
 cc		sinon si ideaele=0 on ne le prend pas en compte:
 
-		read(4,*)ideaele					
+		read(4,*)ideaele
 
 cc		Si ideaion=1, on prend en compte l'effet des courants alignes
 cc		sinon si ideaion=0 on ne le prend pas en compte:
 
-		read(4,*)ideaion					
+		read(4,*)ideaion
 
 
 cc		Si ideapot=1, on fait varier au cours du temps le potentiel
 cc		sinon si ideapot =0 on ne le prend pas en compte
 
-		read(4,*)ideapot					
+		read(4,*)ideapot
 
 
 cc		On lit la valeur du compteur d'ecriture ni. On ecrit 1 fois
 cc		sur ni
 
-		read(4,*)ni					     	
+		read(4,*)ni
 
 
-		close(4)						
-							   	
+		close(4)
+
 		heure=0.
 
 CC		LECTURE D'UN FICHIER INITIAL POUR L'INITIALISATION
@@ -185,28 +185,28 @@ cc		open(9,file='dir.source/dir.imm/dir.in_out/tgcm.lis',status='unknown')
 		open(9,file='dir.in_out/tgcm.lis',status='unknown')
 
 	end if
- 
+
 	write(*,*)'iteration: ',ie
 
 CC	CALCUL DU POTENTIEL
 
 	write(*,*)'POTENT'
-	
+
 cesr
 
 	if (ie.ge.1)	then
-	
+
 	if (ideapot.eq.1)	then
 
 	call POTENT
-	
+
 				endif
-				
+
 			else
-			
+
 	call POTENT
-	
-			
+
+
 			endif
 
 cesr
@@ -227,7 +227,7 @@ CC	ITERATIONS.
 CC	ni=5
 
 	if ((ie-(ie/ni)*ni).eq.(0))	then
-     
+
   	write(*,*) 'heure',heure,' ecriture sur fichier'
 
 					endif
@@ -239,14 +239,14 @@ CC	DU TIEGCM
 	if ((ie-(ie/ni)*ni).eq.(0))	then
 	write(9,*) (utem2(i),i=1,dpar11)
 					endif
-					
+
 CC	ECRITURE DES FLUX D'ENERGIE ELECTRONIQUES
 CC	INTERPOLES DANS LA GRILLE DU TIEGCM
 
 	if ((ie-(ie/ni)*ni).eq.(0))	then
  	write(9,*) (FEtem2(i),i=1,dpar11)
 					endif
-					
+
 CC	ECRITURE DE LA TEMPERATURE ELECTRONIQUE
 CC	DANS LA GRILLE DU TIEGCM
 
@@ -254,45 +254,45 @@ CC	DANS LA GRILLE DU TIEGCM
 	if ((ie-(ie/ni)*ni).eq.(0))	then
 	write(9,*) (Etem2(i),i=1,dpar11)
 					endif
-					
+
 c***	ECRITURE DES COURANTS ALIGNES DANS LA GRILLE DU TIEGCM***
 
-	
+
 	if ((ie-(ie/ni)*ni).eq.(0))	then
 	write(9,*) (Alite2(i),i=1,dpar11)
 					endif
-					
+
 CC	ECRITURE DU NOMBRE D'IONS
-		
-	
+
+
 	if ((ie-(ie/ni)*ni).eq.(0))	then
 	write(9,*) (Rni(i),i=1,ndl)
 					endif
-					
+
 CC	ECRITURE DE LA TEMPERATURE DES IONS
 
 	if ((ie-(ie/ni)*ni).eq.(0))	then
 	write(9,*) (Ti(i),i=1,ndl)
 					endif
-					
+
 CC	ECRITURE DE LA TEMPERATURE DES ELECTRONS
 
 	if ((ie-(ie/ni)*ni).eq.(0))	then
 	write(9,*) (ener1(i),i=1,ndl)
 					endif
-					
+
 CC	ECRITURE DU NOMBRE D'ELECTRONS
 
 	if ((ie-(ie/ni)*ni).eq.(0))	then
 	write(9,*) (ane1(i),i=1,ndl)
 					endif
-					
+
 CC	ECRITURE DE L'INVARIANT ADIABATIQUE DES ELECTRONS
 
 	if ((ie-(ie/ni)*ni).eq.(0))	then
 	write(9,*)(uo(i),i=1,ndl)
 					endif
-	
+
 c***	ON CALCULE LES CONDUCTANCES ***
 
 	icomp=9
@@ -314,12 +314,12 @@ CC	DU TIEGCM
 CC	ECRITURE DES CONDUCTIVITES DE HALL DANS LA GRILLE
 CC	DU TIEGCM
 
-	
+
 	if ((ie-(ie/ni)*ni).eq.(0))	then
 	write(9,*) (transh(i),i=1,dpar11)
 					endif
 
-	
+
 	if (ni.eq.1)			then
 
 		if (ie.ge.1)			then
@@ -341,4 +341,3 @@ c	close(4)
 	iecompteur=ie
 	return
 	end subroutine Drive11
-      	

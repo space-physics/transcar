@@ -81,7 +81,7 @@ C
       real ZN3(5),ZN2(4)
 
       real :: SV(25) = (/(1.,j=1,25)/)
-      
+
       COMMON/GTS3C/TLB,S,DB04,DB16,DB28,DB32,DB40,DB48,DB01,ZA,T0,Z0
      & ,G0,RL,DD,DB14,TR12
       COMMON/MESO6/TN1(5),TN2(4),TN3(5),TGN1(2),TGN2(2),TGN3(2)
@@ -99,7 +99,7 @@ C
       DATA MN3/5/,ZN3/32.5,20.,15.,10.,0./
       DATA MN2/4/,ZN2/72.5,55.,45.,32.5/
       DATA ZMIX/62.5/,ALAST/99999./,MSSL/-999/
-      
+
 
 c
       IF(ISW.NE.64999) CALL TSELEC(SV)
@@ -177,7 +177,7 @@ C      ***** N2 DENSITY ****
         DMR=D6(3)/DM28M-1.
         D(3)=DENSM(ALT,DM28M,XMM,TZ,MN3,ZN3,TN3,TGN3,MN2,ZN2,TN2,TGN2)
         D(3)=D(3)*(1.+DMR*DMC)
-        if (isnan(d(3))) 
+        if (isnan(d(3)))
      &    print*,'gtd6: nan d3:',
      &     ALT,DM28M,XMM,TZ,MN3,ZN3,TN3,TGN3,MN2,ZN2,TN2,TGN2
 C      ***** HE DENSITY ****

@@ -32,25 +32,25 @@ while ~feof(fid)
     if mod(l,10)==0
         fprintf('READ_DIFFNUMFLUX.M --> Reading record #:  %d\n',l);
     end
-    
+
     %DATA SIZE INFO
     metadata=fscanf(fid,'%f %d %d',3);
     if isempty(metadata)
-       break; 
+       break;
     end
     t=[t,metadata(1)];
     nalt=metadata(2);
     nen=metadata(3);
 
 
-    
+
     %DISTRIBUTION ENERGY GRID
     en=fscanf(fid,'%f',[1 nen]);
     fluxup=zeros(nalt,nen);
     fluxdown=zeros(nalt,nen);
-    
-    
-    
+
+
+
     %LOOP OVER ALTITUDES AND READ IN UP AND DOWN DIST. FN. AT EACH GRIDPOINT
     for k=1:nalt
         %ALTITUDE GRID
@@ -62,14 +62,14 @@ while ~feof(fid)
         fluxdown(k,:)=fluxes(1,:);
         fluxup(k,:)=fluxes(2,:);
     end
-    
+
     %REORDER ALTITUDE DIMENSION TO BE FROM LOW TO HIGH
     alt=flipud(alt(:));
     fluxdown=flipud(fluxdown);
     fluxup=flipud(fluxup);
-    
-    
-    
+
+
+
     %PUT INTO AN OUTPUT DATA CUBE
     fhemd=cat(3,fhemd,fluxdown);
     fhemu=cat(3,fhemu,fluxup);

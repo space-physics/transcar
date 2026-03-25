@@ -2,7 +2,7 @@
      &			     Lmin,Lmax,latequi,ierr)
        use comm, only : dp
         implicit none
- 
+
         integer ndeg,mdeg,ierr,i,u
 	    integer iyddeb,iydfin,iyd
 	    real(dp) :: tu,latequi,Lmin,Lmax

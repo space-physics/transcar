@@ -4,12 +4,12 @@ SUBROUTINE IMM_COUR(ndg,mdg,phicour,Lmin,Lmax,latequi)
 
         integer :: ndg,mdg,ndeg,mdeg
 	real*8  :: Lmin,Lmax,latmin,latmax,latequi
-	
+
 	integer,parameter :: rangcoef=1000
 	real*8 :: phicour(rangcoef)
 	real*8 :: coefpot(rangcoef),coefflux(rangcoef),&
 			coefte(rangcoef),coefalg(rangcoef)
-				
+
 	common/phi/coefpot,coefflux,coefte,coefalg,latmin,latmax,ndeg,mdeg
 
 INTERFACE
@@ -17,12 +17,12 @@ INTERFACE
 
         integer :: ndeg,mdeg,ndg,mdg
 	real*8  :: Lmin,Lmax,latmin,latmax,latequi
-	
+
 	integer,parameter :: rangcoef=1000
 	real*8 :: phipot(rangcoef)
 	real*8 :: coefpot(rangcoef),coefflux(rangcoef),&
 			coefte(rangcoef),coefalg(rangcoef)
-				
+
 	common/phi/coefpot,coefflux,coefte,coefalg,latmin,latmax,ndeg,mdeg
 
      END SUBROUTINE IMM_POT
@@ -34,10 +34,10 @@ INTERFACE
 
 	integer,parameter :: rangcoef=1000
 	real*8 :: phifluxE(rangcoef),phienerg(rangcoef)
-	
+
 	real*8 :: coefpot(rangcoef),coefflux(rangcoef),&
 			coefte(rangcoef),coefalg(rangcoef)
-				
+
 	common/phi/coefpot,coefflux,coefte,coefalg,latmin,latmax,ndeg,mdeg
 
      END SUBROUTINE IMM_PREC
@@ -60,17 +60,17 @@ END SUBROUTINE IMM_COUR
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 SUBROUTINE IMM_POT(ndg,mdg,phipot,Lmin,Lmax,latequi)
-	
+
 	IMPLICIT NONE
 
         integer :: ndeg,mdeg,ndg,mdg
 	real*8  :: Lmin,Lmax,latmin,latmax,latequi
-	
+
 	integer,parameter :: rangcoef=1000
 	real*8 :: phipot(rangcoef)
 	real*8 :: coefpot(rangcoef),coefflux(rangcoef),&
 			coefte(rangcoef),coefalg(rangcoef)
-				
+
 common/phi/coefpot,coefflux,coefte,coefalg,latmin,latmax,ndeg,mdeg
 
 Lmin=latmin
@@ -92,13 +92,13 @@ SUBROUTINE IMM_PREC(ndg,mdg,phienerg,phifluxE,Lmin,Lmax,latequi)
 
         integer:: ndeg,mdeg,ndg,mdg
 	real*8 :: Lmin,Lmax,latmin,latmax,latequi
-	
+
 	integer,parameter :: rangcoef=1000
 	real*8 :: phifluxE(rangcoef),phienerg(rangcoef)
-	
+
 	real*8 :: coefpot(rangcoef),coefflux(rangcoef),&
 			coefte(rangcoef),coefalg(rangcoef)
-				
+
 common/phi/coefpot,coefflux,coefte,coefalg,latmin,latmax,ndeg,mdeg
 
 Lmin=latmin

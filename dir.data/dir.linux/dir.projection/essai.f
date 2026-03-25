@@ -1,5 +1,5 @@
         program essai
-        implicit none	
+        implicit none
 
         real buffer(100)
         integer irec,i

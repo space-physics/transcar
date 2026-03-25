@@ -1,5 +1,9 @@
 name: ci_unix
 
+env:
+  CMAKE_GENERATOR: Ninja
+  CMAKE_BUILD_TYPE: Release
+
 on:
   push:
     paths:
@@ -15,18 +19,17 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v6
+    - uses: actions/setup-python@v6
       with:
-        python-version: '3.x'
+        python-version: '3.14'
 
     - name: Install prereqs
-      run: pip install -e .[tests,lint]
+      run: pip install -e .[tests]
 
-    - run: flake8
     - run: mypy
 
     - run: cmake -B build
-    - run: cmake --build build --parallel
+    - run: cmake --build build
 
     - run: pytest

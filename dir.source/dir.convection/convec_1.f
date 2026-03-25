@@ -48,7 +48,7 @@
 
         real*8 lat_top
         data lat_top/89.9d0/
-	
+
         re=6.378d6
         year=1995.
         zref=300.
@@ -124,7 +124,7 @@ c            dlonmag=dlonmlt-tu/240.d0-dlonref
      &                     dlonmlt,dlatmag,EE(1),EE(2),psi1,ddp)
           Eest=EE(1)
           Enord=EE(2)
-	
+
           vpest =-Enord/Bmag*10.d0
           vh        = Eest/Bmag*10.d0/dcos(dipangle*deg2rad)
 
@@ -171,7 +171,7 @@ c	print*,'sortie convec_1',tu,dlatgeo,dlongeo,dlatmag,dlonmag,dlonmlt
         real*8 clon,slon,clat,slat,det,y,z,dlat2
         real*8 dlat,dx,dlon,dy,ca,sa,cb,sb
         real*8 rad2deg,deg2rad,pi
-        data rad2deg/57.2957795130823229d0/ 
+        data rad2deg/57.2957795130823229d0/
         data deg2rad/0.174532925199432955d-01/
         data pi/3.14159265358979312d0/
 
@@ -212,12 +212,12 @@ c   lat=lat1
         x=clat*clon
         y=clat*slon
         z=slat
-        
+
         dlat2=dlat*dlat
         det=dsqrt(1.d0+dlat2-z**2)
 
         lat=dacos((dlat*z+det)/(1+dlat2))*rad2deg
-        
+
         lon=datan2(y*det-x*dlon,x*det+y*dlon)*rad2deg
                 lon=mod(lon+360.d0,360.d0)
 

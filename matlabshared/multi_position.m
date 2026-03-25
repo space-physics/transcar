@@ -26,10 +26,10 @@ else
    delta_lat=.3;
    delta_lon=1;
    delta_alt=1;
-   lat_ref=lat_time(1,:); 
-   lon_ref=lon_time(1,:); 
-   alt_ref=z_time(45,:); 
-   
+   lat_ref=lat_time(1,:);
+   lon_ref=lon_time(1,:);
+   alt_ref=z_time(45,:);
+
    for i=1:length(lat_ref)
        j=find(abs([per.lat]-lat_ref(i))< delta_lat & abs([per.lon]-lon_ref(i))<=delta_lon);
        if isempty(j)
@@ -79,12 +79,12 @@ else
    scan(scan_deb)=scan_num;
    last_pos=position_time(scan_deb);
    last_time=time(scan_deb);
-   % Dans ce qui suit, on suppose qu on va du nord vers le sud; 
-   % comme le scan st ordonne en latitude croissantes, le sens "normal de scan est en 
-   % positions decroissantes. Si c'est l'inverse comme pour cp3-e (je crois), alors 
+   % Dans ce qui suit, on suppose qu on va du nord vers le sud;
+   % comme le scan st ordonne en latitude croissantes, le sens "normal de scan est en
+   % positions decroissantes. Si c'est l'inverse comme pour cp3-e (je crois), alors
    % il faut remplacer la ligne ci-dessous "if position_time(i)<=last_pos..." par:
    %                                       "if position_time(i)>=last_pos..."
-   
+
    for i=scan_deb+1:length(time)
       if isnan(position_time(i))==0
          if position_time(i)<=last_pos & time(i)<last_time+0.5

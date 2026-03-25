@@ -10,6 +10,6 @@ function architecture(path)
         write(99) itest
         rewind(99)
         read(99) iarch
-    close(99)	
+    close(99)
     architecture=type(iarch+1)
 end function architecture

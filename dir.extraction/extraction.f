@@ -33,7 +33,7 @@
 	nligne=nx+2
 	longbuf=nligne*ncol
 	longrec=longbuf
-	
+
 	open(10,file=filein,form='unformatted',access='direct',
      &		status='unknown',recl=longrec)
 
@@ -53,7 +53,7 @@ c	read(*,*) nrec
 200	format('La date trouvee est le : ',i2,'/',i2,'/',
      &  i2,' … ',i2,'h',i2,'m',i2,'s')
 
-997	read(10,rec=nrec,err=999)(buffer(i),i=1,longbuf)	
+997	read(10,rec=nrec,err=999)(buffer(i),i=1,longbuf)
 	goto 998
 999	backspace(10)
 	inquire(10,nextrec=nrec)

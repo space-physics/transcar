@@ -27,13 +27,13 @@ for k=1:length(timestr)
     is=1; curr=timestr{k};
     while curr(is)>='0' && curr(is)<='9'
       is=is+1;
-    end 
+    end
     timing(k)=str2num(curr(1:is-1))/3600;        %index 1: dt, 2: starttime, 3:duration, 4:precstart, 5:precend
 end
 %}
 
 %% upgrade (by MHirsch)
-NlinesDATCAR = 29; 
+NlinesDATCAR = 29;
 timestr = textscan(fid,'%s %s',NlinesDATCAR,'MultipleDelimsAsOne',true,'Delimiter','\t');
 fclose(fid);
 timing = str2num(strjoin(timestr{1}([4;6;7;28;29])'))./3600; %#ok<ST2NM>
@@ -51,7 +51,7 @@ end
 duree=timing(5)-timing(4); %how long precipitation lasted [hours]
 mintime=timing(4)-.5*duree; %start at precStart - 0.5*duration
 maxtime=timing(5)+.5*duree; %stop at precEnd + 0.5*duration
-endtime=timing(2)+timing(3); %UT sim start + sim duration 
+endtime=timing(2)+timing(3); %UT sim start + sim duration
 
 % TODO: REMOVE THIS LATER.  THIS IS A KLUDGE TO DEAL WITH THE TRANSCAR
 % PRECIPITATION NOT CEASING ISSUE.
@@ -102,9 +102,9 @@ end
 % 1					precext, precipation energy extrapolation (see table below, INTEGER)
 % 3600.					precipitation start time (seconds)
 % 4800.					precipitation end time (seconds)
-% 
-% 
-% 
+%
+%
+%
 % jpreci = 0 if sun only
 %        = 1 if electron precipitation only
 %        = 2 if sun + electron precipitation
@@ -112,9 +112,9 @@ end
 %        = 4 if proton and electron precipitation
 %        = 5 if sun + proton precipitation
 %        = 6 if proton, electron precipitation + sun
-% 
+%
 % precint = 0 log-linear interpolation
 % 	= 1 sample and hold interpolation
-% 
+%
 % precext = 0 log-linear extrapolation
 % 	= 1 truncation of distribution past energy range of input file

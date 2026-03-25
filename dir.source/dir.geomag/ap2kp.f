@@ -12,6 +12,6 @@
 	i=max(i-1,1)
 	dkp=(ap-xap(i))/(xap(i+1)-xap(i))
 	ap2kp=(i-1+dkp)/3.
-	
+
 	return
 	end

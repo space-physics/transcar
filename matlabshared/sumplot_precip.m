@@ -13,9 +13,9 @@ excFN = [datadir,'/',excfile];
 display(['sumplot_precip: loading ',excFN])
 load(excFN,'timeop','e*','fluxdown*')
 %% DEFINE Time Of Interest
-if plotAllSimTime 
+if plotAllSimTime
     time = timeop;
-    tInds = 1:length(time); %take all values 
+    tInds = 1:length(time); %take all values
 else
     tInds=find(timeop>=onsettime & timeop<maxtime);
     time=timeop(tInds);

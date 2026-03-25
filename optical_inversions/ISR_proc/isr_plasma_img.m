@@ -8,7 +8,7 @@ load(['./datafiles/11Feb2002/',datafile]);
 %CREATE A DIRECTORY FOR OUTPUT PLOTS
 datadir=['./plots/',datelab];
 system(['mkdir ',datadir]);
-    
+
 
 
 %CORRECT TIME VARIABLE FOR PLOTTING PURPOSES

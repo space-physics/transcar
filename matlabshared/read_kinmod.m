@@ -25,25 +25,25 @@ while(~feof(fid))
         fprintf('KINREAD.M --> Reading record #:  %d\n',k);
     end
 
-    head=fscanf(fid,'%e',5);                                                                                               %read in header for this time    
+    head=fscanf(fid,'%e',5);                                                                                               %read in header for this time
     if(feof(fid))
         break;
     end
     day=[day,head(1)]; sec=[sec,head(2)]; dipangle=[dipangle,90-head(3)]; nalt=[nalt,head(4)]; nen=[nen,head(5)];             %store header info in appropriate vars.
-    
+
     data=fscanf(fid,'%e',[11 nalt(k)])';           %read in main data portion
 
     %organize into appropriately name arrays
-    zop=[zop,data(:,1)]; 
-    no1d=[no1d,data(:,2)]; 
-    no1s=[no1s,data(:,3)]; 
-    noii2p=[noii2p,data(:,4)]; 
-    nn2a3=[nn2a3,data(:,5)]; 
-    po3p3p=[po3p3p,data(:,6)]; 
+    zop=[zop,data(:,1)];
+    no1d=[no1d,data(:,2)];
+    no1s=[no1s,data(:,3)];
+    noii2p=[noii2p,data(:,4)];
+    nn2a3=[nn2a3,data(:,5)];
+    po3p3p=[po3p3p,data(:,6)];
     po3p5p=[po3p5p,data(:,7)];
-    p1ng=[p1ng,data(:,8)]; 
+    p1ng=[p1ng,data(:,8)];
     pmein=[pmein,data(:,9)];
-    p2pg=[p2pg,data(:,10)]; 
+    p2pg=[p2pg,data(:,10)];
     p1pg=[p1pg,data(:,11)];
 
     %read in precipitation information

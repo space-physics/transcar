@@ -16,12 +16,12 @@ c=====================================================================
      %,b4(par1)
      %,b5(par1),b6(par1),xu(par2),xv(par2),
      %PHIi(par1),ui(par1)
-     
+
      %,dxdt(par2),dydt(par2),Tic(par1)
      %,Rnic(par1),hh(par1),
      %aire1(par1),RNNN(par1),TV(par1),ppi(par1)
      %,dppia(par1),dppib(par1),
-     %hh1(par1),hh2(par1)     
+     %hh1(par1),hh2(par1)
      %,betaai(par1),Rni1(par1),Ti1(par1)
      %,u4(par1),Rni11(par1),Ti11(par1),
      %utemp(dpar1),FEtemp(dpar1),Etemp(dpar1),alitem(dpar1)
@@ -32,7 +32,7 @@ c=====================================================================
       real*4 TV1(par1),RNNN1(par1)
       real*4 Nmax,mass,u0(par1),T0(par1),rN0(par1)
       common/sol/ener2(par1),ane2(par1)
-      dimension ane3(par1),ener3(par1)   
+      dimension ane3(par1),ener3(par1)
       dimension u(par1)
       dimension E(par1),F(par1),FE(par1)
       dimension result(6,168)
@@ -83,7 +83,7 @@ c=====================================================================
 cHAO97
 
 	common/fluxioni/FEion(dpar11),Fion(dpar11)
-	
+
 cHAO97
 
 cesr
@@ -94,7 +94,7 @@ cesr
 
 c     ========================================
 c
-c     ENTREE DE LA TRIANGULATION : LECTURE SUR LE FICHIER 01 
+c     ENTREE DE LA TRIANGULATION : LECTURE SUR LE FICHIER 01
 c             ndl  : nombre de degres de libertes
 c             nt   : nombre de triangles
 c             n1   : nombre de subdivisions suivant la longitude
@@ -110,10 +110,10 @@ c             Amax : valeur maximale de la colatitude
 c             Amin : valeur minimale de la colatitude
 c             m1   : triangulation du domaine
 c             m2   : pointeur des points frontieres
-c            
+c
 
 
-c     ========================================      
+c     ========================================
 c     ndl1=2481
 c     n1 DESIGNE LE NOMBRE DE SUBDIVISIONS DE L AXE DES PHI:[0,2*pi]
 c     n2 DESIGNE LE NOMBRE DE SUBDIVISIONS DE L AXE DES
@@ -124,7 +124,7 @@ c      n1=80
 c      n2=30
 
 C ************************************************************ DEBUT
-	
+
 	if (ie.eq.0)						then
 
 C ************************************************* D'INITIALISATION
@@ -161,14 +161,14 @@ cesr	phiopt=15.
 CC	ON COMMENCE LES CALCULS
 
 	rpmax=rtmax*rnmax
-	
+
 	heuref=3600.
 
       dn1=80
       dn2=24
       dnt=2*dn1*dn2
       dndl=dn1*(dn2+1)
-      
+
       pi=4.*atan(1.)
       Bfm=Bfm*2.*pi/24.
       Bfs=Bfs*2.*pi/24.
@@ -188,14 +188,14 @@ c!!!      print 1000,n1,n2,ndl,nt,nf
      &        'nombre de degres de liberte',i4,/,
      &        'nombre de triangles:',i4,/,
      &        'nombre de noeuds sur la frontiere:',i3)
-     
+
 c!!!      write(*,*) ('ATTENTION: COS(X)**(1/2)')
-      
+
 c     ========================================
 c     ========================================
       ioptec=0
       if(ioptec.lt.1) goto 502
-     
+
       write(4,1001) ((m1(i,j),j=1,3),i=1,nt)
 1001   format ('TRIANGULATION DU DISQUE',/,5(3i5,1x))
       write(4,1002) (m2(i),i=1,ndl)
@@ -208,7 +208,7 @@ c     ========================================
 	u0(i)=0.
 	T0(i)=0.
 	rN0(i)=0.
-9876	continue	
+9876	continue
 502     r=6.37e+06
 
       b0=3.08e-5
@@ -237,7 +237,7 @@ c     triangulation uniforme
 c     on impose une triangulation uniforme et donc on a raison=0
 c     tout le temps, ce qui rend inutile la lecture de raison.
       h21=(Aint1-Amin)/n21
-      
+
 c 	On effectue une triangulation reguliere en L.
 
 c 	Calcul du L minimal.
@@ -247,17 +247,17 @@ c 	Calcul du L minimal.
 c 	Calcul du pas en L.
 
       rlpas=(-almax+almin)/n21
-      
+
 c 	Calcul du pas en sin(TETA)**2. pour la frontiere polaire.
 
       hpas1=almin-rlpas
       hpas1=-(1./almin)+(1./hpas1)
-      
+
 c 	Calcul du pas en sin(TETA)**2. pour la frontiere equatoriale.
 
 	hpas2=almax+rlpas
 	hpas2=(1./almax)-(1./hpas2)
-	
+
       h22=0.
       hA=h21
       do 561 j=1,n2+1
@@ -327,7 +327,7 @@ c!!!	open(4,file='tabMT.lis',status='UNKNOWN')
 c!!!    write(4,*)(tabMT(i,1),i=1,dndl)
 c!!!	write(4,*)(tabMT(i,2),tabMT(i,3),tabMT(i,4),i=1,dndl)
 c!!!	close(4)
-      
+
 c     ========================================
 c     ENTREE DES DIVERSES CONSTANTES PHYSIQUES
 c      r:RAYON TERRESTRE en metres
@@ -341,7 +341,7 @@ c
 c     ON CALCULERA LES CONSTANTES:
 c      em=sqrt(8*e/pi*mass)
 c      ab0=a*a*a*a*a*b0*b0*b0
-c     ========================================      
+c     ========================================
        pi=4.*atan(1.)
        r=6.37e+06
        b0=3.08e-05
@@ -362,7 +362,7 @@ cHAO97	Ici le coefficient est mis a 0.4
 
 	em=em*1.
 
-cHA097	
+cHA097
 
        ab0=r*r*r*r*r*b0*b0*b0
 
@@ -381,20 +381,20 @@ c
 
       nemax=10
       iint=0
-      
+
 c 	Le parametre iinti effectue les meme choses que iint mais
 c 	pour les ions.
 
-c 	Le parametre ibrupt permet d'avoir un bord raide ou doux 
+c 	Le parametre ibrupt permet d'avoir un bord raide ou doux
 c 	(sinusoidal) en azimut:
 c 				quand ibrupt=0, pas de bord raide
 c 				quand ibrupt=1, bord raide
-	
+
       metod=4
 
 c     ========================================
 c     INITIALISATION EN TEMPS
-c     ========================================      
+c     ========================================
 c
 c             DONNEES DE L ENERGIE ET DU NOMBRE DE PARTICULES AU
 c             TEMPS t=0
@@ -403,7 +403,7 @@ c           ET DE LA PARTIE DU POTENTIEL INDEPENDANTE DU TEMPS: dans
 c           uo
 c
       heure=0.
-      
+
 c 	Initialisation des electrons
 
       do 1 i=1,ndl
@@ -428,8 +428,8 @@ CCC		ane1(i)=0.
 CCC			endif
  1     continue
 
-c 	Initialisation des ions 
-	
+c 	Initialisation des ions
+
 	do 6661 i=1,ndl
 	Ti(i)=0.
 	Rni(i)=0.
@@ -451,7 +451,7 @@ cHAO97
 
 cHAO97	call limitIII(Ti(i),i,B(i),ibrupt,iinti,n1,Bfm,Bfs,heure,
 cHAO97     %delta2,heuref,1.)
-     
+
 cHAO97    	call limitIII(Rni(i),i,B(i),ibrupt,iinti,n1,Bfm,Bfs,heure,
 cHAO97     %delta2,heuref,1.)
 
@@ -468,7 +468,7 @@ cHAO97
       	Ti(i)=0.
 
 			endif
-      
+
 6662	continue
 
 	do 6652 i=1,(1*dn1)
@@ -477,7 +477,7 @@ cHAO97
 
 cHAO97	call limitIII(Titemp(i),i,Btemp(i),ibrupt,iinti,dn1,Bfm,Bfs,
 cHAO97     %heure,delta2,heuref,1.)
-     
+
 cHAO97  call limitIII(Rnitemp(i),i,Btemp(i),ibrupt,iinti,dn1,Bfm,Bfs,
 cHAO97     %heure,delta2,heuref,1.)
 
@@ -494,7 +494,7 @@ cHAO97
       	Titemp(i)=0.
 
 			endif
-     	     	
+
 6652	continue
 
 
@@ -520,13 +520,13 @@ cHAO97
 	read(96,*)(Rni(i),i=1,ndl)
 
 	read(97,*)(Ti(i),i=1,ndl)
-	
+
 	read(98,*)(ener1(i),i=1,ndl)
-		
+
 	read(99,*)(ane1(i),i=1,ndl)
 
  6789	continue
-	
+
 	close(96)
 	close(97)
 	close(98)
@@ -539,7 +539,7 @@ cHAO97
 	close(4)
 
 c!	goto 2993
-	
+
 	do 2992 i=1,ndl
 
 	ane1(i)=ane1(i)/Nmax
@@ -577,7 +577,7 @@ c!!!	write(*,*)'J''interpole le potentiel'
 		utemp((i-1)*80+j)=utem2((icomp-1)*80+j)
  9010		continue
  9000	continue
-			
+
 	call interpolation(Atemp,Btemp,Ttemp,dndl,dnt,dn1,
      %dn2,m1temp,A,B,T,ndl,nt,n1,n2,m1,
      %utemp,utemp,utemp,utemp,utemp,u,u,u,u,u,tabTM)
@@ -585,7 +585,7 @@ c!!!	write(*,*)'J''interpole le potentiel'
 c!!!	write(*,*)'interpolation du potentiel finie'
 
 c	*** ON AVANCE ***
-     
+
        nnp=0
 c     if(nnp.eq.0) write (02) (u(i),i=1,ndl)
        do 2 i=1,ndl
@@ -606,7 +606,7 @@ c     if(nnp.eq.0) write (02) (u(i),i=1,ndl)
 	nemax=10
 	iint=0
 	metod=4
-	
+
 csss	write(*,*)'deltat ',deltat
 
 csss	if (Rni1(i).lt.(1.e-09)) goto 9999
@@ -643,12 +643,12 @@ c           (ivol1)
 c     ========================================
 c     ========================================
 c     pour t=temp=0 ,on a entre les valeurs initiales de
-c         ane dans ane1:NOMBRE D ELECTRONS 
+c         ane dans ane1:NOMBRE D ELECTRONS
 c         ener dans ener1:ENERGIE DES PARTICULES
 c     ========================================
 c     ========================================
 c     PREMIERE ETAPE EVOLUTIVE ENTRE T ET T+deltat
-c     ========================================      
+c     ========================================
       do 8 i=1,ndl
       ener2(i)=ener1(i)
 8     ane2(i)=ane1(i)
@@ -668,14 +668,14 @@ c         ntria:le numero des triangles traverses
 c         nemax:nombre maximal de triangles traverses
 c     ========================================
 
-      heure=0.     
+      heure=0.
       tmin=heure
       tmax=heure+deltat
       eps=1.e-09
-       
+
 c     print 106
 c     goto 300
-	
+
 c!!!	write(*,*)'Je suis en CARACT'
 
 c *********************************************************
@@ -706,7 +706,7 @@ c	***	On moyenne uo sur les triangles 	***
 	aire1(i)=0.
  8100 	continue
 
- 	do 8020 i=1,nt 
+ 	do 8020 i=1,nt
 	x1=B(m1(1,i))
 	x2=B(m1(2,i))
 	x3=B(m1(3,i))
@@ -727,7 +727,7 @@ c	***	On moyenne uo sur les triangles 	***
  8020	continue
 
 	call intmas(uo,hh,ndl,nt,m1,A,B)
- 
+
 	do 8040 noeud=n1+1,ndl
 	uo(noeud)=6*hh(noeud)/aire1(noeud)
  8040	continue
@@ -748,7 +748,7 @@ c!!!	write(*,*)'Je suis en IVOL1'
 	do 1600 i=n1+1,ndl
 	ane1(i)=ane3(i)
 	ener1(i)=ener3(i)
-	if (abs(ane1(i)).lt.((1.e-05)*(ane1(1)))) then 
+	if (abs(ane1(i)).lt.((1.e-05)*(ane1(1)))) then
 						ane1(i)=0.
 						ener1(i)=0.
 				 	     	endif
@@ -756,47 +756,47 @@ c!!!	write(*,*)'Je suis en IVOL1'
 
 					endif
 
-c!!!  	write(*,*)'COUCOU JE SUIS EN CARACTI'   
+c!!!  	write(*,*)'COUCOU JE SUIS EN CARACTI'
 
 
 ccccc	open(4,file='u.lis',status='UNKNOWN')
 ccccc	write(4,*)(u3(i),i=1,ndl)
 ccccc	close(4)
-	
+
 ccccc	open(4,file='Rni.lis',status='UNKNOWN')
 ccccc	write(4,*)(Rni(i),i=1,ndl)
 ccccc	close(4)
-	
+
 ccccc	open(4,file='Ti.lis',status='UNKNOWN')
 ccccc	write(4,*)(Ti(i),i=1,ndl)
 ccccc	close(4)
-	
+
 	ilect=0
-	
+
 	 call caract(ilect,tmin,tmax,itria,isort,ui,eps,xn,
      % yn,temp,ntria,nemax
      %,1,ndl,nt,B,A,m1,m2,dxdt,dydt,Rnic,Tic,Rni,Ti,
      %T,metod,iint,uo,b1,result,contro)
-     
+
 cccc     open(4,file='Ntrans.lis',status='UNKNOWN')
 cccc	write(4,*)(Rnic(i),i=1,ndl)
 cccc	close(4)
-	
+
 cccc	open(4,file='Ttrans.lis',status='UNKNOWN')
 cccc	write(4,*)(Tic(i),i=1,ndl)
 cccc	close(4)
 
-		
+
 cccc	open(4,file='Rni1.lis',status='UNKNOWN')
 cccc	write(4,*)(Rni(i),i=1,ndl)
 cccc	close(4)
-	
+
 cccc	open(4,file='Ti1.lis',status='UNKNOWN')
 cccc	write(4,*)(Ti(i),i=1,ndl)
 cccc	close(4)
-	
+
 c!!!	write(*,*)'Je vais en Ivol5'
-     			
+
         call ivol5(Tic,Rnic,nt,Ti,Rni,ndl,hh,hh1,hh2,
      %aire1,RNNN,TV,Ti1,Rni1,A,B,T,m1,m2,iinti,ibrupt,heure,
      %Bfm,Bfs,delta2,heuref,rtmax,rnmax,b5,b6,znmax,
@@ -805,7 +805,7 @@ c!!!	write(*,*)'Je vais en Ivol5'
 cccc	open(4,file='Rnic1.lis',status='UNKNOWN')
 cccc	write(4,*)(Rnic(i),i=1,ndl)
 cccc	close(4)
-	
+
 cccc	open(4,file='Tic1.lis',status='UNKNOWN')
 cccc	write(4,*)(Tic(i),i=1,ndl)
 cccc	close(4)
@@ -817,9 +817,9 @@ cccc	close(4)
 
 cccc	open(4,file='Ti2.lis',status='UNKNOWN')
 cccc	write(4,*)(Ti(i),i=1,ndl)
-cccc	close(4)	
+cccc	close(4)
 
-       
+
 c    	 open(4,file='etat.lis',status='UNKNOWN')
 c    	 write(4,*)('noeud :',i,Ti(i),Rni(i),PHIi(i),i=1,ndl)
 c     	close(4)
@@ -829,7 +829,7 @@ c      CALCUL DU FLUX F ET DE L'ENERGIE DES ELECTRONS PRECIPITES
 c
 c        FE : FLUX D'ENERGIE PRECIPITES
 c     ========================================
-    
+
       do 4 i=1,ndl
       teme=emax*(ener1(i))*(A(i)**(8./3.))/(Amin**(8./3.))
       E(i)=teme
@@ -853,14 +853,14 @@ c***	CALCUL DE LA PRESSION IONIQUE ***
 c***	CALCUL DES GRADIENTS DE PRESSION IONIQUE ***
 
 	call GRADP(aire1,B,A,PHIi,nt,ndl,m1,m2,dppib,dppia,betaai)
-	
+
 c***	CALCUL DES COURANTS ALIGNES ***
 
 	do 2994 i=1,ndl
 
 	ali(i)=(betaai(i)*1.6e-16)*2.*
      %(sqrt(4.-3.*A(i)))/(b0*((A(i))**(5.)))
-					
+
  2994	continue
 
 
@@ -916,10 +916,10 @@ cHAO97     %tabMT)
 
 c	On calcule les flux ioniques
 
-	
+
 	do 44 i=1,49
 		do 444 j=1,80
-	
+
 	kk=(i-1)*80+j
 	FEion(kk)=0.
 	Fion(kk)=0.
@@ -978,8 +978,8 @@ cHAO97 aucun sens.
 
 		alite2((icomp-1)*80+j)=0.
 
-					else	
-			
+					else
+
 		alite2((icomp-1)*80+j)=alitem((i-1)*80+j)
 
 					endif
@@ -1013,15 +1013,15 @@ cc		if (FEtem2((i-1)*80+j).gt.(1.e-06))	then
 		dAimax=(dAimax**(2.))
 		FEimax=FEtem2((imax-1)*80+j)
 cc							endif
-		
+
  6010		continue
 
 		do 6020	i=2,(imax-1)
 
 		dAima=(90.-dTtem2(i))*pi/180.
 		dAima=(dAima**(2.))
-		FEtem2((i-1)*80+j)=FEimax*((dAima/dAimax)**(8.))		
-		
+		FEtem2((i-1)*80+j)=FEimax*((dAima/dAimax)**(8.))
+
  6020		continue
 
 		FEtem2(1)=FEtem2(80+j)+FEtem2(1)
@@ -1038,15 +1038,15 @@ cc		if (Etem2((i-1)*80+j).gt.(1.e-06))	then
 		dAimax=(dAimax**(2.))
 		Eimax=Etem2((imax-1)*80+j)
 cc							endif
-		
+
  6030		continue
 
 		do 6040	i=2,(imax-1)
 
 		dAima=(90.-dTtem2(i))*pi/180.
 		dAima=(dAima**(2.))
-		Etem2((i-1)*80+j)=Eimax*((dAima/dAimax)**(8./3.))		
-		
+		Etem2((i-1)*80+j)=Eimax*((dAima/dAimax)**(8./3.))
+
  6040		continue
 
 		Etem2(1)=Etem2(80+j)+Etem2(1)
@@ -1059,7 +1059,7 @@ cc							endif
  6050	continue
 
 	FEtem2(1)=FEtem2(2)
-	Etem2(1)=Etem2(2)		
+	Etem2(1)=Etem2(2)
 
 c!!!	write(*,*)'INTERPOLATION FINIE'
 
@@ -1179,11 +1179,11 @@ c ===================================================================
 
 	subroutine limitIII(Ti,i,B,ibrupt,iinti,nn1,Bfm,Bfs,heure,
      %delta2,heuref,rnorm)
-     
+
      	real*4    Ti,B
 	integer*4 ibrupt,iinti,nn1,i
 	real*4    Bfm,Bfs,heure,delta2,heuref,rnorm
-	
+
 	Ti=rnorm
 
 	if (iinti.eq.1) 			then
@@ -1215,7 +1215,7 @@ c	write(*,*)'x1... :',x1,x2,x3,'y1...',y1,y2,y3
 	N00=N1-N10*x1-N01*y1
 	return
 	end
-	
+
 
 c ===================================================================
 c ===================================================================
@@ -1256,7 +1256,7 @@ c ===================================================================
       ps3=psi2(m1(3,i))
       ps3=(ps3**2.)/cost3
       aire=(x2-x1)*(y3-y1)-(x3-x1)*(y2-y1)
-      res=res+(ps1+ps2+ps3)*aire/6. 
+      res=res+(ps1+ps2+ps3)*aire/6.
 8      continue
 	relat=diff2/res
 	return
@@ -1269,7 +1269,7 @@ c==================================================================
      %xn,yn,temp,
      %     ntria,nemax,iopt,ndl,nt,coox,cooy,m1,m2,xu,xv,ane3,ener3,
      %     ane1,ener1
-     %     ,T,metod,iint,uo,u1,result,contro)  
+     %     ,T,metod,iint,uo,u1,result,contro)
 c
 c             CALCUL DES CARACTERISTIQUES ENTRE tmin ET tmax;La
 c             vitesse
@@ -1320,13 +1320,13 @@ ccc			endif
       aire=(x2-x1)*(y3-y1)-(x3-x1)*(y2-y1)
       xv(i)=-((ps1-ps2)*(y1-y3)-(ps1-ps3)*(y1-y2))/(aire)
       xu(i)=-((ps1-ps2)*(x1-x3)-(ps1-ps3)*(x1-x2))/(aire)
-      
+
 	if (ilect.eq.0) then
-	
+
 c *** 	REMISE A 1 de L'INDICATEUR DE DENSITE NULLE OU PAS ***
 
 	flag1=1
-	
+
 c	if (i.lt.161) then
 c	write(*,*)'i :',i
 c			endif
@@ -1370,7 +1370,7 @@ c	write(4,*)'T10...',T10,T01,T00,N10,N01,N00
 c	close(4)
 
 			endif
- 
+
  8      continue
 
 
@@ -1379,13 +1379,13 @@ c     BOUCLE SUR LES NOEUDS
 c     ITRIANG:NOMBRE DE TRIANGLES TRAVERSES
 c     ISORTIE:0 SI LE PARCOURS DE I EST SITUE DANS LE DOMAINE
 c            :1 SI I SORT DU DOMAINE
-c     IS:LE NOEUD COURANT ETUDIE      
-c     ========================================      
-	
+c     IS:LE NOEUD COURANT ETUDIE
+c     ========================================
+
 	nmax1=0
 	itria=0
 	depas=0.
-	
+
       do 1 i=1,ndl
       if (itria.gt.nmax1) nmax1=itria
       if (itria.gt.1) depas=depas+1.
@@ -1435,7 +1435,7 @@ c     ========================================
       if(is.le.n1) nsc=5
 c     ========================================
 c     ETUDE DU TRIANGLE TRAVERSE :RECHERCHE DE CE TRIANGLE
-c     ========================================      
+c     ========================================
       x=coox(is)
       y=cooy(is)
       ps=psi(i)
@@ -1458,16 +1458,16 @@ c106   format(1x,'ps1,ps2,ps3',3e12.5)
        s=(ps2-ps)*(ps-ps3)
       if ((abs(ps-ps2).lt.eps).or.(abs(ps-ps3).lt.eps)) goto 789
       if(s.lt.(-eps)) goto 5
- 789	continue      
+ 789	continue
       i2=iv(H)
       i3=iv(j1)
       x2=coox(iv(H))
       y2=cooy(iv(H))
-      x3=coox(iv(j1))      
+      x3=coox(iv(j1))
       y3=cooy(iv(j1))
 c     ========================================
 c     DETERMINATION DES DEUX VOISINS SUR LE TRIANGLE
-c     ========================================      
+c     ========================================
       cb1=ps2-ps1
       cb2=ps1-ps3
       if ((abs(cb1).lt.eps).or.(abs(cb2).lt.eps)) goto 788
@@ -1496,7 +1496,7 @@ c     ============================================
       yc=1/3.*(y1+y2+y3)
 c     nota=0
       call dtcar(xc,yc,x,y,ymax,ymin,n1,n2,h1,h2,not,not2)
-      
+
 c     if (i.eq.639) write(*,*) i,not,not1,not2,nota
 c     if (i.eq.722) write(*,*) i,not,not1,not2,nota
 c     if (i.eq.762) write(*,*) i,not,not1,not2,nota
@@ -1555,27 +1555,27 @@ c!!!      	do 1987 k=1,nemax
 c!!!      write(4,*) ('triangle traverse:'),ntria(k)
 c!!!      write(4,*)('Coordonnees du point d,arrivee sur le
 c!!!     % triangle'),xn(k),yn(k)
-c!!!1987 	continue      
+c!!!1987 	continue
 c!!!      close(4)
 c     open(4,file='debile.lis',status='UNKNOWN')
 c     write(4,*)
 c    % H,iv(H),j1,iv(j1),coox(iv(H)),cooy(iv(H)),coox(iv(j1))
-c    % ,cooy(iv(j1)) 
+c    % ,cooy(iv(j1))
 c     close(4)
 c!!!	STOP
 c!!!      endif
       x=xc
-      y=yc   
+      y=yc
 c     TEST
-c         SAVOIR SI ON ARRIVE SUR UN NOEUD 
+c         SAVOIR SI ON ARRIVE SUR UN NOEUD
 c          SI PS=PS2 =>is=i2
 c          SI PS=PS3 =>is=i3
-c        
-c     ========================================	      
+c
+c     ========================================
        if(abs(ps-ps2).lt.eps) goto 31
       if(abs(ps-ps3).lt.eps) goto 32
       goto 33
-31	continue	    
+31	continue
 c	if (iji.eq.(1)) then
 c      write(*,*)('NOEUD 2')
 c      endif
@@ -1660,7 +1660,7 @@ c      nota=not
 11    continue
       i4=m1(k2,not)
 c     ========================================
-c     recherche du cote sur lequel on arrive 
+c     recherche du cote sur lequel on arrive
 c     ========================================
       ps4=psi(i4)
 	if (ilect.eq.0) ps4=-psi(i4)*1000./(r*r*b0)
@@ -1673,7 +1673,7 @@ c100   format ('erreur',i4,1x,i4,1x,i2)
       stop
 c     ========================================
 c     CALCUL DES 6 COORDONNEES DES SOMMETS DU TRIANGLE
-c     ========================================                
+c     ========================================
 12    continue
       i1=i3
       i3=i4
@@ -1717,7 +1717,7 @@ c     ========================================
       ps1=ps2
       ps2=ps4
       npt=not-(not/(2*n1))*2*n1
-      if(npt.eq.0) goto60   
+      if(npt.eq.0) goto60
       if(npt.eq.(2*n1-1)) goto70
       if(npt.eq.1) goto75
       goto14
@@ -1752,10 +1752,10 @@ c     on s arrete au milieu d un triangle (cause: temps depasse)
 c     =========================================================
       xc=x+(xc-x)*(ttol+dt-tmin)/dt
       yc=y+(yc-y)*(ttol+dt-tmin)/dt
-      itria=itria+1      
+      itria=itria+1
 c!!!      if(itria.gt.nemax) then
 c!!!      print 114,nemax
-	
+
 c!!!      open (4,file='probleme.lis',status='UNKNOWN')
 c!!!      write(4,*) ('noeud de depart:'),i
 c!!!      write(4,*) ('heure :'),tmin,tmax
@@ -1763,7 +1763,7 @@ c!!!      	do 1988 k=1,nemax
 c!!!      write(4,*) ('triangle traverse:'),ntria(k)
 c!!!      write(4,*)('Coordonnees du point d,arrivee sur
 c!!!     % le triangle'),xn(k),yn(k)
-c!!!1988 	continue      
+c!!!1988 	continue
 c!!!      close(4)
 c!!!114   format ('LE NOMBRE D ETAPES EST SUPERIEUR AU MAX:',i4)
 c!!!      STOP
@@ -1783,12 +1783,12 @@ c!!!      endif
      % TRAVERSES:
      %',i2,/,'INDICE DE SORTIE (=1 SI SORTIE DU DOMAINE):',i2)
 111   format (16x,'POUR CHAQUE TRIANGLE:SON No,LES COORDONNEES
-     % DU POINT 
+     % DU POINT
      %D ARRIVEE')
 112   format (4x,'TRIANGLE',4x,':',5x,'XN',5x,':',5x,'YN',5x,
      %':',4x,'TEMP
      %S',3x,':')
-113   format (6x,i4,6x,':',3(e12.5,':'))  
+113   format (6x,i4,6x,':',3(e12.5,':'))
 csss	write(*,*) 'Le nbre max de tri et depas :',nmax1,depas
       return
       end
@@ -1804,7 +1804,7 @@ c     DETERMINATION DU TRIANGLE CONTENANT LE POINT DE COORDONNEES
 c     XM ET YM ;SI CE POINT N'APPARTIEND PAS AU DOMAINE ,ON
 c     DETERMINERA
 c     D'ABORD LE POINT DE LA FRONTIERE SITUE SUR LA DROITE MP
-c     ET L 'INSTANT 
+c     ET L 'INSTANT
 c     DE PASSAGE SUR CETTE FRONTIERE
 c     ========================================
 c	indic=0
@@ -1820,7 +1820,7 @@ c     on a coupe la frontiere en un point ou ym=0
 c     ========================================
       xq=xp-(xm-xp)/(ym-yp)*(yp-ymin)
       ym=ymin
-      xm=xq      
+      xm=xq
       goto3
 2     continue
 c     ========================================
@@ -1862,7 +1862,7 @@ c       if (indic.eq.1)   return
       if(abs(ym-ymin1).lt.eps2) not2=not1-2*n1+1
 c      if (i.eq.(762)) write(*,*) i,l1,l2
       return
-4     continue 
+4     continue
       if (abs(s).lt.eps)then
      	not2=(2*n1)*l2+2*l1+1
      			endif
@@ -1873,9 +1873,9 @@ c       indic=1
       endif
 c       if(not2.eq.nota) goto 18
 c       if (indic.eq.1)    return
-c 18    if (abs(s).lt.eps) then 
+c 18    if (abs(s).lt.eps) then
 c       not2=(2*n1)*l2+2*l1+1
-c                          endif      
+c                          endif
       if(abs(xm-(l1+1)*h1).lt.(eps1)) then
 c      not3=(2*n1)*l2+2*l1+3
 	not2=(2*n1)*l2+2*l1+3
@@ -1914,7 +1914,7 @@ c      =============================================================
       return
       end
 
-      				
+
 c ==================================================================
 c ==================================================================
 
@@ -1979,7 +1979,7 @@ c      nota=0
       cb2=((xn(j)-x1)*(y3-y1)-(yn(j)-y1)*(x3-x1))/(aire)
       cb3=((yn(j)-y1)*(x2-x1)-(xn(j)-x1)*(y2-y1))/(aire)
       cb1=1-cb2-cb3
-c      
+c
 c PRISE EN COMPTE DES CONDITIONS AUX LIMITES
 c
 83    continue
@@ -2000,7 +2000,7 @@ c
 82    continue
        return
       end
-      
+
 
 c===============================================================
 c===============================================================
@@ -2017,7 +2017,7 @@ csss	close(4)
       ainter=cb1*f(m1(1,i))+cb2*f(m1(2,i))+cb3*f(m1(3,i))
       return
       end
-      
+
 c===================================================================
 c===================================================================
 
@@ -2042,19 +2042,19 @@ c===================================================================
       ainte1=s
       return
       end
-      
+
 c=====================================================================
 c=====================================================================
-      
+
       function clndep0(i,A,e1,B,T)
 	real*4 Nmax
       common/donnees/e,q,em,ab0,deltat,r,b0,emax,Amax,Amin,hA,hB,n1,n2
      %,Nmax
       common/triang2/almax,almin,rlpas,hpas1,hpas2
-      
+
       eps=1.e-06
       if(abs(A-Amin).le.hpas1+eps) goto 5
-      if(abs(A-Amax).le.hpas2+eps) goto 6 
+      if(abs(A-Amax).le.hpas2+eps) goto 6
       goto 1
 6     clndep0=0.
       return
@@ -2069,7 +2069,7 @@ c!!!1     print 100,T,i
       clndep0=0.*rnorm
       return
       end
-      
+
 c==================================================================
 c==================================================================
 
@@ -2079,8 +2079,8 @@ c==================================================================
 c     ========================================
 c     ETAPE EVOLUTIVE PASSAGE DE t A t+deltat
 c     EN TENANT COMPTE DES NON LINEARITES
-c     ======================================== 
-	real*4 Nmax     
+c     ========================================
+	real*4 Nmax
       common/donnees/e,q,em,ab0,deltat,r,b0,emax,Amax,Amin,hA,hB,n1,n2
      %,Nmax
       common/triang2/almax,almin,rlpas,hpas1,hpas2
@@ -2105,7 +2105,7 @@ c       1. dans b1   K*(a**4)/sqrt(C+a)*u.Vv/v
 c       2. dans b2   la partie en E**3/2
 c       3. dans b3   q(n)-u.Vq(n)*deltat
 c       4. dans b4   la surface du support de wi
-c     ========================================      
+c     ========================================
       pi=4.*atan(1.)
       do 2 i=1,nt
       u12=u(m1(1,i))-u(m1(2,i))
@@ -2161,18 +2161,18 @@ c     ======================
 12    b3(i)=6*b5(i)/b4(i)
       ane2(i)=6*b6(i)/b4(i)
 13    ener2(i)=zero(b1(i),b2(i),b3(i),i)
-      if (abs(ane2(i)).lt.((1.e-05)*(ane2(1)))) then 
+      if (abs(ane2(i)).lt.((1.e-05)*(ane2(1)))) then
 						ane2(i)=0.
 						ener2(i)=0.
 				 	     	endif
       ane2(i)=ane2(i)/(1+em*sqrt(emax)*((A(i)/Amin)**(4./3.))
      % /(2*ab0)*((r*b0*A(i))
      %    **4)/(b0*sqrt(4.-3.*A(i)))*ifact*deltat*sqrt(ener2(i)))
-      
+
 4     continue
       return
       end
- 
+
 c==================================================================
 c==================================================================
 
@@ -2214,7 +2214,7 @@ c==================================================================
 
       function zero(a,b,c,i)
 c     ========================================
-c     Recherche du zero de la function 
+c     Recherche du zero de la function
 c            f(x)=x+a*x+b*(x**3./2.)-c
 c     Par une methode de newton
 c     ========================================
@@ -2272,7 +2272,7 @@ c!!!102   format ('ERREUR LE COEFFICIENT C EST NEGATIF :',e12.5,i4)
 25     continue
        zero=0
       return
-      end     
+      end
 
 c===================================================================
 c===================================================================
@@ -2296,7 +2296,7 @@ c===================================================================
 	eps=1.e-02
 
 csss	write(*,*)'Je suis en Ivol5'
-	
+
 cccc	REMARQUE FONDAMENTALE: LES VARIABLES SONT NORMALISEES
 
 c 	CALCUL DE QUELQUES CONSTANTES DE NORMALISATION DU PB
@@ -2321,13 +2321,13 @@ cHAO97
 	Femax=Fmax*4./3.
 	C1max=rtmax*4000.*(Rlmax**(8./3.))/(r*r*b0)
 	C2max=5000.*rtmax*(Rlmax**(8./3.))/(3.*r*r*b0)
-	
+
 c 	INITIALISATION DE ZNMAX ET ZTMAX QUI SONT LES VALEURS MAX
 c 	DE Z POUR N ET T.
 
 	znmax=0.
 	ztmax=0.
-	
+
 	iflag2=0
 	do 4000 i=ndl,1,-1
 	if (Rnic(i).gt.(Rni(1)/1000.))	then
@@ -2336,8 +2336,8 @@ c 	DE Z POUR N ET T.
 			iflag2=1
 					endif
 					endif
- 4000	continue 
- 	
+ 4000	continue
+
 	if (icom1.ge.(ndl-n1+1))	then
 		icom1=ndl
 					else
@@ -2352,7 +2352,7 @@ c 	DE Z POUR N ET T.
 	Tic(i)=Ti(i)
 	Rnic(i)=Rni(i)
  4010 	continue
- 
+
 	do 4020 i=icom1,ndl
 
 	if (Rnic(i).lt.((1.e-03)*Rni(1))) then
@@ -2360,18 +2360,18 @@ c 	DE Z POUR N ET T.
 	Tic(i)=0.
 					  endif
  4020	continue
-	
-c ***	On calcule le T chapeau moyen et le N chapeau moyen comme 
+
+c ***	On calcule le T chapeau moyen et le N chapeau moyen comme
 c 	Laure pour les electrons ***
 
 	call intmas(Rnic,b5,ndl,nt,m1,A,B)
 	call intmas(Tic,b6,ndl,nt,m1,A,B)
-  	
+
 	do 6663 i=1,ndl
 	Ti1(i)=Ti(i)
 	Rni1(i)=Rni(i)
  6663	continue
-  
+
 c ***	Initialisation des parametres ***
 
 	do 100 i=1,ndl
@@ -2381,7 +2381,7 @@ c ***	Initialisation des parametres ***
 	aire1(i)=0.
  100 	continue
 
- 	do 2 i=1,nt 
+ 	do 2 i=1,nt
 	T1=Ti(m1(1,i))
 	T2=Ti(m1(2,i))
 	T3=Ti(m1(3,i))
@@ -2406,20 +2406,20 @@ c ***	Initialisation des parametres ***
 	z=N10*T01-N01*T10
 	z1=T10
 	z2=N10
-	
+
 c ***	On fait une boucle pour calculer une moyenne sur le noeud
 c 	a partir des triangles environnant ***
 
 	do 3 j=1,3
 	noeud=m1(j,i)
-		
+
 	hh(noeud)=hh(noeud)+z*delta
 	hh1(noeud)=hh1(noeud)+z1*delta
 	hh2(noeud)=hh2(noeud)+z2*delta
 	aire1(noeud)=aire1(noeud)+delta
  3	continue
  2	continue
- 
+
 c ***	On fait la moyenne sur h **
 
 	do 4 noeud=1,ndl
@@ -2443,7 +2443,7 @@ c%%%
 		iflag2=1
 					endif
  4040	continue
-		
+
 		if (abs(Rnic(i)).lt.((1.e-06)*Rni(1))) 	then
 		Rnic(i)=0.
 		Tic(i)=0.
@@ -2455,7 +2455,7 @@ c%%%
 		Tic(i)=6.*b6(i)/aire1(i)
 						endif
 
- 
+
  4030	continue
 
 	if ((ie-(ie/ifact)*ifact).eq.0)	goto 1993
@@ -2468,15 +2468,15 @@ c%%%
 						Rni(i)=0.
 							endif
  1992	continue
- 
+
 	goto 1994
 
  1993	continue
-  
+
 c ***	On resoud maintenant les equations ***
 
 	do 5 i=n1+1,ndl
-	
+
 c ***	Arret quand probleme ***
 
 	if ((Ti(i)).lt.(0.))	then
@@ -2486,7 +2486,7 @@ c ***	Arret quand probleme ***
 		close(4)
 		STOP
 				endif
-				
+
 	if ((Rni(i)).lt.(0.))	then
 		open(4,file='Neg.lis',access='sequential',position='append')
 		write(*,*)'dens :',Rni(i)
@@ -2494,7 +2494,7 @@ c ***	Arret quand probleme ***
 		close(4)
 		STOP
 				endif
-	
+
 c ***	Calcul de N(n+1) ***
 
 c *** 	Calcul de f(T(n)) ***
@@ -2504,7 +2504,7 @@ c***	On calcule ici les flux de precipitation
 	z=-Fmax
 	z=z*sqrt(Ti(i))
 	z=z*(A(i))**(16./3.)
-	
+
 
 c ***	On tient compte ici des flux orthogonaux ***
 
@@ -2522,10 +2522,10 @@ c	w1=0.
 	z1=0.
 	z2=0.
 					   endif
-	
+
 	if ((abs(z)).gt.znmax) znmax=abs(z)
-					   
-	
+
+
 c ***	Calcul de N chapeau ***
 
 c	NNc=6.*Rnic(i)/aire1(i)
@@ -2539,21 +2539,21 @@ c ***	bien calcules la ou il faut ***
 c ***	Ceci est la formule initiale du calcul de RNNN(i) dite implicite
 
 c	RNNN(i)=NNc/(1-ifact*deltat*z)
-	
+
 c ***	Ceci est la formule testee du calcul de RNNN(i) dite explicite
 
 	RNNN(i)=Rni(i)*z*ifact*deltat + NNc
-					   				
+
 c ***	Calcul de T*V**(2/3)(n+1) ***
 
 c ***	Calcul de g(T(n)) ***
-	
+
 	if (Rni(i).lt.((1.e-06)*Rni(1))) 		then
 		z=0.
 		z1=0.
 		z2=0.
 							else
-							
+
 c ***	On calcule les flux de precipitation
 
 		z=-(A(i))**(16./3.)
@@ -2561,7 +2561,7 @@ c ***	On calcule les flux de precipitation
 		z=z*Rni(i)
 		z=z/4.
 		z=z*Femax
-	
+
 c ***	On tient compte ici des flux orthogonaux ***
 
 		w1=-hh(i)
@@ -2581,12 +2581,12 @@ c		w2=0.
 		z2=z/Rni(i)
 		z=z+w1+w2
 		z=z/Rni(i)
-							endif		
+							endif
 c ***	Calcul de kTV*2/3 chapeau ***
 
 c	TVc=6.*Tic(i)/aire1(i)
 	TVc=Tic(i)
-	
+
 c ***	Calcul de kTV*2/3 a l'instant t(n+1) ***
 c ***	On fait de meme attention a l'endroit ou il faut calculer ***
 c ***	gradients ***
@@ -2594,7 +2594,7 @@ c ***	gradients ***
 c ***	Ceci est la formule initiale du calcul de TV(i) dite implicite
 
 c	TV(i)=TVc/(1-ifact*deltat*z)
-	
+
 c ***	Ceci est la formule testee du calcul de TV(i) dite explicite
 
 	TV(i)=Ti(i)*z*ifact*deltat + TVc
@@ -2605,22 +2605,22 @@ c ***	On coupe tout a 1.e-03 de Nmax ***
 							TV(i)=0.
 							RNNN(i)=0.
 							endif
-	
-	Rni1(i)=RNNN(i)	
+
+	Rni1(i)=RNNN(i)
 	Ti1(i)=TV(i)
  300	continue
- 
+
 c ***	Prise en compte des conditions aux limites
 
  5	continue
- 
+
 	do 8 i=1,ndl
 	Ti(i)=Ti1(i)
 	Rni(i)=Rni1(i)
  8	enddo
 
  1994	continue
-  	
+
  	return
 	end
 
@@ -2628,11 +2628,11 @@ c===================================================================
 c===================================================================
 
 	subroutine GRADP(aire1,B,A,pp,nt,ndl,m1,m2,dbeta,dalpha,betaa)
-	
+
 c***	CETTE SUBROUTINE CALCULE LES GRADIENTS DE PRESSION DES ION
 c       OU DES
 c 	ELECTRONS EN CHAQUE NOEUD. ELLE CALCULE LES GRADIENTS P/R A
-c       r=L*a 
+c       r=L*a
 c 	ET beta ***
 
 	real*4 Nmax
@@ -2640,7 +2640,7 @@ c 	ET beta ***
 	common/donnees/el,q,em,ab0,deltat,r,b0,emax,Amax,Amin,hA,hB,
      %n1,n2,Nmax
 	common/triang2/almax,almin,rlpas,hpas1,hpas2
-	
+
 	dimension aire1(1),B(1),A(1),pp(1),m2(1),m1(3,nt),
      %dbeta(1),dalpha(1)
 	dimension betaa(1)
@@ -2717,7 +2717,7 @@ c===================================================================
 		y1=Atemp(not1)
 		y2=Atemp(not2)
 		y3=Atemp(not3)
-		
+
 		irest=j-(j/2)*2
 
 		if (irest.eq.1)	then
@@ -2730,11 +2730,11 @@ c  *****	Triangle inferieur ***
 		if (jrest.eq.(2*ddn1-1))	then
 		x2=2.*pi
 						else
-		x2=Btemp(not2)	
+		x2=Btemp(not2)
 						endif
 
 		x3=Btemp(not3)
-		
+
 		ymin=y1
 		ymax=y3
 		xmin=x1
@@ -2752,11 +2752,11 @@ c  *****	Triangle superieur ***
 		x2=2.*pi
 						else
 		x1=Btemp(not1)
-		x2=Btemp(not2)	
+		x2=Btemp(not2)
 						endif
 
 		x3=Btemp(not3)
-		
+
 		ymin=y1
 		ymax=y3
 		xmin=x3
@@ -2864,7 +2864,7 @@ c===================================================================
 	if (abs(u4temp(i)).ge.rnmax4)	rnmax4=abs(u4temp(i))
 
  1	continue
-	
+
 	do 2 i=1,ddndl
 
 	if (abs(utemp(i)).le.(rnmax/1000.))	utemp(i)=0.
@@ -2883,7 +2883,7 @@ c===================================================================
  10	continue
 
 	do 1510	i=1,nndl
-	
+
 		j=tabTM(i,1)
 		not1=m1temp(1,j)
 		not2=m1temp(2,j)
@@ -2892,10 +2892,10 @@ c===================================================================
 		cb1=tabTM(i,2)
 		cb2=tabTM(i,3)
 		cb3=tabTM(i,4)
-			
+
 		u(i)=cb1*utemp(not1)
 		u(i)=u(i)+cb2*utemp(not2)
-		u(i)=u(i)+cb3*utemp(not3)	
+		u(i)=u(i)+cb3*utemp(not3)
 
 		u1(i)=cb1*u1temp(not1)
 		u1(i)=u1(i)+cb2*u1temp(not2)
@@ -2903,7 +2903,7 @@ c===================================================================
 
 		u2(i)=cb1*u2temp(not1)
 		u2(i)=u2(i)+cb2*u2temp(not2)
-		u2(i)=u2(i)+cb3*u2temp(not3)	
+		u2(i)=u2(i)+cb3*u2temp(not3)
 
 		u3(i)=cb1*u3temp(not1)
 		u3(i)=u3(i)+cb2*u3temp(not2)
@@ -2948,7 +2948,7 @@ c!	de Fourrier pour la ligne i a l'ordre k.
 	par55=n1+1
 
 	do 5 kk=iordi,iordf
-	
+
 	if (kk.eq.0) 	then
  	pas=dpi/(par33*10.)
 			else
@@ -2983,12 +2983,12 @@ c!	de Fourrier pour la ligne i a l'ordre k.
 		abs11=abs1+pas
 
 		do 350	jj=1,par33
-		
+
 		eps=1.e-09
 		rinf=(jj-1)*dpi/par33-eps
 		rsup=rinf+dpi/par33+eps
 
-		if ((abs1.ge.rinf).and.(abs1.le.rsup))	then		
+		if ((abs1.ge.rinf).and.(abs1.le.rsup))	then
 		icompt=jj
 							endif
 
@@ -3027,9 +3027,9 @@ ccc				endif
 				endif
 
 c!	write(*,*)kk,i,rafou(i,kk),iafou(i,kk)
-				
+
  200     continue
-       	
+
  5	continue
 
 	do 6900 i=1,par1
@@ -3039,7 +3039,7 @@ c!	write(*,*)kk,i,rafou(i,kk),iafou(i,kk)
  6900	continue
 
 c!	write(*,*)(ali(k),k=1,1240)
-	
+
 	do 7000 i=1,par44
 
 		do 7100 j=1,par33
@@ -3047,7 +3047,7 @@ c!	write(*,*)(ali(k),k=1,1240)
 		k=(i-1)*par33+j
 
 		x=B(k)
-	
+
 			do 7200 kk=iordi,iordf
 
 			alifit(k)=alifit(k)+rafou(i,kk)*cos(kk*x)
@@ -3066,4 +3066,3 @@ c!	write(*,*)(ali(k),k=1,1240)
 	return
 
 	end
-

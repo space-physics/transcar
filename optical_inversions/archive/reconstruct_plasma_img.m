@@ -43,7 +43,7 @@ ti_time=(n1_time.*t1_time+n2_time.*t2_time+n3_time.*t3_time+nm_time.*tm_time)./(
 if max(time(tinds))>24
   tplot=time(tinds)-24;
 else
-  tplot=time(tinds); 
+  tplot=time(tinds);
 end
 zplot=90:5:995;
 for k=1:length(tinds);
@@ -167,10 +167,10 @@ print('-depsc',[datadir,'reconstructed_plasma_resp_img.eps']);
 % ax=axis;
 % ylabel(c,'T_e/T_i')
 % print('-depsc',[datadir,'Te_Ti.eps']);
-% 
+%
 % tbark=time(tinds)-24;
 % zbark=z(zinds);
 % te_ti=te_time(zinds,tinds)./ti_time(zinds,tinds);
 % nesim=ne_time(zinds,tinds);
-% 
+%
 % save barker.mat tbark zbark te_ti nesim;

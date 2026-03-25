@@ -45,7 +45,7 @@
         data lat_top/89.9_dp/
 
        save dtmag,dlonmag0,dlatmag0
-       
+
        if (flgini) then
        open(56,file='trace_conv',form='formatted',status='replace')
        flgini=.false.
@@ -72,10 +72,10 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
        print *,'convec.f: call potentiel, dlonmag,dlonmlt',
      &   dlonmag,dlonmlt
        call potentiel(iyd,tu,kp,dlonmlt,dlatmag ,EE(1),EE(2),psi,ddp)
-       
+
        if (flgpot) psi0=psi
-       
-       print*,'convec.f: call magfild'  
+
+       print*,'convec.f: call magfild'
        call magfild(latgeo,longeo,zref,year,Bmag,dipangle,orient)
        pot=psi0
        Enord=EE(2)
@@ -88,13 +88,13 @@ c        call geo2mag(dlatgeo,dlongeo,dlatmag,dlonmag,dlonref)
        vhorizon=vh
        vp    =vpnord*tan(dipangle*deg2rad)*orient
        vpara=vp
-       
+
         dlon = vpest*dt/re/cos(min(dlatmag,lat_top)*deg2rad)
         dlat =  vh*dt/re
        if (dlon.ne.0.0_dp .and. dlat.ne.0.0_dp) then
          print *,'convec.f: call cor_cnv   dlonmlt,dlatmag ',
      &                    dlonmlt,dlatmag
-     
+
          dtheta=cor_cnv(iyd,tu,kp,dlonmlt,dlatmag,
      &			   dlat,dlon,psi0)
          dlonmag=dlonmlt-(tu+dt)/240.0_dp-dlonref
@@ -183,7 +183,7 @@ c        lon=datan2(sb,cb)*rad2deg
        integer, intent(in) :: iyd
        real(dp), intent(in) :: tu,psi0
        real, intent(in) :: kp
-       
+
        real(dp), intent(inout) :: dlat,dlon,lonmlt,latmag
 
        real(dp) ca,sa,dlon1,lat,lon,dlat1,xa
@@ -243,20 +243,20 @@ c        lon=datan2(sb,cb)*rad2deg
           endif
           fb=potar(iyd,tu,kp,lonmlt,latmag,dlat,dlon,b,psi0)
         enddo
-       
+
        ca=cos(b)
        sa=sin(b)
        dlon1=dlon*ca-dlat*sa
        dlat1=dlon*sa+dlat*ca
        lat=latmag
        lon=lonmlt
-      
+
       if (debug) then
        print *,'convec.f: cor_cnv 1st call:',
      & ' call integ  lat,lon,dlat,dlon'
      &, lat,lon,dlat,dlon
       endif
-       
+
        call integ(lat,lon,dlat1,dlon1)
        c=b
        fc=fb
@@ -322,14 +322,14 @@ c        lon=datan2(sb,cb)*rad2deg
        dlon=dlon1
        lat=latmag
        lon=lonmlt
-       
+
       if (debug) then
       call cpu_time(tic)
       print *,tic,' convec.f: cor_cnv 2nd call:',
      & ' call integ  lat,lon,dlat,dlon'
      &, lat,lon,dlat,dlon
       endif
-      
+
        call integ(lat,lon,dlat,dlon)
        latmag=lat
        lonmlt=lon
@@ -341,7 +341,7 @@ c        lon=datan2(sb,cb)*rad2deg
      &      dlat,dlon,dtheta,psi0)
        use comm, only: dp
        implicit none
-       
+
        integer,intent(in) :: iyd
        real(dp),intent(in) :: tu,lonmlt,latmag,dlat,dlon,dtheta,psi0
        real, intent(in) :: kp
@@ -354,7 +354,7 @@ c        lon=datan2(sb,cb)*rad2deg
        dy=dlon*sa+dlat*ca
        lat=latmag
        lon=lonmlt
-       
+
        call integ(lat,lon,dy,dx)
        call potentiel(iyd,tu,kp,lon,lat,x,y,psi,ddp)
        potar=psi-psi0

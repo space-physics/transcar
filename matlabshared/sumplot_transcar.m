@@ -29,7 +29,7 @@ FS=8; LW=4;
 %tspan=maxtime-mintime;
 if plotAllSimTime
     tInds = 1:length(time); %take all values
-else %restrict to around precipitation time 
+else %restrict to around precipitation time
     tpad= 0; %MH %1/6*tspan;  %show quiescent ionosphere before precipitation is switched on
     tInds=find(time >= mintime + tpad & ...
                time <= maxtime         );
@@ -39,7 +39,7 @@ lt = length(tInds);
 %% select desireed altitudes
 zInds=find(z>=altlims(1) & z<=altlims(2));
 %minz=min(z(zinds)); maxz=max(z(zinds)); %zspan=maxz-minz;
-minZ = z(zInds(1)); 
+minZ = z(zInds(1));
 maxZ = z(zInds(end));
 %% FIGURE OUT HOW TO BEST DISPLAY TIME AXIS
 nlab=6;                                                 %nominal number of labels on time axis
@@ -77,7 +77,7 @@ if doISRinterp
         neplot(:,k)=interpolateTRANSCAR(ne_time(zInds,tInds(k)),z(zInds),zPlot,'loglin','loglin') ;
         viplot(:,k)=interpolateTRANSCAR(vi_time(zInds,tInds(k)),z(zInds),zPlot,'lin','lin');
     end %for
-else 
+else
     zPlot = z(zInds);
     tiplot = ti_time(zInds,tInds);
     teplot = te_time(zInds,tInds);

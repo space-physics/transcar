@@ -10,7 +10,7 @@ data_type='tra';
 data_path=datadir;
 file=fluidfile;
 %% FIXME: yuck
-run('giveno') 
+run('giveno')
 %% manipulate to get ISR parameters
 display('READ_FLUIDMOD: Computing ISR-like parameters')
 ne=ne_time; %#ok<*NASGU>

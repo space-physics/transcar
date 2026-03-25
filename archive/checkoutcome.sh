@@ -13,8 +13,8 @@ for f in $(find $RODIR -mindepth 1 -maxdepth 2 -type f -name "transcarError.log"
 
 #don't do this if as one-liner, gives impossible good and bad at same time for first file
   if [[ $outcome == *fin\ normale* ]]; then
-     ((normal++)) 
-  else 
+     ((normal++))
+  else
      echo "abnormal completion in $f"
      ((abnormal++))
   fi

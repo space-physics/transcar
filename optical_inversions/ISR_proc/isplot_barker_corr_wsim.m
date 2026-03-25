@@ -71,7 +71,7 @@ for k=1:length(tplotb)
     its=min(find(time>=tplotb(k)));      %ZOH for finding Te/Ti from simulation
     Te_Ti_grid(:,k)=interpolate(Te_Ti(:,its),z,zplot,'lin','lin')';
     fact(:,k)=(Te_Ti_grid(:,k)+1)/2;                     %Te/Ti correction factor vs. altitude
-    
+
     neplotbcorr(:,k)=neplotb(:,k)+log10(fact(:,k));
 end
 

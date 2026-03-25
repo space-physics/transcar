@@ -4,7 +4,7 @@ figh=figure(76);
 cp = get(figh,'pos');
 set(figh,'pos',[cp(1), cp(2), 950, 540])
 %set(gcf,'PaperPosition',[0,0,8.5,6.5]);
- 
+
 %% ARE WE USING ENERGY BINS?
 [le,lt]=size(phimem);
 if length(er)~=le

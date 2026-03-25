@@ -72,9 +72,9 @@ for k=1:length(tplotb)
     Te_Ti_grid=interpolate(Te_Ti(:,its),z,zplot,'lin','lin');
     Te_Ti_grid=Te_Ti_grid(:);
     fact(:,k)=(Te_Ti_grid+1)/2;                     %Te/Ti correction factor vs. altitude
-    
+
     neplotbcorr(:,k)=neplotb(:,k)+log10(fact(:,k));
-    
+
     itdiff=min(find(tplotf>=tplotb(k)));
     dnefb(:,k)=abs(10.^neplotf(:,itdiff)-10.^neplotb(:,k))./10.^neplotf(:,itdiff);              %difference in fitted and raw ne
     dnefc(:,k)=abs(10.^neplotf(:,itdiff)-10.^neplotbcorr(:,k))./10.^neplotf(:,itdiff);             %difference in fitted and Te/Ti corrected ne

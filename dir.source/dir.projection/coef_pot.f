@@ -13,12 +13,12 @@
       real,intent(out) :: ddp
 
       integer,save :: ierr  ! file read error
-      
+
       real(dp),parameter :: Linf=61.5_dp,Lsup=72.5_dp,latlim=55._dp
       integer, parameter :: ndeg0=5, mdeg0=5, npt=(ndeg0+1)*(2*mdeg0+1)
 
       integer len_coef,len_rec,len_buf,irec
-      
+
       integer iyddeb,iydfin,i,u
       real buffer(1000)
       real(dp) phi(3*npt)
@@ -90,7 +90,7 @@
       if (flgini) then
           ierr=1
           flgini=.false.
-          
+
         open(newunit=u,
      &   file='dir.data/dir.linux/dir.projection/varpot.dat',
      &   form='unformatted',access='direct',status='old',recl=40,
@@ -107,8 +107,8 @@
 
 999    continue
       close(u)
-      if (ierr.gt.0) then 
-      
+      if (ierr.gt.0) then
+
         call cpu_time(tic)
         print *,tic,
      &  ' Error reading varpot.dat, fallback to defaults  kp=', kp
@@ -132,7 +132,7 @@
               phipot(i)=phi(i+2*npt)
             enddo
           endif
-          
+
       else
 ! continue to read varpot.dat
        open(newunit=u,

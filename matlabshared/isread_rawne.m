@@ -22,7 +22,7 @@ while ~feof(fid)
     if mod(isit,50) == 0
         fprintf('\nISREAD.M --> reading record #:  %d',isit);
     end
-    
+
     %ff past labels
     sline=fgets(fid); sline=fgets(fid);
 
@@ -48,11 +48,11 @@ while ~feof(fid)
         %organize the data in this line
         istimeraw(isit)=numline(1);
         iszraw(isiz)=numline(2);
-        
+
         isneraw(isiz,isit)=numline(3);
     end
     sline=fgets(fid);       %trailing blank line
-    
+
     %time index counter
     isit=isit+1;
 end

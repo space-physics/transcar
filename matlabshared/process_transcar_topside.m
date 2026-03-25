@@ -59,9 +59,9 @@ for l=1:length(idlist)
       fprintf('\nPROCESS_TRANSCAR.M --> There appears to be a problem with these simulation files!');
       break;
     end
-    
 
-    
+
+
     %SUMMARY PLOT OF PLASMA PARAMETERS AND OPTICAL EMISSIONS
     alt_lims=[90, 2000];
     figh=sumplot_transcar(datadir,timingfile,plasmafile,emfile,alt_lims);                       %an 8.5x11 summary plot
@@ -71,12 +71,12 @@ for l=1:length(idlist)
     fig2h=sumplot_precip(datadir,timingfile,excfile);
     saveas(fig2h,[datadir,'/figures/spectrogram.fig'],'fig');
     print(fig2h,'-depsc',[datadir,'/figures/spectrogram.eps']);
-    
+
     fig3h=sumplot_conduct(datadir,timingfile,confile);
     saveas(fig3h,[datadir,'/figures/conductivities.fig'],'fig');
-    print(fig3h,'-depsc',[datadir,'/figures/conductivities.eps']);    
+    print(fig3h,'-depsc',[datadir,'/figures/conductivities.eps']);
     close all;
-    
+
     fprintf('PROCESS_TRANSCAR.M --> .mat files and plots generated for simulation with ID:  %s\n',datadir);
 end
 toc

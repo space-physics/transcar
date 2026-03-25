@@ -70,10 +70,10 @@ c!!!	Permet Lecture des conductivites de Barbara
 c!!!
 	real*4 Barped(dpar11),Barhal(dpar11)
 
-	
+
 c     ========================================
 c
-c     ENTREE DE LA TRIANGULATION : LECTURE SUR LE FICHIER 01 
+c     ENTREE DE LA TRIANGULATION : LECTURE SUR LE FICHIER 01
 c             ndl  : nombre de degres de libertes
 c             nt   : nombre de triangles
 c             n1   : nombre de subdivisions suivant la longitude
@@ -94,7 +94,7 @@ c		     matrice de
 c                    resolution du probleme elliptique
 c
 
-c     ========================================      
+c     ========================================
 c     ndl1=2481
 c     n1 DESIGNE LE NOMBRE DE SUBDIVISIONS DE L AXE DES PHI:[0,2*pi]
 c     n2 DESIGNE LE NOMBRE DE SUBDIVISIONS DE L AXE DES
@@ -106,7 +106,7 @@ c      n2=30
 
 
 C ************************************************************ DEBUT
-	
+
 	if (ie.eq.0)						then
 
 C ************************************************* D'INITIALISATION
@@ -146,14 +146,14 @@ cesr	phiopt=15.
 CC	ON COMMENCE LES CALCULS
 
 	rpmax=rtmax*rnmax
-	
+
 	heuref=3600.
 
       dn1=80
       dn2=24
       dnt=2*dn1*dn2
       dndl=dn1*(dn2+1)
-      
+
       pi=4.*atan(1.)
       Bfm=Bfm*2.*pi/24.
       Bfs=Bfs*2.*pi/24.
@@ -169,7 +169,7 @@ c     ========================================
       Bmax=2*pi
       Tmin=(90.-71.97)*pi/180.
       teta0=Tmin
-    
+
       almax=1./cos(10.14*pi/180.)
       almax=almax*almax
       Amax=1./almax
@@ -198,17 +198,17 @@ c 	Calcul du L minimal.
 c 	Calcul du pas en L.
 
       rlpas=(-almax+almin)/n21
-      
+
 c 	Calcul du pas en sin(TETA)**2. pour la frontiere polaire.
 
       hpas1=almin-rlpas
       hpas1=-(1./almin)+(1./hpas1)
-      
+
 c 	Calcul du pas en sin(TETA)**2. pour la frontiere equatoriale.
 
 	hpas2=almax+rlpas
 	hpas2=(1./almax)-(1./hpas2)
-	
+
       h22=0.
       hA=h21
 
@@ -230,7 +230,7 @@ c 	Calcul du pas en sin(TETA)**2. pour la frontiere equatoriale.
 1055  continue
       dAmin=Atemp(1)
       dAmax=Atemp(dndl)
-      
+
 c     ========================================
 c     CALCUL DES COEFFICIENTS DIAGONAUX
 c     ========================================
@@ -238,7 +238,7 @@ c     ========================================
 c!!!  open(4,file='pointeur.lis',status='UNKNOWN')
 c!!!  write(4,*) (muns(i),i=1,(dndl+1))
 c!!!  close(4)
-      
+
       dndl1=dndl+1
 c     print 100,n1,n2
 ccc	open(4,file='disque.lis',status='UNKNOWN')
@@ -253,7 +253,7 @@ c       al1 : dwi/dx*dwj/dx
 c       al2 : dwi/dy*dwj/dy
 c       al3 : dwi/dy*dwj/dx
 c       al4 : dwi/dx*dwj/dy
-c     ========================================      
+c     ========================================
       al1(1)=1.
       al1(2)=-1.
       al1(3)=0.
@@ -273,7 +273,7 @@ c     ========================================
       al2(7)=-1.
       al2(8)=0.
       al2(9)=1.
-      
+
       al3(1)=1.
       al3(2)=0.
       al3(3)=-1.
@@ -283,7 +283,7 @@ c     ========================================
       al3(7)=0.
       al3(8)=0.
       al3(9)=0.
-      
+
       al4(1)=1.
       al4(2)=-1.
       al4(3)=0.
@@ -293,7 +293,7 @@ c     ========================================
       al4(7)=-1.
       al4(8)=1.
       al4(9)=0.
-      
+
 c     ========================================
 c     ENTREE DES DIVERSES CONSTANTES PHYSIQUES
 c      r:RAYON TERRESTRE en metres
@@ -307,7 +307,7 @@ c
 c     ON CALCULERA LES CONSTANTES:
 c      em=sqrt(8*e/pi*mass)
 c      ab0=a*a*a*a*a*b0*b0*b0
-c     ========================================      
+c     ========================================
        pi=4.*atan(1.)
        r=6.37e+06
        b0=3.08e-05
@@ -329,14 +329,14 @@ cHAO97	Ici le coefficient est mis a 0.4
 
 	em=em*1.
 
-cHAO97	
+cHAO97
 
        ab0=r*r*r*r*r*b0*b0*b0
 
 c      1.  Valeur optimale de Sp,le jour:Spjour
 c      2.  rapport entre Sh et Sp       : rapp=sh/sp
 c      3.  Rapport entre Spjor et Spnuit: rapp1=spjour/spnuit
-c                    mis egal a 30 
+c                    mis egal a 30
 c      4.  choix d'interpolation pour la loi des conductivites
 c                  iopsp=1   lineaire
 c                  iopsp=2   quadratique
@@ -355,7 +355,7 @@ c
       iopsp=1
       iopec=0
       ioptint=1
-     
+
        call tencon1(spjour,rapp,iopec,sp0temp,sh0temp,
      %ioptint,rapp1,dndl,Btemp,Ttemp,dn1)
 
@@ -392,32 +392,32 @@ c     ========================================
       sptemp(i)=5.2*(FEtemp(i)**0.5)
 
 cesr
-      
+
       sptemp(i)=ideaele*sptemp(i)
-      
+
 cesr
-      
+
       shtemp(i)=0.55*sptemp(i)*((3.*Etemp(i)/2.)**0.6)
-            
+
 cesr
-      
+
       shtemp(i)=ideaele*shtemp(i)
-      
-cesr      
+
+cesr
 
       if(iopsp.eq.1) goto 1550
-c     
+c
 c     INTERPOLATION QUADRATIQUE DE LA LOI POUR SP ET SH
-c     
+c
       sptemp(i)=sqrt(sp0temp(i)**2+sptemp(i)**2)
       shtemp(i)=sqrt(sh0temp(i)**2+shtemp(i)**2)
 
       goto 1540
 
  1550    continue
-c     
+c
 c     INTERPOLATION LINEAIRE
-c     
+c
       sptemp(i)=sptemp(i)+sp0temp(i)/1.
       shtemp(i)=shtemp(i)+sh0temp(i)/1.
 
@@ -426,7 +426,7 @@ c
 c!!!	write(*,*)'COUCOU JE SUIS EN ELLCONI'
 csss	write(*,*)(Ti(i),i=1,ndl)
 
-c!!!	
+c!!!
 c!!!	On lit les conductivites analytiques
 c!!!
 
@@ -486,13 +486,13 @@ c!!!
 		do 8610 j=1,80
 
 	Rnitemp((i-1)*80+j)=alite2((icompt-1)*80+j)
-		
+
 cesr
 
 	Rnitemp((i-1)*80+j)=ideaion*Rnitemp((i-1)*80+j)
 
-cesr		
-		
+cesr
+
 8610		continue
 
 8600	continue
@@ -543,7 +543,7 @@ c==================================================================
        nmin=min0(m(1,i),m(2,i),m(3,i))
        do 3 j=1,nndlt
        k=m(j,i)
-       k1=k+1    
+       k1=k+1
        k2=(k-nmin)*2+1
        mu(k1)=max0(mu(k1),k2)
  3     continue
@@ -552,12 +552,12 @@ c==================================================================
        mu(i+1)=mu(i+1)+mu(i)
  4     continue
        return
-       end 
+       end
 
 c===================================================================
 c===================================================================
-      
-      subroutine tencon1(spjour,rapp,iopec,sp,sh,ioptint,rapp1            
+
+      subroutine tencon1(spjour,rapp,iopec,sp,sh,ioptint,rapp1
      %  ,nndl,phi,T,nn1)
 c
 c        CE PROGRAMME CALCULE LE TENSEUR DE CONDUCTIVITE
@@ -664,7 +664,7 @@ csss      print 117,spnuit,shnuit,spjour,shjour
 118   format ('VERIFICATION ',/,6(e12.5))
       return
       end
-      
+
 c 	=========================================================
 c 	=========================================================
 
@@ -693,7 +693,7 @@ c     ========================================
       dimension T(1),A(1),phi(1),m1(3,nnt),m2(1),muns(1)
       dimension Ti(1),TT(1),DPHI(1),Rni(1),Rnn(1),utem2(1)
       real*4 aa(6),x1,x2,x3,y1,y2,y3,Heel(49*80)
-      
+
 c ****	INITIALISATION DU SECOND MENBRE DE LA MATRICE ***
 
 	do 900 i=1,nndl
@@ -710,11 +710,11 @@ c      sinI=2*cos(T(i))/sqrt(4-3*(sin(T(i))**2))
       sinI=1.
 
       a11(i)=sp(i)
-      a12(i)=-sh(i)/sinI      
+      a12(i)=-sh(i)/sinI
       a22(i)=sp(i)/(sinI**2)
       a21(i)=sh(i)/sinI
 16    continue
-	
+
 c     ========================================
 c     ENTREE DE LA FONCTION DE BORD
 c     ========================================
@@ -731,7 +731,7 @@ csss      print 119,S,r
             pi3=3*pi2
       eps=1.e-04
       do 4 i=1,nndl
-       ao(i)=S/r      
+       ao(i)=S/r
        if(((phi(i)-pi3).gt.eps).or.((phi(i)-pi2).lt.eps))  goto15
        if((phi(i).gt.pi2).and.(phi(i).lt.pi3)) goto 3
  15    ao(i)=ao(i)/30.
@@ -792,7 +792,7 @@ c	write(4,*)(at(j),j=1,9)
 c	close(4)
 c			endif
       call assmns(at1,m1,muns,a1,i,nnt,3)
-      
+
 c ***	CALCUL DU SECOND MENBRE DE L'EQUATION ELLIPTIQUE ***
 
 	x1=(phi(no(1)))
@@ -806,8 +806,8 @@ c ***	CALCUL DU SECOND MENBRE DE L'EQUATION ELLIPTIQUE ***
 	if (nqi.eq.0) x1=nn1*(2*pi/nn1)
 	if (nqi.eq.0) x2=nn1*(2*pi/nn1)
 	if (nqi.eq.(2*nn1-1)) x2=nn1*(2*pi/nn1)
-	
-	do 902 k=1,3 
+
+	do 902 k=1,3
  	f(no(k))=delta/6.+f(no(k))
  902	continue
  6	continue
@@ -823,7 +823,7 @@ c!!!	sinI=1.
 	f(j)=f(j)/sin(2*T(j))
 
  903	continue
- 			
+
 c	open(4,file='sdm0.lis',access='sequential',position='append')
 c	write(4,*)'f'
 c	write(4,*)(f(i),i=1,nndl)
@@ -853,7 +853,7 @@ c       ET PRISE EN COMPTE DES CONDITIONS AUX LIMITES
 c     ========================================
 
 	j=0
-	
+
       do 14 i=1,nndl
 
 c	f(i)=0.
@@ -861,7 +861,7 @@ c	f(i)=0.
 
 17    continue
 
-      f(i)=tgv*phiopt*sin(phi(i))*1000.	
+      f(i)=tgv*phiopt*sin(phi(i))*1000.
 
 14    continue
 
@@ -875,13 +875,13 @@ c!!!	close(4)
 8100	continue
 
       call drcr3r(muns,a1,f,nndl,1,2,u)
-      
+
 c ***	ON REPASSE EN kV ***
 
       do 9876 i=1,nndl
       u(i)=u(i)/1000.
  9876 continue
- 
+
       return
 119   format ('CONDUCTANCE DE LA CEINTURE EQUATORIALE',e12.5,/,
      &  'RAYON DE LA TERRE',e12.5)
@@ -890,7 +890,7 @@ c840   format ('VALEUR DES COEFFICIENTS',/,5(e12.5))
 c110   format(1x,'nombre de noeuds sur la frontiere',i2)
 c112   format('frontiere',4i3)
 c111   format('longueur du bout de frontiere',e12.5)
-c121   format ('SOLUTION',/,6(e12.5))      
+c121   format ('SOLUTION',/,6(e12.5))
       end
 
 c=================================================================
@@ -929,14 +929,14 @@ c
       at1(i)=at1(i)+s2*(-y31*x31*al1(i)-y21*x21*al2(i)+y31*x21*al3(i)
      &  +y21*x31*al4(i))
       at1(i)=at1(i)+s3*(-x31*y31*al1(i)-y21*x21*al2(i)+x31*y21*al3(i)
-     &  +y31*x21*al4(i))      
+     &  +y31*x21*al4(i))
       at1(i)=at1(i)+s4*(al1(i)*(x31**2)+al2(i)*(x21**2)-(al3(i)
      &+al4(i))*x21*x31)
       at1(i)=at1(i)/delta
 3     continue
       return
       end
-      
+
 c==================================================================
 c==================================================================
 
@@ -949,7 +949,7 @@ c==================================================================
       som1=s/6.
       return
       end
-      
+
 c=====================================================================
 c=====================================================================
 
@@ -983,10 +983,10 @@ c
       at(9)=0.
       return
       end
-      
+
 c===================================================================
 c===================================================================
-       
+
       function som2(f)
       dimension f(2)
       som2=f(1)+f(2)
@@ -1024,11 +1024,11 @@ c     =======================================
  6     continue
        ka=ka+1
        a(l)=a(l)+at(ka)
- 2     continue  
+ 2     continue
  1     continue
-       return 
+       return
        end
-       
+
 c===================================================================
 c===================================================================
 
@@ -1134,7 +1134,7 @@ c
 c
  17   RETURN
       END
-                    
+
 c++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 c                        SP DRCR3R
 c++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1157,7 +1157,7 @@ c  NDTL  : ORDRE DE LA MATRICE A
 c  NDSM  : NBRE DE SECONDS MEMBRES
 c  NIVEAU: 0 U*B=BO        REMONTEES SEULES EXACTES SEULEMENT SI B =
 c          BO
-c          1 L*B=BO        DESCENTES SEULES 
+c          1 L*B=BO        DESCENTES SEULES
 c          2 L*U*B=BO      DESCENTES,REMONTEES
 c
 c  PARAMETRES DE SORTIE:
@@ -1167,7 +1167,7 @@ c
 c++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 c  PROGRAMMEUR : A.PERRONNET LAN 189 ET IRIA PARIS OCTOBRE 77
 c....................................................................
-     
+
 c===================================================================
 c===================================================================
 
@@ -1198,7 +1198,7 @@ c
 	  IMI=I-IH
 	  IAO=IA
 	  IBO=(IMI-1)*NDSM
-c	  
+c
              DO 3 NC=1,NDSM
 	     SA=0.D0
              IA=IAO
@@ -1216,7 +1216,7 @@ c
 	  MUDLI=MUDLI1
  500      CONTINUE
           IF (NIVEAU.EQ.1) GOTO 100
-c	  
+c
 c         LES REMONTEES
 c         -------------
 c

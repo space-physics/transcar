@@ -132,7 +132,7 @@ clear('len','char')
 
 switch(data_type(1:3))
     case 'nca'
-        chemin_donnees=dir([data_path '*.*dtst']); 
+        chemin_donnees=dir([data_path '*.*dtst']);
         if isempty(chemin_donnees) || chemin_donnees(1).bytes==0
             display(['Sorry: path ',data_path,...
                   ' not exist or is empty of *.ndtst files'])
@@ -152,7 +152,7 @@ switch data_type(1:3)
     case 'tra', read_tra;
     otherwise, error(['case ',data_type,' not yet handled.'])
 end %switch
-%%      
+%%
 
 end_hour=time(nb_records);
 str_hour=time(1);

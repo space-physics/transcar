@@ -14,7 +14,7 @@ while nit<=maxit && abs(chir-1)>1e-1 && ~ex
   t=min(1./(M.*phimat),[],2);
   c=beta*(1-1./b.*(M*phi)).*t;
   phi=phi./(1-phi.*(M'*diag(w)*c));
-  
+
   %Check the convergence
   if mod(nit,100)==0
 
@@ -22,17 +22,17 @@ while nit<=maxit && abs(chir-1)>1e-1 && ~ex
     if ~mod(nit,1000)
         fprintf('MEBERG.M: iteration %d \r',nit);
     end %if
-      
+
     %Compute solution error.  Inefficient should be done only once per
     %function call.
     chirprev=chir;
     e=M*phi-b;
     if(norm(sigman)>0)
-      chir=e'*diag(1./sigman.^2)*e; 
+      chir=e'*diag(1./sigman.^2)*e;
     else
-      chir=e'*e; 
+      chir=e'*e;
     end
-      
+
     %Change beta if we are getting close to err. min
     dchi=chirprev-chir;
     if dchi<=0

@@ -60,7 +60,7 @@ c
 c       Calcul du flux maxwellien
 c       isotro = parametre d'isotropie du flux precipite :
 c       1 = flux isotrope
-c       0 = distribution gaussienne 
+c       0 = distribution gaussienne
 c       2 = dirac
 c
         implicit none
@@ -249,9 +249,9 @@ c 	Compute input energy in eV/cm2/sec/sr
      .		gmu(iang)*centE(ien)*ddeng(ien)
  	  enddo
   	enddo
- 
+
  	xnorm = qsum/qtot
-c 
+c
 	do iang=1,nango2
 	  do ien=1,nen
 	    fluxdown(ien,iang) = fluxdown(ien,iang)*xnorm

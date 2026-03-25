@@ -13,7 +13,7 @@ integer,parameter :: npt=10000
 integer :: ndeg,mdeg,i,j
 real(dp) :: phipot(npt), latequi,Lmin,Lmax, fit(3)
 
-!TODO segfault if this interface is not defined 
+!TODO segfault if this interface is not defined
 
 interface
 

@@ -35,23 +35,23 @@
 	open(31,file='trace_fte.dat',form='formatted',status='unknown')
 
 	read(transcar_dat,*)dto     	! pas d'integration numerique
-	read(transcar_dat,*)sortie      ! intervalle de temps entre deux sorties 
+	read(transcar_dat,*)sortie      ! intervalle de temps entre deux sorties
 	read(transcar_dat,*)iyd_ini     ! date de la periode simulee
 	read(transcar_dat,*)tempsini    ! UT de debut (en heure)
 	read(transcar_dat,*)tempslim    ! UT limite (en heure)
 	read(transcar_dat,*)f107
 	read(transcar_dat,*)f107a
 	read(transcar_dat,*)
-	
+
 
         read(transcar_dat,*)jpreci
 
 	do ipos=1,4
-	
+
 	 read(transcar_dat,*)latgeo_ini(ipos),longeo_ini(ipos)
 
 	end do
-	
+
 	tempsconv_1=0.
 	read(transcar_dat,*)tempsconv_1	! duree de la convection en amont (<= 0 si pas de convection)
 
@@ -62,24 +62,24 @@
 	read(transcar_dat,*)postinto    ! intervalle de temps entre deux appel a transelec
 
 	close(transcar_dat)
-	
---------------------------------	
+
+--------------------------------
 Debut boucle sur les 4 positions
 --------------------------------
 
 	do ipos=1,4
-	
+
 
 	tempsini=tempsini*3600.
-	
+
 	if (tempsconv_1.gt.0.) then
 	  tempsconv_1=tempsconv_1*3600.
 	endif
-	
+
 	if (tempsconv.gt.0.) then
 	  tempsconv=tempsconv*3600.
 	endif
-	
+
 	  itube=-1
 	  ntubmax=int(tempslim/step)+1
 
@@ -134,7 +134,7 @@ c	  iydfin=iydtube
 	  flgpot=.true.
 	  dtref=0.
 	      call convec(iyd,temps,dlongeo,dlatgeo,0.,pot,flgpot)
-	      
+
 	      write(31,100) temps,tmag,latmag,dlongeo,dlatgeo
 	  do while (temps.gt.tempsdeb.or.iyd.ne.iyddeb)
 	    tps=temps
@@ -167,14 +167,14 @@ c	    flgpot=.false.
 	  enddo
 	      write(31,100) temps,tmag,latmag,dlongeo,dlatgeo
 	enddo
-	
-	
+
+
 	enddo
 
 ------------------------------
 Fin boucle sur les 4 positions
 ------------------------------
-	
+
 	close (31)
 
 	end

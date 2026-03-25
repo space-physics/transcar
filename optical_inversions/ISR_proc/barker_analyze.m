@@ -1,7 +1,7 @@
 isrz=100:10:310;
 isrneraw=[.5 1.4 2.4 3.8 4 3.9 3.8 3.5 3.3 3.4 3.7 3.8 3.8 3.85 3.85 3.5 3.25 2.6 2.4 2.3 2.2 2.1]*10^11;
 
-load barker.mat;            
+load barker.mat;
 
 tind=min(find(tbark>=1+3/60));
 te_tiavg=mean(te_ti(:,tind:tind+5),2);            %use average Te/Ti to make up for the fact that the scanning took 2 minutes

@@ -26,32 +26,32 @@ while(~feof(fid))
 %         fprintf('READ_EXCRATES.M --> Reading record #:  %d\n',k);
 %     end
 
-    head=fscanf(fid,'%e',5);                                                                                               %read in header for this time    
+    head=fscanf(fid,'%e',5);                                                                                               %read in header for this time
     if(feof(fid))
         break;
     end
 
     %store header info in appropriate vars.
-    day(k)     = head(1); 
-    sec(k)     = head(2); 
-    dipangle(k)= 90-head(3); 
-    nalt(k)    = head(4); 
-    nen(k)     = head(5);  
+    day(k)     = head(1);
+    sec(k)     = head(2);
+    dipangle(k)= 90-head(3);
+    nalt(k)    = head(4);
+    nen(k)     = head(5);
 
     %read in main data portion
-    data=fscanf(fid,'%e',[11 nalt(k)])';    
+    data=fscanf(fid,'%e',[11 nalt(k)])';
 
     %organize into appropriately named arrays
-    zop(:,k)   = data(:,1); 
-    no1d(:,k)  = data(:,2); 
-    no1s(:,k)  = data(:,3); 
-    noii2p(:,k)= data(:,4); 
-    nn2a3(:,k) = data(:,5); 
-    po3p3p(:,k)= data(:,6); 
+    zop(:,k)   = data(:,1);
+    no1d(:,k)  = data(:,2);
+    no1s(:,k)  = data(:,3);
+    noii2p(:,k)= data(:,4);
+    nn2a3(:,k) = data(:,5);
+    po3p3p(:,k)= data(:,6);
     po3p5p(:,k)= data(:,7);
-    p1ng(:,k)  = data(:,8); 
+    p1ng(:,k)  = data(:,8);
     pmein(:,k) = data(:,9);
-    p2pg(:,k)  = data(:,10); 
+    p2pg(:,k)  = data(:,10);
     p1pg(:,k)  = data(:,11);
 
     %read in precipitation information

@@ -453,4 +453,3 @@ pot_fit(ind_data(1:nb_data))=matmul(A,coef(1:rang))
 
 
 end subroutine projection
-

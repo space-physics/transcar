@@ -16,7 +16,7 @@ display(['loading ',kernelmat])
 load(kernelmat,'er','phiNbin','phiEbin','bchrresamp','nphi')
 phiNbin = phiNbin(:); %#ok<NODEF> %needs to be column vector
 
-% get filelist 
+% get filelist
 flistmat = ['NIR_proc/datafiles/',datelab,'/filelist.mat'];
 display(['loading ',flistmat])
 load(flistmat,'filelist','lablist','tset')
@@ -59,7 +59,7 @@ for k=1:nFiles
     if writePlots
         currEPSfn = ['inversion_plots/',datelab,'/invdata_',lablist{k},'.eps'];
         display(['Writing ',currEPSfn])
-        print('-depsc',currEPSfn) 
+        print('-depsc',currEPSfn)
     end
 end %for
 %% ENERGY-TIME SPECTROGRAM SUMMARY
@@ -86,11 +86,11 @@ if writePrecip
     create_precinput(tset,er,phimem,PrecipDataFN)
 end
 %% CREATE A .MAT FILE FOR PRECIPITATION
-utprec=tset; 
+utprec=tset;
 le=length(er);
 energy=er(1:le-1)+1/2*diff(er);
-energy=energy(:); 
-diffnumflux=phimem; 
+energy=energy(:);
+diffnumflux=phimem;
 
 if writePrecip
     PrecipFN = [datelab,'_precip.mat'];
@@ -104,15 +104,15 @@ end %function
 
 function [phimem,errbinned,erplot] = invert_NIR(M,phiNbin,nphi,er,currNIRfn,datelab)
     display(['Loading ',currNIRfn])
-    load(currNIRfn)    
+    load(currNIRfn)
 %% INVERSION PARAMS
 switch datelab
-    case '20Nov2001', w=100*ones(size(b)); w(2:4)=1; w=w/sum(w); %works well for 20Nov2001.    
+    case '20Nov2001', w=100*ones(size(b)); w(2:4)=1; w=w/sum(w); %works well for 20Nov2001.
     case '17Feb2001', w=100*ones(size(b)); w(2:4)=1; w=w/sum(w); %give little weight to 1PG, does well for 17Feb2001
     case '19Nov2001', w=    ones(size(b));           w=w/sum(w); %works well for 19Nov2001... sort of
     otherwise, warning(['Unknown date ',datelab])
 end
-   
+
     betaPhi=2.5;                                           %works quite well for BOT and 20Nov2001
 %    betaPhi=2;                                             %works well for 11Feb2002
     ic=ones(nphi,1) ./ phiNbin*1e20;                    %works for FT and BOT
@@ -170,7 +170,7 @@ end %function
 %   phiEmem(:,k)=erplot(:).*phimem(:,k);
 %   phiEmemplot(:,k)=interpolate(phiEmem(:,k),erplot,espec,'loglin','loglin');
 % end
-% 
+%
 % figure;
 % set(gcf,'PaperPosition',[0,0,8.5,3.5]);
 % imagesc(tset,log10(espec),flipud(log10(phiEmemplot)));

@@ -1,4 +1,4 @@
-      SUBROUTINE  DISORT(ien, NLYR, DTAUC, SSALB, PMOM,  USRTAU, NTAU, 
+      SUBROUTINE  DISORT(ien, NLYR, DTAUC, SSALB, PMOM,  USRTAU, NTAU,
      $                    UTAU, NSTR, USRANG, NUMU, UMU, NPHI, PHI,
      $                    FBEAM, UMU0, SRC, SRCU, PHI0, FISOT, LAMBER,
      $                    ALBEDO, HL, BSRC, TSRC, DELTAM, INTSRC,
@@ -18,7 +18,7 @@ C             ( SEE DISORT.DOC FOR COMPLETE DOCUMENTATION )
 *	"concave" source terms (Oystein's suggestion), and including
 *	some more checks on the source term to catch overflows.  The
 *	logical variable linear causes the use of a linear source
-*	for the case linear=.true., and the exp-lin source for 
+*	for the case linear=.true., and the exp-lin source for
 *	linear=.false.  Modifications are in lower case.  Some write
 *	statements for debugging purposes are left as comment lines.
 *	The relation between index and angle for the array SRC is
@@ -28,8 +28,8 @@ C             ( SEE DISORT.DOC FOR COMPLETE DOCUMENTATION )
 *		Dirk Lummerzheim, October 1990
 * 	Some arrays are in double precision in order to avoid under-
 * 	flows (jl, 1992).
-* 	The underflows problems have been cured through the xra 
-* 	computation which is now simplified. The d.p. process is kept, 
+* 	The underflows problems have been cured through the xra
+* 	computation which is now simplified. The d.p. process is kept,
 * 	since it increases the precision and do not make any harm.
 *
 C **********************************************************************
@@ -42,10 +42,10 @@ C
       LOGICAL  DELTAM, LAMBER, INTSRC, ONLYFL, PRNT(7), USRANG, USRTAU
       INTEGER  MAXCLY, MAXUMU, MAXULV, MAXCMU, MAXPHI, NLYR,
      $         NUMU, NSTR, NPHI, NTAU
-      REAL     ACCUR, ALBEDO, BSRC, DTAUC( MAXCLY ), FBEAM, 
+      REAL     ACCUR, ALBEDO, BSRC, DTAUC( MAXCLY ), FBEAM,
      .		fisot(-ipk:-1),
      $         HL( 0:MAXCMU ), PHI( MAXPHI ), PMOM( 0:MAXCMU, MAXCLY ),
-     $         PHI0, SSALB( MAXCLY ), SRC( 3*MAXCLY, MAXCMU ), 
+     $         PHI0, SSALB( MAXCLY ), SRC( 3*MAXCLY, MAXCMU ),
      $         SRCU( 3*MAXCLY, MAXUMU), TSRC,
      $         UMU( MAXUMU ), UMU0, UTAU( MAXULV ),qdumi(32)
 C
@@ -272,26 +272,26 @@ C
       LOGICAL LYRCUT, PASS1,pass2,linear
       INTEGER IPVT( NNLYRI ), LAYRU( MXULV )
 CAKYB
-      REAL    AMB( MI,MI ), APB( MI,MI ), ARRAY( MXCMU,MXCMU ),  
-     $        B( NNLYRI ), BDR( MI,0:MI ), BEM( MI ),  
-     $        CBAND( MI9M2,NNLYRI ), CC( MXCMU,MXCMU ), CMU( MXCMU ),  
+      REAL    AMB( MI,MI ), APB( MI,MI ), ARRAY( MXCMU,MXCMU ),
+     $        B( NNLYRI ), BDR( MI,0:MI ), BEM( MI ),
+     $        CBAND( MI9M2,NNLYRI ), CC( MXCMU,MXCMU ), CMU( MXCMU ),
      $        CWT( MXCMU ), EMU( MXUMU ), EVAL( MI ),
      $        EVECC( MXCMU, MXCMU ), EXPBEA( 0:MXCLY ), FLYR( MXCLY ),
      $        FLDN( MXULV ), FLDIR( MXULV ), GL( 0:MXCMU,MXCLY ),
      $        GC( MXCMU,MXCMU,MXCLY ), GU( MXUMU,MXCMU,MXCLY ),
      $        HLPR( 0:MXCMU ), KK( MXCMU,MXCLY ), LL( MXCMU,MXCLY ),
-     $        OPRIM( MXCLY ), PHIRAD( MXPHI ), PSI0( MXCMU ),  
-     $        PSI1(MXCMU), RMU( MXUMU,0:MI ), TAUC( 0:MXCLY ), 
+     $        OPRIM( MXCLY ), PHIRAD( MXPHI ), PSI0( MXCMU ),
+     $        PSI1(MXCMU), RMU( MXUMU,0:MI ), TAUC( 0:MXCLY ),
      $        TAUCPR( 0:MXCLY ), U0C( MXCMU,MXULV ), UTAUPR( MXULV ),
-     $        UUM( MXUMU,MXULV,0:MXCMU ), WK( MXCMU ), 
-     $        XR0( MXCMU, MXCLY ),XR1( MXCMU,MXCLY ), XRA( MXCLY), 
-     $        XR0U( MXUMU, MXCLY ),XR1U( MXUMU,MXCLY ), XRAU( MXCLY), 
+     $        UUM( MXUMU,MXULV,0:MXCMU ), WK( MXCMU ),
+     $        XR0( MXCMU, MXCLY ),XR1( MXCMU,MXCLY ), XRA( MXCLY),
+     $        XR0U( MXUMU, MXCLY ),XR1U( MXUMU,MXCLY ), XRAU( MXCLY),
      $        YLM0( 0:MXCMU ), YLMC( 0:MXCMU,MXCMU ),
-     $        YLMU( 0:MXCMU,MXUMU ), Z( NNLYRI ), Z0( MXCMU ), 
-     $        Z0U( MXUMU,MXCLY ), Z1( MXCMU ),  ZA(MXCLY), 
-     $        Z1U( MXUMU,MXCLY ), ZJ( MXCMU ), 
+     $        YLMU( 0:MXCMU,MXUMU ), Z( NNLYRI ), Z0( MXCMU ),
+     $        Z0U( MXUMU,MXCLY ), Z1( MXCMU ),  ZA(MXCLY),
+     $        Z1U( MXUMU,MXCLY ), ZJ( MXCMU ),
      $        ZZ( MXCMU,MXCLY ), ZPLK0( MXCMU,MXCLY ),
-     $        ZPLK1( MXCMU,MXCLY ), ZPLKA(MXCLY), ZBEAM( MXUMU,MXCLY ) 
+     $        ZPLK1( MXCMU,MXCLY ), ZPLKA(MXCLY), ZBEAM( MXUMU,MXCLY )
 C
       double precision  dARRAY( MXCMU,mxcmu ),dWK(mxcmu),drcond,
      .		dzj(mxcmu),dz0(mxcmu),dz1(mxcmu)
@@ -324,8 +324,8 @@ C                         ** COLLECT GARBAGE)
 10    CONTINUE
       CALL  ZEROAL( AMB, APB, ARRAY, CC, CMU, CWT, EVAL, EVECC,
      $              GC, GU, HLPR, KK, LL, PSI0, PSI1, WK, XR0, XR1, XRA,
-     $              XR0U, XR1U, XRAU, YLM0, YLMC, YLMU, Z, Z0, Z1, ZA, 
-     $              ZJ, ZZ, ZPLK0, ZPLK1, ZPLKA, Z0U, Z1U, ZBEAM, 
+     $              XR0U, XR1U, XRAU, YLM0, YLMC, YLMU, Z, Z0, Z1, ZA,
+     $              ZJ, ZZ, ZPLK0, ZPLK1, ZPLKA, Z0U, Z1U, ZBEAM,
      $              MI, MXCMU, MXCLY, NNLYRI, MXUMU )
       call dzeroit (dWK,mxcmu)
       call dzeroit (dzj,mxcmu)
@@ -348,7 +348,7 @@ C                                  ** EIGENVALUE/VECTOR COMPUTATION
 20    CONTINUE
 C                                ** CHECK INPUT DIMENSIONS AND VARIABLES
 C
-      CALL  CHEKIN( NLYR, DTAUC, SSALB, PMOM, 
+      CALL  CHEKIN( NLYR, DTAUC, SSALB, PMOM,
      $              SRC, USRTAU, NTAU, UTAU, NSTR, USRANG,
      $              NUMU, UMU, NPHI, PHI, FBEAM, UMU0,
      $              PHI0, FISOT, LAMBER, ALBEDO, HL, BSRC,
@@ -361,16 +361,16 @@ C
       CALL  SETDIS( CMU, CWT, DELTAM, DTAUC, EXPBEA, FBEAM, FLYR,
      $              GL, HL, HLPR, LAMBER, LAYRU, LYRCUT, MAXCLY,
      $              MAXUMU, MAXCMU, mxcly, MXCMU, NCUT, NLYR, NTAU, NN,
-     $              NSTR, INTSRC, NUMU, ONLYFL, OPRIM, PMOM, SRC, 
-     $              SRCU, SSALB, TAUC, TAUCPR, UTAU, UTAUPR, UMU, 
+     $              NSTR, INTSRC, NUMU, ONLYFL, OPRIM, PMOM, SRC,
+     $              SRCU, SSALB, TAUC, TAUCPR, UTAU, UTAUPR, UMU,
      $              UMU0, USRTAU, USRANG, iounit )
 C
 C                                             ** PRINT INPUT INFORMATION
       IF ( PRNT(1) )
-     $     CALL PRTINP( NLYR, DTAUC, SSALB, PMOM, NTAU, UTAU, NSTR, 
+     $     CALL PRTINP( NLYR, DTAUC, SSALB, PMOM, NTAU, UTAU, NSTR,
      $                  NUMU, UMU, NPHI, PHI, FBEAM, UMU0, PHI0,
      $                  FISOT, LAMBER, ALBEDO, HL, BSRC, TSRC,
-     $                  DELTAM, INTSRC, ONLYFL, ACCUR, FLYR, LYRCUT, 
+     $                  DELTAM, INTSRC, ONLYFL, ACCUR, FLYR, LYRCUT,
      $                  OPRIM, TAUC, TAUCPR, MAXCMU, PRNT(7), ipk,
      $			iounit )
 C
@@ -549,9 +549,9 @@ C
 111         CONTINUE
          ENDIF
 C
-            CALL UPISOT( ARRAY, CC, CMU, IPVT, MXCMU, NN, NSTR, 
-     $                   OPRIM(LC), WK, XR0(1,LC), XR1(1,LC), XRA(LC), 
-     $                   Z0, Z1, ZA(lc), ZPLK0(1,LC), ZPLK1(1,LC), 
+            CALL UPISOT( ARRAY, CC, CMU, IPVT, MXCMU, NN, NSTR,
+     $                   OPRIM(LC), WK, XR0(1,LC), XR1(1,LC), XRA(LC),
+     $                   Z0, Z1, ZA(lc), ZPLK0(1,LC), ZPLK1(1,LC),
      $                   ZPLKA(LC), iounit,ien,dARRAY,dWK,dz0,dz1)
          END IF
 C
@@ -568,9 +568,9 @@ C                                            ** TO USER ANGLES
 C
             CALL  TERPSO( CWT, DELM0, FBEAM, GL(0,LC), MAZ,
      $                    MXCMU, INTSRC, NUMU, NSTR, OPRIM(LC),
-     $                    PI, YLM0, YLMC, YLMU, PSI0, PSI1, 
-     $                    XR0U(1,LC), XR1U(1,LC), Z0, Z1, ZJ, 
-     $                    ZBEAM(1,LC), Z0U(1,LC), Z1U(1,LC) )   
+     $                    PI, YLM0, YLMC, YLMU, PSI0, PSI1,
+     $                    XR0U(1,LC), XR1U(1,LC), Z0, Z1, ZJ,
+     $                    ZBEAM(1,LC), Z0U(1,LC), Z1U(1,LC) )
          END IF
 C
 100   CONTINUE
@@ -598,8 +598,8 @@ C                                  ** COMPUTE UPWARD AND DOWNWARD FLUXES
      $     CALL FLUXES( CMU, CWT, FBEAM, GC, KK, LAYRU, LL, LYRCUT,
      $                  MXCMU, MXULV, NCUT, NN, NSTR, NTAU, PI,
      $                  PRNT, SSALB, TAUCPR, UMU0, UTAU, UTAUPR,
-     $                  XR0, XR1, XRA, ZZ, ZPLK0, ZPLK1, ZPLKA, 
-     $                  DFDT, FLUP, FLDN, FLDIR, RFLDIR, RFLDN, 
+     $                  XR0, XR1, XRA, ZZ, ZPLK0, ZPLK1, ZPLKA,
+     $                  DFDT, FLUP, FLDN, FLDIR, RFLDIR, RFLDN,
      $                  UAVG, U0C, MAXULV, iounit )
 C
       IF ( ONLYFL )  THEN
@@ -624,7 +624,7 @@ C
 *     $                 FBEAM, FISOT, GC, GU, KK, LAMBER, LAYRU, LL,
 *     $                 LYRCUT, MAZ, MXCMU, MXULV, MXUMU, NCUT,
 *     $                 NLYR, NN, NSTR, INTSRC, NUMU, NTAU, PI, RMU,
-*     $                 TAUCPR, TSRC, UMU, UMU0, UTAUPR, WK, ZBEAM,  
+*     $                 TAUCPR, TSRC, UMU, UMU0, UTAUPR, WK, ZBEAM,
 *     $                 Z0U, Z1U, ZA, ZZ, ZPLK0, ZPLK1, ZPLKA, UUM)
 	print*,'>>> DISORT:  USRINT = TRUE is not allowed'
 C
@@ -760,7 +760,7 @@ C
 C
       TOL = 1d-30		! D1MACH(3)
       IF ( M.LT.1 .OR. IA.LT.M .OR. IEVEC.LT.M )
-     $     CALL ERRMSG( 'ASYMTX--BAD INPUT VARIABLE(S)', 
+     $     CALL ERRMSG( 'ASYMTX--BAD INPUT VARIABLE(S)',
      .		.TRUE., iounit )
 C
 C                           ** HANDLE 1X1 AND 2X2 SPECIAL CASES
@@ -1244,7 +1244,7 @@ C
      $                    PHI0, FISOT, LAMBER, ALBEDO, HL, BSRC,
      $                    TSRC, INTSRC, ONLYFL, ACCUR, MAXCLY,
      $                    MAXULV, MAXUMU, MAXCMU, MAXPHI, MXCLY,
-     $                    MXULV,  MXUMU,  MXCMU,  MXPHI, TAUC, 
+     $                    MXULV,  MXUMU,  MXCMU,  MXPHI, TAUC,
      $			  ipk, iounit )
 C
 C           CHECKS THE INPUT DIMENSIONS AND VARIABLES
@@ -1254,7 +1254,7 @@ C
       INTEGER  MAXCLY, MAXUMU, MAXULV, MAXCMU, MAXPHI, NLYR,
      $         NUMU, NSTR, NPHI, NTAU, MXCMU, MXUMU, MXPHI, MXCLY,
      $         MXULV
-      REAL     ACCUR, ALBEDO, BSRC, DTAUC( MAXCLY ), FBEAM, 
+      REAL     ACCUR, ALBEDO, BSRC, DTAUC( MAXCLY ), FBEAM,
      .		fisot(-ipk:-1),
      $         HL( 0:MAXCMU ), PHI( MAXPHI ), PMOM( 0:MAXCMU, MAXCLY ),
      $         PHI0, SRC(3*MAXCLY,*), SSALB( MAXCLY ), TSRC,
@@ -1272,7 +1272,7 @@ C
      $        INPERR = WRTBAD( 'SSALB', iounit )
          IF ( INTSRC )  THEN
             LS = 3*(LC-1) + 1
-            DO 11 IQ = 1, NSTR 
+            DO 11 IQ = 1, NSTR
               IF( SRC(LS,IQ).LT.0.0 ) INPERR = WRTBAD( 'SRC', iounit )
               IF( SRC(LS+1,IQ).LT.0.0 ) INPERR = WRTBAD( 'SRC', iounit )
               IF( SRC(LS+2,IQ).LT.0.0 ) INPERR = WRTBAD( 'SRC', iounit )
@@ -1418,7 +1418,7 @@ C                  COORDINATES;  EQUAL TO -UTAU- IF NO DELTA-M
 C       ZZ      :  BEAM SOURCE VECTORS IN EQ. SS(19)
 C       ZPLK0   :  INTERNAL SOURCE VECTORS -Z0-, BY SOLVING EQ. SS(16)
 C       ZPLK1   :  INTERNAL SOURCE VECTORS -Z1-, BY SOLVING EQ. SS(16)
-C       ZPLKA   :  INTERNAL SOURCE VECTORS -ZA-, ALFA IN EQ. 
+C       ZPLKA   :  INTERNAL SOURCE VECTORS -ZA-, ALFA IN EQ.
 C       (REMAINDER ARE 'DISORT' INPUT VARIABLES)
 C
 C    O U T P U T   V A R I A B L E S:
@@ -1437,7 +1437,7 @@ C
        REAL     UUM( MXUMU, MXULV, 0:* )
        REAL     GC( MXCMU,MXCMU,* ), KK( MXCMU,* ), LL( MXCMU,* ),
      $          TAUCPR( 0:* ), UTAUPR(*), ZZ( MXCMU, *),
-     $          ZPLK0( MXCMU,* ), ZPLK1( MXCMU,* ), ZPLKA( * ) 
+     $          ZPLK0( MXCMU,* ), ZPLK1( MXCMU,* ), ZPLKA( * )
 C
 C
 C                                                  ** ZERO OUTPUT ARRAY
@@ -1465,7 +1465,7 @@ C
      $            UUM(IQ,LU,MAZ) = ZINT + ZZ(IQ,LYU)
      $                                    * EXxP( - UTAUPR(LU) / UMU0 )
              IF ( INTSRC .AND. MAZ.EQ.0 )
-     $            UUM(IQ,LU,MAZ) = UUM(IQ,LU,MAZ) + 
+     $            UUM(IQ,LU,MAZ) = UUM(IQ,LU,MAZ) +
      $                             EXxP(-ZPLKA(LYU)*UTAUPR(LU))*
      $                         (ZPLK0(IQ,LYU)+ZPLK1(IQ,LYU)*UTAUPR(LU))
 20        CONTINUE
@@ -1537,8 +1537,8 @@ C
       SUBROUTINE  FLUXES( CMU, CWT, FBEAM, GC, KK, LAYRU, LL, LYRCUT,
      $                    MXCMU, MXULV, NCUT, NN, NSTR, NTAU, PI,
      $                    PRNT, SSALB, TAUCPR, UMU0, UTAU, UTAUPR,
-     $                    XR0, XR1, XRA, ZZ, ZPLK0, ZPLK1, ZPLKA, 
-     $                    DFDT, FLUP, FLDN, FLDIR, RFLDIR, RFLDN, 
+     $                    XR0, XR1, XRA, ZZ, ZPLK0, ZPLK1, ZPLKA,
+     $                    DFDT, FLUP, FLDN, FLDIR, RFLDIR, RFLDN,
      $                    UAVG, U0C, MAXULV, iounit )
 C
 C       CALCULATES THE RADIATIVE FLUXES, MEAN INTENSITY, AND FLUX
@@ -1596,9 +1596,9 @@ C
       INTEGER LAYRU(*)
       REAL    CMU(*), CWT(*), GC( MXCMU,MXCMU,* ), KK( MXCMU,* ),
      $        LL( MXCMU,* ), SSALB(*), TAUCPR( 0:* ),
-     $        UTAU(*), UTAUPR(*), XR0(MXCMU,*), 
+     $        UTAU(*), UTAUPR(*), XR0(MXCMU,*),
      $        XR1(MXCMU,*), XRA(*), ZZ( MXCMU,* ),
-     $        ZPLK0( MXCMU,* ), ZPLK1( MXCMU,* ), ZPLKA( * ) 
+     $        ZPLK0( MXCMU,* ), ZPLK1( MXCMU,* ), ZPLKA( * )
 C
 C
       IF ( PRNT(2) )  WRITE( iounit,1010 )
@@ -1681,7 +1681,7 @@ C
 C
             U0C( IQ,LU ) = ZINT
             IF ( FBEAM.GT.0.0 )  U0C( IQ,LU ) = ZINT + ZZ(IQ,LYU) * FACT
-            U0C( IQ,LU ) = U0C( IQ,LU ) + 
+            U0C( IQ,LU ) = U0C( IQ,LU ) +
      $                             EXxP(-ZPLKA(LYU)*UTAUPR(LU))*
      $                         (ZPLK0(IQ,LYU)+ZPLK1(IQ,LYU)*UTAUPR(LU))
 
@@ -1710,9 +1710,9 @@ C
 51       CONTINUE
 C                             **  FACTOR OF 0.5 BECAUSE OF THE
 C                             **  USE OF DOUBLE GAUSSIAN QUADRATURE
-         SORC = 0.5 * SORC    
-         DFDT( LU ) = ( 1.0-SSALB(LYU) ) * 4.*PI* UAVG(LU) 
-     $                 - 4. * PI * SORC 
+         SORC = 0.5 * SORC
+         DFDT( LU ) = ( 1.0-SSALB(LYU) ) * 4.*PI* UAVG(LU)
+     $                 - 4. * PI * SORC
  90      IF( PRNT(2) )  WRITE( iounit,1020 ) UTAU(LU), LYU, RFLDIR(LU),
      $                                 RFLDN(LU), FDNTOT, FLUP(LU),
      $                                 FNET, UAVG(LU), SORC, DFDT(LU)
@@ -1881,10 +1881,10 @@ C
 *
 *----------------------------------------------------------------------
 *
-      SUBROUTINE  PRTINP( NLYR, DTAUC, SSALB, PMOM, NTAU, UTAU, 
-     $                    NSTR, NUMU, UMU, NPHI, PHI, FBEAM, 
-     $                    UMU0, PHI0, FISOT, LAMBER, ALBEDO, HL, 
-     $                    BSRC, TSRC, DELTAM, INTSRC, ONLYFL, 
+      SUBROUTINE  PRTINP( NLYR, DTAUC, SSALB, PMOM, NTAU, UTAU,
+     $                    NSTR, NUMU, UMU, NPHI, PHI, FBEAM,
+     $                    UMU0, PHI0, FISOT, LAMBER, ALBEDO, HL,
+     $                    BSRC, TSRC, DELTAM, INTSRC, ONLYFL,
      $                    ACCUR, FLYR, LYRCUT, OPRIM, TAUC, TAUCPR,
      $                    MAXCMU, PRTMOM, ipk, iounit )
 C
@@ -2159,7 +2159,7 @@ C
      $                    MAXUMU, MAXCMU, mxcly, MXCMU, NCUT, NLYR,
      $			  NTAU, NN,
      $                    NSTR, INTSRC, NUMU, ONLYFL, OPRIM, PMOM, SRC,
-     $                    SRCU, SSALB, TAUC, TAUCPR, UTAU, UTAUPR, UMU, 
+     $                    SRCU, SSALB, TAUC, TAUCPR, UTAU, UTAUPR, UMU,
      $                    UMU0, USRTAU, USRANG, iounit )
 C
 C          PERFORM MISCELLANEOUS SETTING-UP OPERATIONS
@@ -2769,7 +2769,7 @@ C                               ** BOTTOM LAYER
                DO 60 IQ = 1, NN
 C                                      ** BOTTOM BOUNDARY
 C
-                  B(NCOL-NN+IQ) = 
+                  B(NCOL-NN+IQ) =
      $                       -  EXxP(-ZPLKA(NCUT)*TAUCPR(NCUT))*
      $               (ZPLK0(IQ+NN,NCUT)+ZPLK1(IQ+NN,NCUT)*TAUCPR(NCUT))
 60             CONTINUE
@@ -2781,7 +2781,7 @@ C
                   SUM = 0.
                   DO 70 JQ = 1, NN
                      SUM = SUM + CWT(JQ) * CMU(JQ) * BDR(IQ,JQ)
-     $                          * ( 
+     $                          * (
      $                EXxP(-ZPLKA(NCUT)*TAUCPR(NCUT))*
      $       (ZPLK0(NN+1-JQ,NCUT)+ZPLK1(NN+1-JQ,NCUT)*TAUCPR(NCUT)))
 70                CONTINUE
@@ -3127,9 +3127,9 @@ C
 *
 *----------------------------------------------------------------------
 *
-      SUBROUTINE  TERPSO( CWT, DELM0, FBEAM, GL, MAZ, MXCMU, 
+      SUBROUTINE  TERPSO( CWT, DELM0, FBEAM, GL, MAZ, MXCMU,
      $                    INTSRC, NUMU, NSTR, OPRIM, PI, YLM0, YLMC,
-     $                    YLMU, PSI0, PSI1, XR0U, XR1U, Z0, Z1, 
+     $                    YLMU, PSI0, PSI1, XR0U, XR1U, Z0, Z1,
      $                    ZJ, ZBEAM, Z0U, Z1U)
 C
 C         INTERPOLATES SOURCE FUNCTIONS TO USER ANGLES
@@ -3171,7 +3171,7 @@ C        PSI1     WITH Z0 AND Z1 RESPECTIVELY
 C+---------------------------------------------------------------------+
       LOGICAL  INTSRC
       REAL     CWT(*), GL(0:*), PSI0(*), PSI1(*), XR0U(*), XR1U(*),
-     $         YLM0(0:*), YLMC( 0:MXCMU,* ), YLMU( 0:MXCMU,*), 
+     $         YLM0(0:*), YLMC( 0:MXCMU,* ), YLMU( 0:MXCMU,*),
      $         Z0(*), Z1(*), ZJ(*), ZBEAM(*), Z0U(*), Z1U(*)
 C
 C
@@ -3217,7 +3217,7 @@ C
                SUM0 = SUM0 + YLMU(IQ,IU) *  PSI0(IQ+1)
                SUM1 = SUM1 + YLMU(IQ,IU) *  PSI1(IQ+1)
 90          CONTINUE
-            Z0U(IU) = SUM0 + XR0U(IU) 
+            Z0U(IU) = SUM0 + XR0U(IU)
             Z1U(IU) = SUM1 + XR1U(IU)
 100      CONTINUE
 C
@@ -3310,7 +3310,7 @@ C
 *----------------------------------------------------------------------
 *
       SUBROUTINE  UPISOT( ARRAY, CC, CMU, IPVT, MXCMU, NN, NSTR, OPRIM,
-     $                    WK, XR0, XR1, XRA, Z0, Z1, ZA, ZPLK0, ZPLK1, 
+     $                    WK, XR0, XR1, XRA, Z0, Z1, ZA, ZPLK0, ZPLK1,
      $                    ZPLKA, iounit,ien,dARRAY,dWK,dz0,dz1)
 C
 C       FINDS THE PARTICULAR SOLUTION OF THERMAL RADIATION OF SS(15)
@@ -3345,7 +3345,7 @@ C+---------------------------------------------------------------------+
 C
       INTEGER IPVT(*)
       REAL    ARRAY( MXCMU,* ), CC( MXCMU,* ), CMU(*), WK(*),
-     $        XR0(*), XR1(*), XRA, Z0(*), Z1(*), ZA, 
+     $        XR0(*), XR1(*), XRA, Z0(*), Z1(*), ZA,
      $        ZPLK0(*), ZPLK1(*), ZPLKA
       double precision  dARRAY( MXCMU,mxcmu ),dWK(mxcmu),drcond,
      .		dz0(mxcmu),dz1(mxcmu)
@@ -3384,7 +3384,7 @@ C
       DO 30 IQ = 1, NSTR
          dZ0(IQ) = dble(XR0(IQ)) + dble(CMU(IQ)) * dZ1(IQ)
 30    CONTINUE
- 	
+
       CALL  dGESL( dARRAY, MXCMU, NSTR, IPVT, dZ0, 0 )
 C
       DO 40  IQ = 1, NN
@@ -3422,7 +3422,7 @@ C
      $                    FBEAM, FISOT, GC, GU, KK, LAMBER, LAYRU, LL,
      $                    LYRCUT, MAZ, MXCMU, MXULV, MXUMU, NCUT,
      $                    NLYR, NN, NSTR, INTSRC, NUMU, NTAU, PI, RMU,
-     $                    TAUCPR, TSRC, UMU, UMU0, UTAUPR, WK, ZBEAM,  
+     $                    TAUCPR, TSRC, UMU, UMU0, UTAUPR, WK, ZBEAM,
      $                    Z0U, Z1U, ZA, ZZ, ZPLK0, ZPLK1, ZPLKA, UUM)
 C
 C       COMPUTES INTENSITY COMPONENTS AT USER OUTPUT ANGLES
@@ -3492,8 +3492,8 @@ C
      $         GU( MXUMU,MXCMU,* ), KK( MXCMU,* ), LL( MXCMU,* ),
      $         RMU( MXUMU,0:* ), TAUCPR( 0:* ), UUM( MXUMU,MXULV,0:* ),
      $         UMU(*), UTAUPR(*), WK(*), Z0U( MXUMU,* ), Z1U( MXUMU,* ),
-     $         ZA( * ), ZBEAM( MXUMU,* ), ZZ( MXCMU,* ),  
-     $         ZPLK0( MXCMU,* ), ZPLK1( MXCMU,* ), ZPLKA( * ) 
+     $         ZA( * ), ZBEAM( MXUMU,* ), ZZ( MXCMU,* ),
+     $         ZPLK0( MXCMU,* ), ZPLK1( MXCMU,* ), ZPLKA( * )
 C
 C
       CALL  ZEROIT( UUM, MXUMU*MXULV*(MXCMU+1) )
@@ -3637,9 +3637,9 @@ C
                  EXPN = EXP1
                  ALFA = ZA(LYU)
                  DEN = (-1./(ALFA*UMU(IU)+1.))
-                 PLKINT = PLKINT + 
+                 PLKINT = PLKINT +
      $                    Z0U(IU,LYU) * DEN * (
-     $                   -EXxP(-ALFA*UTAUPR(LU))+ 
+     $                   -EXxP(-ALFA*UTAUPR(LU))+
      $		         exp(-alfa*taucpr(lyu-1))*EXPN )
      $                   +  Z1U(IU,LYU)*DEN*(
      $                  -(UTAUPR(LU)-UMU(IU)*DEN)*EXxP(-ALFA*UTAUPR(LU))
@@ -3649,7 +3649,7 @@ C
                  EXPN = EXP2
                  ALFA = ZA(LYU)
                  DEN = (1./(ALFA*UMU(IU)+1.))
-                 PLKINT = PLKINT + 
+                 PLKINT = PLKINT +
      $                    Z0U(IU,LYU) * DEN *
      $                   (EXxP(-ALFA*UTAUPR(LU))-EXxP(-ALFA*TAUCPR(LYU))
      $                                           *EXPN)
@@ -3683,7 +3683,7 @@ C                            ** COMPONENT FOR ISOTROPIC SURFACE
 71               CONTINUE
                  IF ( FBEAM.GT.0.0 )
      $                DFUINT = DFUINT + ZZ(IQ,NLYR) * EXPBEA(NLYR)
-                 DFUINT = DFUINT + DELM0 * ( 
+                 DFUINT = DFUINT + DELM0 * (
      $              EXxP(-ZPLKA(NLYR)*TAUCPR(NLYR))*
      $              (ZPLK0(IQ,NLYR)+ZPLK1(IQ,NLYR)*TAUCPR(NLYR)))
                  BNDDFU = BNDDFU + ( 1. + DELM0 ) * RMU(IU,NN+1-IQ)
@@ -3708,10 +3708,10 @@ C
 *----------------------------------------------------------------------
 *
       SUBROUTINE  ZEROAL( AMB, APB, ARRAY, CC, CMU, CWT, EVAL, EVECC,
-     $                    GC, GU, HLPR, KK, LL, PSI0, PSI1, WK, XR0, 
-     $                    XR1, XRA,XR0U, XR1U, XRAU, YLM0, YLMC, YLMU, 
-     $                    Z, Z0, Z1, ZA, ZJ, ZZ, ZPLK0, ZPLK1, ZPLKA, 
-     $                    Z0U, Z1U, ZBEAM, MI, MXCMU, MXCLY, 
+     $                    GC, GU, HLPR, KK, LL, PSI0, PSI1, WK, XR0,
+     $                    XR1, XRA,XR0U, XR1U, XRAU, YLM0, YLMC, YLMU,
+     $                    Z, Z0, Z1, ZA, ZJ, ZZ, ZPLK0, ZPLK1, ZPLKA,
+     $                    Z0U, Z1U, ZBEAM, MI, MXCMU, MXCLY,
      $                    NNLYRI, MXUMU )
 C
 C            ZERO ARRAYS
@@ -3719,12 +3719,12 @@ C
       REAL  AMB(MI,*), APB(MI,*), ARRAY(MXCMU,*), CC(MXCMU,*),
      $      CMU(*), CWT(*), EVAL(*), EVECC(MXCMU,*), GC(MXCMU,MXCMU,*),
      $      GU(MXUMU,MXCMU,*), HLPR(0:*), KK(MXCMU,*), LL(MXCMU,*),
-     $      PSI0(*), PSI1(*), WK(*), XR0(MXCMU,*), XR1(MXCMU,*), 
+     $      PSI0(*), PSI1(*), WK(*), XR0(MXCMU,*), XR1(MXCMU,*),
      $      XRA(*), XR0U(MXUMU,*),XR1U(MXUMU,*),XRAU(*), YLM0(0:*),
      $      YLMC(0:MXCMU,*), YLMU(0:MXCMU,*), Z(*), Z0(*), Z1(*), ZA(*),
      $      Z0U(MXUMU,*), Z1U(MXUMU,*),ZJ(*), ZZ(MXCMU,*),
      $      ZPLK0(MXCMU,*), ZPLK1(MXCMU,*), ZPLKA(*),
-     $      ZBEAM(MXUMU,*)  
+     $      ZBEAM(MXUMU,*)
 C
 C
       CALL  ZEROIT( XR0, MXCMU*MXCLY )

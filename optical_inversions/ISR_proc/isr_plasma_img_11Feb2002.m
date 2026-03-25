@@ -13,7 +13,7 @@ iste1=iste;
 isti1=isti;
 isvi1=isvi;
 
-    
+
 
 %LOAD OTHER PART OF DATA
 datelab='11Feb2002_25s_p2';

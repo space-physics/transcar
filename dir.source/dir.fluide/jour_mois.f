@@ -1,9 +1,9 @@
        subroutine jour_mois(ian,
      &                          ijour,imois)
-     
+
        implicit none
-       
-       
+
+
        integer, intent(in)  :: ian
        integer, intent(out) :: ijour,imois, iday
 
@@ -22,19 +22,19 @@
 	    if (ijour.gt.m2(i)) goto 10
             if (i.eq.1) then
             ijour=ijour
-            else   
+            else
 	    ijour=ijour-m2(i-1)
             endif
-            imois=i  
+            imois=i
 	    goto 20
 	  else
 	    if (ijour.gt.m1(i)) goto 10
             if (i.eq.1) then
             ijour=ijour
-            else   
+            else
 	    ijour=ijour-m1(i-1)
             endif
-            imois=i 
+            imois=i
 	    goto 20
 	  endif
 

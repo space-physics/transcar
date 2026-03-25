@@ -1,21 +1,21 @@
 c
 c 			CONTENT OF MISC.F
-c    
+c
 c ----  subroutine bfield(date,alt,la,lon,x,y,z,f,dip,dec)
 c       subroutine igrf (date,itype,alt,colat,elong,x,y,z,f)
 c       igs 1975 magnetic field model
 c
 c ---- 	subroutine clasdesc(tab,ntab,index)
-c 	Classe un tableau en ordre descendant. 
+c 	Classe un tableau en ordre descendant.
 c 	tab : en entree, tableau a classe
 c 	      en sortie, tableau classe (et donc original ecrase)
 c 	ntab : nbre de points a classer
-c 	index : tableau d'entiers contenant en sortie l'ordre de 
+c 	index : tableau d'entiers contenant en sortie l'ordre de
 c 	        classement.
 c
 c ----  subroutine intlin (nin,xin,yin,nout,xout,yout)
 c 	Linear interpolation.
-c 	No restriction on extrema. Extrapolation is performed if 
+c 	No restriction on extrema. Extrapolation is performed if
 c       necessary.
 c
 c ----  subroutine intquad(nin,xin,yin,nout,xout,yout)
@@ -24,8 +24,8 @@ c    	result is yout(i) at the x points given by xout(i)
 c
 c ----  subroutine gaussint (ngau,nx,x,fx,sum)
 c    	Computes |integrale fx(i) dx(i)| using gaussian integration.
-c 	done on ngauss points within each interval. To speed up the 
-c 	program, the absissas and weight factors for ngauss=6, 12 or 24 
+c 	done on ngauss points within each interval. To speed up the
+c 	program, the absissas and weight factors for ngauss=6, 12 or 24
 c 	are stored. Otherwise they are computed.
 c
 c---- 	subroutine hint(nin,z,fction,fint)
@@ -48,7 +48,7 @@ c ----  subroutine qgauss(m,gmu,gwt)
 c 	Computes the absissas gmu and weight factors gwt for a gaussian
 c 	integration on m points
 c
-c ----  subroutine xline(nbline,ijfile)                   
+c ----  subroutine xline(nbline,ijfile)
 c    	xline skips nbline in file ijfile.
 c
 c ---- 	subroutine nuoion (xnutot,xnuo,xnun2,xnuo2, ti,tn,deno,denn2,
@@ -66,7 +66,7 @@ c     	routine to find the ion-neutral collision frequencieS
 c     	for no+ with o, n2, and o2.
 c     	these are the *reduced* frequencies given by schunk and
 c     	walker (1973), pss 21, page 1896.
-c 
+c
 c ---- 	subroutine o2ion (xnutot,xnuo,xnun2,xnuo2,ti,tn,deno,denn2,
 c    . 			 deno2)
 c     	routine by vincent wickwar, sri, may 1975.
@@ -277,7 +277,7 @@ c
  	subroutine intlin (nin,xin,yin,nout,xout,yout)
 c
 c 	Subroutine d'interpolation lineaire.
-c 	No restriction on extrema. Extrapolation is performed if 
+c 	No restriction on extrema. Extrapolation is performed if
 c       necessary.
 c 	L'ordre croissant des donnees d'entree est assure par pgmme
 c
@@ -368,11 +368,11 @@ c
  	end
 c
 c------------------------- gaussint -------------------------------
-c 
+c
   	subroutine gaussint (ngau,nx,x,fx,sum)
 c
 c    	Computes |integrale fx(i) dx(i)| using gaussian integration.
-c 	Each interval is splitted in ngauss points on which the 
+c 	Each interval is splitted in ngauss points on which the
 c 	integration is performed. To speed up the program, the
 c 	absissas and weight factors for ngauss=6, 12 or 24 are stored.
 c 	Otherwise they are computed.
@@ -469,7 +469,7 @@ c
 	    y = A * absc(i) + B
 	    fy=fyy*(y-x(ix))+fx(ix)
 	    sum = sum + A*fy*wt(i)
-	    
+
 	    y = A * (-absc(i)) + B
 	    fy=fyy*(y-x(ix))+fx(ix)
 	    sum = sum + A*fy*wt(i)
@@ -480,9 +480,9 @@ c
 c
       return
       end
-c 
+c
 c----------------------- hint ------------------------------
-c 
+c
       subroutine hint(nin,z,fction,sum)
 c
 c    integrate using trapezoid rule
@@ -736,20 +736,20 @@ C
 c
 c------------------------------------------------------------------
 c
-      subroutine xline(nbline,ijfile)                   
+      subroutine xline(nbline,ijfile)
       implicit none
-      integer,intent(in) :: nbline,ijfile  
+      integer,intent(in) :: nbline,ijfile
 
       character nc*30
       integer i
 
-      do i=1,nbline        
-        read(ijfile,1000) nc    
+      do i=1,nbline
+        read(ijfile,1000) nc
       end do
 
- 1000 format(a1)              
-              
-      end subroutine xline                   
+ 1000 format(a1)
+
+      end subroutine xline
 c
 c---------------------------------------------------------------
 c
@@ -793,7 +793,7 @@ c     XNUO = 3.67E-11 * DENO * SQRT(TM) *
 c    *   (1.0 - 0.064 * XLOG)**2
 c	on remplace cette valeur par celle recommande par le CEDAR
 c	qui inclut le facteur de Burnside:1.7 (Chantal, 1993)
-c 	On s'autorise quand meme de pouvoir jouer sur ce facteur 
+c 	On s'autorise quand meme de pouvoir jouer sur ce facteur
 c 	"burnside" devient un parametre libre (jl, 1994)
 c	equation 5, Salah, GRL 93, vol 20, p1543-1546
 
@@ -803,7 +803,7 @@ c	equation 5, Salah, GRL 93, vol 20, p1543-1546
       XNUTOT = XNUO + XNUN2 + XNUO2
 
       END SUBROUTINE NUOION
-C    
+C
 c----------------------------------------------------------------------
 c
       	SUBROUTINE NOION (XNUTOT,XNUO, XNUN2,XNUO2,DENO,DENN2,
@@ -838,7 +838,7 @@ C
       XNUTOT = XNUO + XNUN2 + XNUO2
 
       END SUBROUTINE NOION
-C    
+C
 c----------------------------------------------------------------------
 c
       	SUBROUTINE O2ION (XNUTOT,XNUO,XNUN2,XNUO2,TI,TN,DENO,DENN2,
@@ -872,7 +872,7 @@ C
       IF ( TM - 800.0 ) 1, 1, 3
     1 XNUO2 = 4.08E-10 * DENO2
       GO TO 5
-    3 XNUO2 = 2.59E-11 * DENO2 * SQRT(TM) * 
+    3 XNUO2 = 2.59E-11 * DENO2 * SQRT(TM) *
      *   (1.0 - 0.073 * XLOG)**2
     5 XNUTOT = XNUO + XNUN2 + XNUO2
 
@@ -979,11 +979,11 @@ c----------------------------------------------------------------------
 c
  	subroutine clasdesc(tab,ntab,index)
 c
-c 	Classe un tableau en ordre descendant. 
+c 	Classe un tableau en ordre descendant.
 c 	tab : en entree, tableau a classe
 c 	      en sortie, tableau classe (et donc original ecrase)
 c 	ntab : nbre de points a classer
-c 	index : tableau d'entiers contenant en sortie l'ordre de 
+c 	index : tableau d'entiers contenant en sortie l'ordre de
 c 	        classement.
  	implicit none
 c
@@ -1023,11 +1023,11 @@ c
  	end subroutine clasdesc
 c
 c----------------------- gridcst ---------------------------------
-c 
+c
         subroutine gridcst (ntab,tabmin,tabmax,tab,dtab)
 c
 c       determine grid with equally spaced points
-c 
+c
         real tab(*),dtab(*)
 c
         dzo = (tabmax-tabmin)/float(ntab-1)
@@ -1044,7 +1044,7 @@ c
         end
 c
 c----------------------- gridexp ---------------------------------
-c 
+c
       	subroutine gridexp (ntab,tabmin,tabmax,tab)
 c
 c       determine grid with exponentially spaced points
@@ -1071,7 +1071,7 @@ c     dzo = grid spacing between lowest points.
       ratio = (tabmax + hsave)/(tabmin + hsave)
       alrat = log(ratio)
       do 20 i = 1,ntab
-        tab( ntab - i + 1) = 
+        tab( ntab - i + 1) =
      .         (tabmin + hsave)*ratio**(float(i-1)/flntabm1) - hsave
    20 continue
       tab(1)=tabmax

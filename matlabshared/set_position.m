@@ -1,7 +1,7 @@
 clear('index')
 
   ipos=find(position_time==req_pos);
-  
+
 if nb_records>1
   dt=diff(time(ipos));
   dtmin=mean(dt);
@@ -11,7 +11,7 @@ if nb_records>1
   for i=1:nin-1
     index(i).data=ipos(indt(i)+1:indt(i+1));
   end
-  
+
 
 end
 %%
@@ -25,8 +25,8 @@ if nb_pos>1
    end
    titre=[file_expr string_box];
 else
-   titre=file_expr;                       
-end                     
+   titre=file_expr;
+end
 
 titre=strrep(titre,'_','\_');
 %%

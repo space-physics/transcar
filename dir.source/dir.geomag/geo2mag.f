@@ -253,14 +253,14 @@ c    coordonnees dipolaires de Gustafsson
         y(0)=1.d0
         x(1)=cos(lonmag)*cos(latmag)
         y(1)=sin(lonmag)*cos(latmag)
-        
+
         do i=2,ndeg
         x(i)=x(i-1)*x(1)
         enddo
         do j=2,mdeg
         y(j)=y(j-1)*y(1)
         enddo
-        
+
         xm=0.
         ym=0.
         do i=0,ndeg
@@ -269,14 +269,14 @@ c    coordonnees dipolaires de Gustafsson
             ym=ym+cy_geo2cgm(j,i)*x(i)*y(j)
           enddo
         enddo
-        
+
         latmag=acos(sqrt(xm*xm+ym*ym))*rad2deg
         if(ym*xm.ne.0.) then
           lonmag=atan2(ym,xm)*rad2deg
           lonmag=mod(lonmag+360.d0,360.d0)
         else
           lonmag=lonref
-        endif 
+        endif
 
 
         return
@@ -290,14 +290,14 @@ c    coordonnees dipolaires de Gustafsson
         y(0)=1.
         x(1)=cos(dlonmag)*cos(dlatmag)
         y(1)=sin(dlonmag)*cos(dlatmag)
-        
+
         do i=2,ndeg
         x(i)=x(i-1)*x(1)
         enddo
         do j=2,mdeg
         y(j)=y(j-1)*y(1)
         enddo
-        
+
         xm=0.
         ym=0.
         do i=0,ndeg
@@ -306,14 +306,14 @@ c    coordonnees dipolaires de Gustafsson
             ym=ym+cy_cgm2geo(j,i)*x(i)*y(j)
           enddo
         enddo
-        
+
         ca=sqrt(xm*xm+ym*ym)
         sa=sqrt(1-ca*ca)
         if(ym*xm.ne.0.) then
           dlonmag=atan2(ym,xm)
         else
           dlonmag=lonref
-        endif 
+        endif
 
         cb=cos(dlonmag)
         sb=sin(dlonmag)

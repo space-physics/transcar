@@ -311,7 +311,7 @@ C-----------------------------------------------------------------------
              DIFF(I+1) = RNH(I+1)*RNH(I+1)
              LN(I) = PI*(DIFF(I+1) - DIFF(I))
           End do
-          
+
           case(3)
 c  Spherical Coordinates: RADIAL . . .
 C-----------------------------------------------------------------------
@@ -327,8 +327,8 @@ C-----------------------------------------------------------------------
              LO(I) = FTPI*(SCR1(I+1) - SCR1(I))
              LN(I) = FTPI*(DIFF(I+1) - DIFF(I))
           End do
-            
-          case(4)  
+
+          case(4)
 c  Special Coordinates: Areas and Volumes are User Supplied . . .
 C-----------------------------------------------------------------------
           end select
@@ -567,7 +567,7 @@ C-----------------------------------------------------------------------
          End do
          SOURCE(I1) = SOURCE(I1) + SCRH(I1P) - SCRH(I1)
       Return
-        
+
          case(5)
 c  + C*GRAD(D) is computed using interface data . . .
 C-----------------------------------------------------------------------
@@ -589,7 +589,7 @@ C-----------------------------------------------------------------------
             I = INDX(IS)
             SOURCE(I) = SOURCE(I) + SCALARS(IS)
          End do
-         
+
         case(7)
 C-----------------------------------------------------------------------
   707    Do I = I1, IN
@@ -654,7 +654,7 @@ C-----------------------------------------------------------------------
           Real,Parameter :: BIGNUM = Huge(1.)
 c     BIGNUM = Machine Dependent Largest Number - Set By The User!!!!
 
-          Real, Intent(IN)  ::   RHOO(NPT)     
+          Real, Intent(IN)  ::   RHOO(NPT)
           Real, Intent(OUT) ::   RHON(NPT)
 
 c     /FCT_SCRH/ Holds scratch arrays for use by LCPFCT and CNVFCT
@@ -983,7 +983,7 @@ C-----------------------------------------------------------------------
              DIFF(I+1) = RNH(I+1)*RNH(I+1)
              LN(I) = PI*(DIFF(I+1) - DIFF(I))
           End do
-          
+
           case(3)
 c  Spherical Coordinates: RADIAL . . .
 C-----------------------------------------------------------------------
@@ -996,7 +996,7 @@ C-----------------------------------------------------------------------
              AH(I) = FTPI*(SCRH(I) + RNH(I)*RNH(I))
              LN(I) = FTPI*(DIFF(I+1) - DIFF(I))
           End do
-          
+
           case(4)
 c  Special Coordinates: Areas and Volumes are User Supplied . . .
 C-----------------------------------------------------------------------
@@ -1006,7 +1006,7 @@ c  Additional system independent geometric variables . . .
 C-----------------------------------------------------------------------
           Do I = I1, IN
              RLN(I) = 1.0/LN(I)
-          End do   
+          End do
           LH(I1)  = LN(I1)
           RLH(I1) = RLN(I1)
           Do I = I1P, IN
@@ -1315,5 +1315,3 @@ C       extra(5)=sig2
 
         return
         end
-
-

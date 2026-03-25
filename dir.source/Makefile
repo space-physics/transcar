@@ -1,4 +1,4 @@
-# USAGE: 
+# USAGE:
 # make -s fc=gfortran
 # make -s fc=ifort
 #
@@ -19,7 +19,7 @@ OPTIONS=-assume byterecl  -O2 -march=native #-warn all #for ifort
 else ifeq ($(fc),gfortran)
 # we use std=legacy because there are deleted features used
 OPTIONS=-frecord-marker=4  -O1 -march=native  -std=legacy
-#OPTIONS+= -fno-align-commons  #-pedantic #-Wall #for gfortran 
+#OPTIONS+= -fno-align-commons  #-pedantic #-Wall #for gfortran
 OPTIONS+= -g -fbounds-check -fbacktrace
 else
 $(info you must specify your compiler with fc=mycompiler.  E.g. make fc=gfortran)
@@ -58,7 +58,7 @@ BUT_EXE=$(TCDIR)
 #
 all: $(BUT_EXE)/transconvec_13.op.out
 
-clean: 
+clean:
 	$(RM) $(BUT_OBJ)/*.o
 #
 #Definition des modules
@@ -106,7 +106,7 @@ mod_imm    =$(BUT_OBJ)/IMM2.o $(BUT_OBJ)/IMM_routines.o
 # Fabrication de transcar
 # -----------------------
 #
-	
+
 $(BUT_EXE)/transconvec_13.op.out:   $(BUT_OBJ)/transconvec_13.op.o \
 	$(mod_fluide_op) $(mod_numeric) $(mod_systeme) \
 	$(mod_proj) $(mod_conv) $(mod_geomag) $(mod_imm) \
@@ -166,7 +166,7 @@ $(BUT_EXE)/tube0:   $(BUT_OBJ)/tube.o \
 	$(BUT_OBJ)/courant.o $(BUT_OBJ)/potentiel.o  $(BUT_OBJ)/precipitation.o \
 	$(BUT_OBJ)/coef_cour.o $(BUT_OBJ)/coef_pot.o  $(BUT_OBJ)/coef_prec.o \
 	$(BUT_OBJ)/val_fit.o \
-	$(BUT_OBJ)/projection.o	$(BUT_OBJ)/IMM_routines.o $(BUT_OBJ)/IMM2.o	
+	$(BUT_OBJ)/projection.o	$(BUT_OBJ)/IMM_routines.o $(BUT_OBJ)/IMM2.o
 #
 #
 #		COMPILATIONS DES PROGRAMMES
@@ -225,7 +225,7 @@ $(BUT_OBJ)/hqr2.o:	$(NUMERIC)/hqr2.f
 	cd $(BUT_OBJ); $(F77) $(FLAG_COMPIL) $(NUMERIC)/hqr2.f
 $(BUT_OBJ)/cdiv.o:	$(NUMERIC)/cdiv.f
 	cd $(BUT_OBJ); $(F77) $(FLAG_COMPIL) $(NUMERIC)/cdiv.f
-	
+
 #
 #
 # Sources fluide

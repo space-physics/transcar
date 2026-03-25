@@ -52,7 +52,7 @@ ti_time=(n1_time.*t1_time+n2_time.*t2_time+n3_time.*t3_time+nm_time.*tm_time)./(
 if max(time(tinds))>24
   tplot=time(tinds)-24;
 else
-  tplot=time(tinds); 
+  tplot=time(tinds);
 end
 zplot=90:5:795;
 for k=1:length(tinds);
@@ -172,7 +172,7 @@ iste1=iste;
 isti1=isti;
 isvi1=isvi;
 
-    
+
 
 %LOAD OTHER PART OF DATA
 datelab='11Feb2002_25s_p2';

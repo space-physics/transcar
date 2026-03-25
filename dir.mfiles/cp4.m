@@ -71,7 +71,7 @@ hV1=[hV1(1),ht];
 label_y(hV1(1),'bottom');
 fig=hV1(1);
 lab_time;
-  
+
 h=axes('Position',pos_fig,'unit','norm','Visible','off');
 lab_alti=get(h,'ylabel');
 set(lab_alti,'position',[-.07 .5 0],'unit','norm','string','Geographic Latitude','color','blue','vertical','bottom','Visible','on');

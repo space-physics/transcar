@@ -40,13 +40,13 @@ c 	denelc(altkm) = densite electronique cm-3
 c 	densneut(8,altkm) = densites neutres. Seules les 3 premieres
 c 	 		(n2,o2,o) sont utilisees.
 c	tneutre(altkm) = temperature neutre
-c 	temelc(altkm) = temperature electronique (pour le calcul des 
+c 	temelc(altkm) = temperature electronique (pour le calcul des
 c 	 		frequences de collision)
-c 	temion(altkm) = temperature ionique (pour le calcul des 
+c 	temion(altkm) = temperature ionique (pour le calcul des
 c 	 		frequences de collision)
 c 	chideg = angle zenithal solaire (pour le calcul des valeurs
 c 	 		theoriques de catherine)
-c	glat,glong,year,day,hrloc = pour le calcul de B et de la 
+c	glat,glong,year,day,hrloc = pour le calcul de B et de la
 c 			composition ionique.
 c 	iprt = 1 si on imprime les resultats dans le fichier file_cond
 c 	file_cond = numero du fichier de sortie
@@ -65,15 +65,15 @@ c
 c 	On sort aussi les parametres qui servent au calcul des cond :
 c
 c     	gyreave,gyriave = gyrofrequences moyennes  eB/m
-c 	collOp(altkm),collNOp(altkm),collO2p(altkm) = frequences de 
+c 	collOp(altkm),collNOp(altkm),collO2p(altkm) = frequences de
 c 	 	collisions ion/neutre calculees par le pgmme de Vincent,
 c 		selon les formules de Schunk et Nagy.
-c	collionSN(altkm),collionRG(altkm) = frequence de collision 
-c 		moyenne ion/neutre selon Schunk et Nagy ou selon 
-c 		Rishbeth et Garriot (qui est ce que Catherine avait 
+c	collionSN(altkm),collionRG(altkm) = frequence de collision
+c 		moyenne ion/neutre selon Schunk et Nagy ou selon
+c 		Rishbeth et Garriot (qui est ce que Catherine avait
 c 		utilise).
-c 	collen2(altkm),colleo2(altkm),colleo1(altkm),colle(altkm) = 
-c 		frequences de collisions electrons/neutres et 
+c 	collen2(altkm),colleo2(altkm),colleo1(altkm),colle(altkm) =
+c 		frequences de collisions electrons/neutres et
 c 		totale electron/neutre. Ouf, tout le monde utilise la
 c 		meme formule...
 c
@@ -196,7 +196,7 @@ c 	conversion des km vers les metres
         call hint (nalt,altkm,cped,cpedsum)
 c 	conversion des km vers les metres
         cpedsum = cpedsum*1.e+03
-c 	
+c
 c 	Comparaison avec les valeurs theoriques de Catherine Senior.
  	cpedCS =  1.81 + 8.88 * cx
  	chalCS = 21.58 - 0.21 * chideg
@@ -268,9 +268,9 @@ c
 1060  	format('Gyrofrequences moyennes      :',2(1pe10.2))
 2000 	format(1f10.2,3f7.4,1f10.2,3(1p1e10.2))
 
-      end subroutine conductivite     
+      end subroutine conductivite
 
-	
+
       subroutine conduct(denn2,deno2,deno1,denne,dOp,dO2p,
      .		dNOp,te,ti,tn,conP,conH,field,aionmas,gyre,gyri,
      .		fcOp,fcNOp,fcO2p,fci,fciRG,fciSN,
@@ -314,8 +314,8 @@ c
 c
  	if(icolin.eq.0)then
 c 	  frequence de collision ions-neutres:
-c 	  Formule Risbeth and Garriot, Introduction to ionospheric 
-c 	  physics, intern geophys series, ed J van Mieghem, Academic 
+c 	  Formule Risbeth and Garriot, Introduction to ionospheric
+c 	  physics, intern geophys series, ed J van Mieghem, Academic
 c 	  Pess, NY, 1969, p 130
  	  fci=fciRG
  	else
@@ -334,7 +334,7 @@ c 	On passe de frequences reduites aux frequences reelles. Les
 c 	frequences e/neutre tiennent deja compte des densite neutres.
 c 	(These Catherine, p23)
         fce=fcen2+fceo2+fceo1
-        
+
         ae=gyre**2+fce**2
         ai=gyri**2+fci**2
         conP=denne*1.e+06*esb*(fci*gyri/ai+fce*gyre/ae)
@@ -361,7 +361,7 @@ c
 c
  	real paresse,gtzbaz
  	common/outpt2/ paresse,gtzbaz
-c 
+c
  	real texo,tzbaz,tm,ts
  	common /modtemp/texo,tzbaz,tm,ts
 c
@@ -566,7 +566,7 @@ c
  	else
  	  binf = cubic(x)
  	  x = (alt-zm)/deltaz*a
- 	  bsup = cubic(x) 	
+ 	  bsup = cubic(x)
  	  tdz = tm*cub(x)
  	  gg = g((alt+zref)/2.)
  	  fact = amas*gg*deltaz*(binf-bsup)/r/tm/a*1.e+03

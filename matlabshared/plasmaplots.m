@@ -32,8 +32,3 @@ figure(662),clf(662)
 pcolor(time, z, tet_time)
 shading flat
 title('Electron Perpendicular Temperature');
-
-
-
-
-

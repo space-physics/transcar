@@ -2,7 +2,7 @@ if exist('data_path','var')
   filein=[data_path,'dir.output/',file];
 else
   filein=file;
-end    
+end
 
 file_expr=['TRANSCAR - ',filein];
 
@@ -44,7 +44,7 @@ size_record=nli*ncol;
 fseek(fid,0,'eof');
 nb_records=fix(ftell(fid)/size_record/int_type);
 
-%fclose(fid); %will be used in data_tra 
+%fclose(fid); %will be used in data_tra
 %fopen(filein,'r',TCoutEndianness); %mistake?
 
 time=zeros([1 nb_records]);
@@ -137,7 +137,7 @@ end
 if ncol>47
     NOHot_time=z_time;
     TnOHot_time=z_time;
-    
+
     if ncol>49
       n7_time=z_time;
       v7_time=z_time;
@@ -146,15 +146,15 @@ if ncol>47
       t7_time=z_time;
       q7_time=z_time;
       POHot_time=z_time;
-      
+
       if ncol>55
           nOHot_time=z_time;
           vOHot_time=z_time;
           tOHotp_time=z_time;
           tOHott_time=z_time;
-          tOHot_time=z_time;        
+          tOHot_time=z_time;
           qOHot_time=z_time;
-          
+
           if ncol>60
              Po1d_time=z_time;
              no1d_time=z_time;
@@ -176,13 +176,13 @@ for rec_num=1:nb_records
     display(['read_tra: Processing record ',int2str(rec_num),...
               '  ; remaining ',int2str(nb_records-rec_num),' records'])
   end
-  
+
   data_tra
 
   if he<he0,
     dhe=dhe+24;
   end
-      
+
   he0=he;
 
   time(rec_num)=he+dhe+mi/60+se/3600;
@@ -216,7 +216,7 @@ for rec_num=1:nb_records
   vperpnord_time(rec_num)=vperpnord;
   ddp_time(rec_num)=ddp;
   Jtop_time(rec_num)=Jtop;
-  
+
   ne_time(:,rec_num)=ne;
   n1_time(:,rec_num)=n1;
   n2_time(:,rec_num)=n2;
@@ -268,12 +268,12 @@ for rec_num=1:nb_records
   Vn_time(:,rec_num)=Vn;
   Un_time(:,rec_num)=Un;
   Wn_time(:,rec_num)=Wn;
-  
+
   %Added for neutral hot O
   if ncol>47
     NOHot_time(:,rec_num)=NOHot;
     TnOHot_time(:,rec_num)=TnOHot;
-    
+
     if ncol>49
       n7_time(:,rec_num)=n7;
       v7_time(:,rec_num)=v7;
@@ -282,7 +282,7 @@ for rec_num=1:nb_records
       t7_time(:,rec_num)=t7;
       q7_time(:,rec_num)=q7;
       POHot_time(:,rec_num)=POHot;
-            
+
       if ncol>55
           nOHot_time(:,rec_num)=nOHot;
           vOHot_time(:,rec_num)=vOHot;
@@ -290,7 +290,7 @@ for rec_num=1:nb_records
           tOHott_time(:,rec_num)=tOHott;
           tOHot_time(:,rec_num)=tOHot;
           qOHot_time(:,rec_num)=qOHot;
-          
+
           if ncol>60
              Po1d_time(:,rec_num)=Po1d;
              no1d_time(:,rec_num)=no1d;
@@ -298,11 +298,11 @@ for rec_num=1:nb_records
           end
       end
     end
-   
+
      Heat_time(:,rec_num)=Heat;
   end
-  %-MZ  
-  
+  %-MZ
+
   if exist('nes_time'),
     nes_time(:,rec_num)=nes;
     jes_time(:,rec_num)=jes;
@@ -321,7 +321,7 @@ j_time=(n1_time.*v1_time...
  if ncol>49
     j_time=j_time+n7_time.*v7_time;
  end
-       
+
 if exist('jes_time'),
 %  j_time=j_time-jes_time;
 end

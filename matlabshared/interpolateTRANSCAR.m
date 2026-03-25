@@ -12,14 +12,14 @@ function newdata=interpolateTRANSCAR(data,grid,newgrid,exmode,imode)
 %     imode='lin'
 
   lgr=length(grid);
-  
+
   l=1;
-  for k=1:length(newgrid)  
+  for k=1:length(newgrid)
     %Compute the bin # that the new point falls in
     while  l<=length(grid) && newgrid(k)>grid(l)
-       l=l+1; 
+       l=l+1;
     end
-    
+
     %Low end extrap.
     if l==1
        switch exmode
@@ -63,17 +63,17 @@ function newdata=interpolateTRANSCAR(data,grid,newgrid,exmode,imode)
            x0=log10(grid(l-1)); x1=log10(grid(l));
            y0=log10(data(l-1)); y1=log10(data(l));
            slope=(y1-y0)/(x1-x0);
-           newdata(k)=10^(y0+slope*(log10(newgrid(k))-x0));          
+           newdata(k)=10^(y0+slope*(log10(newgrid(k))-x0));
          case 'lin',
            x0=grid(l-1); x1=grid(l);
            y0=data(l-1); y1=data(l);
            slope=(y1-y0)/(x1-x0);
            newdata(k)=y0+slope*(newgrid(k)-x0);
          otherwise,
-           fprintf('\n INTERPOLATE --> imode not valid!')  
+           fprintf('\n INTERPOLATE --> imode not valid!')
        end
     end %conditional
   end %loop over data points
-  
+
   newdata=reshape(newdata,size(newgrid));
 end %function

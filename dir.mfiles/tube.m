@@ -34,7 +34,7 @@ for j=1:length(i)-1
    eval(['t_en(j)=tps' int2str(j) '(1);']);
    longueur=max(longueur,i(j+1)-i(j));
 %   eval(['plot3(' int2str(j) '*ones(size(tps' int2str(j) ')),tps' int2str(j) ',Chi' int2str(j) ')']);
-   
+
 %   plot(x,y)
 %   hold on
 end

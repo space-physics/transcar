@@ -143,7 +143,7 @@ c	fonction calculant la racine de dE_dt=0 pour 5<=Lncoul<=25
 
 	real*8 function erf_d(x)
 	real*8 x
-	
+
 	erf_d=x
 	return
 	end

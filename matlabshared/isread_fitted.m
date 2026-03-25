@@ -22,7 +22,7 @@ while ~feof(fid)
     if mod(isit,50) == 0
         fprintf('\nISREAD.M --> reading record #:  %d',isit);
     end
-    
+
     %ff past labels
     sline=fgets(fid); sline=fgets(fid);
 
@@ -48,7 +48,7 @@ while ~feof(fid)
         %organize the data in this line
         istime(isit)=numline(1);
         isz(isiz)=numline(4);
-        
+
         isne(isiz,isit)=numline(6);
         isdne(isiz,isit)=numline(7);
         iste(isiz,isit)=numline(8);
@@ -59,7 +59,7 @@ while ~feof(fid)
         isdvi(isiz,isit)=numline(13);
     end
     sline=fgets(fid);       %trailing blank line
-    
+
     %time index counter
     isit=isit+1;
 end

@@ -63,4 +63,3 @@ runTranscar()
 
 copyTranscarFiles $1
 runTranscar
-

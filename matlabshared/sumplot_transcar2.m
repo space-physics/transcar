@@ -132,36 +132,36 @@ ylabel(c,'v_i (m/s)')
 
 % %LOAD OPTICAL DATA
 % load([datadir,'/',emfile]);
-% 
-% 
-% 
+%
+%
+%
 % %WHAT TIME INDEX?
 % tind=min(find(timeop>=midevent));
 % tinds=find(timeop>=mintime & timeop<=maxtime);
 % lt=length(tinds);
 % bavg=mean(blambda(:,tinds),2);
-% 
+%
 % %plot sizing parameters
 % FS=8;
 % LW=2;
-% 
-% 
-% 
+%
+%
+%
 % %BUILD LEGEND (THIS IS A BIT OF A HACK TO GET AROUND MATLAB'S STUPID LEGEND
 % %CODE)
 % subplot(515); pbaspect([8.5 11/6.5 1]);
 % plot(557.7,1e0,'g',557.7,1e0,'r',557.7,1e0,'b',557.7,1e0,'y',557.7,1e0,'m',557.7,1e0,'c','LineWidth',LW);
 % legend('O meta-stable','O prompt','N_2^+ 1N','N_2^+ Meinel','N_2 2P','N_2 1P','Location','NorthWest','Orientation','Horizontal');
 % legend boxoff;
-% 
-% 
-% 
+%
+%
+%
 % %BUILD LINES FOR PLOTTING
 % linebase=0.5*min(bavg);
 % blines=[bavg,linebase*ones(size(bavg))];
-% 
-% 
-% 
+%
+%
+%
 % %IDENTIFY EMISSION GROUPS AND PLOT ON SYNTHETIC SPECTROGRAPH
 % %metastable oxygen lines
 % hold on;
@@ -169,31 +169,31 @@ ylabel(c,'v_i (m/s)')
 %     ilk=find(lambda==lambdams(k));
 %     plot([lambda(ilk),lambda(ilk)],log10(blines(ilk,:)),'g','LineWidth',LW)
 % end
-% 
+%
 % %prompt oxygen emissions
 % for k=1:length(lambdapa)
 %     ilk=find(lambda==lambdapa(k));
 %     plot([lambda(ilk),lambda(ilk)],log10(blines(ilk,:)),'r','LineWidth',LW)
 % end
-% 
+%
 % %1NG
 % for k=1:length(lambda1NGvec)
 %     ilk=find(lambda==lambda1NGvec(k));
 %     plot([lambda(ilk),lambda(ilk)],log10(blines(ilk,:)),'b','LineWidth',LW)
 % end
-% 
+%
 % %Meinel
 % for k=1:length(lambdaMeinvec)
 %     ilk=find(lambda==lambdaMeinvec(k));
 %     plot([lambda(ilk),lambda(ilk)],log10(blines(ilk,:)),'y','LineWidth',LW)
 % end
-% 
+%
 % %2PG
 % for k=1:length(lambda2PGvec)
 %     ilk=find(lambda==lambda2PGvec(k));
 %     plot([lambda(ilk),lambda(ilk)],log10(blines(ilk,:)),'m','LineWidth',LW)
 % end
-% 
+%
 % %1PG
 % for k=1:length(lambda1PGvec)
 %     ilk=find(lambda==lambda1PGvec(k));

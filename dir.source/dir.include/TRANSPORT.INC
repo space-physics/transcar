@@ -10,7 +10,7 @@
 ! nbren    =    IPN: maximum length of the energy grid
 !
 !
-      integer,parameter :: nbralt=201,nbrsp=5,nbrango2 = 16,nbrang=32,     
+      integer,parameter :: nbralt=201,nbrsp=5,nbrango2 = 16,nbrang=32,
      &                    nbrexc=15,nbrionst=5,nbren=400
 !
 !       Nom de la planete d'application, et distance au soleil (UA)
@@ -21,13 +21,13 @@
 !       . Atomic mass (number).
 !
       real,parameter :: atomas(8) = [28.0134,31.9988,15.9994,1.00797,
-     &   4.0026,14.0067, 39.948,30.0061]       
+     &   4.0026,14.0067, 39.948,30.0061]
 
       real, parameter :: rayonUA=1.,N_0=1.e4,T_0=1000.
-     
+
        character(*), parameter :: specie(*)=['[N2]','[O2]','[O] ',
      &  '[H] ', '[He]','[N] ','[A] ','[NO]']
-     
+
       integer,parameter :: ineutr=10,ielec=12,iindat=14,transcar_dat=15,
      &  unfic_in_transcar=16,unfic_out_transcar=18,
      &  fic_datdeg=20,fic_degout=22,fic_transout=24,

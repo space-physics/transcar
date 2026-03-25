@@ -15,7 +15,7 @@ Real*8  :: coef_r(rang),coef_i(rang)
 
 !!!!!!! !!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!! !!!!!!
 open(unit=4,file='CoefP1.lis',form='formatted',status='unknown')
-do i=1,2346	
+do i=1,2346
 	read(4,*) longitude(i),latitude(i),utem2(i)
 	read(4,*)
 end do

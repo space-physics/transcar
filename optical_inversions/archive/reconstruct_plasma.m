@@ -1,5 +1,5 @@
 function reconstruct_plasma(dataDir,writePlots)
-%% 
+%%
 % after running process_transcar() to convert TRANSCAR output to Matlab format,
 % reconstruct_plasma() outputs the Ne, Ti, Te, vi plasma parameters
 %
@@ -7,7 +7,7 @@ addpath('../matlabshared')
 %% user parameters
 if nargin<2, writePlots = false; end
 
-MinZkm = 0; 
+MinZkm = 0;
 MaxZkm = 1000;
 %% LOAD THE DATA FROM THE RECONSTRUCTED SIMULATION
 datelab='20Nov2001'; %'11Feb2002';
@@ -31,12 +31,12 @@ load(flFN)
 %% CORRECT TIME VARIABLE FOR PLOTTING PURPOSES
 tinds=find(time>=mintime+5/60 & time<=maxtime);
 zinds=find(z>=MinZkm & z<=MaxZkm);
-minz=min(z(zinds)); maxz=max(z(zinds)); 
+minz=min(z(zinds)); maxz=max(z(zinds));
 %zspan=maxz-minz;
 %% TICK MARKS FOR TIMES AXIS
 switch datelab
     case '20Nov2001',xloc=.5:5/60:(maxtime-24);
-    case '11Feb2002', xloc=23.5:5/60:23.6667; 
+    case '11Feb2002', xloc=23.5:5/60:23.6667;
     otherwise, warning(['unknown date ',datelab])
 end
 %{
@@ -65,7 +65,7 @@ ti_time=(n1_time.*t1_time + n2_time.*t2_time + n3_time.*t3_time + nm_time.*tm_ti
 if max(time(tinds))>24
   tplot=time(tinds)-24;
 else
-  tplot=time(tinds); 
+  tplot=time(tinds);
 end
 zplot=90:5:995;
 for k=1:length(tinds);
@@ -120,7 +120,7 @@ ax=axis;
 text(ax(1)+.015,ax(3)+100,'(c)','FontSize',FS+10,'Color',[1 1 1],'FontWeight','bold');
 ylabel(c,'T_e (K)')
 
-h=subtightplot(4,1,1); 
+h=subtightplot(4,1,1);
 pbaspect([8.5 11/6 1]);
 imagesc(tplot,zplot,flipud(log10(neplot)),nelims)
 c=colorbar;
@@ -191,10 +191,10 @@ end %function
 % ax=axis;
 % ylabel(c,'T_e/T_i')
 % print('-depsc',[datadir,'Te_Ti.eps']);
-% 
+%
 % tbark=time(tinds)-24;
 % zbark=z(zinds);
 % te_ti=te_time(zinds,tinds)./ti_time(zinds,tinds);
 % nesim=ne_time(zinds,tinds);
-% 
+%
 % save barker.mat tbark zbark te_ti nesim;

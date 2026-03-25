@@ -8,7 +8,7 @@ real*8 :: tu
 real :: kp,Energie,fluxE,flux_elec_int,rtmag,rlat
 real*8 :: phienerg(npt),phifluxE(npt),psi
 real*8 :: tmag,lon,lat,latequi,Lmin,Lmax
-	
+
 save ierr
 
 interface
@@ -26,7 +26,7 @@ end interface
 
 
 Lmin=0.d0
-Lmax=0.d0	
+Lmax=0.d0
 !call coef_prec(iyd,tu,kp,ndeg,mdeg,phienerg,phifluxE,	&
 !	       Lmin,Lmax,latequi,ierr)
 
@@ -36,7 +36,7 @@ if (Lmin.lt.Lmax) then
 else
   ierr=1
 endif
-	
+
 if (ierr.gt.0) then
   rtmag=lon/15.d0
   rlat=lat
@@ -67,7 +67,7 @@ if (ierr.gt.0) then
 
 
 else
-	
+
   call val_fit(lon,lat,ndeg,mdeg,phienerg,Lmin,Lmax,latequi,psi)
   energie=psi
   call val_fit(lon,lat,ndeg,mdeg,phifluxE,Lmin,Lmax,latequi,psi)
@@ -76,12 +76,12 @@ else
 
 !	dans le fichier initial l'energie est en keV et on la veut en eV
 !	  energie=exp(energie)*1000./2.
-!	dans le fichier initial le flux en energie est en W/m^2 et on le veut en  keV/(cm^2.s.sr)	
+!	dans le fichier initial le flux en energie est en W/m^2 et on le veut en  keV/(cm^2.s.sr)
 !	  fluxE=exp(fluxE)*9.9472e10
 
 !	dans le fichier initial l'energie est en eV et on la veut en eV
 	  energie=exp(energie)
-!	dans le fichier initial le flux en energie est en mW/m^2 et on le veut en  keV/(cm^2.s.sr)	
+!	dans le fichier initial le flux en energie est en mW/m^2 et on le veut en  keV/(cm^2.s.sr)
 	  fluxE=exp(fluxE)*9.9472e7
 	if (energie<50.) then
 	  energie=50.
@@ -93,6 +93,6 @@ else
 
 !	print*,Energie,fluxE
 endif
-	
+
 return
 end subroutine precipitation

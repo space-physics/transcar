@@ -5,7 +5,7 @@ c
      .		XNN2_,XNO2_,XNO_,QTI_,QIA_)
 c
 c  Computation of the electron and ion production rates
-c  induced by a proton beam of a given mean energy 
+c  induced by a proton beam of a given mean energy
 c  and a given energy flux.
 c
 c  * INPUTS:
@@ -14,8 +14,8 @@ c  Eflux: energy flux of the incident proton flux, in mW m-2.
 c  Emoy_keV  : mean energy of the incident proton flux, in keV.
 c  	  Restriction : 2 < Emoy_keV < 40 keV
 c	  If out of the range, set to closest value (2 keV or 40 keV)
-c  	  Emoy_keV = 2*E0, with E0, the characteristic energy of 
-c	  the incident flux(having assumed the distribution in 
+c  	  Emoy_keV = 2*E0, with E0, the characteristic energy of
+c	  the incident flux(having assumed the distribution in
 c 	  energy to be Maxwellian)
 c
 c  nalt : number of altitude level
@@ -25,7 +25,7 @@ c
 c  * OUTPUTS:
 c
 c  QIA_(4,nalt) : ion production rate (m-3 s-1)
-c               j=1,2,3,4 -> N2+,O2+,O+,N+ 
+c               j=1,2,3,4 -> N2+,O2+,O+,N+
 c  QTI_ : electron production rate (m-3 s-1)
 c
 c  Notes: * if the altitude grid has only few levels, set nk to an integer
@@ -83,11 +83,11 @@ c	DATA Mass/2*2.34*1.e-23,2*2.67*1.e-23,2.67*1.e-23/
 c Input data
 	real Eflux,Emoy_keV
 
-c Complete set of input/output data (MG) 
+c Complete set of input/output data (MG)
 	integer nalt,nz
 	real*4 ZPHT_(nalt),XNN2_(nalt),XNO2_(nalt),XNO_(nalt)
 	real*4 QTI_(nalt),QIA_(4,nalt)
-	
+
 c Local variables
 	integer i,j,K,ik,iz
 	real*4 ZPHT(nbrz),XNN2(nbrz),XNO2(nbrz),XNO(nbrz)
@@ -102,10 +102,10 @@ c 	Attention ! Emoy_keV est l'energie moyenne, egale a deux fois l'
 c 	energie caracteristique de la maxwellienne.
 c 	Passage en eV
 	Emoy_eV=Emoy_keV*1.e3
-	if (Emoy_eV.lt.2000.) then 
+	if (Emoy_eV.lt.2000.) then
 		Emoy_eV=2000.
 	endif
-	if (Emoy_eV.gt.40000.) then 
+	if (Emoy_eV.gt.40000.) then
 		Emoy_eV=40000.
 	endif
 
@@ -163,7 +163,7 @@ c Mass density (g cm-3)
 
 c CALCULATION
 c -----------
-c RANGE (g.cm-2). Attention ! Un seul range global pour une masse 
+c RANGE (g.cm-2). Attention ! Un seul range global pour une masse
 c 	moyenne... 78% N2, 11% O2, 11% O
 	do i=6,1,-1
 	  if (Emoy_keV.gt.2.*tab_E0(i)) then
@@ -172,7 +172,7 @@ c 	moyenne... 78% N2, 11% O2, 11% O
 	  endif
 	enddo
 c 	Equation 10
-	RANGE = Mean_mass/KL/(1-EL)*(Emoy_eV**(1-EL)-EminV**(1-EL)) 
+	RANGE = Mean_mass/KL/(1-EL)*(Emoy_eV**(1-EL)-EminV**(1-EL))
 c 	Apres equation 11
 	F_E   = Emoy_eV**(1-EL)/KL/(1-EL)/RANGE*Mean_mass
 
@@ -228,7 +228,7 @@ c R_norm : Normalized atmospheric scattering depth (g.cm-2)
 c Decreasing altitudes
 	  if (iz.eq.1) then
 	     R_norm=0
-	  else   
+	  else
 c Decreasing altitudes
  	     R_norm=R_norm
      .	     +(RHO(iz-1)+RHO(iz))/2*(ZPHT(iz-1)-ZPHT(iz))*1.e5/RANGE
@@ -249,7 +249,7 @@ c QTI : Electron production rate (cm-3.s-1)
 	  QTI(iz)=ETA/W(6)
 
 c QIA(j,iz) : Ion production rate (cm-3.s-1)
-c j=1,2,3,4 -> N2+,O2+,O+,N+ 
+c j=1,2,3,4 -> N2+,O2+,O+,N+
 	  shape(1)=tab_shape(1)*XNN2(iz)/(tab_shape(1)*XNN2(iz)
      .		+tab_shape(2)*XNO2(iz)+tab_shape(3)*XNO(iz))
 	  shape(2)=tab_shape(5)*XNO2(iz)/(tab_shape(4)*XNN2(iz)
@@ -265,7 +265,7 @@ c j=1,2,3,4 -> N2+,O2+,O+,N+
      .	   +ETA/W(4)*Kd(4)/(1+Kd(4)))+shape(3)*ETA/W(5)
 
 c Normalization
-	  QIA_TOT=QIA(1,iz)+QIA(2,iz)+QIA(3,iz)+QIA(4,iz) 
+	  QIA_TOT=QIA(1,iz)+QIA(2,iz)+QIA(3,iz)+QIA(4,iz)
 	  if ((QIA_TOT.gt.1.e-20).and.(QTI(iz).gt.1.e-20)) then
 		do i=1,4
 			QIA(i,iz)=QIA(i,iz)*QTI(iz)/QIA_TOT

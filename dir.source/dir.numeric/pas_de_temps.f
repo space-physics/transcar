@@ -34,7 +34,7 @@ c
           dt=dto/2.
         endif
 999	continue
-	
+
 	if (dt_max.gt.0..and.dt.gt.0.d0) then
 	  n=int(max(0.d0,log(dt*dt_max)*log2_1))
           if (n.gt.0) dt=dt*2.d0**(-n)

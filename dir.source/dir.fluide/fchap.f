@@ -7,13 +7,12 @@
         real,intent(out) :: chapesp(nesp)
 
 
-        real zi(nmax),lati(nmax),loni(nmax),wi(nmax),decli
-        real zj(nlaguer),wj(nlaguer)
-        integer ni,nj,i,j
-        real dn(8),tn(2),sec,stl,chap1(nesp),chap2(nesp),indesp(nesp)
+        real :: zi(nmax),lati(nmax),loni(nmax),wi(nmax),decli
+        real :: zj(nlaguer),wj(nlaguer)
+        integer :: ni,nj,i,j
+        real :: dn(8),tn(2),sec,stl,chap1(nesp),chap2(nesp)
+        integer, parameter :: indesp(nesp) = [3,4,2,7,1,8,5]
 
-
-        data indesp/3,4,2,7,1,8,5/
         common /decl/decli
 
         stl=tu + lon/15. !wow big mistake in prior code due to no implicit none

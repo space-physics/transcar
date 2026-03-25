@@ -7,5 +7,4 @@ add_library(transelec OBJECT transelec.op.f lect.f  iniflu.f
             ecr.f prec_time.f conduc.f
             dE_dt.f low_proton.f prot.f)
 target_link_libraries(transelec PRIVATE system fluid common)
-set_target_properties(transelec PROPERTIES Fortran_MODULE_DIRECTORY ${PROJECT_BINARY_DIR})
 target_include_directories(transelec PRIVATE ${PROJECT_SOURCE_DIR}/dir.source/dir.include)

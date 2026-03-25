@@ -1,14 +1,13 @@
-#!/usr/bin/env python
-import pandas
 from pathlib import Path
-import pytest
+
+import pandas
 from pytest import approx
 import transcar.base as transcar
 import transcarread as tr
 
-root = Path(__file__).parents[1]
+root = Path(__file__).parent
 beam = "beam947.2"
-refdir = root / "tests" / beam
+refdir = root / beam
 kinfn = "dir.output/emissions.dat"
 
 
@@ -24,7 +23,7 @@ def test_run_transcar(tmp_path):
     }
 
     beams = pandas.read_csv(
-        root / "tests/test_E1E2prev.csv", header=None, names=["E1", "E2", "pr1", "pr2"]
+        root / "test_E1E2prev.csv", header=None, names=["E1", "E2", "pr1", "pr2"]
     ).squeeze()
 
     transcar.mono_beam_arbiter(beams, params)
@@ -46,7 +45,3 @@ def test_run_transcar(tmp_path):
     assert (refexc.time == exc.time).all(), (
         "simulation time of current run did not match reference run"
     )
-
-
-if __name__ == "__main__":
-    pytest.main(["-x", __file__])

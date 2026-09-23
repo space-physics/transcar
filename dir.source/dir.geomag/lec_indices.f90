@@ -4,19 +4,22 @@ subroutine lec_indices(ian,imois,ijour,tu,ap,f107)
 ! mois    month
 ! jour    day
 
+use, intrinsic :: iso_fortran_env, only : int16, int32, int64
+
 implicit none
+
 integer,intent(in) :: ian,imois,ijour
 real,intent(in)  :: tu
 real,intent(out) :: ap(7),f107(3)
 
 integer   :: recsize=2*62,offset
-integer i,ihe,u
+integer   :: i,ihe,u
 integer   :: ian_deb,iday_deb,km,kj,k,num_rec
 
-integer*2 :: idat(6),kdat(7,8)
-integer*4 :: ftell,num,max_num
-integer*8 :: ftelli8
-integer*2 ::tempo(124)
+integer(int16) :: idat(6),kdat(7,8)
+integer(int32) :: num,max_num
+integer(int64) :: ftelli8
+integer(int16) ::tempo(124)
 
 
 print*,'record size=',recsize
@@ -26,8 +29,6 @@ open(newunit=u,file='dir.data/dir.linux/dir.geomag/data_geom.bin', &
 
 call fseek(u,0,2)
 max_num=(ftell(u)-8)/recsize
-
-
 
 read(u,rec=1) idat
 ian_deb = idat(1)

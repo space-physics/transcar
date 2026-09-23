@@ -1,0 +1,46 @@
+name: ci
+
+on:
+  push:
+    paths:
+      - "**/CMakeLists.txt"
+      - "**.cmake"
+      - "**.f90"
+      - "**.py"
+      - ".github/workflows/ci.yml"
+  pull_request:
+
+  workflow_dispatch:
+
+# avoid wasted runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+
+jobs:
+
+  core:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions/setup-python@v7
+      with:
+        python-version: '3.14'
+
+    - name: macOS GFortran
+      if: runner.os == 'macOS'
+      run: echo "FC=gfortran-15" >> $GITHUB_ENV
+
+    - name: Install prereqs
+      run: pip install -e .[tests]
+
+    - run: mypy
+
+    - run: cmake --workflow build
+
+    - run: pytest

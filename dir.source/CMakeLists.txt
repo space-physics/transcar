@@ -1,9 +1,12 @@
 add_executable(transconvec transconvec_13.op.f reacrates.f)
 target_link_libraries(transconvec PRIVATE fluid numeric system proj
                        convec geomag transelec imm common)
-target_include_directories(transconvec PRIVATE ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/dir.source/dir.include)
+target_include_directories(transconvec PRIVATE
+${transcar_BINARY_DIR}
+"dir.include"
+)
 
-add_subdirectory(dir.include)
+add_library(common OBJECT dir.include/comm.f90)
 
 add_library(fluid OBJECT dir.fluide/atmos.op.f dir.fluide/vent.f dir.fluide/msis90.f
 dir.fluide/coskhi.f dir.fluide/fchap.f

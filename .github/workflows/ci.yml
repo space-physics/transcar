@@ -23,7 +23,7 @@ jobs:
   core:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -44,3 +44,10 @@ jobs:
     - run: cmake --workflow build
 
     - run: pytest
+
+    - name: upload transconvec.exe for Windows
+      if: success() && runner.os == 'Windows'
+      uses: actions/upload-artifact@v7
+      with:
+        name: transconvec.exe
+        path: build/transconvec.exe

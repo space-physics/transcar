@@ -27,7 +27,7 @@ classifiers = [
 ]
 dependencies = [
 	"pandas",
-	"transcarread",
+	"transcarread @ https://github.com/space-physics/transcarread/archive/refs/heads/main.zip",
 ]
 
 [project.optional-dependencies]

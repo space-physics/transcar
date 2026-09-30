@@ -1,14 +1,15 @@
 import subprocess
 from pathlib import Path
 import logging
-import pandas
 import typing as T
-import shutil
+import os
 
-from .io import setup_dirs, setup_monoprec, setup_spectrum_prec, transcaroutcheck
+import pandas
+
+from .io import setup_dirs, setup_monoprec, setup_spectrum_prec, transcaroutcheck, transcar_paths
 
 
-def beam_spectrum_arbiter(beam: pandas.DataFrame, P: T.Dict[str, T.Any]):
+def beam_spectrum_arbiter(beam: pandas.DataFrame, P: dict[str, T.Any]):
     """
     run beam with user-defined flux spectrum
     """
@@ -27,7 +28,7 @@ def beam_spectrum_arbiter(beam: pandas.DataFrame, P: T.Dict[str, T.Any]):
     raise RuntimeError(f"Transcar run failed. See {odir / P['errfn']} for clues")
 
 
-def run_spectrum(beam: pandas.DataFrame, P: T.Dict[str, T.Any]) -> bool:
+def run_spectrum(beam: pandas.DataFrame, P: dict[str, T.Any]) -> bool:
     """
     Run beam spectrum
     """
@@ -35,12 +36,12 @@ def run_spectrum(beam: pandas.DataFrame, P: T.Dict[str, T.Any]) -> bool:
     datinp, odir = setup_dirs(P["rodir"], P)
     setup_spectrum_prec(odir, datinp, beam)
     # %% run the compiled executable
-    runTranscar(odir, P["errfn"], P["msgfn"])
+    isok = runTranscar(odir, P["errfn"], P["msgfn"])
     # %% check output trivially
-    return transcaroutcheck(odir, P["errfn"])
+    return isok and transcaroutcheck(odir, P["errfn"])
 
 
-def mono_beam_arbiter(beam: T.Dict[str, float], P: T.Dict[str, T.Any]):
+def mono_beam_arbiter(beam: dict[str, float], P: dict[str, T.Any]):
     """
     run monoenergetic beam
     """
@@ -58,25 +59,34 @@ def mono_beam_arbiter(beam: T.Dict[str, float], P: T.Dict[str, T.Any]):
             logging.error(f"failed on beam{beam['E1']:.1f} on 2nd try, aborting")
 
 
-def run_monobeam(beam: T.Dict[str, float], P: T.Dict[str, T.Any]) -> bool:
+def run_monobeam(beam: dict[str, float], P: dict[str, T.Any]) -> bool:
     """Run a particular beam energy vs. time"""
     # %% copy the Fortran static init files to this directory (simple but robust)
     datinp, odir = setup_dirs(P["rodir"] / f"beam{beam['E1']:.1f}", P)
     setup_monoprec(odir, datinp, beam, P["Q0"])
     # %% run the compiled executable
-    runTranscar(odir, P["errfn"], P["msgfn"])
+    isok = runTranscar(odir, P["errfn"], P["msgfn"])
     # %% check output trivially
-    return transcaroutcheck(odir, P["errfn"])
+    return isok and transcaroutcheck(odir, P["errfn"])
 
 
-def runTranscar(odir: Path, errfn: Path, msgfn: Path):
+def runTranscar(odir: Path, errfn: Path, msgfn: Path) -> bool:
     """actually run Transcar exe"""
     odir = Path(odir).expanduser().resolve()  # MUST have resolve()!!
 
-    exe = shutil.which("transconvec", path=str(odir))
+    exe = transcar_paths()["transconvec"]
 
-    with (odir / errfn).open("w") as ferr, (odir / msgfn).open("w") as fout:
+    err_file = odir / errfn
+    out_file = odir / msgfn
+
+    with err_file.open("w") as ferr, out_file.open("w") as fout:
         ret = subprocess.run(exe, cwd=odir, stdout=fout, stderr=ferr)
 
-    if ret.returncode:
-        logging.error(f"{odir.name} error code {ret.returncode}")
+    if ret.returncode != 0:
+        logging.error(f"{odir.name} error code {ret.returncode} see {err_file}")
+        if os.name == "nt":
+            match ret.returncode:
+                case 3221225725:
+                    logging.error(f"{exe} stack overflow indicated")
+
+    return ret.returncode == 0

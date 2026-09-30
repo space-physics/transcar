@@ -19,4 +19,9 @@ endif()
 
 set(CMAKE_Fortran_MODULE_DIRECTORY ${transcar_BINARY_DIR})
 
+add_executable(transconvec dir.source/transconvec_13.op.f dir.source/reacrates.f)
+target_link_libraries(transconvec PRIVATE fluid numeric system proj convec geomag transelec imm common)
+target_include_directories(transconvec PRIVATE ${transcar_BINARY_DIR} dir.source/dir.include
+)
+
 add_subdirectory(dir.source)

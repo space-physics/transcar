@@ -5,23 +5,29 @@ import collections
 import shutil
 import pandas
 import typing as T
-
-# hard-coded in Fortran
-ROOT = Path(__file__).resolve().parents[1]
-TRANSCAREXE = Path(
-    shutil.which("transconvec", path=str(ROOT))
-).resolve()  # needs the last resolve too
-if not TRANSCAREXE:
-    raise FileNotFoundError(f"could not find transconvec executable in {ROOT}")
-
-din = ROOT / "dir.input"
-dout = Path("dir.output")
-ddat = ROOT / "dir.data"
-DATCAR = din / "DATCAR"
-FOK = "finish.status"
+import functools
 
 
-PREC = "dir.input/precinput.asc"  # NOT based on root, MUST be relative!!
+@functools.cache
+def transcar_paths() -> dict[str, Path]:
+
+    root = Path(__file__).resolve().parents[2]
+    for p in [root, root / "build"]:
+        if exe := shutil.which("transconvec", path=p):
+            break
+
+    if not exe:
+        raise FileNotFoundError(f"could not find transconvec executable under {root}")
+
+    paths = {"transconvec": Path(exe),
+             "root": root,
+             "datain": root / "dir.input",
+             "datadir": root / "dir.data",
+             "datcar": root / "dir.input/DATCAR",
+             "finish_status": root / "finish.status",
+             "precip": Path("dir.input/precinput.asc")
+             }
+    return paths
 
 
 def cp_parents(files: T.Sequence[Path], target_dir: Path, origin: Path = None) -> None:
@@ -73,8 +79,10 @@ def transcaroutcheck(odir: Path, errfn: Path, ok: str = "STOP fin normale") -> b
     checks for text at end of file
 
     """
+    tpaths = transcar_paths()
+
     isok = False
-    fok = odir / FOK
+    fok = odir / tpaths["finish_status"]
     try:
         with (odir / errfn).open("r") as ferr:
             last = collections.deque(ferr, 1)[0].rstrip("\n")
@@ -96,13 +104,15 @@ def transcaroutcheck(odir: Path, errfn: Path, ok: str = "STOP fin normale") -> b
 
 
 def setup_dirs(
-    odir: Path, params: T.Dict[str, T.Any]
-) -> T.Tuple[T.Dict[str, T.Any], Path]:
+    odir: Path, params: dict[str, T.Any]
+) -> tuple[dict[str, T.Any], Path]:
     """
     prepare output directory for a beam
     """
 
-    datcar = params["datcar"] if "datcar" in params else DATCAR
+    tpaths = transcar_paths()
+
+    datcar = params["datcar"] if "datcar" in params else tpaths["datcar"]
 
     inp = readTranscarInput(datcar)
     # %% cleanup bad runs
@@ -112,28 +122,31 @@ def setup_dirs(
         if (out / fn).is_file():
             (out / fn).unlink()
     # %% move files where needed for this instantiation
+    flist = []
     # precfn is NOT included here!
-    flist = [
-        TRANSCAREXE
-    ]  # does not operate consistently (segfault) if not in same directory, verified by hand June 2019.
-    flist += [din / inp["precfile"], ddat / "type"]
+
+    # decided to just use the original executable rather than make so many copies
+    # flist += [tpaths["transconvec"]]
+
+    # does not operate consistently (segfault) if not in same directory, verified by hand June 2019.
+    flist += [tpaths["datain"] / inp["precfile"], tpaths["datadir"] / "type"]
     flist += [
-        ddat / "dir.linux/dir.geomag" / s
+        tpaths["datadir"] / "dir.linux/dir.geomag" / s
         for s in ["data_geom.bin", "igrf90.dat", "igrf90s.dat"]
     ]
-    flist += [ddat / "dir.linux/dir.projection/varpot.dat"]
+    flist += [tpaths["datadir"] / "dir.linux/dir.projection/varpot.dat"]
     # transcar sigsegv on val_fit_ if FELTRANS is blank!
     flist += [
-        ddat / "dir.linux/dir.cine" / s
+        tpaths["datadir"] / "dir.linux/dir.cine" / s
         for s in ["DATDEG", "DATFEL", "DATTRANS", "flux.flag", "FELTRANS"]
     ]
-    flist += [ddat / "dir.linux/dir.cine/dir.euvac/EUVAC.dat"]
+    flist += [tpaths["datadir"] / "dir.linux/dir.cine/dir.euvac/EUVAC.dat"]
     flist += [
-        ddat / "dir.linux/dir.cine/dir.seff" / s
+        tpaths["datadir"] / "dir.linux/dir.cine/dir.seff" / s
         for s in ["crsb8", "crsphot1.dat", "rdtb8"]
     ]
 
-    cp_parents(flist, odir, ROOT)
+    cp_parents(flist, odir, tpaths["root"])
     # may have uniquely named input DATCAR, that always needs to be in output dir as
     # dir.input/DATCAR due to legacy Fortran hardcoding
     shutil.copy2(datcar, odir / "dir.input/DATCAR")
@@ -142,12 +155,14 @@ def setup_dirs(
 
 
 def setup_monoprec(
-    odir: Path, inp: T.Dict[str, T.Any], beam: T.Dict[str, float], flux0: float
+    odir: Path, inp: dict[str, T.Any], beam: dict[str, float], flux0: float
 ) -> None:
     """
     write dir.input/precinput.asc for monoenergetic beam case
     """
-    ofn = Path(odir).expanduser() / PREC
+    tpaths = transcar_paths()
+
+    ofn = Path(odir).expanduser() / tpaths["precip"]
 
     E1 = beam["E1"]
     E2 = beam["E2"]
@@ -176,12 +191,15 @@ def setup_monoprec(
 
 
 def setup_spectrum_prec(
-    odir: Path, inp: T.Dict[str, T.Any], beam: pandas.DataFrame
+    odir: Path, inp: dict[str, T.Any], beam: pandas.DataFrame
 ) -> None:
     """
     write dir.input/precinput.asc for beam with shaped differential number flux
     """
-    ofn = Path(odir).expanduser() / PREC
+
+    tpaths = transcar_paths()
+
+    ofn = Path(odir).expanduser() / tpaths["precip"]
 
     dat = str(inp["precipstartsec"])
 
@@ -199,7 +217,7 @@ def setup_spectrum_prec(
     ofn.write_text(dat)
 
 
-def compute_Ebin(ebin: pandas.Series) -> T.Tuple[float, float, float]:
+def compute_Ebin(ebin: pandas.Series) -> tuple[float, float, float]:
     E1 = ebin["E1"]
     E2 = ebin["E2"]
     pr1 = ebin["pr1"]
@@ -214,13 +232,14 @@ def compute_Ebin(ebin: pandas.Series) -> T.Tuple[float, float, float]:
     return Elow, Ehigh, flux
 
 
-def readTranscarInput(infn: Path) -> T.Dict[str, T.Any]:
+def readTranscarInput(infn: Path) -> dict[str, T.Any]:
     """
     The transcar input file is indexed by line number --this is what the Fortran
       #  code of transcar does, and it's what we do here as well.
     """
     infn = Path(infn).expanduser()
-    hd: T.Dict[str, T.Any] = {}
+    hd: dict[str, T.Any] = {}
+
     with infn.open("r") as f:
         hd["kiappel"] = int(f.readline().split()[0])
         hd["precfile"] = f.readline().split()[0]
@@ -264,9 +283,8 @@ def readTranscarInput(infn: Path) -> T.Dict[str, T.Any]:
 
         # %% derived parameters not in datcar file
         hd["tstartSim"] = hd["dayofsim"] + timedelta(seconds=hd["simstartUTCsec"])
-        hd["tendSim"] = hd["dayofsim"] + timedelta(
-            seconds=hd["simlengthsec"]
-        )  # TODO verify this isn't added to start
+        hd["tendSim"] = hd["dayofsim"] + timedelta(seconds=hd["simlengthsec"])
+        # TODO verify this isn't added to start
         hd["tstartPrecip"] = hd["dayofsim"] + timedelta(seconds=hd["precipstartsec"])
         hd["tendPrecip"] = hd["dayofsim"] + timedelta(seconds=hd["precipendsec"])
 

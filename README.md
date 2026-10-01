@@ -13,10 +13,24 @@ Models disturbance propagation in ionosphere via models including LCPFCT.
 ## Prereqs
 
 Because Transcar is Python & Fortran based, it runs on any PC/Mac with Linux, MacOS, Windows, etc.
-Most Fortran compilers can be used, including Gfortran and Intel.
+Fortran compilers can be used, including Gfortran and Intel.
+However, there are limitations because of the non-standard code used in Transcar, not all compiler vendors or versions work.
 
-* Linux / Windows Subsystem for Linux: `apt install gfortran cmake make`
-* MacOS / Homebrew: `brew install gcc cmake make`
+* Linux / Windows Subsystem for Linux: `apt install gfortran cmake ninja-build`
+* MacOS / Homebrew: `brew install gcc cmake ninja`
+
+### Known working
+
+Apple:
+
+* GCC 16.2 with -O1 or -O0
+
+### Known not working
+
+Apple:
+
+* GCC 16.2 with -O3 or -O2 (SIGBUS -10)
+* GCC 15.3 with -O1 or -O0 (error 2); SIGBUS -10 with -O3 or -O2
 
 ### Windows
 

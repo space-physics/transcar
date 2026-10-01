@@ -14,10 +14,13 @@ if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   -fmax-errors=3
   )
   # -Warray-bounds=2)
-  set(transcar_optim_flag -O2)
+
+  if(APPLE AND NOT DEFINED transcar_optim_flag)
+    set(transcar_optim_flag -O1)
+  endif()
+
   set(transcar_file_opts -frecord-marker=4)
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "IntelLLVM")
-  set(transcar_optim_flag -O2)
   set(transcar_file_opts -assume:byterecl)
 endif()
 

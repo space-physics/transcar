@@ -336,21 +336,21 @@ c
  	  do 50 iin =1,nin
  	    if(xxout(iout).lt.xxin(1))then
  	      yyout(iout)=(yyin(2)-
-     .                   (xxin(2)-xxout(iout))*(yyin(2)-yyin(2-1))
-     .                  /(xxin(2)-xxin(2-1)))
+     &                   (xxin(2)-xxout(iout))*(yyin(2)-yyin(2-1))
+     &                  /(xxin(2)-xxin(2-1)))
  	      go to 60
  	    elseif(xxout(iout).gt.xxin(nin))then
  	      yyout(iout)=(yyin(nin)-
-     .                   (xxin(nin)-xxout(iout))*(yyin(nin)-yyin(nin-1))
-     .                  /(xxin(nin)-xxin(nin-1)))
+     &                   (xxin(nin)-xxout(iout))*(yyin(nin)-yyin(nin-1))
+     &                  /(xxin(nin)-xxin(nin-1)))
  	      go to 60
  	    elseif (xxout(iout).eq.xxin(iin))then
  	      yyout(iout)=(yyin(iin))
  	      go to 60
  	    elseif (xxout(iout).lt.xxin(iin))then
  	      yyout(iout)=(yyin(iin)-
-     .                   (xxin(iin)-xxout(iout))*(yyin(iin)-yyin(iin-1))
-     .                  /(xxin(iin)-xxin(iin-1)))
+     &                   (xxin(iin)-xxout(iout))*(yyin(iin)-yyin(iin-1))
+     &                  /(xxin(iin)-xxin(iin-1)))
  	      go to 60
  	     endif
  50 	  continue
@@ -703,7 +703,7 @@ C
          PPR   = EN * ( PM2 - X * P ) * TMP
          P2PRI = ( 2.D0 * X * PPR - NNP1 * P ) * TMP
          XI    = X - ( P / PPR ) * ( 1.D0 +
-     .               ( P / PPR ) * P2PRI / ( 2.D0 * PPR ) )
+     &               ( P / PPR ) * P2PRI / ( 2.D0 * PPR ) )
 C
 C        CHECK FOR CONVERGENCE
          IF ( DABS(XI-X) .GT. TOL ) THEN
@@ -842,7 +842,7 @@ C
 c----------------------------------------------------------------------
 c
       	SUBROUTINE O2ION (XNUTOT,XNUO,XNUN2,XNUO2,TI,TN,DENO,DENN2,
-     . 			 DENO2)
+     & 			 DENO2)
 C
 C     	ROUTINE BY VINCENT WICKWAR, SRI, MAY 1975.
 C
@@ -947,10 +947,10 @@ c
     1   nm=nu
         if((x-xin(nl))**2.lt.(x-xin(nu))**2)nm=nl
         yout(i)=yin(nm)*(x-xin(nm-1))*(x-xin(nm+1))/
-     .          ((xin(nm)-xin(nm-1))*(xin(nm)-xin(nm+1)))+
-     .          (yin(nm-1)*(x-xin(nm+1))/(xin(nm-1)-xin(nm))+
-     .          yin(nm+1)*(x-xin(nm-1))/ (xin(nm)-xin(nm+1)))*
-     .          (x-xin(nm))/(xin(nm-1)-xin(nm+1))
+     &          ((xin(nm)-xin(nm-1))*(xin(nm)-xin(nm+1)))+
+     &          (yin(nm-1)*(x-xin(nm+1))/(xin(nm-1)-xin(nm))+
+     &          yin(nm+1)*(x-xin(nm-1))/ (xin(nm)-xin(nm+1)))*
+     &          (x-xin(nm))/(xin(nm-1)-xin(nm+1))
       end do
 
       end subroutine intquad
@@ -1072,7 +1072,7 @@ c     dzo = grid spacing between lowest points.
       alrat = log(ratio)
       do 20 i = 1,ntab
         tab( ntab - i + 1) =
-     .         (tabmin + hsave)*ratio**(float(i-1)/flntabm1) - hsave
+     &         (tabmin + hsave)*ratio**(float(i-1)/flntabm1) - hsave
    20 continue
       tab(1)=tabmax
       tab(ntab)=tabmin

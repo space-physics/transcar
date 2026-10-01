@@ -43,7 +43,7 @@ C
       INTEGER  MAXCLY, MAXUMU, MAXULV, MAXCMU, MAXPHI, NLYR,
      $         NUMU, NSTR, NPHI, NTAU
       REAL     ACCUR, ALBEDO, BSRC, DTAUC( MAXCLY ), FBEAM,
-     .		fisot(-ipk:-1),
+     &		fisot(-ipk:-1),
      $         HL( 0:MAXCMU ), PHI( MAXPHI ), PMOM( 0:MAXCMU, MAXCLY ),
      $         PHI0, SSALB( MAXCLY ), SRC( 3*MAXCLY, MAXCMU ),
      $         SRCU( 3*MAXCLY, MAXUMU), TSRC,
@@ -265,7 +265,7 @@ C       MXUMU  = MAX NO. OF OUTPUT POLAR ANGLES
 C       MXPHI  = MAX NO. OF OUTPUT AZIMUTHAL ANGLES
 C+---------------------------------------------------------------------+
       PARAMETER ( MXCLY = 201, MXULV =mxcly*2-1, MXCMU = 32,
-     .		  MXUMU = mxcmu,
+     &		  MXUMU = mxcmu,
      $            MXPHI = 1, MI = MXCMU/2, MI9M2 = 9*MI-2,
      $            NNLYRI = MXCMU*MXCLY )
 C
@@ -294,7 +294,7 @@ CAKYB
      $        ZPLK1( MXCMU,MXCLY ), ZPLKA(MXCLY), ZBEAM( MXUMU,MXCLY )
 C
       double precision  dARRAY( MXCMU,mxcmu ),dWK(mxcmu),drcond,
-     .		dzj(mxcmu),dz0(mxcmu),dz1(mxcmu)
+     &		dzj(mxcmu),dz0(mxcmu),dz1(mxcmu)
       double precision dCBAND( MI9M2,NNLYRI ),dZ( NNLYRI ),dB( NNLYRI )
 c
       DOUBLE PRECISION   AAD( MI,MI ), EVALD( MI ) , EVECCD( MI,MI ),
@@ -444,7 +444,7 @@ C
          CALL  SOLEIG( AMB, APB, ARRAY, CMU, CWT, GL(0,LC), MI, MAZ,
      $                 MXCMU, NN, NSTR, WK, YLMC, CC, EVECC, EVAL,
      $                 KK(1,LC), GC(1,1,LC), iounit, AAD, WKD, EVECCD,
-     .		       EVALD ,ien)
+     &		       EVALD ,ien)
 C
 C                                  ** CALCULATE PARTICULAR SOLUTIONS OF
 C                                  ** EQ.SS(18) FOR INCIDENT BEAM SOURCE
@@ -467,17 +467,17 @@ C
             IF ( DELTAT.GT.0.0 ) THEN
 	       if( src(ls+2,iq) .gt. 0.) then
       		   tempsqrt=(src(ls+1,iq)/src(ls+2,iq))**2 -
-     .                  src(ls,iq)/src(ls+2,iq)
+     &                  src(ls,iq)/src(ls+2,iq)
      		   templog=src(ls+1,iq)/src(ls+2,iq)
                	   if( tempsqrt  .gt. 0.0         .and.
-     .		       src(lc,iq).lt.src(ls+2,iq)) then
+     &		       src(lc,iq).lt.src(ls+2,iq)) then
                   	        xra(lc) = (2./deltat) *
-     .                         		log( templog + sqrt(tempsqrt) )
+     &                         		log( templog + sqrt(tempsqrt) )
 	           elseif ( tempsqrt   .gt. 0.0           .and.
-     .		            src(lc,iq).gt.src(ls+2,iq)    .and.
-     .             	    templog   .gt.sqrt(tempsqrt) ) then
+     &		            src(lc,iq).gt.src(ls+2,iq)    .and.
+     &             	    templog   .gt.sqrt(tempsqrt) ) then
 			        xra(lc) = (2./deltat) *
-     .                    		log( templog - sqrt(tempsqrt) )
+     &                    		log( templog - sqrt(tempsqrt) )
 		   else
 			    xra(lc)=0.
 		   end if
@@ -487,7 +487,7 @@ C
             ENDIF
 	    if(linear) xra(lc)=0.		! test with alpha=0
 	    if(xra(lc)*taucpr(lc).ge.exptest.or.
-     .	       xra(lc)*taucpr(lc-1).ge.exptest) then
+     &	       xra(lc)*taucpr(lc-1).ge.exptest) then
 *		  write(iounit,*) 'XRA is too large ',iq,lc,xra(lc),
 *     .			taucpr(lc),taucpr(lc-1)
 	  	  xra(lc)=0.
@@ -761,7 +761,7 @@ C
       TOL = 1d-30		! D1MACH(3)
       IF ( M.LT.1 .OR. IA.LT.M .OR. IEVEC.LT.M )
      $     CALL ERRMSG( 'ASYMTX--BAD INPUT VARIABLE(S)',
-     .		.TRUE., iounit )
+     &		.TRUE., iounit )
 C
 C                           ** HANDLE 1X1 AND 2X2 SPECIAL CASES
       IF ( M.EQ.1 )  THEN
@@ -773,7 +773,7 @@ C
          DISCRI = ( A(1,1) - A(2,2) )**2 + 4. * A(1,2) * A(2,1)
          IF ( DISCRI.LT.0.0 )
      $        CALL ERRMSG( 'ASYMTX--COMPLEX EVALS IN 2X2 CASE',
-     .		.TRUE., iounit )
+     &		.TRUE., iounit )
          SGN = 1.0
          IF ( A(1,1).LT.A(2,2) )  SGN = - 1.0
          EVAL(1) = 0.5 * ( A(1,1) + A(2,2) + SGN*SQRT(DISCRI) )
@@ -1255,7 +1255,7 @@ C
      $         NUMU, NSTR, NPHI, NTAU, MXCMU, MXUMU, MXPHI, MXCLY,
      $         MXULV
       REAL     ACCUR, ALBEDO, BSRC, DTAUC( MAXCLY ), FBEAM,
-     .		fisot(-ipk:-1),
+     &		fisot(-ipk:-1),
      $         HL( 0:MAXCMU ), PHI( MAXPHI ), PMOM( 0:MAXCMU, MAXCLY ),
      $         PHI0, SRC(3*MAXCLY,*), SSALB( MAXCLY ), TSRC,
      $         UMU( MAXUMU ), UMU0, UTAU( MAXULV ),
@@ -2586,7 +2586,7 @@ C                      ** PRODUCT (ALFA+BETA)*(ALFA-BETA); SS(12)
 C                      ** FIND (REAL) EIGENVALUES AND EIGENVECTORS
 C
       CALL  ASYMTX( ARRAY, EVECC, EVAL, NN, MI, MXCMU, IER, WK,
-     .		AAD, EVECCD, EVALD, WKD, iounit)
+     &		AAD, EVECCD, EVALD, WKD, iounit)
 C
       IF ( IER.GT.0 )  THEN
          WRITE( iounit, '(//,A,I4,A)' ) ' ASYMTX--EIGENVALUE NO. ', IER,
@@ -2809,7 +2809,7 @@ C
 C
             DO 150 IQ = 1, NN
                B(IQ) = - ZZ(NN+1-IQ,1) - ZPLK0(NN+1-IQ,1) +
-     .			FISOT(-iq) + TSRC
+     &			FISOT(-iq) + TSRC
 150         CONTINUE
 C
             IF ( LYRCUT ) THEN
@@ -3269,7 +3269,7 @@ C
      $         WK(*), YLM0(0:*), YLMC( 0:MXCMU,* ), ZJ(*), ZZ(*)
 c
       double precision  dARRAY( MXCMU,mxcmu ),dWK(mxcmu),drcond,
-     .		dzj(mxcmu)
+     &		dzj(mxcmu)
 C
 C
       DO 40  IQ = 1, NSTR
@@ -3348,7 +3348,7 @@ C
      $        XR0(*), XR1(*), XRA, Z0(*), Z1(*), ZA,
      $        ZPLK0(*), ZPLK1(*), ZPLKA
       double precision  dARRAY( MXCMU,mxcmu ),dWK(mxcmu),drcond,
-     .		dz0(mxcmu),dz1(mxcmu)
+     &		dz0(mxcmu),dz1(mxcmu)
 C
 C
 c	write(iounit,'(a8,8(1pe9.1))') ' xr0/1  ',

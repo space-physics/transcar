@@ -2,10 +2,10 @@ c
 c-------------------------- reed ----------------------------
 c
       	subroutine lect (nspec,knm,nen,nalt,zbot,ztop,hrloc,ut,day,year,
-     .		jpreci,tempexo,f107,f107a,Apind,chi,chideg,glat,glong,
-     .		albedo,altkm,alt,tneutre,densneut,colden,botE,centE,
-     .		ddeng,nang,nango2,angzb,gmu,gwt,fluxdown,fluxup,
-     .		denelc,temelc,temion,dipang,smgdpa)
+     &		jpreci,tempexo,f107,f107a,Apind,chi,chideg,glat,glong,
+     &		albedo,altkm,alt,tneutre,densneut,colden,botE,centE,
+     &		ddeng,nang,nango2,angzb,gmu,gwt,fluxdown,fluxup,
+     &		denelc,temelc,temion,dipang,smgdpa)
 c
  	implicit none
 c
@@ -15,9 +15,9 @@ c
  	integer isp,ialt,ien,i,iang
  	real bid
  	real zbot,ztop,hrloc,ut,year,tempexo,f107,f107a,Apind,day,
-     . 	 	fctemp,fcdens(nbrsp),glat,glong,alt(nbralt),
-     .		altkm(nbralt),tneutre(nbralt),densneut(8,nbralt),
-     .     	colden(8,nbralt),albedo
+     & 	 	fctemp,fcdens(nbrsp),glat,glong,alt(nbralt),
+     &		altkm(nbralt),tneutre(nbralt),densneut(8,nbralt),
+     &     	colden(8,nbralt),albedo
 c
  	integer nen
  	real botE(nbren),centE(nbren),ddeng(nbren)
@@ -26,7 +26,7 @@ c
  	real angzb(2*nbrango2),gmu(2*nbrango2),gwt(2*nbrango2)
  	real fluxdown(nbren,nbrango2),fluxup(nbren,nbrango2)
  	real denelc(nbralt),temelc(nbralt),dipang(nbralt),
-     .	       zel(nbralt),smgdpa(nbralt),temion(nbralt),chi,chideg
+     &	       zel(nbralt),smgdpa(nbralt),temion(nbralt),chi,chideg
  	real pi
 c
  	pi = 4.*atan(1.)
@@ -128,7 +128,7 @@ c
  	nango2 = nang/2
 	if(nango2.gt.nbrango2) then
 	  print*,' Too many streams: nbrango2 = ', nbrango2,
-     .		 '                   nango2   = ', nango2
+     &		 '                   nango2   = ', nango2
 	  stop 'error'		! call abort
 	end if
       	read(ielec,*) (angzb(iang),iang=1,nang)

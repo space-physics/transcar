@@ -2,7 +2,7 @@ c
 c--------------------------------------------------------------------
 c
 	SUBROUTINE LOW_PROTON(Eflux,Emoy_keV,nalt,ZPHT_,
-     .		XNN2_,XNO2_,XNO_,QTI_,QIA_)
+     &		XNN2_,XNO2_,XNO_,QTI_,QIA_)
 c
 c  Computation of the electron and ion production rates
 c  induced by a proton beam of a given mean energy
@@ -125,19 +125,19 @@ c		write(*,*)nz
 		XNO((iz-2)*(nk+1)+1)=XNO_(iz-1)
 		do ik=1,nk
 	ZPHT((iz-2)*(nk+1)+ik+1)=exp((log(ZPHT_(iz))-log(ZPHT_(iz-1)))
-     .		/(1.+nk)*ik+log(ZPHT_(iz-1)))
+     &		/(1.+nk)*ik+log(ZPHT_(iz-1)))
 	XNN2((iz-2)*(nk+1)+ik+1)=exp((log(XNN2_(iz))-log(XNN2_(iz-1)))
-     .		/(ZPHT_(iz)-ZPHT_(iz-1))
-     .		*(ZPHT((iz-2)*(nk+1)+ik+1)-ZPHT_(iz-1))
-     .		+log(XNN2_(iz-1)))
+     &		/(ZPHT_(iz)-ZPHT_(iz-1))
+     &		*(ZPHT((iz-2)*(nk+1)+ik+1)-ZPHT_(iz-1))
+     &		+log(XNN2_(iz-1)))
 	XNO2((iz-2)*(nk+1)+ik+1)=exp((log(XNO2_(iz))-log(XNO2_(iz-1)))
-     .		/(ZPHT_(iz)-ZPHT_(iz-1))
-     .		*(ZPHT((iz-2)*(nk+1)+ik+1)-ZPHT_(iz-1))
-     .		+log(XNO2_(iz-1)))
+     &		/(ZPHT_(iz)-ZPHT_(iz-1))
+     &		*(ZPHT((iz-2)*(nk+1)+ik+1)-ZPHT_(iz-1))
+     &		+log(XNO2_(iz-1)))
 	XNO((iz-2)*(nk+1)+ik+1)=exp((log(XNO_(iz))-log(XNO_(iz-1)))
-     .		/(ZPHT_(iz)-ZPHT_(iz-1))
-     .		*(ZPHT((iz-2)*(nk+1)+ik+1)-ZPHT_(iz-1))
-     .		+log(XNO_(iz-1)))
+     &		/(ZPHT_(iz)-ZPHT_(iz-1))
+     &		*(ZPHT((iz-2)*(nk+1)+ik+1)-ZPHT_(iz-1))
+     &		+log(XNO_(iz-1)))
 		enddo
 	  enddo
 	  ZPHT(nz)=ZPHT_(nalt)
@@ -231,13 +231,13 @@ c Decreasing altitudes
 	  else
 c Decreasing altitudes
  	     R_norm=R_norm
-     .	     +(RHO(iz-1)+RHO(iz))/2*(ZPHT(iz-1)-ZPHT(iz))*1.e5/RANGE
+     &	     +(RHO(iz-1)+RHO(iz))/2*(ZPHT(iz-1)-ZPHT(iz))*1.e5/RANGE
 	  endif
 
 c LAMBDA : Normalized energy deposition function
  	  if (abs(1-EL)/(1-EL)*(F_E-R_norm).gt.0) then
     		LAMBDA=KL*RANGE/Mean_mass/(Emoy_eV-EminV)
-     .	    *(((1-EL)*KL*RANGE/Mean_mass*(F_E-R_norm))**(EL/(1-EL)))
+     &	    *(((1-EL)*KL*RANGE/Mean_mass*(F_E-R_norm))**(EL/(1-EL)))
 	  else
 	    	LAMBDA=0
           endif
@@ -251,18 +251,18 @@ c QTI : Electron production rate (cm-3.s-1)
 c QIA(j,iz) : Ion production rate (cm-3.s-1)
 c j=1,2,3,4 -> N2+,O2+,O+,N+
 	  shape(1)=tab_shape(1)*XNN2(iz)/(tab_shape(1)*XNN2(iz)
-     .		+tab_shape(2)*XNO2(iz)+tab_shape(3)*XNO(iz))
+     &		+tab_shape(2)*XNO2(iz)+tab_shape(3)*XNO(iz))
 	  shape(2)=tab_shape(5)*XNO2(iz)/(tab_shape(4)*XNN2(iz)
-     .		+tab_shape(5)*XNO2(iz)+tab_shape(6)*XNO(iz))
+     &		+tab_shape(5)*XNO2(iz)+tab_shape(6)*XNO(iz))
 	  shape(3)=tab_shape(9)*XNO(iz)/(tab_shape(7)*XNN2(iz)
-     .		+tab_shape(8)*XNO2(iz)+tab_shape(9)*XNO(iz))
+     &		+tab_shape(8)*XNO2(iz)+tab_shape(9)*XNO(iz))
 
 	  QIA(1,iz)=shape(1)*(ETA/W(1)/(1+Kd(1))+ETA/W(2)/(1+Kd(2)))
 	  QIA(4,iz)=shape(1)*(ETA/W(1)*Kd(1)/(1+Kd(1))
-     .	   +ETA/W(2)*Kd(2)/(1+Kd(2)))
+     &	   +ETA/W(2)*Kd(2)/(1+Kd(2)))
 	  QIA(2,iz)=shape(2)*(ETA/W(3)/(1+Kd(3))+ETA/W(4)/(1+Kd(4)))
 	  QIA(3,iz)=shape(2)*(ETA/W(3)*Kd(3)/(1+Kd(3))
-     .	   +ETA/W(4)*Kd(4)/(1+Kd(4)))+shape(3)*ETA/W(5)
+     &	   +ETA/W(4)*Kd(4)/(1+Kd(4)))+shape(3)*ETA/W(5)
 
 c Normalization
 	  QIA_TOT=QIA(1,iz)+QIA(2,iz)+QIA(3,iz)+QIA(4,iz)

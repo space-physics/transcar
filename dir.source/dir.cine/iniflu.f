@@ -1,13 +1,13 @@
       subroutine iniflu(npt,iyd,UTsec,z,glat,glong,stl,f107,
-     .                ap,chi,Ne,Te,Tj,indlim,jpreci,
-     .             Nh,No,No2,Nn2,Nn,Tn,Po,Po2,Pn2,Ph,Pn,Heat,
-     .
-     .                  nspec,knm,nen,nang,nango2,nalt,
-     .                  ddeng,botE,centE,gmu,gwt,angzb,altkm,altcm,
-     .                  dipang,smgdpa,
-     .            fluxup,fluxdown,densneut,tneutre,tempexo,
-     .                  albedo,chideg,denelc,temelc,temion,UT,hrloc,
-     .                  ztop,zbot,colden,day,year)
+     &                ap,chi,Ne,Te,Tj,indlim,jpreci,
+     &             Nh,No,No2,Nn2,Nn,Tn,Po,Po2,Pn2,Ph,Pn,Heat,
+     &
+     &                  nspec,knm,nen,nang,nango2,nalt,
+     &                  ddeng,botE,centE,gmu,gwt,angzb,altkm,altcm,
+     &                  dipang,smgdpa,
+     &            fluxup,fluxdown,densneut,tneutre,tempexo,
+     &                  albedo,chideg,denelc,temelc,temion,UT,hrloc,
+     &                  ztop,zbot,colden,day,year)
 c
 c     Initialisation des parametres necessaires au programme cinetique
 c     lorsque celui-ci est appele par le programme fluide.
@@ -113,7 +113,7 @@ c
          real dne(nbralt),dte(nbralt),dti(nbralt)
          real tempexo,albedo
          real UT,UTsec,hrloc,stl,year,day,chi,chideg,f107(3),
-     .        ap(7),glong,glat
+     &        ap(7),glong,glat
          real ztop,zbot
          integer iyd,nan,jpreci
         integer ialt,ien,iang,isp,ii
@@ -155,7 +155,7 @@ c
          data fanion /0/
 c       Les options sont les options standard de IRI
         data jf /.false.,.false.,.false.,.true.,.true.,.true.,.true.,
-     .           .true.,.true.,.true.,.true.,.true./
+     &           .true.,.true.,.true.,.true.,.true./
 c
         real PT(150),PD(150,9),PS(150),PDL(25,2),PTL(100,4),PMA(100,10)
         COMMON /PARM6/     PT,PD,PS,PDL,PTL,PMA
@@ -231,7 +231,7 @@ c         ... msis90
 
        print*,'iniflux call gtd6'
           call gtd6(iyd,UTsec,ztrav(ialt),glat,glong,stl,
-     .            f107(3),f107(2),ap,48,d,t)
+     &            f107(3),f107(2),ap,48,d,t)
 c
          densneut(1,indlim+ialt-1)=d(3)        ! N2
          densneut(2,indlim+ialt-1)=d(4)        ! O2
@@ -277,7 +277,7 @@ c         La date est en jours : negative pour IRI
 c         L'indice est f107 : negatif pour IRI
           xind = -f107(3)
           call iris12(jf,jmag,glat,glong,xind,iddd,hrloc,zbotiri,
-     .              ztopiri,zstepiri,outiri1,outiri2)
+     &              ztopiri,zstepiri,outiri1,outiri2)
 c       Il reste a interpoler depuis la grille reguliere de iri
 c       vers la grille exp de calcul :
        do ialt = 1,nziri
@@ -321,7 +321,7 @@ c     Si il n'y a pas de precipitations, on garde la 1ere grille.
            Emax = 300.
            print*,'call quelle_grille'
            call quelle_grille(Emax,nen,centE,botE,ddeng,
-     .        nang,nango2,gmu,gwt,angzb)
+     &        nang,nango2,gmu,gwt,angzb)
        else
 c
 c       Il faut connaitre l'energie caracteristique des precipitations
@@ -348,7 +348,7 @@ c
 c       write(6,*)'Flux_ener_int,Eave',Flux_ener_int,Eave
        print*,'quelle_grille'
        call quelle_grille(Emax,nen,centE,botE,ddeng,
-     .        nang,nango2,gmu,gwt,angzb)
+     &             nang,nango2,gmu,gwt,angzb)
 c
 c
 c         ============================================================
@@ -363,24 +363,24 @@ c    if (latmag.le.0.) then
 c      isotro=1
          print*,'fluxkappa'
          call fluxkappa(nango2,nen,centE,isotro,
-     .                  gmu,fluxdown,fluxup,Eave,Flux_ener_int)
+     &                  gmu,fluxdown,fluxup,Eave,Flux_ener_int)
 
 !          open(44,file='fluxtop.dat',status='replace')
 !          write(44,*) ((fluxdown(ien,iang),ien=1,nen),iang=1,nango2)
 !          close(44)
           print*,'flux_integre'
           call flux_integre(nango2,nen,centE,ddeng,
-     .                    gmu,gwt,fluxdown,fluxup,
-     .            Eave,Flux_ener_int)
+     &                    gmu,gwt,fluxdown,fluxup,
+     &            Eave,Flux_ener_int)
       Fe0=Flux_ener_int*6.2832
       Ee0=Eave
 c
 c    else
 c      isotro=1
 c        call inmaxwl(Flux_ener_int,Eave,nango2,nen,centE,
-c     .            isotro,gmu,fluxdown,fluxup)
+c     &                 isotro,gmu,fluxdown,fluxup)
 c          call normflux(Flux_ener_int,nango2,nen,centE,ddeng,gmu,gwt,
-c     .            fluxdown,fluxup)
+c     &                 fluxdown,fluxup)
 c      Fe0=Flux_ener_int*6.2832
 c      Ee0=Eave
         endif
@@ -467,7 +467,7 @@ c       Calcul du champ : mgdpa = magnetic dip angle (radians)
         if(nan.lt.100)date=1900.+float(nan)+day/100.
         do ialt = 1,nalt
           call bfield(date,altkm(ialt),glat,glong,xbid,ybid,zbid,bf,
-     .              mgdpa(ialt),decbid)
+     &                   mgdpa(ialt),decbid)
           mgdpa(ialt)=abs(mgdpa(ialt))
           smgdpa(ialt)=sin(mgdpa(ialt))
 c       La valeur du champ pourra dans le futur etre a garder...
@@ -522,12 +522,12 @@ c     0 dans la ligne data en debut de ce sous programme
          dti (ialt) = temion(ialt)/10.
        enddo
           call ecr(nspec,nalt,zbot,ztop,UT,hrloc,day,nan,
-     .      jpreci,tempexo,f107(2),f107(3),ap(1),fctemp,fcdens,glat,
-     .      glong,modatmos,albedo,altkm,nen,botE,centE,ddeng,knm,eave,
-     .      alpha,nang,angzb,gmu,gwt,fluxdown,fluxup,denelc,dne,
-     .      temelc,dte,temion,dti,derivte,comp,z50,densneut,tneutre,
-     .      xmasdens,colden,mgdpa,smgdpa,chideg,icont,iprt,spfac,
-     .      moddene,modtemp,modcomp)
+     &       jpreci,tempexo,f107(2),f107(3),ap(1),fctemp,fcdens,glat,
+     &       glong,modatmos,albedo,altkm,nen,botE,centE,ddeng,knm,eave,
+     &       alpha,nang,angzb,gmu,gwt,fluxdown,fluxup,denelc,dne,
+     &       temelc,dte,temion,dti,derivte,comp,z50,densneut,tneutre,
+     &       xmasdens,colden,mgdpa,smgdpa,chideg,icont,iprt,spfac,
+     &       moddene,modtemp,modcomp)
       endif
 c
       return
@@ -563,20 +563,20 @@ c
          do isp=1,nspec
           d=0.
           if(densneut(isp,i2).gt.0..and.densneut(isp,i1).gt.0.)
-     .        d=abs(log(densneut(isp,i2)/densneut(isp,i1)))
+     &        d=abs(log(densneut(isp,i2)/densneut(isp,i1)))
         if(abs(d).ge.epsilon)
-     .        colden(isp,i1)=densneut(isp,i1)/d*(altcm(i1)-altcm(i2))
+     &        colden(isp,i1)=densneut(isp,i1)/d*(altcm(i1)-altcm(i2))
       do ialt=i2,i3,i4
       d=0.
         if(densneut(isp,ialt-i4).gt.0..and.densneut(isp,ialt).gt.0.)
-     .        d=abs(log(densneut(isp,ialt-i4)/densneut(isp,ialt)))
+     &        d=abs(log(densneut(isp,ialt-i4)/densneut(isp,ialt)))
         if(abs(d).ge.epsilon) then
           colden(isp,ialt)=colden(isp,ialt-i4)+
-     .                  abs((altcm(ialt)-altcm(ialt-i4))/d*
-     .            (densneut(isp,ialt)-densneut(isp,ialt-i4)))
+     &                  abs((altcm(ialt)-altcm(ialt-i4))/d*
+     &            (densneut(isp,ialt)-densneut(isp,ialt-i4)))
         else
           colden(isp,ialt)=colden(isp,ialt-i4)+
-     .            densneut(isp,ialt)*(altcm(ialt-i4)-altcm(ialt))
+     &            densneut(isp,ialt)*(altcm(ialt-i4)-altcm(ialt))
         end if
        enddo
         enddo

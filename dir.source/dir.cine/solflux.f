@@ -56,7 +56,7 @@ c
 c 	Estime le flux solaire pour le jour requis.
  	numday = 1
  	call euv91(iout,yyddd,numday,w1nm,eVinf,w2nm,eVsup,eVmid,wmid,
-     .		Pflux,Eflux,impress)
+     &		Pflux,Eflux,impress)
 c 	Reordonne les tableaux
  	do ien=1,39
  	  eVmiddp(ien) = dble(eVmid(ien))
@@ -129,7 +129,7 @@ c 	Conservation du nombre de photons total:
 c
  	write(iout,*)
  	write(iout,*)'After interpolation and normalization of the total',
-     . 	 	     ' number of particles'
+     & 	 	     ' number of particles'
  	write(iout,*)'Energies [eV]'
  	write(iout,1040)(e(ien),ien=1,nen)
  	write(iout,*)'wavelength [nm]'
@@ -143,7 +143,7 @@ c
 c-----------------------------------------------------------------------
 c
  	subroutine euv91(iout,yyddd,numday,w1nm,eVinf,w2nm,eVsup,
-     .			eVmid,wmid,Pflx,Eflx,impress)
+     &			eVmid,wmid,Pflx,Eflx,impress)
 c
 c 	Re-ecrit en subroutine 07/93 (jl)
 c 	PARAMETRES D'ENTREE :
@@ -218,7 +218,7 @@ C	implicit	none
 	real		date,Eflux(39),Pflux(39),wave(39)
 	real		Eflx(39),Pflx(39)
 	real		w1nm(39),w2nm(39),wmid(39),eVinf(39),
-     .			eVsup(39),eVmid(39)
+     &			eVsup(39),eVmid(39)
 	character*10	fname
 c	data		numday /1/
 c	data		fname(1:1),fname(7:10) /'f','.dat'/
@@ -257,12 +257,12 @@ C********1*********2*********3*********4*********5*********6*********7**
 
 1000 	  format('  EUV 91 Energy and Photon Flux for ',i10,/)
 1010 	format (5x,'Wavelength',5x,'Middle',6x,'Energy',6x,'Middle',8x,
-     .    'Photon',5x,'Energy',/,58x,'flux',8x,'flux',/,
-     .    7x,'[nm]',10x,'[nm]',8x,'[eV]',8x,'[eV]',9x,'[cm-2.',
-     .    5x,'[eV.cm-2.',/,3x,13('-'),12x,14('-'),15x,'s-1.nm-1]',
-     .    3x,'s-1.nm-1]',/)
+     &    'Photon',5x,'Energy',/,58x,'flux',8x,'flux',/,
+     &    7x,'[nm]',10x,'[nm]',8x,'[eV]',8x,'[eV]',9x,'[cm-2.',
+     &    5x,'[eV.cm-2.',/,3x,13('-'),12x,14('-'),15x,'s-1.nm-1]',
+     &    3x,'s-1.nm-1]',/)
 1020 	format
-     .	    (2(1F8.1,1x),1f8.1,1x,2(1F7.2,1x),1f7.2,6x,2(1p1E9.3,3x))
+     &	    (2(1F8.1,1x),1f8.1,1x,2(1F7.2,1x),1f7.2,6x,2(1p1E9.3,3x))
 c
  	  if (impress.eq.1)then
 	    write (iout,1000)yyddd+i
@@ -290,7 +290,7 @@ c 	    Dans ce cas, le flux d'energie est :
  	    Eflux(j) = eVmid(j) * Pflux(j)
  	    Eflx(j) = Eflux(j)
  	    if (impress.eq.1) write(iout,1020) w1nm(j),w2nm(j),wmid(j),
-     .		     eVinf(j),eVsup(j),eVmid(j),Pflux(j),Eflux(j)
+     &		     eVinf(j),eVsup(j),eVmid(j),Pflux(j),Eflux(j)
 30	  continue
 10	continue
 	end
@@ -346,8 +346,8 @@ C********1*********2*********3*********4*********5*********6*********7**
 10	continue
 
 	open (unit=fic_euvcoeff,
-     .		file='dir.data/dir.linux/euv91coef.txt',
-     .		status='old',form='formatted')
+     &		file='dir.data/dir.linux/euv91coef.txt',
+     &		status='old',form='formatted')
 	do 20 i = 1,3
 	  read(fic_euvcoeff,'(A)') line1
 20	continue
@@ -418,7 +418,7 @@ C********1*********2*********3*********4*********5*********6*********7**
 C	Read in the indices
 C********1*********2*********3*********4*********5*********6*********7**
 	open(unit=fic_euvindex,file='dir.data/dir.linux/euv91index2.dat'
-     .		,status='old',form='formatted')
+     &		,status='old',form='formatted')
   	do 50 i = 1,2
 	  read(fic_euvindex,'(A)') line1
 50	continue

@@ -639,9 +639,9 @@ c                 flg_err=.true.
 c         endif
 !              print*,'call transelec'
                call transelec(npt,iyd,sec,glat,glong,stl,f107,
-     .          ap,chi,Ne,Te,Tj,nx,Nh,No,No2,Nn2,Nn,Tn,indlim,jpreci,
-     .          kiappel,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
-     .          Nes,Jes,Tes,qes)
+     &          ap,chi,Ne,Te,Tj,nx,Nh,No,No2,Nn2,Nn,Tn,indlim,jpreci,
+     &          kiappel,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
+     &          Nes,Jes,Tes,qes)
 
         endif
 

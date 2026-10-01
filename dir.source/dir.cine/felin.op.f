@@ -1,8 +1,8 @@
 c
         subroutine felin(knm,nspec,hrloc,day,year,UT,
-     .          tempexo,f107,ap,glat,glong,nen,botE,centE,
-     .          ddeng,nalt,altkm,tneutre,densneut,colden,chi,chideg,
-     .		kiappel,phdisso2,pfluxsr,Po1sdisso2)
+     &          tempexo,f107,ap,glat,glong,nen,botE,centE,
+     &          ddeng,nalt,altkm,tneutre,densneut,colden,chi,chideg,
+     &		kiappel,phdisso2,pfluxsr,Po1sdisso2)
 
 c	Computation of the primary photoelectrons, i.e. the electrons
 c 	created by the solar photon flux.(jl,1993).
@@ -80,15 +80,15 @@ c
       include 'TRANSPORT.INC'
 c
       common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
-     .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
-     .               nwave,ns,nns,f107min,f107max,iseff,wnmseff,
-     .               lambdasr,sigsro2,Isr,lineflux,sigabso2,qyield,
-     .               Isr2
+     &  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
+     &               nwave,ns,nns,f107min,f107max,iseff,wnmseff,
+     &               lambdasr,sigsro2,Isr,lineflux,sigabso2,qyield,
+     &               Isr2
  	integer nalt,ns,nns,nwave,nen
  	real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
       	real f107(3),day,ap(7),hrloc,UT,glat,chi,chideg
        	dimension altkm(nbralt),densneut(8,nbralt),colden(8,nbralt),
-     .		  tneutre(nbralt)
+     &		  tneutre(nbralt)
 c 	wwt (specie, excit, energy) = branching ratio
        	real threshold(7),wwt(7,6,39)
  	integer number(7)
@@ -102,8 +102,8 @@ c
        	real eV(39),centE(nbren),ddeng(nbren),botE(nbren)
        	real Ecent(nbren),engdd(nbren),Ebot(nbren)
        	real proelec(nbralt),
-     .		  prodion(nbralt,nbrsp*2),proneut(nbralt,nbrsp),
-     . 	  	  prophel(nbralt,nbren),produc(nbralt,nbrsp,nbren)
+     &		  prodion(nbralt,nbrsp*2),proneut(nbralt,nbrsp),
+     & 	  	  prophel(nbralt,nbren),produc(nbralt,nbrsp,nbren)
         real prodcont(nbralt),prodraie(nbralt)
       	real seffion(2000,7),sefftot(2000,5),eVseff(2000),wnmseff(2000)
       	real sigi(39,7),sigt(39,5)         ! Seff sur les en(Torr)
@@ -129,8 +129,8 @@ c ---	Open up files to be used in this program.
      &          status='replace')
         rewind(ifelprt)
         open (unit=ifeltrans,
-     .		file='dir.data/dir.linux/dir.cine/FELTRANS',
-     .		form='unformatted',
+     &		file='dir.data/dir.linux/dir.cine/FELTRANS',
+     &		form='unformatted',
      &          status='old')
         rewind(ifeltrans)
       	write(ifelprt,*)'felin1.f'
@@ -148,17 +148,17 @@ c
 c --- 	Set the input parameters.
 c
         call setpar(imod,nspec,idess,hrloc,UT,day,nan,tempexo,
-     .	   f107,ap,glat,glong,nalt,year,
-     .	   altkm,nen,centE,botE,ddeng,Ecent,Ebot,engdd,iprt,pflux,knm,
-     .	   tneutre,densneut,colden,iflux,wwt,number,xchap,chi,chideg,
-     .	   sigi,sigt,ichapman)
+     &	   f107,ap,glat,glong,nalt,year,
+     &	   altkm,nen,centE,botE,ddeng,Ecent,Ebot,engdd,iprt,pflux,knm,
+     &	   tneutre,densneut,colden,iflux,wwt,number,xchap,chi,chideg,
+     &	   sigi,sigt,ichapman)
 c
 c --- 	Calculates primary photoelectron production.
    	call depo(nalt,ns,nns,nwave,nen,chi,densneut,colden,altkm,
-     .		  threshold,eV,Ecent,Ebot,engdd,produc,
-     .		  proelec,prodion,proneut,prophel,prodcont,prodraie,
-     .    	  sigi,sigt,pflux,tneutre,iprt,number,wwt,xchap,
-     .		  eVmin,eVmax,imod,nspec,sflux)
+     &		  threshold,eV,Ecent,Ebot,engdd,produc,
+     &		  proelec,prodion,proneut,prophel,prodcont,prodraie,
+     &    	  sigi,sigt,pflux,tneutre,iprt,number,wwt,xchap,
+     &		  eVmin,eVmax,imod,nspec,sflux)
 
 !       Compute production of O(1D) from photodissociation of O2
         maxchi=1.7453
@@ -220,11 +220,11 @@ c --- 	Calculates primary photoelectron production.
 c
 c --- 	Calculates electron density.
         call densout1(nalt,altkm,proelec,denselregE,nregE,altregE,
-     .		    densneut)
+     &		    densneut)
 c
 c ---	Writes the different productions.
  	call prodprt(ns,nalt,altkm,nen,Ecent,engdd,produc,proelec,
-     .  	      prodion,proneut,prophel,iprt,ichapman)
+     &  	      prodion,proneut,prophel,iprt,ichapman)
 c
       return
       end
@@ -302,20 +302,20 @@ c
 c 	INPUTS
 c
  	real eVbrO(10),brO(5,10),eVbrN2(13),brN2(5,13),
-     .  	eVbrO2(20),brO2(3,20),eVbrO2dis(14),brO2dis(6,14),
-     .		eVbrN2dis(2),brN2dis(1,2),eVbrH(2),brH(1,2),
-     .		eVbrHe(2),brHe(1,2)
+     &  	eVbrO2(20),brO2(3,20),eVbrO2dis(14),brO2dis(6,14),
+     &		eVbrN2dis(2),brN2dis(1,2),eVbrH(2),brH(1,2),
+     &		eVbrHe(2),brHe(1,2)
  	integer neVbrO,nstO,neVbrN2,nstN2,
-     .  	neVbrO2,nstO2,neVbrO2dis,nstO2dis,neVbrN2dis,nstN2dis,
-     .  	neVbrH,nstH,neVbrHe,nstHe
+     &  	neVbrO2,nstO2,neVbrO2dis,nstO2dis,neVbrN2dis,nstN2dis,
+     &  	neVbrH,nstH,neVbrHe,nstHe
  	common /branching/
-     .		eVbrN2,    brN2,    neVbrN2,    nstN2,
-     .		eVbrO2,    brO2,    neVbrO2,    nstO2,
-     .		eVbrO,     brO,     neVbrO,     nstO,
-     .		eVbrO2dis, brO2dis, neVbrO2dis, nstO2dis,
-     .		eVbrN2dis, brN2dis, neVbrN2dis, nstN2dis,
-     .		eVbrH,     brH,     neVbrH,     nstH,
-     .		eVbrHe,    brHe,    neVbrHe,    nstHe
+     &		eVbrN2,    brN2,    neVbrN2,    nstN2,
+     &		eVbrO2,    brO2,    neVbrO2,    nstO2,
+     &		eVbrO,     brO,     neVbrO,     nstO,
+     &		eVbrO2dis, brO2dis, neVbrO2dis, nstO2dis,
+     &		eVbrN2dis, brN2dis, neVbrN2dis, nstN2dis,
+     &		eVbrH,     brH,     neVbrH,     nstH,
+     &		eVbrHe,    brHe,    neVbrHe,    nstHe
 c
  	integer iprt(12),nwave
  	real eV(500),threshold(7)
@@ -525,7 +525,7 @@ c
 c---------------------------- densout1 -------------------------------
 c
       subroutine densout1(nalt,altkm,proelec,denselregE,nregE,altregE,
-     .		 densneut)
+     &		 densneut)
 c
  	include 'TRANSPORT.INC'
 c
@@ -553,7 +553,7 @@ c     	calcul de densites
  	write(ifelprt,7050)
  	do ialt = 1,nregE
  	  write(ifelprt,7051)altregE(ialt),proelec(ialt),
-     .		denselregE(ialt)
+     &		denselregE(ialt)
  	enddo
 7050 	format(/,'Electron density in the E region',/,' altitude ',
      &    ' e- prod.  Computed [Ne]')
@@ -565,10 +565,10 @@ c
 c------------------------- depo ----------------------------------
 c
       subroutine depo(nalt,ns,nns,nwave,nen,chi,densneut,colden,altkm,
-     .        threshold,eV,Ecent,Ebot,engdd,produc,
-     .	      proelec,prodion,proneut,prophel,prodcont,prodraie,
-     .        sigi,sigt,pflux,tneutre,iprt,number,wwt,xchap,
-     .	      eVmin,eVmax,imod,nspec,sflux)
+     &        threshold,eV,Ecent,Ebot,engdd,produc,
+     &	      proelec,prodion,proneut,prophel,prodcont,prodraie,
+     &        sigi,sigt,pflux,tneutre,iprt,number,wwt,xchap,
+     &	      eVmin,eVmax,imod,nspec,sflux)
 c
 	include 'TRANSPORT.INC'
 c
@@ -618,11 +618,11 @@ c     	        solar continuum [cm-3.s-1]
 c
        	real chi,altkm(nbralt)
        	dimension colden(8,nbralt),densneut(8,nbralt),tneutre(nbralt),
-     . 	 	threshold(7),proelec(nbralt),prodion(nbralt,nbrsp*2),
-     . 		proneut(nbralt,nbrsp),prophel(nbralt,nbren)
+     & 	 	threshold(7),proelec(nbralt),prodion(nbralt,nbrsp*2),
+     & 		proneut(nbralt,nbrsp),prophel(nbralt,nbren)
  	real prodcont(nbralt),prodraie(nbralt)
        	dimension produc(nbralt,nbrsp,nbren),pflux(39),
-     .            sigi(39,7),sigt(39,5),eV(39),eVmin(39),eVmax(39)
+     &            sigi(39,7),sigt(39,5),eV(39),eVmin(39),eVmax(39)
  	real Ecent(nbren),engdd(nbren),Ebot(nbren)
 c 	wwt = branching ratio sur les energies de Torr
        	real wwt(7,6,39)
@@ -646,7 +646,7 @@ c	write(6,*)
 c
         do iwave=1,nwave
           if (kiappel.eq.1)
-     .		write(6,*)'Wavelength ',iwave,'/',nwave,'  [A'
+     &		write(6,*)'Wavelength ',iwave,'/',nwave,'  [A'
  	  deV = eVmax(iwave)-eVmin(iwave)
  	  if(deV .le. 1. .or. imod.eq.1)then
 c 	    On est sur une ligne discrete .ou. on ne coupe pas les
@@ -667,9 +667,9 @@ c               Computes the productions :
  	  	  wt(ist) = wwt(iontype,ist,iwave)
  		enddo
        	        call eval (dev,dele,flux,iontype,sigion(iontype),
-     .		           nexcit,wt,nen,Ecent,Ebot,engdd,densneut,exa,
-     .	                   iz,proelec,prodion,produc,proneut,prophel,
-     .			   prodcont,prodraie)
+     &		           nexcit,wt,nen,Ecent,Ebot,engdd,densneut,exa,
+     &	                   iz,proelec,prodion,produc,proneut,prophel,
+     &			   prodcont,prodraie)
  	      enddo		! boucle sur les especes
               sflux(iz,iwave)=pflux(iwave)*exp(-exa)
 10     	    continue        	! boucle sur les altitudes
@@ -685,7 +685,7 @@ c 	    Le flux dans chaque petite boite est :
 c
  	    do i = 1,ninter
               write(6,*)'Wavelength ',iwave,'/',nwave,
-     .              ' interval ',i,'/',ninter,'  [A'
+     &              ' interval ',i,'/',ninter,'  [A'
 c
 c 	      On place les energies au milieu de chaque petite boite
  	      energy = eVmin(iwave) + deltaE/2. + float(i-1)*deltaE
@@ -716,9 +716,9 @@ c                 Computes the productions :
  	          nexcit = number(iontype)
  	          dele = energy-threshold(iontype)
        	          call eval (dev,dele,flux,iontype,sigion(iontype),
-     .		           nexcit,wt,nen,Ecent,Ebot,engdd,densneut,exa,
-     .		           iz,proelec,prodion,produc,proneut,prophel,
-     .			   prodcont,prodraie)
+     &		           nexcit,wt,nen,Ecent,Ebot,engdd,densneut,exa,
+     &		           iz,proelec,prodion,produc,proneut,prophel,
+     &			   prodcont,prodraie)
  	        enddo		! boucle sur les especes
                 sflux(iz,iwave)=pflux(iwave)*exp(-exa)
 20     	      continue     	! boucle sur les altitudes
@@ -733,9 +733,9 @@ c
 c--------------------------- eval -----------------------------------
 c
       subroutine eval (deV,dele,flux,iontype,sigion,nexcit,wt,
-     .	      nen,Ecent,Ebot,engdd,densneut,exa,iz,
-     .	      proelec,prodion,produc,proneut,prophel,
-     .	      prodcont,prodraie)
+     &	      nen,Ecent,Ebot,engdd,densneut,exa,iz,
+     &	      proelec,prodion,produc,proneut,prophel,
+     &	      prodcont,prodraie)
 c
 c 	INPUTS
 c 	------
@@ -772,8 +772,8 @@ c
        	integer nen,nexcit
 c
       	real proelec(nbralt),prodion(nbralt,nbrsp*2),
-     .		produc(nbralt,nbrsp,nbren),proneut(nbralt,nbrsp),
-     .		prophel(nbralt,nbren),prodstion(nbralt,7,6)
+     &		produc(nbralt,nbrsp,nbren),proneut(nbralt,nbrsp),
+     &		prophel(nbralt,nbren),prodstion(nbralt,7,6)
  	real prodcont(nbralt),prodraie(nbralt)
 c       nbrelec = nbre d'electrons crees dans l'ionisation
         real nbrelec
@@ -823,7 +823,7 @@ c           Case He --> He+  (neutral 5 -->ion 6)
           depr=depr*sigion*densneut(neutspe,iz)
  	  do ist = 1,nexcit
             prodstion(iz,iontype,ist)=prodstion(iz,iontype,ist)+
-     .					depr*wt(ist)
+     &					depr*wt(ist)
  	  enddo
           prodion(iz,ionspe)=prodion(iz,ionspe)+ depr
           proneut(iz,neutspe)=proneut(iz,neutspe)+ depr
@@ -848,14 +848,14 @@ c
 c ---------------------------- prodprt -----------------------------
 c
       subroutine prodprt(ns,nalt,altkm,nen,Ecent,engdd,produc,proelec,
-     .  	      prodion,proneut,prophel,iprt,ichapman)
+     &  	      prodion,proneut,prophel,iprt,ichapman)
 c
       include 'TRANSPORT.INC'
 c
        	dimension Ecent(nbren),altkm(nbralt),engdd(nbren)
        	dimension proneut(nbralt,nbrsp),proelec(nbralt),
-     .		prodion(nbralt,nbrsp*2),prophel(nbralt,nbren),
-     .		produc(nbralt,nbrsp,nbren)
+     &		prodion(nbralt,nbrsp*2),prophel(nbralt,nbren),
+     &		produc(nbralt,nbrsp,nbren)
       integer iprt(12)
       real zwork(nbralt)
 
@@ -865,19 +865,19 @@ c
 1015  	format(/,5x,'alt',7x,'H+',8x,' He+')
 1020  	format(1h ,6(1pe10.2))
 1040  	format( /,'Production (/cm3.s),at 5 alt., in',i5,
-     .    ' energy boxes,due to N2,O2,O,H,He(produc(iz,neutspe,ien))')
+     &    ' energy boxes,due to N2,O2,O,H,He(produc(iz,neutspe,ien))')
 1050    format(1x,/,'alt=',f6.1)
 1060  	format(2(1x,i2,3(1pe10.2)))
 1070  	format (/,5x,'Produced Photoel. (/cm3.s.eV) at each altitude',
-     .    ' (prophel(ialt,ien))',
-     .    / 12x, 'Altitude  ',
-     .    / , 5x, ' E ', 1x, 7f10.2)
+     &    ' (prophel(ialt,ien))',
+     &    / 12x, 'Altitude  ',
+     &    / , 5x, ' E ', 1x, 7f10.2)
 1080  	format (1x, f8.2, 8(1pe10.2))
 1100  	format(1h ,7(1pe10.2))
 1110  	format('Electron and ionized neutral production (cm-3.s-1)',
-     .    ' (proneut(iz,neutspe))',/,
-     .    5x,'alt',7x,'Ne',9x,'Nn2',7x,'No2 ',6x,'No1 ',
-     .    7x,'H ',7x,'He')
+     &    ' (proneut(iz,neutspe))',/,
+     &    5x,'alt',7x,'Ne',9x,'Nn2',7x,'No2 ',6x,'No1 ',
+     &    7x,'H ',7x,'He')
 c
 c	write(6,*)'Writting                                            '
  	if(iprt(8).eq.1)then
@@ -885,7 +885,7 @@ c	write(6,*)'Writting                                            '
       	  write(ifelprt,1010)
       	  do iz=1,nalt
            write(ifelprt,1020)altkm(iz),proelec(iz),
-     .		(prodion(iz,m),m=1,4)
+     &		(prodion(iz,m),m=1,4)
  	  enddo
       	  write(ifelprt,1015)
       	  do iz=1,nalt
@@ -919,7 +919,7 @@ c
             do 170 ien1=1,nen,2
               ien2=ien1+1
               write(ifelprt,1060)ien1,(produc(iz,neutspe,ien1),
-     .         neutspe=1,3 ),ien2,(produc(iz,neutspe,ien2),neutspe=1,3)
+     &         neutspe=1,3 ),ien2,(produc(iz,neutspe,ien2),neutspe=1,3)
 170         continue
             iz=iz+nnz
 180   	  continue
@@ -933,7 +933,7 @@ c
             write(ifelprt, 1070) (altkm(ialt),ialt = ialt1,ialt2)
             do ien = 1,nen
               write(ifelprt,1080)Ecent(ien),
-     .		(prophel(ialt,ien),ialt=ialt1,ialt2)
+     &		(prophel(ialt,ien),ialt=ialt1,ialt2)
  	    enddo
             ialt1 = ialt1 + 6
             ialt2 = ialt2 + 6
@@ -944,7 +944,7 @@ c
       	  write(ifelprt, 1070) (altkm(ialt), ialt = ialt2,nalt)
       	  do ien = 1,nen
        	    write(ifelprt,1080) Ecent(ien),
-     .		(prophel(ialt,ien),ialt=ialt2,nalt)
+     &		(prophel(ialt,ien),ialt=ialt2,nalt)
  	  enddo
  	endif
 c
@@ -952,7 +952,7 @@ c
       	  write(ifelprt,1110)
       	  do 270 iz=1,nalt
       	   write(ifelprt,1100)altkm(iz),proelec(iz),
-     .			      (proneut(iz,m),m=1,5)
+     &			      (proneut(iz,m),m=1,5)
 270   	  continue
  	endif
 c
@@ -962,7 +962,7 @@ c 	Integration over the energies
  	      zwork(ialt) = 0.
 	      do ien=1,nen
  	        zwork(ialt) = zwork(ialt)+
-     .		    Ecent(ien)*prophel(ialt,ien)*engdd(ien)
+     &		    Ecent(ien)*prophel(ialt,ien)*engdd(ien)
  	      enddo
  	    enddo
 c
@@ -974,8 +974,8 @@ c 	Dans ce pgme, les altitudes sont en km :
 	    write(ifelprt,5007) qpheleV,qphelerg
 c 	write(6,5007) qpheleV,qphelerg
 5007	format(/,
-     .  'The total E. from photoelectron prod.  is : ', 1pe11.4,
-     .  ' eV/cm2/s',/,45x,'or : ',1pe11.4,' erg/cm2/s')
+     &  'The total E. from photoelectron prod.  is : ', 1pe11.4,
+     &  ' eV/cm2/s',/,45x,'or : ',1pe11.4,' erg/cm2/s')
 c
 c     	write in file ifeltrans for transport program.
       	write(ifeltrans) nen,nalt,ns
@@ -991,17 +991,17 @@ c     	write in file ifeltrans for transport program.
 
 
       subroutine setpar(imod,nspec,idess,hrloc,UT,day,nan,tempexo,
-     .	   f107,ap,glat,glong,nalt,year,
-     .	   altkm,nen,centE,botE,ddeng,Ecent,Ebot,engdd,iprt,pflux,knm,
-     .	   tneutre,densneut,colden,iflux,wwt,number,xchap,chi,chideg,
-     .	   sigi,sigt,ichapman)
+     &	   f107,ap,glat,glong,nalt,year,
+     &	   altkm,nen,centE,botE,ddeng,Ecent,Ebot,engdd,iprt,pflux,knm,
+     &	   tneutre,densneut,colden,iflux,wwt,number,xchap,chi,chideg,
+     &	   sigi,sigt,ichapman)
 c
       include 'TRANSPORT.INC'
 c
       common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
-     .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
-     .		      nwave,ns,nns, f107min,f107max,iseff,wnmseff, lambdasr,
-     .                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
+     &  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
+     &		      nwave,ns,nns, f107min,f107max,iseff,wnmseff, lambdasr,
+     &                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
  	common /const/ pi,re,recm,bolt,gzero,amu
  	real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
  	integer index(39)
@@ -1012,7 +1012,7 @@ c
       	real seffion(2000,7),sefftot(2000,5),eVseff(2000),wnmseff(2000)
       	real sigi(39,7),sigt(39,5)
  	real wave(39),Pflux(39),Eflux(39),eV(39),tneutre(nbralt),
-     .		  densneut(8,nbralt),colden(8,nbralt)
+     &		  densneut(8,nbralt),colden(8,nbralt)
  	real pfluxmin(39),pfluxmax(39)
  	real wwt(7,6,39),threshold(7)
  	integer number(7),iseff
@@ -1022,45 +1022,45 @@ c
         real chapesp(8),f107(3),ap(7)
 c
 1000    format (1x,/,'hour=',f6.2, 8x,'chi =',f6.2, 3x,'degrees',
-     .    6x,'exo temp =',f8.2,/)
+     &    6x,'exo temp =',f8.2,/)
 1010  	format ('     felin.f : Production of primary photoelectrons',
-     .    '. Sza (deg) :',f10.2)
+     &    '. Sza (deg) :',f10.2)
 c    .		'prod., Sza (deg) :',f10.2,/,' --------')
 1020   	format (' Spectral lines :',/,'      Wavelength (nm)     ',7x,
-     .    'energy(eV)        incident flux (photons/s.cm2)',/,
-     .    51x,'SC#21REFW  Computed  F79059N',/,48x,3f10.2,/,
-     .    1x,23('-'),2x,23('-'),2x,28('-'))
+     &    'energy(eV)        incident flux (photons/s.cm2)',/,
+     &    51x,'SC#21REFW  Computed  F79059N',/,48x,3f10.2,/,
+     &    1x,23('-'),2x,23('-'),2x,28('-'))
 1030 	format(3f8.3,1x,3f8.3,3(1pe10.2))
 1050  	format (' Ionization potentials (threshold, [eV]), ',
-     .    'N2,O2,O,N2d,O2d,H,He ')
+     &    'N2,O2,O,N2d,O2d,H,He ')
 1060  	format( /,' Comparison 1/cos(chi) and',
-     .          ' Chapman''s function (o,n2,o2)')
+     &          ' Chapman''s function (o,n2,o2)')
 1070    format (1x, 7(1pe15.7) )
 1080  	format (1x, 10(1pe10.2))
 1090  	format (1x, f7.2, 6(1x,f5.2))
 1130    format(/,70('-'),/,
-     .  ' Lambda |      N_2 (*1.e18cm2)     ',
-     .  '|    O_2   (*1.e18cm2)      |', /,70('-'),/,
-     .  'ANGSTROMS  ABS   N_2+   N+     ION ',
-     .   '|  ABS    O_2+    O+    ION', /,70('-'))
+     &  ' Lambda |      N_2 (*1.e18cm2)     ',
+     &  '|    O_2   (*1.e18cm2)      |', /,70('-'),/,
+     &  'ANGSTROMS  ABS   N_2+   N+     ION ',
+     &   '|  ABS    O_2+    O+    ION', /,70('-'))
 1140   format(12f7.3)
 1150   format(/,28('-'),/,' Lambda  |  O   (*1.e18cm2) |',
-     .    /,28('-'),/,'ANGSTROMS| ABS    ION       |', /,28('-'))
+     &    /,28('-'),/,'ANGSTROMS| ABS    ION       |', /,28('-'))
 1160   format(/,70('-'),/,
-     . ' Lambda |      H   (*1.e18cm2)     |    He  (*1.e18cm2)     |',
-     .  /,70('-'),/,
-     .  'ANGSTROMS      ABS        ION   |  ABS         ION',/,70('-'))
+     & ' Lambda |      H   (*1.e18cm2)     |    He  (*1.e18cm2)     |',
+     &  /,70('-'),/,
+     &  'ANGSTROMS      ABS        ION   |  ABS         ION',/,70('-'))
 c
 2010    format (/,'atmosphere neutre',/,f10.2, 20x, 'tempexo')
 2020    format (' lat=' ,f7.2,3x,'long=',f7.2,3x,'ap=',f7.2)
 2023    format (' jour=',f10.1,3x,'annee=',i7)
 2030    format('flux moyen ',f7.2,3x,'flux de la veille ',f7.2)
 2050    format (/,' no.   height    temp        n(N2)       '
-     .      ,' n(02)      n(01)',/,8x,' km      deg k    ',
-     .       '   /cm3       /cm3       /cm3')
+     &      ,' n(02)      n(01)',/,8x,' km      deg k    ',
+     &       '   /cm3       /cm3       /cm3')
 2055    format (/,' no.   height     n(H)       n(He)       ',
-     .    'n(N)       n(A)', /,'         km        /cm3       ',
-     .    '/cm3       /cm3       /cm3')
+     &    'n(N)       n(A)', /,'         km        /cm3       ',
+     &    '/cm3       /cm3       /cm3')
 2060    format (i3,2f10.2,3(1pe11.3))
 2065    format (i3,f10.2,4(1pe11.3))
 c
@@ -1127,14 +1127,14 @@ c 	tive, N2,O2,O,Ndiss,Odiss.
 c 	  Fichier Torr et Torr de 39 energies (2 energies rajoutees
 c 	  pour tenir compte du flux solaire de Tobiska, jl 1993)
  	  open(icrsphot,
-     .	    file='dir.data/dir.linux/dir.cine/dir.seff/crsphot1.dat',
+     &	    file='dir.data/dir.linux/dir.cine/dir.seff/crsphot1.dat',
      &      status='old')
       	  call xline(6,icrsphot)
  	  read(icrsphot,*)nbseff
  	  do i = 1,nbseff
  	    read(icrsphot,*)wnmseff(i),sefftot(i,1),seffion(i,1),
-     .		seffion(i,4),sigion1,sefftot(i,2),seffion(i,2),
-     .		seffion(i,5),sigion2
+     &		seffion(i,4),sigion1,sefftot(i,2),seffion(i,2),
+     &		seffion(i,5),sigion2
  	    eVseff(i) = 1239.8/wnmseff(i)
  	  enddo
       	  call xline(6,icrsphot)
@@ -1144,20 +1144,20 @@ c 	  pour tenir compte du flux solaire de Tobiska, jl 1993)
       	  call xline(10,icrsphot)
  	  do i = 1,nbseff
  	    read(icrsphot,*)wnm,sefftot(i,4),seffion(i,6),
-     .		          sefftot(i,5),seffion(i,7)
+     &		          sefftot(i,5),seffion(i,7)
  	  enddo
  	  close(icrsphot)
  	  elseif(iseff.eq.2)then
 c 	  Fichier Fennely et Torr de 1946 energies (dont 2 rajoutees
 c 	  pour tenir compte du flux solaire de Tobiska, jl 1993)
  	  open(icrsphot,
-     .	   file = 'dir.data/dir.linux/dir.cine/dir.seff/crsphot2.dat',
+     &	   file = 'dir.data/dir.linux/dir.cine/dir.seff/crsphot2.dat',
      &     status ='old')
       	  call xline(12,icrsphot)
  	  read(icrsphot,*)nbseff
  	  do i = 1,nbseff
  	    read(icrsphot,*)wA,sefftot(i,1),seffion(i,1),seffion(i,4),
-     .  	  sigion1,sefftot(i,2),seffion(i,2),seffion(i,5),sigion2
+     &  	  sigion1,sefftot(i,2),seffion(i,2),seffion(i,5),sigion2
  	    wnmseff(i) = wA/10.
  	    eVseff(i) = 1239.8/wnmseff(i)
 c	    Bizzarement, certaines seff d'abs. sont inf a la seff
@@ -1169,14 +1169,14 @@ c 	    d'ionis. totale...
  	  read(icrsphot,*)nbseff
  	  do i = 1,nbseff
  	    read(icrsphot,*)wnm,sefftot(i,3),x1,x2,x3,x4,x5,x6,x7,
-     .		seffion(i,3)
+     &		seffion(i,3)
  	    sefftot(i,3) = max(sefftot(i,3),seffion(i,3))
  	  enddo
       	  call xline(14,icrsphot)
  	  read(icrsphot,*)nbseff
  	  do i = 1,nbseff
  	    read(icrsphot,*)wnm,sefftot(i,4),seffion(i,6),
-     . 	                  sefftot(i,5),seffion(i,7)
+     & 	                  sefftot(i,5),seffion(i,7)
  	    sefftot(i,4) = max(sefftot(i,4),seffion(i,6))
  	    sefftot(i,5) = max(sefftot(i,5),seffion(i,7))
  	  enddo
@@ -1188,7 +1188,7 @@ c 	en photons/cm2/s
  	  if(iflux.eq.0)then
 	  do i=1,nwave
  	    pflux(i)= (f107(1)-f107max)*(pfluxmin(i)-pfluxmax(i))/
-     . 	   		(f107min-f107max) + pfluxmax(i)
+     & 	   		(f107min-f107max) + pfluxmax(i)
 c	    pflux(i)= (130.5-f107max)*(pfluxmin(i)-pfluxmax(i))/
 c    . 	   		(f107min-f107max) + pfluxmax(i)
 
@@ -1216,14 +1216,14 @@ c    . 	   		(f107min-f107max) + pfluxmax(i)
  	  endif
  	  numday = 1
  	  call euv91(ifelprt,yyddd,numday,wavemin,eVmin,wavemax,
-     .		     eVmax,eV,wave,Pflux,Eflux,iprt(1))
+     &		     eVmax,eV,wave,Pflux,Eflux,iprt(1))
 
         elseif (iflux.eq.4)then
 c   	  ici le flux EUVAC94 peut etre obtenu.
 c   	  ref: Richards et al, JGR,99,8981,1994
 c   	  modification : OW, 12 dec 1997
           open (47,file=
-     .    'dir.data/dir.linux/dir.cine/dir.euvac/EUVAC.dat',
+     &    'dir.data/dir.linux/dir.cine/dir.euvac/EUVAC.dat',
      &    status='old')
  	  do i=1,nwave
             p=(f107(1)+f107(3))/2.
@@ -1310,45 +1310,45 @@ c
 	    iwrite=nspec
 	    do 130 i=1,nalt
               write(ifelprt,2060)i,altkm(i),tneutre(i),
-     .                          (densneut(isp,i),isp=1,iwrite)
+     &                          (densneut(isp,i),isp=1,iwrite)
 130 	    continue
 	  else
 	    iwrite=3
 	    do 140 i=1,nalt
               write(ifelprt,2060)i,altkm(i),tneutre(i),
-     .                          (densneut(isp,i),isp=1,iwrite)
+     &                          (densneut(isp,i),isp=1,iwrite)
 140 	    continue
             write(ifelprt,2055)
 	    do 150 i=1,nalt
               write(ifelprt,2065)i,altkm(i),
-     .			(densneut(isp,i),isp=4,nspec)
+     &			(densneut(isp,i),isp=4,nspec)
 150 	    continue
 	  endif
         endif
 c
 2070    format('total energy contained in the solar flux',
-     .          ' [eV/s/cm2]:',1pe10.2)
+     &          ' [eV/s/cm2]:',1pe10.2)
         if(kiappel.eq.1)write(6,2070)enflux
         if(iprt(2).eq.1)then
   	  write(ifelprt,1020)f107min, f107(1), f107max
 	  do 35 i=1,nwave
 	    write(ifelprt,1030)wavemin(i),wave(i),wavemax(i),eVmin(i),
-     .		eV(i),eVmax(i),pfluxmin(i),pflux(i),pfluxmax(i)
+     &		eV(i),eVmax(i),pfluxmin(i),pflux(i),pfluxmax(i)
 35	  continue
           write(ifelprt,2070)enflux
 	endif
 c
  	if (iprt(3).eq.1)then
  	  if(iseff.eq.1) write(ifelprt,*)
-     .			'Torr and Torr (1985) cross section set'
+     &			'Torr and Torr (1985) cross section set'
  	  if(iseff.eq.2) write(ifelprt,*)
-     .			'Fennelly and Torr (1992) cross section set'
+     &			'Fennelly and Torr (1992) cross section set'
  	  write(ifelprt,1130)
  	  do i = 1,39
  	    write(ifelprt,1140)wave(i),sigt(i,1)*1.e18,sigi(i,1)*1.e18,
-     .	        sigi(i,4)*1.e18,(sigi(i,1)+sigi(i,4))*1.e18,
-     . 		sigt(i,2)*1.e18,sigi(i,2)*1.e18,sigi(i,5)*1.e18,
-     .		(sigi(i,2)+sigi(i,5))*1.e18
+     &	        sigi(i,4)*1.e18,(sigi(i,1)+sigi(i,4))*1.e18,
+     & 		sigt(i,2)*1.e18,sigi(i,2)*1.e18,sigi(i,5)*1.e18,
+     &		(sigi(i,2)+sigi(i,5))*1.e18
  	  enddo
  	  write(ifelprt,1150)
  	  do i = 1,39
@@ -1357,7 +1357,7 @@ c
  	  write(ifelprt,1160)
  	  do i = 1,39
  	    write(ifelprt,1140)wave(i),sigt(i,4)*1.e18,sigi(i,6)*1.e18,
-     .			               sigt(i,5)*1.e18,sigi(i,7)*1.e18
+     &			               sigt(i,5)*1.e18,sigi(i,7)*1.e18
  	  enddo
  	endif
 c
@@ -1378,14 +1378,14 @@ c
 	  write(ifelprt,*)' Energy  X2S+g A2Pu B2S+u F2Su  2S+g'
       	  do k = 1,nwave
             write(ifelprt,1090)eV(k),
-     .		 (wwt(iontype,ist,k),ist =1,number(iontype))
+     &		 (wwt(iontype,ist,k),ist =1,number(iontype))
  	  enddo
 	  write(ifelprt,*)' O2 --> O2+ '
  	  iontype = 2
 	  write(ifelprt,*)' Energy  X2Pg  a4Pu+A2Pu  b4S-g'
       	  do k = 1,nwave
             write(ifelprt,1090)eV(k),
-     .		 (wwt(iontype,ist,k),ist =1,number(iontype))
+     &		 (wwt(iontype,ist,k),ist =1,number(iontype))
  	  enddo
 	  write(ifelprt,*)' O --> O+ '
  	  iontype = 3
@@ -1393,36 +1393,36 @@ c
 	  write(ifelprt,*) '         4S0    2D0   2D0    4P    2P'
       	  do k = 1,nwave
             write(ifelprt,1090)eV(k),
-     .		 (wwt(iontype,ist,k),ist =1,number(iontype))
+     &		 (wwt(iontype,ist,k),ist =1,number(iontype))
  	  enddo
 	  write(ifelprt,*)' N2 --> N + N+ '
  	  iontype = 4
 	  write(ifelprt,*)' Energy  Fundamental state'
       	  do k = 1,nwave
             write(ifelprt,1090)eV(k),
-     .		 (wwt(iontype,ist,k),ist =1,number(iontype))
+     &		 (wwt(iontype,ist,k),ist =1,number(iontype))
  	  enddo
 	  write(ifelprt,*)' O2 --> O + O+ '
  	  iontype = 5
 	  write(ifelprt,*)
-     .   ' Energy  B2S-g  2Pu  c4S-u  2S-u 2,4S-g 662A'
+     &   ' Energy  B2S-g  2Pu  c4S-u  2S-u 2,4S-g 662A'
       	  do k = 1,nwave
             write(ifelprt,1090)eV(k),
-     .		 (wwt(iontype,ist,k),ist =1,number(iontype))
+     &		 (wwt(iontype,ist,k),ist =1,number(iontype))
  	  enddo
 	  write(ifelprt,*)' H --> H+ '
  	  iontype = 6
 	  write(ifelprt,*) ' Energy  One state'
       	  do k = 1,nwave
             write(ifelprt,1090)eV(k),
-     .		 (wwt(iontype,ist,k),ist =1,number(iontype))
+     &		 (wwt(iontype,ist,k),ist =1,number(iontype))
  	  enddo
 	  write(ifelprt,*)' He --> He+ '
  	  iontype = 7
 	  write(ifelprt,*) ' Energy  One state'
       	  do k = 1,nwave
             write(ifelprt,1090)eV(k),
-     .		 (wwt(iontype,ist,k),ist =1,number(iontype))
+     &		 (wwt(iontype,ist,k),ist =1,number(iontype))
  	  enddo
  	endif
 c
@@ -1443,7 +1443,7 @@ c
  	    altcm=altkm(iz)*1.e+05
  	    do  isp=1,ns
               xchap(iz,isp) =
-     .		chapsmith(chi,altcm,tneutre(iz),atomas(isp))
+     &		chapsmith(chi,altcm,tneutre(iz),atomas(isp))
  	    enddo
  	  enddo
         else if(ichapman.eq.2)then
@@ -1451,7 +1451,7 @@ c
  	    altcm=altkm(iz)*1.e+05
  	    do  isp=1,ns
               xchap(iz,isp) =
-     .		chapgreen(chi,altcm,tneutre(iz),atomas(isp))
+     &		chapgreen(chi,altcm,tneutre(iz),atomas(isp))
  	    enddo
  	  enddo
  	endif
@@ -1497,9 +1497,9 @@ c
         include 'TRANSPORT.INC'
 c
       	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
-     .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
-     .		      nwave,ns,nns,f107min,f107max,iseff,wnmseff,lambdasr,
-     .                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
+     &  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
+     &		      nwave,ns,nns,f107min,f107max,iseff,wnmseff,lambdasr,
+     &                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
       	real seffion(2000,7),sefftot(2000,5),eVseff(2000),threshold(7)
         real wnmseff(2000)
         real eV(39),wave(39),pfluxmin(39),pfluxmax(39)
@@ -1545,7 +1545,7 @@ c 	Used to compute the Chapman function.
 c
       	if (dummy .le. 8.) then
           sperfc = (1.0606963+0.55643831*dummy) /
-     .           (1.0619896+1.7245609*dummy+dummy*dummy)
+     &           (1.0619896+1.7245609*dummy+dummy*dummy)
         else
           sperfc=0.56498823/(0.06651874+dummy)
         endif
@@ -1574,9 +1574,9 @@ c
 c	include 'TRANSPORT.INC'
 c
     	common /bloc/ threshold,nbseff,eVseff,seffion,sefftot,pfluxmin,
-     .  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
-     .		      nwave,ns,nns,f107min,f107max,iseff,wnmseff,lambdasr,
-     .                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
+     &  	      pfluxmax,wave,eV,wavemin,wavemax,eVmin,eVmax,
+     &		      nwave,ns,nns,f107min,f107max,iseff,wnmseff,lambdasr,
+     &                sigsro2,Isr,lineflux,sigabso2,qyield,Isr2
       common /const/ pi,re,recm,bolt,gzero,amu
 c
  	real wavemin(39),wavemax(39),eVmin(39),eVmax(39)
@@ -1587,36 +1587,36 @@ c
         real lineflux(7),sigabso2(7),qyield(7),Isr2(8)
 c
  	real eVbrO(10),brO(5,10),eVbrN2(13),brN2(5,13),
-     .  	eVbrO2(20),brO2(3,20),eVbrO2dis(14),brO2dis(6,14),
-     .		eVbrN2dis(2),brN2dis(1,2),eVbrH(2),brH(1,2),
-     .		eVbrHe(2),brHe(1,2)
+     &  	eVbrO2(20),brO2(3,20),eVbrO2dis(14),brO2dis(6,14),
+     &		eVbrN2dis(2),brN2dis(1,2),eVbrH(2),brH(1,2),
+     &		eVbrHe(2),brHe(1,2)
  	integer neVbrO,nstO,neVbrN2,nstN2,
-     .  	neVbrO2,nstO2,neVbrO2dis,nstO2dis,neVbrN2dis,nstN2dis,
-     .  	neVbrH,nstH,neVbrHe,nstHe
+     &  	neVbrO2,nstO2,neVbrO2dis,nstO2dis,neVbrN2dis,nstN2dis,
+     &  	neVbrH,nstH,neVbrHe,nstHe
  	common /branching/
-     .		eVbrN2,    brN2,    neVbrN2,    nstN2,
-     .		eVbrO2,    brO2,    neVbrO2,    nstO2,
-     .		eVbrO,     brO,     neVbrO,     nstO,
-     .		eVbrO2dis, brO2dis, neVbrO2dis, nstO2dis,
-     .		eVbrN2dis, brN2dis, neVbrN2dis, nstN2dis,
-     .		eVbrH,     brH,     neVbrH,     nstH,
-     .		eVbrHe,    brHe,    neVbrHe,    nstHe
+     &		eVbrN2,    brN2,    neVbrN2,    nstN2,
+     &		eVbrO2,    brO2,    neVbrO2,    nstO2,
+     &		eVbrO,     brO,     neVbrO,     nstO,
+     &		eVbrO2dis, brO2dis, neVbrO2dis, nstO2dis,
+     &		eVbrN2dis, brN2dis, neVbrN2dis, nstN2dis,
+     &		eVbrH,     brH,     neVbrH,     nstH,
+     &		eVbrHe,    brHe,    neVbrHe,    nstHe
 c
 
         data lambdasr /1350.,1400.,1450.,1500.,1550.,1600.
-     .                  ,1650.,1700.,1750./
+     &                  ,1650.,1700.,1750./
         data Isr /.0628e10,.0768e10,.1078e10,.1894e10,
-     .            .2436e10,.3120e10,.6430e10,1.132e10/
+     &            .2436e10,.3120e10,.6430e10,1.132e10/
         data sigsro2 /1.2e-17,1.5e-17,1.3e-17,1.0e-17,
-     .                6.e-18,3.4e-18,1.5e-18,5.e-19/
+     &                6.e-18,3.4e-18,1.5e-18,5.e-19/
         data lineflux /2.07e9,2.7e8,4.36e9,1.12e9,1.78e9,
-     .                  8.92e8,3.48e9/
+     &                  8.92e8,3.48e9/
         data sigabso2 /4.0e-18,1.75e-18,1.58e-18,1.e-18,
-     .                  7.8e-19,1.8e-18,1.3e-18/
+     &                  7.8e-19,1.8e-18,1.3e-18/
         data qyield /0.066,0.074,0.094,0.097,0.100,0.101,
-     .                  0.012/
+     &                  0.012/
         data Isr2 /6.1e9,9.5e9,16.2e9,25.2e9,35.6e9,56.e9,
-     .                  121.5e9,225.e9/
+     &                  121.5e9,225.e9/
 
  	integer ne
 c 	WARNING! In a block data, an array T(i,j) is read by i begining
@@ -1640,114 +1640,114 @@ c
       	data nwave /39/
 c   	wave = Wavelength, in nm of the considered line.
          data wavemin /
-     .     1.900,    3.000,    5.000,   10.000,   15.000,
-     .    20.000,   25.630,   28.415,   25.000,   30.331,
-     .    30.378,   30.000,   36.807,   35.000,   40.000,
-     .    46.522,   45.000,   50.000,   55.437,   58.433,
-     .    55.000,   60.976,   62.973,   60.000,   65.000,
-     .    70.331,   70.000,   76.515,   77.041,   78.936,
-     .    75.000,   80.000,   85.000,   90.000,   97.702,
-     .    95.000,  102.572,  103.191,  100.000/
+     &     1.900,    3.000,    5.000,   10.000,   15.000,
+     &    20.000,   25.630,   28.415,   25.000,   30.331,
+     &    30.378,   30.000,   36.807,   35.000,   40.000,
+     &    46.522,   45.000,   50.000,   55.437,   58.433,
+     &    55.000,   60.976,   62.973,   60.000,   65.000,
+     &    70.331,   70.000,   76.515,   77.041,   78.936,
+     &    75.000,   80.000,   85.000,   90.000,   97.702,
+     &    95.000,  102.572,  103.191,  100.000/
          data wavemax /
-     .     3.000,    5.000,   10.000,   15.000,   20.000,
-     .	  25.000,   25.630,   28.415,   30.000,   30.331,
-     .    30.378,   35.000,   36.807,   40.000,   45.000,
-     .    46.522,   50.000,   55.000,   55.437,   58.433,
-     .    60.000,   60.976,   62.973,   65.000,   70.000,
-     .    70.331,   75.000,   76.515,   77.041,   78.936,
-     .    80.000,   85.000,   90.000,   95.000,   97.702,
-     .   100.000,  102.572,  103.191,  105.000/
+     &     3.000,    5.000,   10.000,   15.000,   20.000,
+     &	  25.000,   25.630,   28.415,   30.000,   30.331,
+     &    30.378,   35.000,   36.807,   40.000,   45.000,
+     &    46.522,   50.000,   55.000,   55.437,   58.433,
+     &    60.000,   60.976,   62.973,   65.000,   70.000,
+     &    70.331,   75.000,   76.515,   77.041,   78.936,
+     &    80.000,   85.000,   90.000,   95.000,   97.702,
+     &   100.000,  102.572,  103.191,  105.000/
 c   	pfluxmin = Solar input flux for sunspot minimum.
 c 	2 lowest wavelength --> Tobiska, 1991
 c 	Others --> Torr, 1985
 	data f107min /68.00/
         data pfluxmin /
-     .	      1.119e+07, 3.119e+07,
-     .	      3.834e+08, 1.346e+08, 18.418e+08, 9.235e+08 , 2.713e+08,
-     .	      1.000e+08, 8.405e+08, 2.350e+08 , 6.000e+09 , 8.661e+08,
-     .	      7.394e+08, 2.121e+08, 3.926e+08 , 1.800e+08 , 3.063e+08,
-     .	      5.085e+08, 7.992e+08, 1.580e+09 , 4.843e+08 ,4.500e+08,
-     .	      1.500e+09, 1.746e+08, 2.223e+08 , 3.915e+08 , 1.667e+08,
-     .	      1.997e+08, 2.425e+08, 7.931e+08 , 8.728e+08 , 19.311e+08,
-     .	     44.325e+08, 42.170e+08,59.570e+08, 17.850e+08,
-     .	     43.750e+08, 31.840e+08,36.401e+08/
+     &	      1.119e+07, 3.119e+07,
+     &	      3.834e+08, 1.346e+08, 18.418e+08, 9.235e+08 , 2.713e+08,
+     &	      1.000e+08, 8.405e+08, 2.350e+08 , 6.000e+09 , 8.661e+08,
+     &	      7.394e+08, 2.121e+08, 3.926e+08 , 1.800e+08 , 3.063e+08,
+     &	      5.085e+08, 7.992e+08, 1.580e+09 , 4.843e+08 ,4.500e+08,
+     &	      1.500e+09, 1.746e+08, 2.223e+08 , 3.915e+08 , 1.667e+08,
+     &	      1.997e+08, 2.425e+08, 7.931e+08 , 8.728e+08 , 19.311e+08,
+     &	     44.325e+08, 42.170e+08,59.570e+08, 17.850e+08,
+     &	     43.750e+08, 31.840e+08,36.401e+08/
 c
 c   	pfluxmax = Solar input flux for sunspot maximum.
 	data f107max /243.00/
         data pfluxmax /
-     .	     1.2330e+08,  2.4690e+08,
-     .       1.1487E+09, 3.4330E+08, 4.8498E+09, 3.7013E+09, 5.9470E+08,
-     .       3.1675E+09, 4.1358E+09, 2.4995E+09, 1.1280E+10, 5.6326E+09,
-     .       1.3949E+09, 2.1965E+09, 9.9320E+08, 3.6210E+08, 1.6716E+09,
-     .       1.5468E+09, 1.5904E+09, 4.8664E+09, 1.0213E+09, 1.4621E+09,
-     .       3.0180E+09, 4.8200E+08, 4.5540E+08, 7.1650E+08, 4.2560E+08,
-     .       4.3180E+08, 6.7090E+08, 1.5869E+09, 2.1809E+09, 5.0135E+09,
-     .       1.3298E+10, 1.2035E+10, 1.3177E+10, 4.4204E+09,
-     .       1.3125E+10, 9.0426E+09, 8.6669E+09/
+     &	     1.2330e+08,  2.4690e+08,
+     &       1.1487E+09, 3.4330E+08, 4.8498E+09, 3.7013E+09, 5.9470E+08,
+     &       3.1675E+09, 4.1358E+09, 2.4995E+09, 1.1280E+10, 5.6326E+09,
+     &       1.3949E+09, 2.1965E+09, 9.9320E+08, 3.6210E+08, 1.6716E+09,
+     &       1.5468E+09, 1.5904E+09, 4.8664E+09, 1.0213E+09, 1.4621E+09,
+     &       3.0180E+09, 4.8200E+08, 4.5540E+08, 7.1650E+08, 4.2560E+08,
+     &       4.3180E+08, 6.7090E+08, 1.5869E+09, 2.1809E+09, 5.0135E+09,
+     &       1.3298E+10, 1.2035E+10, 1.3177E+10, 4.4204E+09,
+     &       1.3125E+10, 9.0426E+09, 8.6669E+09/
 c
 c	Les branching ratio qui suivent viennent de Rees, Physics and
 c 	chemistry of the upper atmosphere, cambridge, 1989.
 	data neVbrO /10/
  	data eVbrO /247.96,39.48,39.36,28.50,28.43,18.64,18.62,
-     .			16.94,16.91,13.60/
+     &			16.94,16.91,13.60/
  	data nstO /5/
 c 		  2P3-4S0  2P3-2D0   2P3-2D0   2P4-4P   2P4-2P
  	data brO / 0.25,     0.36,    0.23,     0.10,    0.06,
-     . 	           0.25,     0.36,    0.23,     0.10,    0.06,
-     .		   0.26,     0.41,    0.26,     0.07,    0.00,
-     .		   0.26,     0.41,    0.26,     0.07,    0.00,
-     .		   0.30,     0.45,    0.25,     0.00,    0.00,
-     .		   0.30,     0.45,    0.25,     0.00,    0.00,
-     .		   0.43,     0.57,    0.00,     0.00,    0.00,
-     .		   0.43,     0.57,    0.00,     0.00,    0.00,
-     .		   1.00,     0.00,    0.00,     0.00,    0.00,
-     .		   1.00,     0.00,    0.00,     0.00,    0.00/
+     & 	           0.25,     0.36,    0.23,     0.10,    0.06,
+     &		   0.26,     0.41,    0.26,     0.07,    0.00,
+     &		   0.26,     0.41,    0.26,     0.07,    0.00,
+     &		   0.30,     0.45,    0.25,     0.00,    0.00,
+     &		   0.30,     0.45,    0.25,     0.00,    0.00,
+     &		   0.43,     0.57,    0.00,     0.00,    0.00,
+     &		   0.43,     0.57,    0.00,     0.00,    0.00,
+     &		   1.00,     0.00,    0.00,     0.00,    0.00,
+     &		   1.00,     0.00,    0.00,     0.00,    0.00/
 c
 	data neVbrN2 /13/
  	data eVbrN2 /59.04,51.66,44.28,41.33,37.34,28.97,24.80,
-     .		     20.66,18.79,18.78,17.22,16.60,15.6/
+     &		     20.66,18.79,18.78,17.22,16.60,15.6/
  	data nstN2 /5/
 c 		   X2S+g  A2Pu   B2S+u   F2Su   2S+g
  	data brN2 /0.271, 0.275, 0.110, 0.064, 0.278,
-     .		   0.271, 0.345, 0.110, 0.064, 0.210,
-     .		   0.271, 0.470, 0.095, 0.040, 0.124,
-     .		   0.271, 0.470, 0.110, 0.074, 0.075,
-     .		   0.300, 0.520, 0.120, 0.060, 0.000,
-     .		   0.460, 0.460, 0.080, 0.000, 0.000,
-     .		   0.404, 0.506, 0.090, 0.000, 0.000,
-     .		   0.308, 0.589, 0.103, 0.000, 0.000,
-     .		   0.308, 0.589, 0.103, 0.000, 0.000,
-     .		   0.308, 0.692, 0.000, 0.000, 0.000,
-     .		   0.420, 0.580, 0.000, 0.000, 0.000,
-     .		   1.000, 0.000, 0.000, 0.000, 0.000,
-     .		   1.000, 0.000, 0.000, 0.000, 0.000/
+     &		   0.271, 0.345, 0.110, 0.064, 0.210,
+     &		   0.271, 0.470, 0.095, 0.040, 0.124,
+     &		   0.271, 0.470, 0.110, 0.074, 0.075,
+     &		   0.300, 0.520, 0.120, 0.060, 0.000,
+     &		   0.460, 0.460, 0.080, 0.000, 0.000,
+     &		   0.404, 0.506, 0.090, 0.000, 0.000,
+     &		   0.308, 0.589, 0.103, 0.000, 0.000,
+     &		   0.308, 0.589, 0.103, 0.000, 0.000,
+     &		   0.308, 0.692, 0.000, 0.000, 0.000,
+     &		   0.420, 0.580, 0.000, 0.000, 0.000,
+     &		   1.000, 0.000, 0.000, 0.000, 0.000,
+     &		   1.000, 0.000, 0.000, 0.000, 0.000/
 c
 	data neVbrO2 /20/
  	data eVbrO2 /40.78,38.38,27.31,26.89,24.60,23.09,22.30,21.64,
-     .		     21.23,20.73,20.32,19.46,19.22,19.02,18.13,17.61,
-     .		     17.22,16.82,16.02,12.1/
+     &		     21.23,20.73,20.32,19.46,19.22,19.02,18.13,17.61,
+     &		     17.22,16.82,16.02,12.1/
  	data nstO2 /3/
 c	            X2Pg  a4Pu+A2Pu  b4S-g
    	data brO2 /0.365,   0.205,   0.125,
-     .		   0.374,   0.210,   0.124,
-     .		   0.432,   0.243,   0.120,
-     .		   0.435,   0.245,   0.120,
-     . 		   0.384,   0.270,   0.126,
-     .		   0.345,   0.290,   0.130,
-     .		   0.356,   0.230,   0.225,
-     .		   0.365,   0.270,   0.216,
-     .    	   0.306,   0.330,   0.210,
-     .		   0.230,   0.295,   0.375,
-     .		   0.235,   0.385,   0.305,
-     .		   0.245,   0.350,   0.370,
-     .		   0.340,   0.305,   0.330,
-     .		   0.270,   0.385,   0.345,
-     .		   0.482,   0.518,   0.000,
-     .		   0.675,   0.325,   0.000,
-     .		   0.565,   0.435,   0.000,
-     .		   0.565,   0.435,   0.000,
-     .		   1.000,   0.000,   0.000,
-     .		   1.000,   0.000,   0.000/
+     &		   0.374,   0.210,   0.124,
+     &		   0.432,   0.243,   0.120,
+     &		   0.435,   0.245,   0.120,
+     & 		   0.384,   0.270,   0.126,
+     &		   0.345,   0.290,   0.130,
+     &		   0.356,   0.230,   0.225,
+     &		   0.365,   0.270,   0.216,
+     &    	   0.306,   0.330,   0.210,
+     &		   0.230,   0.295,   0.375,
+     &		   0.235,   0.385,   0.305,
+     &		   0.245,   0.350,   0.370,
+     &		   0.340,   0.305,   0.330,
+     &		   0.270,   0.385,   0.345,
+     &		   0.482,   0.518,   0.000,
+     &		   0.675,   0.325,   0.000,
+     &		   0.565,   0.435,   0.000,
+     &		   0.565,   0.435,   0.000,
+     &		   1.000,   0.000,   0.000,
+     &		   1.000,   0.000,   0.000/
 c
 c 	On cree N a un seul etat d'excitation.
 	data neVbrN2dis /2/
@@ -1757,24 +1757,24 @@ c 	On cree N a un seul etat d'excitation.
 c
 	data neVbrO2dis /14/
  	data eVbrO2dis /40.78,38.38,27.31,26.89,24.60,23.09,22.30,21.64,
-     .		     21.23,20.73,20.32,19.46,19.22,19.00/
+     &		     21.23,20.73,20.32,19.46,19.22,19.00/
  	data nstO2dis /6/
 c 	           B2S-g    2Pu      c4S-u     2S-u     2,4S-g     662A
    	data brO2dis
-     .		  /0.055,  0.060,    0.035,   0.030,    0.125,    0.000,
-     .		   0.055,  0.060,    0.035,   0.030,    0.000,    0.112,
-     .		   0.055,  0.060,    0.035,   0.000,    0.000,    0.055,
-     .		   0.055,  0.060,    0.035,   0.000,    0.000,    0.050,
-     .		   0.079,  0.026,    0.000,   0.000,    0.000,    0.115,
-     .		   0.098,  0.000,    0.000,   0.000,    0.000,    0.137,
-     .		   0.109,  0.000,    0.000,   0.000,    0.000,    0.080,
-     .		   0.119,  0.000,    0.000,   0.000,    0.000,    0.030,
-     .		   0.125,  0.000,    0.000,   0.000,    0.000,    0.030,
-     .		   0.058,  0.000,    0.000,   0.000,    0.000,    0.045,
-     .		   0.000,  0.000,    0.000,   0.000,    0.000,    0.075,
-     .		   0.000,  0.000,    0.000,   0.000,    0.000,    0.036,
-     .		   0.000,  0.000,    0.000,   0.000,    0.000,    0.025,
-     .		   0.000,  0.000,    0.000,   0.000,    0.000,    0.000/
+     &		  /0.055,  0.060,    0.035,   0.030,    0.125,    0.000,
+     &		   0.055,  0.060,    0.035,   0.030,    0.000,    0.112,
+     &		   0.055,  0.060,    0.035,   0.000,    0.000,    0.055,
+     &		   0.055,  0.060,    0.035,   0.000,    0.000,    0.050,
+     &		   0.079,  0.026,    0.000,   0.000,    0.000,    0.115,
+     &		   0.098,  0.000,    0.000,   0.000,    0.000,    0.137,
+     &		   0.109,  0.000,    0.000,   0.000,    0.000,    0.080,
+     &		   0.119,  0.000,    0.000,   0.000,    0.000,    0.030,
+     &		   0.125,  0.000,    0.000,   0.000,    0.000,    0.030,
+     &		   0.058,  0.000,    0.000,   0.000,    0.000,    0.045,
+     &		   0.000,  0.000,    0.000,   0.000,    0.000,    0.075,
+     &		   0.000,  0.000,    0.000,   0.000,    0.000,    0.036,
+     &		   0.000,  0.000,    0.000,   0.000,    0.000,    0.025,
+     &		   0.000,  0.000,    0.000,   0.000,    0.000,    0.000/
 c
 c 	on cree H et He a un seul etat d'
 c 	excitation.

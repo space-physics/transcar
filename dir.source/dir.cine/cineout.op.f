@@ -1,8 +1,8 @@
 c
  	subroutine cineout(nalt,Chaufelec,denelc,prodiontot,
-     .          Ne_supra,courant_supra,Te_supra,Chaleur_supra,
-     .		Ne,npt,indlim,nx,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
-     .          Ne_sup,courant_sup,Te_sup,Chaleur_sup)
+     &          Ne_supra,courant_supra,Te_supra,Chaleur_supra,
+     &		Ne,npt,indlim,nx,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
+     &          Ne_sup,courant_sup,Te_sup,Chaleur_sup)
 c
         implicit none
 c
@@ -13,7 +13,7 @@ c
 c 	INPUTS
  	real Chaufelec(nbralt),denelc(nbralt),prodiontot(nbrsp*2,nbralt)
         real Ne_supra(nbralt),courant_supra(nbralt),Te_supra(nbralt),
-     .          Chaleur_supra(nbralt)
+     &          Chaleur_supra(nbralt)
         real z(npt),Ne(npt)
  	integer nalt,nx
  	integer indlim

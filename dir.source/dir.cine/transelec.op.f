@@ -1,7 +1,7 @@
       subroutine transelec(npt,iyd,UTsec,glat,glong,stl,f107,
-     .          ap,chi,Ne,Te,Tj,nx,Nh,No,No2,Nn2,Nn,Tn,indlim,jpreci0,
-     .          kiappel,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
-     .          Ne_sup,courant_sup,Te_sup,Chaleur_sup)
+     &          ap,chi,Ne,Te,Tj,nx,Nh,No,No2,Nn2,Nn,Tn,indlim,jpreci0,
+     &          kiappel,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
+     &          Ne_sup,courant_sup,Te_sup,Chaleur_sup)
 c
 c 	Ce programme est un driver.
 c       This program is a driver.
@@ -95,18 +95,18 @@ c
 c
         integer nspec,nalt,jpreci0,jpreci,modatmos,neutspe
         real zbot,ztop,hrloc,ut,year,tempexo,f107(3),Apind,day,
-     . 	 	glat,glong,albedo,altcm(nbralt),altkm(nbralt),
-     .		tneutre(nbralt),densneut(8,nbralt),
-     .     	colden(8,nbralt)
+     & 	 	glat,glong,albedo,altcm(nbralt),altkm(nbralt),
+     &		tneutre(nbralt),densneut(8,nbralt),
+     &     	colden(8,nbralt)
       integer knm,nang,nango2,nen
       real botE(nbren),centE(nbren),ddeng(nbren)
       real angzb(2*nbrango2),gmu(2*nbrango2),gwt(2*nbrango2)
       real fluxdown(nbren,nbrango2),fluxup(nbren,nbrango2)
       real denelc(nbralt),temelc(nbralt),dipang(nbralt),
-     .	       smgdpa(nbralt),temion(nbralt),chideg
+     &	       smgdpa(nbralt),temion(nbralt),chideg
         real prodiontot(nbrsp*2,nbralt),chaufelec(nbralt)
         real Ne_supra(nbralt),courant_supra(nbralt),Te_supra(nbralt),
-     .          Chaleur_supra(nbralt)
+     &          Chaleur_supra(nbralt)
 c
            integer i,j,iyd,nx
         real z(npt),Ne(npt),Te(npt),ap(7),stl
@@ -274,10 +274,10 @@ c	  It is called by transsolo.f. The entries are read and ELEC NEUTRAL.
           write(6,*)'-------'
           print*,'call lect'
           call lect (nspec,knm,nen,nalt,zbot,ztop,hrloc,UT,day,year,
-     .     jpreci,tempexo,f107(2),f107(3),Apind,chi,chideg,glat,glong,
-     .          albedo,altkm,altcm,tneutre,densneut,colden,botE,centE,
-     .          ddeng,nang,nango2,angzb,gmu,gwt,fluxdown,fluxup,
-     .          denelc,temelc,temion,dipang,smgdpa)
+     &     jpreci,tempexo,f107(2),f107(3),Apind,chi,chideg,glat,glong,
+     &          albedo,altkm,altcm,tneutre,densneut,colden,botE,centE,
+     &          ddeng,nang,nango2,angzb,gmu,gwt,fluxdown,fluxup,
+     &          denelc,temelc,temion,dipang,smgdpa)
          ap(1)=Apind
 c
        elseif (kiappel.eq.2) then
@@ -285,15 +285,15 @@ c 	  On est appele par le transport fluide
          jpreci = jpreci0
             print*,'call iniflu'
             call iniflu(npt,iyd,UTsec,z,glat,glong,stl,f107,
-     .                ap,chi,Ne,Te,Tj,indlim,jpreci,
-     .                Nh,No,No2,Nn2,Nn,Tn,Po,Po2,Pn2,Ph,Pn,Heat,
-     .
-     .                  nspec,knm,nen,nang,nango2,nalt,
-     .                  ddeng,botE,centE,gmu,gwt,angzb,altkm,altcm,
-     .                  dipang,smgdpa,
-     .                  fluxup,fluxdown,densneut,tneutre,tempexo,
-     .                  albedo,chideg,denelc,temelc,temion,UT,hrloc,
-     .                  ztop,zbot,colden,day,year)
+     &                ap,chi,Ne,Te,Tj,indlim,jpreci,
+     &                Nh,No,No2,Nn2,Nn,Tn,Po,Po2,Pn2,Ph,Pn,Heat,
+     &
+     &                  nspec,knm,nen,nang,nango2,nalt,
+     &                  ddeng,botE,centE,gmu,gwt,angzb,altkm,altcm,
+     &                  dipang,smgdpa,
+     &                  fluxup,fluxdown,densneut,tneutre,tempexo,
+     &                  albedo,chideg,denelc,temelc,temion,UT,hrloc,
+     &                  ztop,zbot,colden,day,year)
 c
         else
           write(6,*)'kiappel is false'
@@ -315,10 +315,10 @@ c	Calculation of primary photoproduction
 c ====================================================================
 c
        if(jpreci.ne.1 .and. jpreci.ne.3 .and. jpreci.ne.4)
-     .  call felin(knm,nspec,hrloc,day,year,UT,
-     .  tempexo,f107,ap,glat,glong,nen,botE,centE,
-     .  ddeng,nalt,altkm,tneutre,densneut,colden,chi,chideg,
-     .          kiappel,phdisso2,pfluxsr,Po1sdisso2)
+     &  call felin(knm,nspec,hrloc,day,year,UT,
+     &  tempexo,f107,ap,glat,glong,nen,botE,centE,
+     &  ddeng,nalt,altkm,tneutre,densneut,colden,chi,chideg,
+     &          kiappel,phdisso2,pfluxsr,Po1sdisso2)
 c
 c ====================================================================
 c 	Transport : calcul du flux stationnaire d'electrons
@@ -327,11 +327,11 @@ c ====================================================================
 c
 c
         call trans(knm,nspec,nalt,zbot,ztop,hrloc,day,year,jpreci,
-     .        tempexo,f107,ap,chideg,glat,glong,albedo,
-     .        altkm,altcm,tneutre,densneut,colden,nang,nango2,
-     .        angzb,gmu,gwt,nen,centE,botE,ddeng,fluxdown,fluxup,denelc,
-     .        temelc,temion,smgdpa,prodiontot,chaufelec,kiappel,
-     .        Ne_supra,courant_supra,Te_supra,Chaleur_supra,ut)
+     &        tempexo,f107,ap,chideg,glat,glong,albedo,
+     &        altkm,altcm,tneutre,densneut,colden,nang,nango2,
+     &        angzb,gmu,gwt,nen,centE,botE,ddeng,fluxdown,fluxup,denelc,
+     &        temelc,temion,smgdpa,prodiontot,chaufelec,kiappel,
+     &        Ne_supra,courant_supra,Te_supra,Chaleur_supra,ut)
 c
 c ====================================================================
 c 	Integration des productions et flux chaleur
@@ -343,9 +343,9 @@ c	Solely for fluid transportation
       if (kiappel.eq.2) then
             print*,'call cineout'
            call cineout(nalt,chaufelec,denelc,prodiontot,
-     .          Ne_supra,courant_supra,Te_supra,Chaleur_supra,
-     .      	Ne,npt,indlim,nx,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
-     .          Ne_sup,courant_sup,Te_sup,Chaleur_sup)
+     &          Ne_supra,courant_supra,Te_supra,Chaleur_supra,
+     &      	Ne,npt,indlim,nx,zlim,zlim_1,z,Heat,Ph,Po,Po2,Pn2,Pn,
+     &          Ne_sup,courant_sup,Te_sup,Chaleur_sup)
 
       end if
       end subroutine transelec

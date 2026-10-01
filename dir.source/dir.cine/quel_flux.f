@@ -2,7 +2,7 @@ c
 c------------------------- fluxkappa ----------------------------
 c
         subroutine fluxkappa (nango2,nen,centE,isotro,
-     .                  gmu,fluxdown,fluxup,E0,FE)
+     &                  gmu,fluxdown,fluxup,E0,FE)
 c
 c
 c
@@ -55,7 +55,7 @@ c
 c------------------------- inmaxwl ------------------------------
 c
         subroutine inmaxwl (Fe,Eave,nango2,nen,centE,isotro,
-     .                  gmu,fluxdown,fluxup)
+     &                  gmu,fluxdown,fluxup)
 c
 c       Calcul du flux maxwellien
 c       isotro = parametre d'isotropie du flux precipite :
@@ -110,7 +110,7 @@ c
 c------------------------- indirac ------------------------------
 c
  	subroutine indirac (Fe,Eave,nango2,nen,centE,isotro,
-     .			gmu,fluxdown,fluxup)
+     &			gmu,fluxdown,fluxup)
 c
 c 	Calcul du flux monoenergetique
 c       isotro = parametre d'isotropie du flux precipite :
@@ -171,7 +171,7 @@ c
 c------------------------- ingauss ------------------------------
 c
  	subroutine ingauss (Fe,Eave,nango2,nen,centE,isotro,
-     .			gmu,fluxdown,fluxup)
+     &			gmu,fluxdown,fluxup)
 c
 c 	Calcul du flux gaussien
 c
@@ -228,7 +228,7 @@ c
 c ------------------------ normflux ---------------------------------
 c
  	subroutine normflux(Fe,nango2,nen,centE,ddeng,
-     .			gmu,gwt,fluxdown,fluxup)
+     &			gmu,gwt,fluxdown,fluxup)
 c
 c 	Normalise le flux d'entree a une valeur en energie Fe donnee.
 c
@@ -246,7 +246,7 @@ c 	Compute input energy in eV/cm2/sec/sr
  	do iang=1,nango2
  	  do ien=1,nen
  	    qtot=qtot+fluxdown(ien,iang)*gwt(iang)*
-     .		gmu(iang)*centE(ien)*ddeng(ien)
+     &		gmu(iang)*centE(ien)*ddeng(ien)
  	  enddo
   	enddo
 
@@ -271,7 +271,7 @@ c 	Verification ...
  	do iang=1,nango2
  	  do ien=1,nen
  	    qtot=qtot+fluxdown(ien,iang)*gwt(iang)*
-     .		gmu(iang)*centE(ien)*ddeng(ien)
+     &		gmu(iang)*centE(ien)*ddeng(ien)
  	  enddo
   	enddo
  	qtot=qtot            ! total energy input in eV/cm2/sec/sr

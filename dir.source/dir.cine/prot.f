@@ -192,9 +192,9 @@ c 	  la largeur du pas de grille.
 c
           isotro=2		! tout va vers le bas
           call inmaxwl(Flux_ener_int,en_moy_eV,nango2,nen,centE,
-     .                  isotro,gmu,fluxdown,fluxup)
+     &                  isotro,gmu,fluxdown,fluxup)
           call normflux(Flux_ener_int,nango2,nen,centE,ddeng,gmu,gwt,
-     .                  fluxdown,fluxup)
+     &                  fluxdown,fluxup)
 c
 c 	  A partir de maintenant, on fait comme si chaque flux etait
 c 	  repartit dans sa case suivant une maxwellienne
@@ -224,13 +224,13 @@ c 	    eV.cm-2.s-1
  	    alp = centE(ien)*1.e-3		! keV
 c
   	    call low_proton(eflux,alp,nz,z,xnN2,xnO2,xnO1,
-     .		qti,qia)
+     &		qti,qia)
 c
 c 	    Calcul des sorties de prot.f
  	    do ialt = 1,nz
  	      prodprotelec(ialt) = prodprotelec(ialt)+qti(ialt)
  	      primprotelec(ialt,iener)= primprotelec(ialt,iener)+
-     .			qti(ialt)/ddeng(ien)
+     &			qti(ialt)/ddeng(ien)
   	    enddo 		! sur les altitudes
  	  enddo			! sur les energies
 c 	  Passage de m-3 s-1 a cm-3 s-1
@@ -244,7 +244,7 @@ c         On passe en flux.
  	  do ialt = 1,nz
  	    do ien = 1,nen
               fluxprimprot(ialt,ien)=
-     .               primprotelec(ialt,ien)/densig(ialt,ien)
+     &               primprotelec(ialt,ien)/densig(ialt,ien)
               do iang=-nango2,nango2
                 qprimprot(ien,ialt,iang)=primprotelec(ialt,ien)/4./pi
               enddo
@@ -255,7 +255,7 @@ c 	  Cette facon de faire a sans doute change la production qu'
 c 	  on aurait eue normalement. On va renormaliser
 c
   	  call low_proton(eflux_init,en_moy_keV,nz,z,
-     .		xnN2,xnO2,xnO1,qti,prodionprot_init)
+     &		xnN2,xnO2,xnO1,qti,prodionprot_init)
 c 	  Passage en cm-3.s-1
  	  do ialt = 1,nz
  	    qti(ialt) = qti(ialt)/1.e+6
@@ -318,20 +318,20 @@ c
 c         production de H+ et H en cm-3s-1eV-1
  	  call xline(1,58)
           read  (58,*) (((proprotion_init(ien,isp,ialt),ien=1,nnen),
-     .		      isp=1,2),ialt=1,nz)
+     &		      isp=1,2),ialt=1,nz)
           do ien = 1,nnen
  	    do ialt = 1,nz
               proprotion_init(ien,1,ialt)=
-     .			.75*proprotion_init(ien,1,ialt)
+     &			.75*proprotion_init(ien,1,ialt)
               proprotion_init(ien,2,ialt)=
-     .			.75*proprotion_init(ien,2,ialt)
+     &			.75*proprotion_init(ien,2,ialt)
  	    enddo
  	  enddo
 c         La somme vaut la production des protoelec. en cm-3s-1eV-1
           do ien = 1,nnen
             do ialt = 1,nz
               proprotel_init(ialt,ien)=
-     .		proprotion_init(ien,1,ialt)+proprotion_init(ien,2,ialt)
+     &		proprotion_init(ien,1,ialt)+proprotion_init(ien,2,ialt)
             enddo
           enddo
 c         Production des protoelectrons en cm-3.s-1  (prion)
@@ -355,7 +355,7 @@ c
             do ialt=1,nz
               write(fic_transout,920)  z(ialt)
               write (fic_transout,910)(proprotel_init(ialt,ien),
-     .					ien = 1,nnen)
+     &					ien = 1,nnen)
 c             [proprotel_init]=cm-3.s-1.eV-1
  	    enddo
       	  endif
@@ -365,7 +365,7 @@ c 	  Production totale
  	  call intlin(nz,z,proelec_init,nalt,altkm,prodprotelec)
  	  do ialt = 1,nalt
  	    if(altkm(ialt).lt.zmin .or. altkm(ialt).gt.zmax)
-     .		prodprotelec(ialt)=0.
+     &		prodprotelec(ialt)=0.
  	  enddo
 c
 c 	  Interpolation en energie:
@@ -388,7 +388,7 @@ c 	  Interpolation en altitude:
  	      call intlin(nz,z,finput,nalt,altkm,foutput)
 	      do ialt=1,nalt
  	        if(altkm(ialt).gt.zmin .and. altkm(ialt).lt.zmax)
-     .	  	  primprotelec(ialt,ien)=foutput(ialt)
+     &	  	  primprotelec(ialt,ien)=foutput(ialt)
  	      enddo
  	    endif
  	  enddo
@@ -411,7 +411,7 @@ c 	  On passe en flux.
  	  do ien = 1,nen
 	    do ialt=1,nalt
   	      fluxprimprot(ialt,ien)=
-     .		primprotelec(ialt,ien)/densig(ialt,ien)
+     &		primprotelec(ialt,ien)/densig(ialt,ien)
               do iang=-nango2,nango2
 c 	        La division par 2 pi vient de l'integration polaire
                 qprimprot(ien,ialt,iang)= fluxprimprot(ialt,ien)* r2pi

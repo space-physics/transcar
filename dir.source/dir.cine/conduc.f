@@ -95,7 +95,7 @@ c
 c 	On cherche la valeur du champ a 120 km pour se placer dans les
 c 	memes conditions que Catherine Senior.
         call bfield(date,120.,glat,glong,xbid,ybid,zbid,
-     .               field120,xmbid,decbid)
+     &               field120,xmbid,decbid)
  	field120=field120*1.0e-09
 c
  	pi = 4.*atan(1.)
@@ -109,7 +109,7 @@ c
  	if (iprt(24).eq.1)then
  	  write(fic_transout,*)' Gyrofrequences :'
  	  write(fic_transout,*)'   altkm     %O+   %O2+   %NO+ ',
-     .		       '   aionmas  field      gyre       gyri'
+     &		       '   aionmas  field      gyre       gyri'
  	endif
 c
  	gyreave = 0.
@@ -138,7 +138,7 @@ c 	    Temperatures
 c
 c 	    Intensite du champ magnetique.
             call bfield(date,altkm(ialt),glat,glong,xbid,ybid,zbid,
-     .               field,xmbid,decbid)
+     &               field,xmbid,decbid)
 c 	    Conversion de B, des gammas en Tesla
  	    field=field*1.0e-09
 c
@@ -156,9 +156,9 @@ c
 c
  	  if (denne.gt.0.)then
 	    call conduct(denn2,deno2,deno1,denne,dOp,dO2p,
-     .	        dNOp,te,ti,tn,conP,conH,field,aionmas,gyre,gyri,
-     .	        fcOp,fcNOp,fcO2p,fci,fciRG,fciSN,
-     .		fcen2,fceo2,fceo1,fce,icolin)
+     &	        dNOp,te,ti,tn,conP,conH,field,aionmas,gyre,gyri,
+     &	        fcOp,fcNOp,fcO2p,fci,fciRG,fciSN,
+     &		fcen2,fceo2,fceo1,fce,icolin)
 c
 	    cped(ialt)    = conP
 c 	    A haute altitude, les cond. Hall peuvent prendre des valeurs
@@ -181,7 +181,7 @@ c
  	    colle  (ialt) = fce
  	  endif
  	  if (iprt(24).eq.1)write(fic_transout,2000)altkm(ialt),
-     .			    dOp,dO2p,dNOp,aionmas/uma,field,gyre,gyri
+     &			    dOp,dO2p,dNOp,aionmas/uma,field,gyre,gyri
  	  gyreave = gyreave + gyre
  	  gyriave = gyriave + gyri
  	enddo
@@ -208,19 +208,19 @@ c
           write(fic_transout,1045)
           do ialt=1,nalt
             write(fic_transout,1050)altkm(ialt),collen2(ialt),
-     . 		colleo2(ialt),colleo1(ialt),colle(ialt)
+     & 		colleo2(ialt),colleo1(ialt),colle(ialt)
           enddo
           write(fic_transout,1055)
           do ialt=1,nalt
             write(fic_transout,1050)altkm(ialt),collOp(ialt),
-     . 	       collNOp(ialt),collO2p(ialt),collionSN(ialt),
-     .		collionRG(ialt)
+     & 	       collNOp(ialt),collO2p(ialt),collionSN(ialt),
+     &		collionRG(ialt)
           enddo
 c
           write(fic_transout,1000)
           do ialt=1,nalt
             write(fic_transout,1010)altkm(ialt),chal(ialt),cped(ialt),
-     . 		ratHoP(ialt),denelc(ialt),temelc(ialt),temion(ialt)
+     & 		ratHoP(ialt),denelc(ialt),temelc(ialt),temion(ialt)
           enddo
  	endif
 c       write(6,*)'                                           ' ,'[A'
@@ -228,7 +228,7 @@ c
  	if (iprt(23).eq.1)then
           write(fic_transout,1020)
           write(fic_transout,1030) glat,f107,chideg,chalsum,cpedsum,
-     .			 ratHoPsum,chalCS,cpedCS
+     &			 ratHoPsum,chalCS,cpedCS
  	endif
 c
 c 	L'ouverture en mode 'old' d'un fichier suivit d'une ecriture
@@ -237,9 +237,9 @@ c 	donnees). En lecture, la ligne lue est la premiere.
 c	Ceci est une specificite aix, car la norme ANSII ne specifie
 c 	rien.
       open(newunit=u,file ='dir.output/conduc.res',
-     .		status = 'old')
+     &		status = 'old')
         write(u,1030)glat,hrloc,chideg,chalsum,cpedsum,
-     .		ratHoPsum,chalCS,cpedCS
+     &		ratHoPsum,chalCS,cpedCS
 c       do ialt=1,nalt
 c         write(u,1010)altkm(ialt),chal(ialt),cped(ialt),
 c    . 		ratHoP(ialt),denelc(ialt),temelc(ialt),temion(ialt)
@@ -261,10 +261,10 @@ c
 1030    format (1f6.2,7f9.3)
 1040 	format(/,'Frequences de collision')
 1045    format(/,
-     .   '   Altitude   e/N2      e/O2       e/O     Total e')
+     &   '   Altitude   e/N2      e/O2       e/O     Total e')
 1050 	format(1f10.2,5(1pe10.2))
 1055    format(/,
-     .   '   Altitude  O+/Ntres NO+/Ntres O2+/Ntres Total ions NuionCS')
+     &   '   Altitude  O+/Ntres NO+/Ntres O2+/Ntres Total ions NuionCS')
 1060  	format('Gyrofrequences moyennes      :',2(1pe10.2))
 2000 	format(1f10.2,3f7.4,1f10.2,3(1p1e10.2))
 
@@ -272,9 +272,9 @@ c
 
 
       subroutine conduct(denn2,deno2,deno1,denne,dOp,dO2p,
-     .		dNOp,te,ti,tn,conP,conH,field,aionmas,gyre,gyri,
-     .		fcOp,fcNOp,fcO2p,fci,fciRG,fciSN,
-     .		fcen2,fceo2,fceo1,fce,icolin)
+     &		dNOp,te,ti,tn,conP,conH,field,aionmas,gyre,gyri,
+     &		fcOp,fcNOp,fcO2p,fci,fciRG,fciSN,
+     &		fcen2,fceo2,fceo1,fce,icolin)
 
       implicit none
 
@@ -300,10 +300,10 @@ c
 c
  	burnside = 1.7
  	call nuoion(fcOp,fcOpO,fcOpN2,fcOpO2,ti,tn,denO1,denN2,denO2,
-     .			burnside)
+     &			burnside)
  	call noion(fcNOp,fcNOpO,fcNOpN2,fcNOpO2,denO1,denN2,denO2)
  	call o2ion(fcO2p,fcO2pO,fcO2pN2,fcO2pO2,ti,tn,denO1,denN2,
-     .		 	denO2)
+     &		 	denO2)
 c 	On passe de frequences reduites aux frequences reelles.
         fcOp  = dOp*fcOp
         fcO2p = dO2p*fcO2p

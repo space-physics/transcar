@@ -2829,12 +2829,17 @@ c47     format(1i4,4f10.2,2(1pe12.3))
       character*80 crsin,rdtin,crsinput
       integer iprt(40),mcount(5),ncountE,ncountA,idess(20),
      &        izplt(4),ieplt(4),icolin
+      integer type_de_grille,iprint1,iprint2,iprint3,iprint4
+      character*80 crs,rdt
+      logical logint,lt1,lt2,lt3,lt4,lopal
+      namelist /DATDEG/ type_de_grille,crsinput,crs,rdt,idess,
+     &    iprint1,iprint2,iprint3,iprint4,logint,lt1,lt2,lt3,lt4,
+     &    lopal
       real eplt(4)
 !
       integer nspec,knmneutral,nalt,jpreci
       integer isp,ialt,iexc,ilinear,iporter,ien,iost,i,j,iang,jp
       character*30 istdate
-      integer lenc
       real bid
       real zbot,ztop,hrloc,year,tempexo,f107,f107a,Apind,day,
      &          glat,glong,albedo,alt(nbralt),
@@ -2870,12 +2875,9 @@ c47     format(1i4,4f10.2,2(1pe12.3))
         open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
      &    status='OLD',iostat=iost,err=997)
          rewind(fic_datdeg)
-         read (fic_datdeg,*)ibid
-        read(fic_datdeg,'(a)') crsinput
-        read(fic_datdeg,'(a)') crsin
-        crsin = crsin(1:lenc(crsin))
-        read(fic_datdeg,'(a)') rdtin
-         rdtin = rdtin(1:lenc(rdtin))
+         read(fic_datdeg,nml=DATDEG)
+         crsin = crs
+         rdtin = rdt
          close(fic_datdeg)
 !
       open(fic_dattrans,file='dir.data/dir.linux/dir.cine/DATTRANS',

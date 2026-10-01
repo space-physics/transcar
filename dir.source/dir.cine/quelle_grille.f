@@ -28,12 +28,15 @@ c     Parametres internes :
 
 c     Pour transferer via DATDEG les caracteristiques de grille a
 c     degrad.f
-      integer :: type_de_grille,lenc,idess(2),iprint1,iprint2,iprint3,
+      integer :: type_de_grille,idess(2),iprint1,iprint2,iprint3,
      &  iprint4
 
       logical :: logint,lt1,lt2,lt3,lt4,lopal
 
-      character(80) :: crsin,crs,rdt,crsfn
+      character(80) :: crsinput,crs,rdt,crsfn
+      namelist /DATDEG/ type_de_grille,crsinput,crs,rdt,idess,
+     &    iprint1,iprint2,iprint3,iprint4,logint,lt1,lt2,lt3,lt4,
+     &    lopal
 c
       real,parameter :: pideg=57.29578
 c
@@ -41,7 +44,7 @@ c     On stoke les parametres de calcul de degrad.
       open(fic_datdeg, file=datdegfn, status='old')
 
       rewind(fic_datdeg)
-      read(fic_datdeg,*) type_de_grille
+      read(fic_datdeg,nml=DATDEG)
 
       if(type_de_grille == 0) then
         print '(a)', 'DATDEG specifies grid type 0'
@@ -49,22 +52,6 @@ c     On stoke les parametres de calcul de degrad.
         return
       end if
 
-        read(fic_datdeg, '(a)') crsin
-        crsin = crsin(1:lenc(crsin))
-        read(fic_datdeg, '(a)') crs
-        crs = crs(1:lenc(crs))
-        read(fic_datdeg, '(a)') rdt
-        rdt = rdt(1:lenc(rdt))
-        call xline(4,fic_datdeg) !skip 4 lines
-        read (fic_datdeg,*) idess(1),idess(2)
-        call xline(2,fic_datdeg) !skip 2 lines
-        read (fic_datdeg,*) iprint1,iprint2,iprint3,iprint4
-        read(fic_datdeg, '(l1)') logint
-        read(fic_datdeg, '(l1)') lt1
-        read(fic_datdeg, '(l1)') lt2
-        read(fic_datdeg, '(l1)') lt3
-        read(fic_datdeg, '(l1)') lt4
-        read(fic_datdeg, '(l1)') lopal
       close(fic_datdeg)
 
 
@@ -188,86 +175,12 @@ c
 c  On previent maintenant degrad de ou il faut lire les sections
 c  efficaces.
       print '(a,1x,a)', 'attempting to open',datdegfn
-      open(fic_datdeg,file=datdegfn, status='unknown',err=993)
-      !yes unknown in case not all values rewritten
-!        rewind(fic_datdeg)
+            open(fic_datdeg,file=datdegfn, status='replace',err=993)
       print '(a,1x,a)', 'beginning to rewrite',datdegfn
-      write(fic_datdeg,1010)type_de_grille
-        write(fic_datdeg,1020) crsin
-        write(fic_datdeg,1030) crs
-        write(fic_datdeg,1040) rdt
-        write(fic_datdeg,1050) idess(1),idess(2)
-        write(fic_datdeg,1060) iprint1,iprint2,iprint3,iprint4
-
-      if(logint)then
-          write(fic_datdeg,1070)
-      else
-          write(fic_datdeg,1075)
-      endif
-1070  format('.true.',11x,
-     &    'logint: interpolation type for cross sections')
-1075  format('.false.',10x,
-     &    'logint: interpolation type for cross sections')
-c
-      if(lt1)then
-          write(fic_datdeg,1080)
-      else
-          write(fic_datdeg,1085)
-      endif
-1080  format('.true.',11x,'lt1   : test without ionization')
-1085  format('.false.',10x,'lt1   : test without ionization')
-
-      if(lt2)then
-              write(fic_datdeg,1090)
-      else
-              write(fic_datdeg,1095)
-      endif
-1090  format('.true.',11x,'lt2   : test only with ionization')
-1095  format('.false.',10x,'lt2   : test only with ionization')
-
-      if(lt3)then
-              write(fic_datdeg,1100)
-      else
-              write(fic_datdeg,1105)
-      endif
-1100  format('.true.',11x,'lt3   : test without degradation')
-1105  format('.false.',10x,'lt3   : test without degradation')
-
-      if(lt4)then
-              write(fic_datdeg,1110)
-      else
-              write(fic_datdeg,1115)
-      endif
-1110  format('.true.',11x,'lt4   : test without excitation')
-1115  format('.false.',10x,'lt4   : test without excitation')
-
-      if(lopal)then
-              write(fic_datdeg,1120)
-      else
-              write(fic_datdeg,1125)
-      endif
-1120  format('.true.',11x,
-     &    'lopal : sec. distrib. de Opal (Rees sinon)')
-1125  format('.false.',10x,
-     &    'lopal : sec. distrib. de Opal (Rees sinon)')
+            write(fic_datdeg,nml=DATDEG)
 
       close(fic_datdeg)
 c
-1010  format(i2,10x,' for iniflu : 1 use detailed grid, 2 coarse grid')
-c1020  format(a,3x,' Fichier d''entree des sections efficaces')
-c1030  format(a,3x,' Fichier de sortie des seff(E)')
-c1040  format(a,3x,' Fic. de sortie des seff diff. (Eprim-->E)')
-1020  format(a)
-1030  format(a)
-1040  format(a)
-1050  format('idess =-1 no plot.',/,
-     &    'idess = 0 metacode created, without interactive session.',/,
-     &    'idess = 1 metacode not created, but screened plots.',/,
-     &    'idess = 2 metacode created, with interactive session.',/,
-     &   2i5,5x,'(seff, seff detailled)')
-1060  format('iprint = 1 if print (whatever number otherwise)',/,
-     &    8x,'sigel  siginel  rmatrix diff-sig-test ',/,4i10)
-1130  format(a7)
 c
         nang=8
         nango2=nang/2

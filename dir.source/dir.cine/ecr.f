@@ -238,50 +238,36 @@ c     write (ielec,4011) (dti(i), i = 1,nalt)
       write (ielec,4023) (smgdpa(i),i=1,nalt)
 
       close(ielec)
- 	    endif
-c
-      	return
-      	end
+      endif
+      end subroutine ecr
 c
 c----------------------------------------------------------------------
 c
         subroutine ecrit_DATDEG
 c
- 	    implicit none
-
+        implicit none
         include 'TRANSPORT.INC'
-c
-c 	Le but de ce sous programme est de palier le probleme suivant :
-c 	lorsqu'on appelle transcar, il laisse dans DATDEG la trace du
-c 	fichier d'entree des sections efficaces utilise. Si (comme ca
-c 	arrive souvent), on appelle transsolo ensuite, avec des
-c 	conditions qui n'ont rien a voir, on ecrase les sections
-c 	efficaces pour en recalculer d'autres. Pour eviter ca, ce
-c 	sous programme, a n'appeler qu'apres transsolo (ce serait meme
-c 	mieux a la fin de transcar) reecrit dans DATDEG des noms de
-c 	fichier de sections efficaces differents.
 
-        integer i
-        character*70 chaine(18),crs,rdt
-1000 	format(a)
-c
-        open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
+c       Reset the elastic cross-section and redistribution file names.
+            integer type_de_grille,idess(2),iprint1,iprint2,iprint3,
+     &      iprint4
+            logical logint,lt1,lt2,lt3,lt4,lopal
+            character*80 crsinput,crs,rdt
+            namelist /DATDEG/ type_de_grille,crsinput,crs,rdt,idess,
+     &      iprint1,iprint2,iprint3,iprint4,logint,lt1,lt2,lt3,
+     &      lt4,lopal
+
+            open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
      &       status='old')
-	    rewind(fic_datdeg)
-     	do i = 1,18
-     	  read(fic_datdeg,1000)chaine(i)
-     	enddo
-     	close(fic_datdeg)
-c
-     	chaine(3) = 'dir.cine/dir.seff/crs'
-     	chaine(4) = 'dir.cine/dir.seff/rdt'
-c
-      open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
-     &        status='old')
-	    rewind(fic_datdeg)
-     	do i = 1,18
-     	  write(fic_datdeg,1000)chaine(i)
-     	enddo
-     	close(fic_datdeg)
+            read(fic_datdeg,nml=DATDEG)
+            close(fic_datdeg)
 
-    	end subroutine ecrit_DATDEG
+            crs = 'dir.cine/dir.seff/crs'
+            rdt = 'dir.cine/dir.seff/rdt'
+
+            open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
+     &       status='replace')
+            write(fic_datdeg,nml=DATDEG)
+            close(fic_datdeg)
+
+            end subroutine ecrit_DATDEG

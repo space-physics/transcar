@@ -1,18 +1,14 @@
- 2           Pour iniflu : 1 si Egrid detaillee, 2 sinon
-dir.cine/dir.seff/crscoll.dat
-dir.cine/dir.seff/crs
-dir.cine/dir.seff/rdt
-idess =-1 no plot.
-idess = 0 metacode created, without interactive session.
-idess = 1 metacode not created, but screened plots.
-idess = 2 metacode created, with interactive session.
-   -1   -1     (seff, seff detailled)
-iprint = 1 if print (whatever number otherwise)
-        sigel  siginel  rmatrix diff-sig-test
-         1         1        -1        -1
-.true.           logint: interpolation type for cross sections
-.true.           lt1   : test without ionization
-.true.           lt2   : test only with ionization
-.true.           lt3   : test without degradation
-.true.           lt4   : test without excitation
-.true.           lopal : sec. distrib. de Opal (Rees sinon)
+&DATDEG
+ type_de_grille = 2                          ! Grid type: 1 detailed grid, 2 coarse grid.
+ crsinput = 'dir.cine/dir.seff/crscoll.dat'  ! Inelastic cross-section input.
+ crs = 'dir.cine/dir.seff/crs'               ! Elastic cross-section file.
+ rdt = 'dir.cine/dir.seff/rdt'               ! Redistribution file.
+ idess = -1, -1             ! Plot modes: -1 none, 0 metacode, 1 screen, 2 interactive.
+ iprint1 = 1, iprint2 = 1, iprint3 = -1, iprint4 = -1, ! Print controls.
+ logint = .true.,          ! Logarithmic interpolation.
+ lt1 = .true.,
+ lt2 = .true.,
+ lt3 = .true.,
+ lt4 = .true.,            ! Cross-section tests.
+ lopal = .true.           ! Use Opal secondary distribution.
+/

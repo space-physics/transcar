@@ -54,16 +54,20 @@ c
 *	The redistribution function as calculated by the SWARTZ
 *	code.
 *	OMDEG(N1,N2,J) : cross-section for inelastic scattering
-*			  from energy N1 to N2
+*		      from energy N1 to N2
 *	OMDEG(N2,N1,J)  : cross-section for the production of a
-*			  secondary with energy N2
+*		      secondary with energy N2
 
-	character*8 istdate,isttime
-	character*9 title(nbrexc,nbrsp)
- 	character*9 excion(nbrionst,nbrsp)
-	character(len=80) crsin,crsout,rdtout,preout
-	character(len=80) line
- 	integer idess(2),lenc,kiappel,i1,i2
+      character*8 istdate,isttime
+      character*9 title(nbrexc,nbrsp)
+      character*9 excion(nbrionst,nbrsp)
+      character(len=80) crsin,crsout,rdtout,preout
+      character(len=80) crsinput,crs,rdt
+      character(len=80) line
+      integer idess(2), kiappel,i1,i2,type_de_grille
+      namelist /DATDEG/ type_de_grille,crsinput,crs,rdt,idess,
+     &      iprint1,iprint2,iprint3,iprint4,logint,lt1,lt2,lt3,
+     &      lt4,lopal
 c
 1000    format(a)
 1010	format(' Pre-electron transport code version 3 ',/,a8,3x,a8/)
@@ -118,40 +122,26 @@ c       write(6,*)'    ---------'
 c       write(6,*)
 
 c 	Met les energies en ordre croissant
- 	    nen = neninit
- 	    if(centE(1).lt.centE(nen))then
- 	      do ien = 1,nen
- 	        e(ien) = centE(ien)
- 	        engdd(ien) = ddeng(ien)
- 	      enddo
- 	    else
- 	      do ien = 1,nen
- 	       e(nen+1-ien) = centE(ien)
- 	       engdd(nen+1-ien) = ddeng(ien)
- 	     enddo
- 	    endif
+         nen = neninit
+         if(centE(1).lt.centE(nen))then
+           do ien = 1,nen
+             e(ien) = centE(ien)
+             engdd(ien) = ddeng(ien)
+           enddo
+         else
+           do ien = 1,nen
+            e(nen+1-ien) = centE(ien)
+            engdd(nen+1-ien) = ddeng(ien)
+          enddo
+         endif
 
 c 	Input control parameters
      	open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
      &           status='old')
-     	read(fic_datdeg,*)ibid
-     	read(fic_datdeg,1000)crsin
-     	crsin = crsin(1:lenc(crsin))
-	    read(fic_datdeg,1000) crsout
-     	crsout = crsout(1:lenc(crsout))
-	    read(fic_datdeg,1000) rdtout
-     	rdtout = rdtout(1:lenc(rdtout))
-     	call xline(4,fic_datdeg)
-     	read (fic_datdeg,*) idess(1),idess(2)
-     	call xline(2,fic_datdeg)
-     	read (fic_datdeg,*) iprint1,iprint2,iprint3,iprint4
-     	read(fic_datdeg,1000)logint   ! logint: interpolation type for
-c 				             cross sections
-     	read(fic_datdeg,1000)lt1           ! lt1   : without ionization
-     	read(fic_datdeg,1000)lt2           ! lt2   : only with ioniz.
-     	read(fic_datdeg,1000)lt3           ! lt3   : without degradation
-     	read(fic_datdeg,1000)lt4           ! lt4   : without excitation
-     	read(fic_datdeg,1000)lopal    ! Opal sec. distrib. (Rees sinon)
+	    read(fic_datdeg,nml=DATDEG)
+	    crsin = crsinput
+	    crsout = crs
+	    rdtout = rdt
 	    close (fic_datdeg)
 c
 c	Check for old computation

@@ -35,7 +35,7 @@ def describe_returncode(rc: int) -> str:
     return f"exited with status {rc}"
 
 
-def beam_spectrum_arbiter(beam: pandas.DataFrame, P: dict[str, T.Any]):
+def beam_spectrum_arbiter(beam: pandas.DataFrame, P: dict[str, T.Any]) -> bool:
     """
     run beam with user-defined flux spectrum
     """
@@ -47,11 +47,12 @@ def beam_spectrum_arbiter(beam: pandas.DataFrame, P: dict[str, T.Any]):
         "logs the simulation output text, watch this file to see simulation progress.",
     )
 
-    if run_spectrum(beam, P):
+    if ok := run_spectrum(beam, P):
         print("OK: Transcar complete")
-        return
+    else:
+        logging.error(f"Transcar run failed. See {odir / P['errfn']} for clues")
 
-    raise RuntimeError(f"Transcar run failed. See {odir / P['errfn']} for clues")
+    return ok
 
 
 def run_spectrum(beam: pandas.DataFrame, P: dict[str, T.Any]) -> bool:
@@ -67,22 +68,22 @@ def run_spectrum(beam: pandas.DataFrame, P: dict[str, T.Any]) -> bool:
     return isok and transcaroutcheck(odir, P["errfn"])
 
 
-def mono_beam_arbiter(beam: dict[str, float], P: dict[str, T.Any]):
+def mono_beam_arbiter(beam: dict[str, float], P: dict[str, T.Any]) -> bool:
     """
     run monoenergetic beam
     """
     if isinstance(beam, pandas.Series):
         beam = beam.to_dict()
 
-    isok = run_monobeam(beam, P)
-
-    if isok:
+    if isok := run_monobeam(beam, P):
         print(f"OK {beam['E1']:.1f} eV")
     else:
         logging.warning(f"retrying beam{beam['E1']:.1f}")
         isok = run_monobeam(beam, P)
         if not isok:
             logging.error(f"failed on beam{beam['E1']:.1f} on 2nd try, aborting")
+
+    return isok
 
 
 def run_monobeam(beam: dict[str, float], P: dict[str, T.Any]) -> bool:

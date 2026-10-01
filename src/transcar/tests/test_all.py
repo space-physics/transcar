@@ -23,8 +23,10 @@ def test_run_transcar(tmp_path):
     }
 
     beams = pandas.read_csv(root / "test_E1E2prev.csv", header=None, names=["E1", "E2", "pr1", "pr2"]).squeeze()
+    beams = beams.to_dict()
 
-    transcar.mono_beam_arbiter(beams, params)
+    if not transcar.mono_beam_arbiter(beams, params):
+        raise RuntimeError(f"Transcar run failed. See {tmp_path / 'transcarError.log'} for clues")
 
     refexc = tr.ExcitationRates(refdir / kinfn)
 

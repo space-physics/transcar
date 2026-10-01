@@ -52,7 +52,8 @@ def main():
     beams = read_csv(infn, header=None, names=["E1", "E2", "pr1", "pr2"])
     beams["flux"] = np.loadtxt(fluxfn, delimiter=",")
 
-    transcar.beam_spectrum_arbiter(beams, params)
+    if not transcar.beam_spectrum_arbiter(beams, params):
+        raise RuntimeError(f"Transcar run failed. See {rodir / p.errfn} for clues")
 
 
 if __name__ == "__main__":

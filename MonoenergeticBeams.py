@@ -55,17 +55,25 @@ def main():
 
     print("using", p.np, "concurrent Transcar runs")
 
+    failed = 0
     # %% do run
     if p.np == 1:
         for _, beam in beams.iterrows():
-            transcar.mono_beam_arbiter(beam, params)
+            if not transcar.mono_beam_arbiter(beam, params):
+                failed += 1
     else:
         with concurrent.futures.ThreadPoolExecutor(max_workers=p.np) as executor:
             future_beam = (executor.submit(transcar.mono_beam_arbiter, beam, params) for _, beam in beams.iterrows())
             for future in concurrent.futures.as_completed(future_beam):
-                future.result()
+                if not future.result():
+                    failed += 1
 
-    print(f"DONE in {time.time() - tic:.1f} seconds")
+    t = time.time() - tic
+
+    if failed != 0:
+        raise RuntimeError(f"{failed} beams failed in {t:.1f} seconds.")
+
+    print(f"DONE in {t:.1f} seconds")
 
 
 if __name__ == "__main__":

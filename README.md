@@ -21,9 +21,9 @@ However, there are limitations because of the non-standard code used in Transcar
 
 ### Known working
 
-Apple:
+macOS, Linux, Windows :
 
-* GCC 16.2 with -O1 or -O0
+* GCC 16.2.0 with -O1 or -O0
 
 ### Known not working
 

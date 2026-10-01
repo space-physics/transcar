@@ -15,7 +15,7 @@ if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   )
   # -Warray-bounds=2)
 
-  if(APPLE AND NOT DEFINED transcar_optim_flag)
+  if(NOT DEFINED transcar_optim_flag)
     set(transcar_optim_flag -O1)
   endif()
 

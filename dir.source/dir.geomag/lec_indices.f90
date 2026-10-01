@@ -18,17 +18,17 @@ integer   :: ian_deb,iday_deb,km,kj,k,num_rec
 
 integer(int16) :: idat(6),kdat(7,8)
 integer(int32) :: num,max_num
-integer(int64) :: ftelli8
-integer(int16) ::tempo(124)
+integer(int64) :: file_size
+integer(int16) :: tempo(124)
 
 
-print*,'record size=',recsize
+print '(a,1x,i0)','record size =', recsize
 
 open(newunit=u,file='dir.data/dir.linux/dir.geomag/data_geom.bin', &
         access='direct',recl=recsize,form='unformatted',status='old')
 
-call fseek(u,0,2)
-max_num=(ftell(u)-8)/recsize
+inquire(unit=u,size=file_size)
+max_num = int((file_size - 8_int64) / int(recsize, int64), int32)
 
 read(u,rec=1) idat
 ian_deb = idat(1)
@@ -98,39 +98,39 @@ end
 
 
 pure integer function num_rec(ian_deb,iday_deb,ian,imois,ijour)
-    implicit none
-    integer,intent(in):: ian_deb,iday_deb,ian,imois,ijour
+implicit none
+integer, intent(in):: ian_deb,iday_deb,ian,imois,ijour
 
-    !day of year for non-leap and leap years month ends
-    integer,parameter :: m1(12)=(/31,59,90,120,151,181,212,243,273,304,334,365/),	&
-                         m2(12)=(/31,60,91,121,152,182,213,244,274,305,335,366/)
+!day of year for non-leap and leap years month ends
+integer, parameter :: m1(12) = [31,59,90,120,151,181,212,243,273,304,334,365]
+integer, parameter :: m2(12) = [31,60,91,121,152,182,213,244,274,305,335,366]
 
-    integer nj_an,kd,i,njour
+integer nj_an,kd,i,njour
 
-    nj_an = 1 - iday_deb
+nj_an = 1 - iday_deb
 
-    do i = ian_deb+1,ian
-       kd = m1(12)
-       if(mod(i-1,4).eq.0) kd = kd+1
-       nj_an = nj_an + kd
-    enddo
+do i = ian_deb+1,ian
+   kd = m1(12)
+   if(mod(i-1,4).eq.0) kd = kd+1
+   nj_an = nj_an + kd
+enddo
 
 
-    if (imois .eq. 1) then
-       num_rec = nj_an + ijour
-       return
-    else if (imois .eq. 2) then
-       num_rec = nj_an + ijour + 31
-       return
-    endif
+if (imois .eq. 1) then
+   num_rec = nj_an + ijour
+   return
+else if (imois .eq. 2) then
+   num_rec = nj_an + ijour + 31
+   return
+endif
 
-    njour=mod(ian,4)
-    if (njour .eq. 0) then
-       num_rec = nj_an + m2(imois-1) + ijour
-    else
-       num_rec = nj_an + m1(imois-1) + ijour
-    endif
+njour = mod(ian,4)
+if (njour .eq. 0) then
+   num_rec = nj_an + m2(imois-1) + ijour
+else
+   num_rec = nj_an + m1(imois-1) + ijour
+endif
 
-    num_rec=max(num_rec,1)
+num_rec=max(num_rec,1)
 
 end function num_rec

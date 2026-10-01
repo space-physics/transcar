@@ -29,6 +29,7 @@ Apple:
 
 Apple:
 
+* Flang 23.1 with -O3, -O2, -O1, -O0 (SIGABRT -6)
 * GCC 16.2 with -O3 or -O2 (SIGBUS -10)
 * GCC 15.3 with -O1 or -O0 (error 2); SIGBUS -10 with -O3 or -O2
 

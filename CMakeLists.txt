@@ -20,6 +20,8 @@ if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   endif()
 
   set(transcar_file_opts -frecord-marker=4)
+elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "LLVMFlang")
+  set(transcar_file_opts -O0)
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "IntelLLVM")
   set(transcar_file_opts -assume:byterecl)
 endif()

@@ -19,14 +19,15 @@ def transcar_paths() -> dict[str, Path]:
     if not exe:
         raise FileNotFoundError(f"could not find transconvec executable under {root}")
 
-    paths = {"transconvec": Path(exe),
-             "root": root,
-             "datain": root / "dir.input",
-             "datadir": root / "dir.data",
-             "datcar": root / "dir.input/DATCAR",
-             "finish_status": root / "finish.status",
-             "precip": Path("dir.input/precinput.asc")
-             }
+    paths = {
+        "transconvec": Path(exe),
+        "root": root,
+        "datain": root / "dir.input",
+        "datadir": root / "dir.data",
+        "datcar": root / "dir.input/DATCAR",
+        "finish_status": root / "finish.status",
+        "precip": Path("dir.input/precinput.asc"),
+    }
     return paths
 
 
@@ -56,9 +57,7 @@ def cp_parents(files: T.Sequence[Path], target_dir: Path, origin: Path = None) -
     if isinstance(files, (str, Path)):
         files = [files]
     # %% cleanup user
-    files = [
-        Path(f).expanduser() for f in files
-    ]  # relative path or absolute path is fine
+    files = [Path(f).expanduser() for f in files]  # relative path or absolute path is fine
     target_dir = Path(target_dir).expanduser()
     # %% work
     for f in files:
@@ -67,9 +66,7 @@ def cp_parents(files: T.Sequence[Path], target_dir: Path, origin: Path = None) -
         else:
             fsource = f.parent
 
-        newpath = (
-            target_dir / fsource
-        )  # to make it work like cp --parents, copying absolute paths if specified
+        newpath = target_dir / fsource  # to make it work like cp --parents, copying absolute paths if specified
         newpath.mkdir(parents=True, exist_ok=True)
         shutil.copy2(f, newpath)
 
@@ -103,9 +100,7 @@ def transcaroutcheck(odir: Path, errfn: Path, ok: str = "STOP fin normale") -> b
     return isok
 
 
-def setup_dirs(
-    odir: Path, params: dict[str, T.Any]
-) -> tuple[dict[str, T.Any], Path]:
+def setup_dirs(odir: Path, params: dict[str, T.Any]) -> tuple[dict[str, T.Any], Path]:
     """
     prepare output directory for a beam
     """
@@ -130,21 +125,12 @@ def setup_dirs(
 
     # does not operate consistently (segfault) if not in same directory, verified by hand June 2019.
     flist += [tpaths["datain"] / inp["precfile"], tpaths["datadir"] / "type"]
-    flist += [
-        tpaths["datadir"] / "dir.linux/dir.geomag" / s
-        for s in ["data_geom.bin", "igrf90.dat", "igrf90s.dat"]
-    ]
+    flist += [tpaths["datadir"] / "dir.linux/dir.geomag" / s for s in ["data_geom.bin", "igrf90.dat", "igrf90s.dat"]]
     flist += [tpaths["datadir"] / "dir.linux/dir.projection/varpot.dat"]
     # transcar sigsegv on val_fit_ if FELTRANS is blank!
-    flist += [
-        tpaths["datadir"] / "dir.linux/dir.cine" / s
-        for s in ["DATDEG", "DATFEL", "DATTRANS", "flux.flag", "FELTRANS"]
-    ]
+    flist += [tpaths["datadir"] / "dir.linux/dir.cine" / s for s in ["DATDEG", "DATFEL", "DATTRANS", "flux.flag", "FELTRANS"]]
     flist += [tpaths["datadir"] / "dir.linux/dir.cine/dir.euvac/EUVAC.dat"]
-    flist += [
-        tpaths["datadir"] / "dir.linux/dir.cine/dir.seff" / s
-        for s in ["crsb8", "crsphot1.dat", "rdtb8"]
-    ]
+    flist += [tpaths["datadir"] / "dir.linux/dir.cine/dir.seff" / s for s in ["crsb8", "crsphot1.dat", "rdtb8"]]
 
     cp_parents(flist, odir, tpaths["root"])
     # may have uniquely named input DATCAR, that always needs to be in output dir as
@@ -154,9 +140,7 @@ def setup_dirs(
     return inp, odir
 
 
-def setup_monoprec(
-    odir: Path, inp: dict[str, T.Any], beam: dict[str, float], flux0: float
-) -> None:
+def setup_monoprec(odir: Path, inp: dict[str, T.Any], beam: dict[str, float], flux0: float) -> None:
     """
     write dir.input/precinput.asc for monoenergetic beam case
     """
@@ -190,9 +174,7 @@ def setup_monoprec(
     ofn.write_text(precout)
 
 
-def setup_spectrum_prec(
-    odir: Path, inp: dict[str, T.Any], beam: pandas.DataFrame
-) -> None:
+def setup_spectrum_prec(odir: Path, inp: dict[str, T.Any], beam: pandas.DataFrame) -> None:
     """
     write dir.input/precinput.asc for beam with shaped differential number flux
     """
@@ -251,19 +233,11 @@ def readTranscarInput(infn: Path) -> dict[str, T.Any]:
         hd["simlengthsec"] = float(f.readline().split()[0])  # "tempslim"
         hd["jpreci"] = int(f.readline().split()[0])
         # transconvec calls the next two latgeo_ini, longeo_ini
-        hd["latgeo_ini"], hd["longeo_ini"] = [
-            float(a) for a in f.readline().split(None)[0].split(",")
-        ]
-        hd["tempsconv_1"] = float(
-            f.readline().split()[0]
-        )  # from transconvec, time before precip
-        hd["tempsconv"] = float(
-            f.readline().split()[0]
-        )  # from transconvec, time after precip
+        hd["latgeo_ini"], hd["longeo_ini"] = [float(a) for a in f.readline().split(None)[0].split(",")]
+        hd["tempsconv_1"] = float(f.readline().split()[0])  # from transconvec, time before precip
+        hd["tempsconv"] = float(f.readline().split()[0])  # from transconvec, time after precip
         hd["step"] = float(f.readline().split()[0])
-        hd["dtkinetic"] = float(
-            f.readline().split()[0]
-        )  # transconvec calls this "postinto"
+        hd["dtkinetic"] = float(f.readline().split()[0])  # transconvec calls this "postinto"
         hd["vparaB"] = float(f.readline().split()[0])
         hd["f107ind"] = float(f.readline().split()[0])
         hd["f107avg"] = float(f.readline().split()[0])

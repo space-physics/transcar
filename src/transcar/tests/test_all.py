@@ -22,9 +22,7 @@ def test_run_transcar(tmp_path):
         "errfn": "transcarError.log",
     }
 
-    beams = pandas.read_csv(
-        root / "test_E1E2prev.csv", header=None, names=["E1", "E2", "pr1", "pr2"]
-    ).squeeze()
+    beams = pandas.read_csv(root / "test_E1E2prev.csv", header=None, names=["E1", "E2", "pr1", "pr2"]).squeeze()
 
     transcar.mono_beam_arbiter(beams, params)
 
@@ -35,13 +33,7 @@ def test_run_transcar(tmp_path):
     ind = [[1, 12, 5], [0, 62, 8]]
 
     for i in ind:
-        assert refexc[i[0], i[1], i[2]].values == approx(
-            exc[i[0], i[1], i[2]].values, rel=1e-3
-        )
+        assert refexc[i[0], i[1], i[2]].values == approx(exc[i[0], i[1], i[2]].values, rel=1e-3)
 
-    assert refexc.time.shape == refexc.time.shape, (
-        "did you rerun the test without clearing the output directory first?"
-    )
-    assert (refexc.time == exc.time).all(), (
-        "simulation time of current run did not match reference run"
-    )
+    assert refexc.time.shape == refexc.time.shape, "did you rerun the test without clearing the output directory first?"
+    assert (refexc.time == exc.time).all(), "simulation time of current run did not match reference run"

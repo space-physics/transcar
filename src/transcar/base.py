@@ -2,11 +2,37 @@ import subprocess
 from pathlib import Path
 import logging
 import typing as T
+import signal
 import os
 
 import pandas
 
 from .io import setup_dirs, setup_monoprec, setup_spectrum_prec, transcaroutcheck, transcar_paths
+
+
+def describe_returncode(rc: int) -> str:
+    """a short reason for subprocess failure."""
+
+    _win_code = {
+        0xC0000135: "DLL not found - missing compiler runtime libraries?",
+        0xC00000FD: "stack overflow",
+        0xC0000005: "access violation (segfault)",
+        0xC0000409: "stack buffer overrun",
+        0xC0000374: "heap corruption",
+        3: "abort (CRT abort, exit code 3)",
+    }
+
+    if os.name == "nt":
+        return _win_code.get(rc, f"error code {rc}")
+    if rc < 0:
+        try:
+            sig = signal.Signals(-rc)
+        except ValueError:
+            return f"killed by signal {-rc}"
+
+        return f"killed by {sig.name}"
+
+    return f"exited with status {rc}"
 
 
 def beam_spectrum_arbiter(beam: pandas.DataFrame, P: dict[str, T.Any]):
@@ -83,10 +109,6 @@ def runTranscar(odir: Path, errfn: Path, msgfn: Path) -> bool:
         ret = subprocess.run(exe, cwd=odir, stdout=fout, stderr=ferr)
 
     if ret.returncode != 0:
-        logging.error(f"{odir.name} error code {ret.returncode} see {err_file}")
-        if os.name == "nt":
-            match ret.returncode:
-                case 3221225725:
-                    logging.error(f"{exe} stack overflow indicated")
+        logging.error(f"{odir.name}: error code {ret.returncode}\nError logfile: {err_file}\n{describe_returncode(ret.returncode)}")
 
     return ret.returncode == 0

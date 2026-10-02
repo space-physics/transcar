@@ -266,7 +266,7 @@ c       Reset the elastic cross-section and redistribution file names.
             rdt = 'dir.cine/dir.seff/rdt'
 
             open(fic_datdeg,file='dir.data/dir.linux/dir.cine/DATDEG',
-     &       status='replace')
+     &       status='replace',delim='quote')
             write(fic_datdeg,nml=DATDEG)
             close(fic_datdeg)
 

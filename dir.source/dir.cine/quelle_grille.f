@@ -175,7 +175,8 @@ c
 c  On previent maintenant degrad de ou il faut lire les sections
 c  efficaces.
       print '(a,1x,a)', 'attempting to open',datdegfn
-            open(fic_datdeg,file=datdegfn, status='replace',err=993)
+            open(fic_datdeg,file=datdegfn, status='replace',err=993,
+     &           delim='quote')
       print '(a,1x,a)', 'beginning to rewrite',datdegfn
             write(fic_datdeg,nml=DATDEG)
 

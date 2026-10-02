@@ -8117,9 +8117,12 @@ C]]]
               buffer(ipos+ipos_no1d)=N_0*No1dnew(i)*1.e6
               buffer(ipos+ipos_uo1d)=Cj0*Uo1dnew(i)/1.e2
             enddo
+            open(newunit=u,file=filetemps,
+     &           form='unformatted',access='direct',recl=longrec,
+     &           status='unknown')
             write(u,rec=nrectemps)(buffer(i),i=1,longbuf)
+            close(u)
           endif
-       close(u)
       nrec_ecr=nrec_ecr+1
         write(unfic_out_transcar,rec=nrec_ecr)(buffer(i),i=1,longbuf)
       endif
@@ -8129,7 +8132,6 @@ C]]]
 
         close(unfic_out_transcar)
         close(unfic_in_transcar)
-        close(u)
 
       stop 'fin normale'
 
@@ -8140,7 +8142,6 @@ C    on a debranche ici a cause d'un probleme de NaN
         print*,'pas de temps et params de norm',dt,deltat,R0,Ci0
         close(unfic_out_transcar)
         close(unfic_in_transcar)
-        close(u)
         fid_NaN=unfic_out_transcar
         open(newunit=u,file='dir.output/transcar.dump',
      &            form='unformatted',

@@ -21,11 +21,9 @@
           flgini=.false.
         open(newunit=u,
      &    file='dir.data/dir.linux/dir.projection/varcourant.dat',
-     &		form='formatted',status='old',iostat=ierr,err=999)
+     &		form='formatted',status='old',iostat=ierr)
+        if (ierr==0) close(u)
       endif
-
-999   continue
-      close(u)
 
         ndeg=0
         mdeg=0

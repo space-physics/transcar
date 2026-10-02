@@ -275,33 +275,24 @@ c
 c-------------------------------------------------------------------
 c
       subroutine intlin (nin,xin,yin,nout,xout,yout)
-c
 c 	Subroutine d'interpolation lineaire.
 c 	No restriction on extrema. Extrapolation is performed if
 c       necessary.
 c 	L'ordre croissant des donnees d'entree est assure par pgmme
+      use, intrinsic :: iso_fortran_env, only: error_unit
+      implicit none
+      integer, intent(in) :: nin,nout
+      real, intent(in) :: xin(nin),yin(nin)
+      real :: xout(nout),yout(nout)
+
+      integer :: i,iordre,iin,iout
+      real :: xxin(2048),yyin(2048)
+      real :: xxout(2048),yyout(2048)
 c
-      dimension xin(nin),yin(nin)
-      dimension xout(nout),yout(nout)
-c
-      dimension xxin(2048),yyin(2048)
-      dimension xxout(2048),yyout(2048)
-c
-      if(nin.gt.2048)then
-        write(6,*)'Pgmme intlin'
-        write(6,*)'Taille du tableau d''entree trop grande'
-        write(6,*)'Taille max = 2048. Taille actuelle =',nin
-        write(6,*)'Programme arrete. Modifier 2048, recompiler'
-        write(6,*)'et redemarer'
-        stop
-      endif
-      if(nout.gt.2048)then
-        write(6,*)'Pgmme intlin'
-        write(6,*)'Taille du tableau de sortie trop grande'
-        write(6,*)'Taille max = 2048. Taille actuelle =',nout
-        write(6,*)'Programme arrete. Modifier 2048, recompiler'
-        write(6,*)'et redemarer'
-        stop
+      if(nin > 2048 .or. nout > 2048) then
+        write(error_unit, '(a)')'intlin: array too large'
+        write(error_unit,'(a,1x,i0,1x,a,1x,i0)')'dims:in',nin,'out',nout
+        error stop
       endif
 
 c 	Teste l'ordre des donnees
@@ -603,10 +594,14 @@ c
 c ----------------------- mnmxi --------------------------------
 c
       subroutine mnmxi(tab,ntab,imax,imin)
-
+      implicit none
 c 	renvoie les indices du max et min du tableau tab.
-      dimension tab(ntab)
+      integer, intent(in) :: ntab
+      real, intent(in) :: tab(ntab)
+      integer, intent(out) :: imax, imin
 c
+      real :: tmin, tmax
+      integer :: i
       tmin=tab(1)
       tmax=tab(1)
       do i=1,ntab
@@ -617,14 +612,12 @@ c
         if(tmax.eq.tab(i))imax=i
         if(tmin.eq.tab(i))imin=i
       enddo
-c
-      return
-      end
-c
-c ------------------------- qgauss ------------------------------
-c
+
+      end subroutine mnmxi
+
+
       subroutine qgauss(m,gmu,gwt)
-C
+
 C       COMPUTE WEIGHTS AND ABSCISSAE FOR ORDINARY GAUSSIAN QUADRATURE
 C       (NO WEIGHT FUNCTION INSIDE INTEGRAL) ON THE INTERVAL (0,1)
 C
@@ -658,7 +651,7 @@ C+---------------------------------------------------------------------+
       INTEGER  LIM, M, NP1
 c     DOUBLE   PRECISION  D1MACH
       DOUBLE   PRECISION  EN, NNP1, P, PM1, PM2, PPR, P2PRI, PROD,
-      $                    TMP, TOL, X, XI
+     &                    TMP, TOL, X, XI
 c     DATA     PI / 0.0 /
       PI = 0.0
 C
@@ -733,21 +726,19 @@ C     CONVERT FROM (-1,1) TO (0,1)
 C
       RETURN
       END
-c
-c------------------------------------------------------------------
-c
-      subroutine xline(nbline,ijfile)
-      implicit none
-      integer,intent(in) :: nbline,ijfile
 
-      character nc*30
-      integer i
+
+      subroutine xline(nbline, u)
+! discard nbline lines from unit u
+      implicit none
+      integer,intent(in) :: nbline,u
+
+      character(30) :: nc
+      integer :: i
 
       do i=1,nbline
-        read(ijfile,1000) nc
+        read(u, '(a1)') nc
       end do
-
- 1000 format(a1)
 
       end subroutine xline
 c
@@ -978,6 +969,7 @@ c 	      en sortie, tableau classe (et donc original ecrase)
 c 	ntab : nbre de points a classer
 c 	index : tableau d'entiers contenant en sortie l'ordre de
 c 	        classement.
+      use, intrinsic :: iso_fortran_env, only: error_unit
       implicit none
 c
       integer ntab,itab
@@ -986,12 +978,9 @@ c
       integer imax,imin,jmin
 c
       if(ntab.gt.3000) then
-        write(6,*)'La dimension max. du tableau a classer est 3000'
-        write(6,*)'dans le sous programme clasdesc'
-        write(6,*)'La dimension actuelle du tableau est',ntab
-        write(6,*)'Augmenter la capacite de clasdesc, puis'
-        write(6,*)'recompiler et relancer'
-        stop
+        write(error_unit,'(a)')'clasdesc: Maximum dimension exceeded'
+        write(error_unit,'(a,i0)')'Current dimension ', ntab
+        error stop
       endif
 c
       do itab = 1,ntab

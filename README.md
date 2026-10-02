@@ -69,6 +69,8 @@ dynamically adapting to the number of CPU cores available:
 python MonoenergeticBeams.py /tmp/tc
 ```
 
+The environment variable "TRANSCAR_ROOT" can be set to specify the path containing the "transconvec" executable.
+
 ### Plotting
 
 The simulation results are loaded and plotted by the [transcarread](https://github.com/space-physics/transcarread) Python package.

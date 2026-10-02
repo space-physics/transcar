@@ -4,6 +4,7 @@ import logging
 import collections
 import shutil
 import pandas
+import os
 import typing as T
 import functools
 
@@ -12,11 +13,12 @@ import functools
 def transcar_paths() -> dict[str, Path]:
 
     root = Path(__file__).resolve().parents[2]
-    for p in [root, root / "build"]:
+    tcpaths: list[str | Path | None] = [os.getenv("TRANSCAR_ROOT"), root, root / "build"]
+    for p in tcpaths:
         if exe := shutil.which("transconvec", path=p):
             break
 
-    if not exe:
+    if exe is None:
         raise FileNotFoundError(f"could not find transconvec executable under {root}")
 
     paths = {

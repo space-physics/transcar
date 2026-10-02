@@ -10,7 +10,7 @@ project(transcar
 if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   add_compile_options(
   -std=legacy
-  -Wline-truncation
+  -Werror=line-truncation
   -fmax-errors=3
   )
   # -Warray-bounds=2)

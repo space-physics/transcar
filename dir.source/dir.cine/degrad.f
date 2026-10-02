@@ -58,12 +58,12 @@ c
 *	OMDEG(N2,N1,J)  : cross-section for the production of a
 *		      secondary with energy N2
 
-      character*8 istdate,isttime
-      character*9 title(nbrexc,nbrsp)
-      character*9 excion(nbrionst,nbrsp)
-      character(len=80) crsin,crsout,rdtout,preout
-      character(len=80) crsinput,crs,rdt
-      character(len=80) line
+      character(8) :: istdate,isttime
+      character(9) :: title(nbrexc,nbrsp)
+      character(9) :: excion(nbrionst,nbrsp)
+      character(:), allocatable :: crsin, crsout, rdtout
+      character(80) :: crsinput,crs,rdt
+      character(80) :: line
       integer idess(2), kiappel,i1,i2,type_de_grille
       namelist /DATDEG/ type_de_grille,crsinput,crs,rdt,idess,
      &iprint1,iprint2,iprint3,iprint4,logint,lt1,lt2,lt3,
@@ -146,18 +146,14 @@ c 	Input control parameters
 c
 c	Check for old computation
 c
-      open(unfic_crsout_degrad,
-     &file='dir.data/dir.linux/'
-     &//crsout,status='OLD',form='UNFORMATTED',
-     &iostat=iost)
+      open(unfic_crsout_degrad, file='dir.data/dir.linux/' // crsout,
+     & status='OLD',form='UNFORMATTED', iostat=iost)
       if (iost.ne.0)then
         print*,' No old differential cross section file'
         print*,' Cross sections therefore computed'
 c 	  Puisqu'il n'existe pas, cree le fichier de sortie
-        open(unfic_crsout_degrad,
-     &  file='dir.data/dir.linux/'
-     &  //crsout,status='new',form='UNFORMATTED',
-     &  iostat=iost)
+        open(unfic_crsout_degrad, file='dir.data/dir.linux/'//crsout,
+     &  status='new',form='UNFORMATTED', iostat=iost)
         rewind(unfic_crsout_degrad)
         close(unfic_crsout_degrad)
         go to 10
@@ -221,8 +217,8 @@ c 	Puisque ce fichier contient quelque chose, on le rembobine
    10 continue	! cross sections not yet computed
 c
 c----  	Open input files : seff file
-      open(fic_crsin_degrad,file='dir.data/dir.linux/'
-     &//crsin,status='old')
+      open(fic_crsin_degrad, file='dir.data/dir.linux/'//crsin,
+     &  status='old', action='read')
       rewind fic_crsin_degrad
 c
 c----  	Open formatted output files
@@ -232,9 +228,8 @@ c----  	Open formatted output files
       rewind fic_degout
 
 c 	Open unformatted output cross section files
-      open(unfic_crsout_degrad,
-     &file='dir.data/dir.linux/'
-     &//crsout,status='old',form='UNFORMATTED')
+      open(unfic_crsout_degrad,file='dir.data/dir.linux/'//crsout,
+     & status='old',form='UNFORMATTED', action='write')
       rewind unfic_crsout_degrad
 c
       write(fic_degout,1010) istdate,isttime
@@ -955,7 +950,8 @@ c 	  Multiplication with fudge factors.
         w2 = work(2)
         do ien=1,nen
           if(e(ien).lt.e1min) then
-            call intlin(nnmax,e1log,work,1,log(e(ien)),yout)
+            xout(1)=log(e(ien))
+            call intlin(nnmax,e1log,work,1,xout,yout)
             cel(isp,ien) = yout(1)
           elseif(e(ien).le.e1max) then
             cel(isp,ien)=terplin(e1,work,nnmax,e(ien))

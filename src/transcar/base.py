@@ -68,20 +68,22 @@ def run_spectrum(beam: pandas.DataFrame, P: dict[str, T.Any]) -> bool:
     return isok and transcaroutcheck(odir, P["errfn"])
 
 
-def mono_beam_arbiter(beam: dict[str, float], P: dict[str, T.Any]) -> bool:
+def mono_beam_arbiter(beam: dict[str, float], P: dict[str, T.Any], tries: int=1) -> bool:
     """
     run monoenergetic beam
     """
     if isinstance(beam, pandas.Series):
         beam = beam.to_dict()
 
-    if isok := run_monobeam(beam, P):
-        print(f"OK {beam['E1']:.1f} eV")
-    else:
-        logging.warning(f"retrying beam{beam['E1']:.1f}")
-        isok = run_monobeam(beam, P)
-        if not isok:
-            logging.error(f"failed on beam{beam['E1']:.1f} on 2nd try, aborting")
+    for i in range(tries):
+        if isok := run_monobeam(beam, P):
+            print(f"OK {beam['E1']:.1f} eV")
+            break
+        else:
+            logging.error(f"FAIL: try {i+1} of beam {beam['E1']:.1f} eV")
+
+    if not isok:
+        logging.error(f"aborting beam {beam['E1']:.1f} eV after {tries} tries")
 
     return isok
 
@@ -98,8 +100,8 @@ def run_monobeam(beam: dict[str, float], P: dict[str, T.Any]) -> bool:
 
 
 def runTranscar(odir: Path, errfn: Path, msgfn: Path) -> bool:
-    """actually run Transcar exe"""
-    odir = Path(odir).expanduser().resolve()  # MUST have resolve()!!
+    """Run Transcar transconvec executable in the specified output directory."""
+    odir = Path(odir).expanduser().resolve()
 
     exe = transcar_paths()["transconvec"]
 
@@ -108,6 +110,10 @@ def runTranscar(odir: Path, errfn: Path, msgfn: Path) -> bool:
 
     with err_file.open("w") as ferr, out_file.open("w") as fout:
         ret = subprocess.run(exe, cwd=odir, stdout=fout, stderr=ferr)
+
+    with err_file.open(errors="replace") as ferr:
+        for line in ferr:
+            logging.error("%s", line.rstrip("\n"))
 
     if ret.returncode != 0:
         logging.error(f"{odir.name}: error code {ret.returncode}\nError logfile: {err_file}\n{describe_returncode(ret.returncode)}")

@@ -1,7 +1,6 @@
 from pathlib import Path
 from datetime import datetime, timedelta
 import logging
-import collections
 import shutil
 import pandas
 import os
@@ -73,20 +72,23 @@ def cp_parents(files: T.Sequence[Path], target_dir: Path, origin: Path = None) -
         shutil.copy2(f, newpath)
 
 
-def transcaroutcheck(odir: Path, errfn: Path, ok: str = "STOP fin normale") -> bool:
+def transcaroutcheck(odir: Path, errfn: Path, ok: str = "fin normale") -> bool:
     """
-    checks for text at end of file
+    checks stderr for the normal STOP message.
 
+    Compilers format STOP differently and may print IEEE flag notes after it, e.g.
+    gfortran: "STOP fin normale", flang: "Fortran STOP: fin normale"
     """
     tpaths = transcar_paths()
 
     isok = False
     fok = odir / tpaths["finish_status"]
     try:
-        with (odir / errfn).open("r") as ferr:
-            last = collections.deque(ferr, 1)[0].rstrip("\n")
+        with (odir / errfn).open("r", errors="replace") as ferr:
+            lines = [line.rstrip("\n") for line in ferr]
+        last = lines[-1]
 
-        if last == ok:
+        if any("STOP" in line and line.rstrip().endswith(ok) for line in lines):
             isok = True
             fok.write_text("true")
             logging.info(f"{odir} completed successfully.")

@@ -45,6 +45,7 @@
         data lat_top/89.9_dp/
 
        save dtmag,dlonmag0,dlatmag0
+       data dlonmag0/0._dp/, dlatmag0/0._dp/
 
        if (flgini) then
        open(56,file='trace_conv',form='formatted',status='replace')

@@ -117,7 +117,7 @@ c
 c
 c
 c       write(6,*)
-      write(6,*)'    degrad.f : computation of the cross sections'
+      print '(a)', 'degrad.f: computation of the cross sections'
 c       write(6,*)'    ---------'
 c       write(6,*)
 
@@ -588,7 +588,7 @@ c
 c
       lsec=.true.
       if (kiappel.eq.1)
-     &write(6,*)'REDIST started with specie',isp,'            [A'
+     & print '(a,i0,a)','REDIST started with specie ',isp,'          [A'
 c       write(6,*)'REDIST started with specie',isp
 c 	On part de l'energie la plus elevee (nen) vers la plus basse.
 c	We start from the highest energy (nen) to the lowest.

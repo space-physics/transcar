@@ -98,6 +98,7 @@ c
 c
         do ialt = 1,nalt
           prodprotelec(ialt) = 0.
+          prodionprot(:,ialt) = 0.
  	        do ien = 1,nen
               primprotelec(ialt,ien) = 0.
               fluxprimprot(ialt,ien) = 0.

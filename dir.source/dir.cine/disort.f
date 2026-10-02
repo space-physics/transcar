@@ -274,16 +274,15 @@ C
 CAKYB
       REAL    AMB( MI,MI ), APB( MI,MI ), ARRAY( MXCMU,MXCMU ),
      $        B( NNLYRI ), BDR( MI,0:MI ), BEM( MI ),
-     $        CBAND( MI9M2,NNLYRI ), CC( MXCMU,MXCMU ), CMU( MXCMU ),
+     $        CC( MXCMU,MXCMU ), CMU( MXCMU ),
      $        CWT( MXCMU ), EMU( MXUMU ), EVAL( MI ),
      $        EVECC( MXCMU, MXCMU ), EXPBEA( 0:MXCLY ), FLYR( MXCLY ),
      $        FLDN( MXULV ), FLDIR( MXULV ), GL( 0:MXCMU,MXCLY ),
-     $        GC( MXCMU,MXCMU,MXCLY ), GU( MXUMU,MXCMU,MXCLY ),
      $        HLPR( 0:MXCMU ), KK( MXCMU,MXCLY ), LL( MXCMU,MXCLY ),
      $        OPRIM( MXCLY ), PHIRAD( MXPHI ), PSI0( MXCMU ),
      $        PSI1(MXCMU), RMU( MXUMU,0:MI ), TAUC( 0:MXCLY ),
      $        TAUCPR( 0:MXCLY ), U0C( MXCMU,MXULV ), UTAUPR( MXULV ),
-     $        UUM( MXUMU,MXULV,0:MXCMU ), WK( MXCMU ),
+     $        WK( MXCMU ),
      $        XR0( MXCMU, MXCLY ),XR1( MXCMU,MXCLY ), XRA( MXCLY),
      $        XR0U( MXUMU, MXCLY ),XR1U( MXUMU,MXCLY ), XRAU( MXCLY),
      $        YLM0( 0:MXCMU ), YLMC( 0:MXCMU,MXCMU ),
@@ -295,7 +294,11 @@ CAKYB
 C
       double precision  dARRAY( MXCMU,mxcmu ),dWK(mxcmu),drcond,
      &		dzj(mxcmu),dz0(mxcmu),dz1(mxcmu)
-      double precision dCBAND( MI9M2,NNLYRI ),dZ( NNLYRI ),dB( NNLYRI )
+      double precision dZ( NNLYRI ),dB( NNLYRI )
+C                         ** large arrays on heap to avoid stack overflow
+      REAL, ALLOCATABLE, SAVE :: CBAND(:,:), GC(:,:,:), GU(:,:,:),
+     $                           UUM(:,:,:)
+      DOUBLE PRECISION, ALLOCATABLE, SAVE :: dCBAND(:,:)
 c
       DOUBLE PRECISION   AAD( MI,MI ), EVALD( MI ) , EVECCD( MI,MI ),
      $                   WKD( MXCMU )
@@ -311,6 +314,14 @@ C
 *         exptest=log(2.)*2**13		! for Cray Y-MP
          exptest=log(2.)*2**6		! for SUN (single precision)
          PASS1 = .FALSE.
+      END IF
+C
+      IF ( .NOT. ALLOCATED(CBAND) ) THEN
+         ALLOCATE( CBAND( MI9M2,NNLYRI ), SOURCE=0. )
+         ALLOCATE( dCBAND( MI9M2,NNLYRI ), SOURCE=0.d0 )
+         ALLOCATE( GC( MXCMU,MXCMU,MXCLY ), SOURCE=0. )
+         ALLOCATE( GU( MXUMU,MXCMU,MXCLY ), SOURCE=0. )
+         ALLOCATE( UUM( MXUMU,MXULV,0:MXCMU ), SOURCE=0. )
       END IF
 C
    1  CONTINUE
@@ -469,15 +480,17 @@ C
       		   tempsqrt=(src(ls+1,iq)/src(ls+2,iq))**2 -
      &                  src(ls,iq)/src(ls+2,iq)
      		   templog=src(ls+1,iq)/src(ls+2,iq)
-               	   if( tempsqrt  .gt. 0.0         .and.
-     &		       src(lc,iq).lt.src(ls+2,iq)) then
+               	   if (tempsqrt .gt. 0.0) then
+                     if (src(lc,iq).lt.src(ls+2,iq)) then
                   	        xra(lc) = (2./deltat) *
      &                         		log( templog + sqrt(tempsqrt) )
-	           elseif ( tempsqrt   .gt. 0.0           .and.
-     &		            src(lc,iq).gt.src(ls+2,iq)    .and.
-     &             	    templog   .gt.sqrt(tempsqrt) ) then
+	             elseif (src(lc,iq).gt.src(ls+2,iq)    .and.
+     &             	     templog   .gt.sqrt(tempsqrt) ) then
 			        xra(lc) = (2./deltat) *
      &                    		log( templog - sqrt(tempsqrt) )
+		     else
+			    xra(lc)=0.
+		     end if
 		   else
 			    xra(lc)=0.
 		   end if

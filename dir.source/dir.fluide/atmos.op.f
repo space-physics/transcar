@@ -595,39 +595,39 @@ c     Transport cinetique. Kinetic transport
                  write(stderr,*),'atmos: NaN in stl'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
                  error stop
-               elseif (any(ieee_is_nan(ne))) then
+               elseif (any(ieee_is_nan(ne(1:nx)))) then
                  write(stderr,*),'atmos: NaN in Ne'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
                  error stop
-               elseif (any(ieee_is_nan(te))) then
+               elseif (any(ieee_is_nan(te(1:nx)))) then
                  write(stderr,*),'atmos: NaN in Te'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
                  error stop
-               elseif (any(ieee_is_nan(tj))) then
+               elseif (any(ieee_is_nan(tj(1:nx)))) then
                  write(stderr,*),'problem with tj'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
                  error stop
-               elseif (any(ieee_is_nan(nh))) then
+               elseif (any(ieee_is_nan(nh(1:nx)))) then
                  write(stderr,*),'problem with nh'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
                  error stop
-               elseif (any(ieee_is_nan(no))) then
+               elseif (any(ieee_is_nan(no(1:nx)))) then
                 write(stderr,*),'problem with no'
                 write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
                  error stop
-               elseif (any(ieee_is_nan(no2))) then
+               elseif (any(ieee_is_nan(no2(1:nx)))) then
                  write(stderr,*),'problem with no2'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
                  error stop
-               elseif (any(ieee_is_nan(nn2))) then
+               elseif (any(ieee_is_nan(nn2(1:nx)))) then
                  write(stderr,*),'problem with nn2'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
                  error stop
-               elseif (any(ieee_is_nan(nn))) then
+               elseif (any(ieee_is_nan(nn(1:nx)))) then
                  write(stderr,*),'problem with nn'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
                  error stop
-               elseif (any(ieee_is_nan(tn))) then
+               elseif (any(ieee_is_nan(tn(1:nx)))) then
                  write(stderr,*),'problem with tn'
                  write(stderr,*),npt,iyd,sec,glat,glong,stl,f107,ap,chi
                  error stop

@@ -401,15 +401,13 @@
         real primelec(nbralt,nbren),fluxprim(nbralt,nbren)
         real primprotelec(nbralt,nbren)
         real fluxprimprot(nbralt,nbren)
-        real qprim(nbren,nbralt,-nbrango2:nbrango2)
-        real qprimpHot(nbren,nbralt,-nbrango2:nbrango2)
-        real qprimpRot(nbren,nbralt,-nbrango2:nbrango2)
+! large arrays are heap-allocated to avoid stack overflow
+        real, allocatable, save :: qprim(:,:,:), qprimpHot(:,:,:),
+     &      qprimpRot(:,:,:), qntsty(:,:,:), intensite(:,:,:)
 !
-        real qntsty(nbren,2*nbralt-1,-nbrango2:nbrango2),
-     &      qgaupin(2*nbralt-1,-nbrango2:nbrango2),
+        real qgaupin(2*nbralt-1,-nbrango2:nbrango2),
      &    fhemu(nbren,nbralt),fhemd(nbren,nbralt),
      &      fhemtot(nbren,nbralt)
-        real intensite(nbren,nbralt,-nbrango2:nbrango2)
         real feup(nbralt),fedwn(nbralt),fesum(nbralt),eup,edwn
         real fpartup(nbralt),fpartdwn(nbralt),fpartsum(nbralt),
      &         partup,partdwn
@@ -689,6 +687,16 @@
 !
         write(6,*)'    trans.f : Kinetic transport. jpreci=',
      &        jpreci,'ut=',UT
+
+        if (.not. allocated(qprim)) then
+          allocate(qprim(nbren,nbralt,-nbrango2:nbrango2), source=0.)
+          allocate(qprimpHot, qprimpRot, intensite, mold=qprim)
+          qprimpHot = 0.
+          qprimpRot = 0.
+          intensite = 0.
+          allocate(qntsty(nbren,2*nbralt-1,-nbrango2:nbrango2),
+     &             source=0.)
+        endif
 !
 
 
@@ -862,6 +870,8 @@
         enddo
 c
 c     Compute input energy due to precipitations
+      qpreceV = 0.
+      qpheleV = 0.
       if (jpreci.ne.0)then
         qpreceV = 0.
        do iang=-nango2,-1,1
@@ -1330,6 +1340,7 @@ c
 c
         call zeroit(prodelsec,nalt)
         call zeroit(enrion,nalt)
+        prodionsec = 0.
         do isp=1,nspec
 *        get deposition profile for species J
         if (kiappel.eq.1)
@@ -2009,7 +2020,6 @@ c47     format(1i4,4f10.2,2(1pe12.3))
             enddo
             fproj0(ien,ialt)=fproj0(ien,ialt)*2.*pi
             fproj1(ien,ialt)=fproj1(ien,ialt)*2.*pi
-            fproj2(ien,ialt)=fproj2(ien,ialt)*2.*pi
           enddo
         enddo
 !
@@ -2169,6 +2179,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
 
 
       nango2=nang/2
+      src = 0.
 !     The photoelectron source function is considered as regularly
 !     distributed on the considered layer : One half is attibuted
 !     to the top (from top to middle), one half to the middle (from
@@ -2193,7 +2204,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
         src(ms+3,nango2+1-k)=max(quelle,0.)
        enddo
       enddo
-        scru=0.
+        srcu=0.
         bsrc=0.
         tsrc=0.
 
@@ -2290,6 +2301,7 @@ c47     format(1i4,4f10.2,2(1pe12.3))
      &        'el. fluxes (nen,nalt):',2i10)
 1080     format ('Primary interpolated prod. :(cm-3.s-1.eV-1):')
 !
+      prodionprim(:,1:nalt) = 0.
       if(jpreci.eq.1 .or. jpreci.eq.3 .or. jpreci.eq.4)then
        do ialt = 1,nalt
         photelec(ialt) = 0.
@@ -2868,6 +2880,8 @@ c47     format(1i4,4f10.2,2(1pe12.3))
        open(fic_transout,file='dir.data/dir.linux/dir.cine/TRANSOUT'
      &    ,status='unknown')
        rewind(fic_transout)
+!     ezero (monoenergetic beam energy) is not read here
+       ezero = 0.
 !
 !-------------------------------------------------------------
 !-------------------- lecture DATTRANS ------------------------

@@ -1,4 +1,4 @@
-        subroutine geo2mag(latgeo,longeo,latmag,lonmag)
+        subroutine geo2mag(latgeo,longeo,latmag,lonmag,dlon)
 
         implicit none
 
@@ -14,6 +14,8 @@ c    lonmag = longitude magnetic   en degres decimal
 c    Baker and Wing, JGR, 94, 9139-9143, 1989
 c    coordonnees dipolaires de Gustafsson
         real*8,intent(inout) :: latgeo,longeo,latmag,lonmag
+c    dlon = reference longitude offset (deg) used by callers for MLT
+        real*8,intent(out) :: dlon
 
         real*8 omega(3,3)
         real*8 dlongeo,dlatgeo,dlonmag,dlatmag
@@ -204,7 +206,7 @@ c    coordonnees dipolaires de Gustafsson
      &   -2.3072229800309287d+00,1.0257990504942427d+00 ,
      &   -8.9571300047100522d-01/
 
-!        dlon=292.d0
+        dlon=292.d0
 
 
         dlatgeo=latgeo*deg2rad

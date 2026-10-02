@@ -516,6 +516,12 @@ c     Pour mettre off ces ecritures, mettre iprt(1) et iprt (2) a
 c     0 dans la ligne data en debut de ce sous programme
       if (iprt(1).eq.1 .or. iprt(2).eq.1) then
        fanion = fanion + 1
+! these are diagnostic-only placeholders for ELEC_VERIF, never computed
+       alpha = 0.
+       spfac = 0.
+       z50 = 0.
+       derivte = 0.
+       comp = 0.
        do ialt = 1,nalt
          dne (ialt) = denelc(ialt)/10.
          dte (ialt) = temelc(ialt)/10.

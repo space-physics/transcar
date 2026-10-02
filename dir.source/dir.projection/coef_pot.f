@@ -120,15 +120,15 @@
           latequi=latlim
 
           if(kp.le.1.) then
-            do i=1,(ndeg+1)*(mdeg+1)
+            do i=1,npt
               phipot(i)=phi(i)
             enddo
           elseif(kp.le.3.) then
-            do i=1,(ndeg+1)*(mdeg+1)
+            do i=1,npt
               phipot(i)=phi(i+npt)
             enddo
           else
-            do i=1,(ndeg+1)*(mdeg+1)
+            do i=1,npt
               phipot(i)=phi(i+2*npt)
             enddo
           endif

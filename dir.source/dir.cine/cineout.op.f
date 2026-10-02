@@ -28,13 +28,11 @@ c 	OUTPUTS
 c
 c 	INTERNAL
  	integer ialt
-	real xo_1,xo,xo2_1,xo2,xn2_1,xn2,xn_1,xn,xh_1,xh
+	real xo_1,xo,xo2_1,xo2,xn2_1,xn2,xn_1,xn
  	real xqe_1,xqe
         real hauteur,x1,x2,y1,y2
         real HQe_1,HPo_1,HPo2_1,HPn2_1,HPn_1,HPh_1
  	real dz
-	real xnes,xnes_1,xjes,xjes_1,xtes,xtes_1,xqes,xqes_1
-	real Hnes_1,Hjes_1,Htes_1,Hqes_1
         integer indo2
 c
 c ====================================================================
@@ -75,14 +73,6 @@ c	IF IT LOOKS JUST TE. IF YOU CHANGED THIS ROUTINE RETURNS THE AMENDMENTS TO ME.
         xn   =Pn(indlim)
 	xqe_1=Chaufelec (2)
 	xqe  =Chaufelec (1)
-	xnes_1=Ne_supra (2)
-	xnes  =Ne_supra (1)
-	xjes_1=Courant_supra (2)
-	xjes  =Courant_supra (1)
-	xtes_1=Te_supra (2)
-	xtes  =Te_supra (1)
-	xqes_1=Chaleur_supra (2)
-	xqes  =Chaleur_supra (1)
 c
 	if (xqe_1*xqe.ne.0.) then
 	  HQe_1=1./abs(hauteur(xqe_1,xqe,zlim_1,zlim))
@@ -109,32 +99,8 @@ c
 	else
 	  HPn_1=0.
 	endif
-	if (xh_1*xh.ne.0.) then
-c	  HPh_1=1./abs(hauteur(xh_1 ,xh ,zlim_1,zlim))
-	  HPh_1=0.
-	else
-	  HPh_1=0.
-	endif
-	if (xnes_1*xnes.ne.0.) then
-	  Hnes_1=1./abs(hauteur(xnes_1,xnes,zlim_1,zlim))
-	else
-	  Hnes_1=0.
-	endif
-	if (xjes_1*xjes.ne.0.) then
-	  Hjes_1=1./abs(hauteur(xjes_1,xjes,zlim_1,zlim))
-	else
-	  Hjes_1=0.
-	endif
-	if (xtes_1*xtes.ne.0.) then
-	  Htes_1=1./abs(hauteur(xtes_1,xtes,zlim_1,zlim))
-	else
-	  Htes_1=0.
-	endif
-	if (xqes_1*xqes.ne.0.) then
-	  Hqes_1=1./abs(hauteur(xqes_1,xqes,zlim_1,zlim))
-	else
-	  Hqes_1=0.
-	endif
+c	H+ scale height disabled
+	HPh_1=0.
 
 	do ialt=indlim+1,nx
 	  dz=zlim-z(ialt)

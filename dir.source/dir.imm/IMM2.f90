@@ -18,7 +18,7 @@ Integer, parameter :: npt=49*80,ndeg=8,mdeg=8,rang=(2*mdeg+1)*(ndeg+1),&
 			rang1=(ndeg+1)*(mdeg+1),rangcoef=1000
 Integer :: mode,nb_data,nb_data_pot,ind_data(npt),ind_data_pot(npt)
 
-Real*8  :: A(npt*rang),B(rang*npt),Apot(npt*rang),Bpot(rang*npt)
+Real*8, allocatable :: A(:),B(:),Apot(:),Bpot(:)
 real*8  :: latmin=50.d0,latmax=72.d0,latequi=40.d0, rmin=1E-6, Lmin,Lmax
 
 !Real*8  :: coef_r(rang),coef_i(rang)
@@ -33,6 +33,8 @@ Lmin=latmin
 Lmax=latmax
 ndg=ndeg
 mdg=mdeg
+
+allocate(A(npt*rang),B(rang*npt),Apot(npt*rang),Bpot(rang*npt))
 
 open(unit=4,file='dir.source/dir.imm/Electro.dat',form='formatted',status='unknown')
 

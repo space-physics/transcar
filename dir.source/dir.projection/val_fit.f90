@@ -7,8 +7,6 @@ real(dp),intent(in) :: lon,lat,coef_psi(:),latmin,latmax,latequi
 integer,intent(in) :: ndeg,mdeg
 Real(dp),intent(out), optional :: psi,psi_est,psi_nord
 !
-Integer,parameter::	npt=100000
-
 Real(dp),parameter ::     coeffc=6._dp,re=6.378_dp,lat_top=89.9_dp
 Integer	::	i,j,k,l,rang
 
@@ -17,8 +15,9 @@ Real(dp)	::  LM,DL
 Real(dp)	::	coef_est,coef_nord
 Real(dp)	::	psi0
 Real(dp)  ::      alpha,xmin,xequi,coslinf,dxmin,d12,d11,d210,d21,d22,det_1,xmax,coslsup
-Real(dp)  ::      anm,bnm,cnm(0:npt),cosphi,sinphi
-Real(dp)  ::	A(npt),A_est(npt),A_nord(npt),Pn(0:npt),dPn(0:npt)
+Real(dp)  ::      anm,bnm,cnm(0:ndeg),cosphi,sinphi
+Real(dp)  ::	A((ndeg+1)*(2*mdeg+1)),A_est((ndeg+1)*(2*mdeg+1)),A_nord((ndeg+1)*(2*mdeg+1))
+Real(dp)  ::	Pn(0:ndeg),dPn(0:ndeg)
 Real(dp)  ::	xinf,xfit,xsup,phi,expdx
 Real(dp)  ::	dxequi,dxequi2,expjdx,expcdx,expcdx_1,Fnm_inf,Fnm_sup,dFnm_inf,dFnm_sup,sum
 
@@ -34,6 +33,11 @@ phi=deg2rad*lon
 
 coef_est=-1.0_dp/re/cos(deg2rad*min(lat,lat_top))
 
+! lat < latequi matches no branch below: yield zero rather than undefined values
+A = 0.0_dp
+A_est = 0.0_dp
+A_nord = 0.0_dp
+coef_nord = coef_est
 
 
 if (lat<latmin.and.lat>=latequi) then

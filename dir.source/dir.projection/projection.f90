@@ -1,9 +1,9 @@
 subroutine geometrie(nb_point,nb_data,ind_data,lon,lat,latmin,latmax,latequi,mode,ndeg,mdeg,rang,A,B)
 
-!	mode=0 on prend toutes les données entre latequi et 90°
-!	mode=1 on prend toutes les données entre latequi et latmax
-! 	mode=2 on prend toutes les données entre latmin et 90°
-!	mode=3 on prend toutes les données entre latmin et latmax
+!	mode=0 on prend toutes les donnï¿½es entre latequi et 90ï¿½
+!	mode=1 on prend toutes les donnï¿½es entre latequi et latmax
+! 	mode=2 on prend toutes les donnï¿½es entre latmin et 90ï¿½
+!	mode=3 on prend toutes les donnï¿½es entre latmin et latmax
 
 
 implicit none
@@ -278,15 +278,16 @@ Subroutine polyleg(x,pn,dpn)
 
 implicit none
 
-integer,parameter :: npt=100000
 integer	:: n,i,nb_point,ndeg
 real*8  :: x(:),pn(:,0:),dpn(:,0:),xm
-real*8	:: x2(npt),x3(npt),x4(npt),x5(npt)
-real*8	:: pn_1(npt),pn_2(npt),dpn_1(npt),dpn_2(npt)
+real*8, allocatable :: x2(:),x3(:),x4(:),x5(:)
+real*8, allocatable :: pn_1(:),pn_2(:),dpn_1(:),dpn_2(:)
 
 
 ndeg=size(pn,2)-1
 nb_point=size(x)
+allocate(x2(nb_point),x3(nb_point),x4(nb_point),x5(nb_point))
+allocate(pn_1(nb_point),pn_2(nb_point),dpn_1(nb_point),dpn_2(nb_point))
 do n=0,ndeg
   select case (n)
     case(0)
@@ -379,20 +380,21 @@ subroutine inverse(mat,mat_1)
 
 implicit none
 
-Integer,parameter :: npt=100000
-Integer ::      i,j,k,l,rang,ind(npt),signe
+Integer ::      i,j,k,l,rang,ind(1),signe
 
 Real*8  ::      mat(:,:),mat_1(:,:)
-Real*8  ::      xnorm,temp(npt)
+Real*8  ::      xnorm
+Real*8, allocatable :: temp(:)
 
 rang=size(mat,1)
+allocate(temp(rang))
 mat_1=0.d0
 do i=1,rang
   mat_1(i,i)=1.d0
 enddo
 
 do i=1,rang
-  ind(1:rang-i+1)=maxloc(abs(mat(i:rang,i)))
+  ind=maxloc(abs(mat(i:rang,i)))
   k=i-1+ind(1)
   signe=(-1)**(i+k)
   temp(1:rang)=mat(i,:)
@@ -444,7 +446,7 @@ Integer :: nb_data,ind_data(nb_data),rang,i
 
 Real*8  ::      A(nb_data,rang),B(rang,nb_data)
 Real*8  ::      pot(npt),pot_fit(npt)
-Real*8  ::      coef(npt)
+Real*8  ::      coef(rang)
 
 
 coef(1:rang)=matmul(B,pot(ind_data(1:nb_data)))

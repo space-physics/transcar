@@ -17,10 +17,13 @@
       real(dp),parameter :: Linf=61.5_dp,Lsup=72.5_dp,latlim=55._dp
       integer, parameter :: ndeg0=5, mdeg0=5, npt=(ndeg0+1)*(2*mdeg0+1)
 
-      integer len_coef,len_rec,len_buf,irec
+! varpot.dat header and current record persist across calls; outputs are
+! reassigned from them on every call
+      integer,save :: len_coef,len_rec,len_buf,ndeg_f,mdeg_f
+      integer irec
 
       integer iyddeb,iydfin,i,u
-      real buffer(1000)
+      real,save :: buffer(1000)
       real(dp) phi(3*npt)
 
       real(dp) tempsdeb,tempsfin,xt,xtd,xtf
@@ -88,26 +91,26 @@
 
 
       if (flgini) then
-          ierr=1
           flgini=.false.
 
         open(newunit=u,
      &   file='dir.data/dir.linux/dir.projection/varpot.dat',
      &   form='unformatted',access='direct',status='old',recl=40,
-     &     iostat=ierr,err=999)
+     &     iostat=ierr)
 
+        if (ierr.eq.0) then
           read(u,rec=1)(buffer(i),i=1,10)
-          ndeg=buffer(5)
-          mdeg=buffer(6)
-          len_coef=(2*mdeg+1)*(ndeg+1)
+          close(u)
+          ndeg_f=buffer(5)
+          mdeg_f=buffer(6)
+          len_coef=(2*mdeg_f+1)*(ndeg_f+1)
           print *,'len_coef=',len_coef
           len_buf=len_coef+10
           len_rec=4*len_buf
+        endif
       endif
 
-999    continue
-      close(u)
-      if (ierr.gt.0) then
+      if (ierr.ne.0) then
 
         call cpu_time(tic)
         print *,tic,
@@ -154,21 +157,23 @@
                 tempsdeb=buffer(2)
                 iydfin=buffer(3)
                 tempsfin=buffer(4)
-                Lmin=buffer(7)
-                Lmax=buffer(8)
-                latequi=buffer(9)
-                ddp=buffer(10)
 !          read(87,*) iyddeb,tempsdeb,iydfin,tempsfin,
 !    &                 ndeg,mdeg,Lmin,Lmax,latequi,ddp
                 xtd=iyddeb+tempsdeb*1.d-6
                 xtf=iydfin+tempsfin*1.d-6
-
-!        read(87,*) (phipot(i),i=1,(2*mdeg+1)*(ndeg+1))
-                do i=1,len_coef
-                  phipot(i)=buffer(10+i)
-                end do
            end do
            close(u)
+
+           ndeg=ndeg_f
+           mdeg=mdeg_f
+           Lmin=buffer(7)
+           Lmax=buffer(8)
+           latequi=buffer(9)
+           ddp=buffer(10)
+!        read(87,*) (phipot(i),i=1,(2*mdeg+1)*(ndeg+1))
+           do i=1,len_coef
+             phipot(i)=buffer(10+i)
+           end do
 
       End If
 

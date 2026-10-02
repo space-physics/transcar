@@ -24,7 +24,7 @@ def main():
     p.add_argument("-Q0", help="total particle flux", type=float, default=70114000000.0)
     p.add_argument("-infn", help="energy bin CSV file", default="BT_E1E2prev.csv")
     p.add_argument("-datcar", help="DATCAR input file to copy", default="DATCAR_spectrum.asc")
-    p.add_argument("-msgfn", help="file to write transcar messages to", default="transcar.log")
+    p.add_argument("-logfn", help="file to write transcar messages to", default="transcar.log")
     p.add_argument("-errfn", help="file to write transcar Errors to", default="transcarError.log")
     p = p.parse_args()
 
@@ -35,7 +35,7 @@ def main():
     params = {
         "rodir": rodir,
         "Q0": p.Q0,
-        "msgfn": p.msgfn,
+        "logfn": p.logfn,
         "errfn": p.errfn,
         "datcar": p.datcar,
     }

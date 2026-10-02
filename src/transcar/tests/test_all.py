@@ -18,7 +18,7 @@ def test_run_transcar(tmp_path):
     params = {
         "rodir": odir,
         "Q0": 70114000000.0,
-        "msgfn": "transcar.log",
+        "logfn": "transcar.log",
         "errfn": "transcarError.log",
     }
 

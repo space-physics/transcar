@@ -43,7 +43,7 @@ def beam_spectrum_arbiter(beam: pandas.DataFrame, P: dict[str, T.Any]) -> bool:
 
     print("Running Transcar single-threaded.")
     print(
-        odir / P["msgfn"],
+        odir / P["logfn"],
         "logs the simulation output text, watch this file to see simulation progress.",
     )
 
@@ -63,9 +63,9 @@ def run_spectrum(beam: pandas.DataFrame, P: dict[str, T.Any]) -> bool:
     datinp, odir = setup_dirs(P["rodir"], P)
     setup_spectrum_prec(odir, datinp, beam)
     # %% run the compiled executable
-    isok = runTranscar(odir, P["errfn"], P["msgfn"])
+    isok = runTranscar(odir, P["errfn"], P["logfn"])
     # %% check output trivially
-    return isok and transcaroutcheck(odir, P["errfn"])
+    return isok and transcaroutcheck(odir, P["logfn"])
 
 
 def mono_beam_arbiter(beam: dict[str, float], P: dict[str, T.Any], tries: int=1) -> bool:
@@ -94,19 +94,19 @@ def run_monobeam(beam: dict[str, float], P: dict[str, T.Any]) -> bool:
     datinp, odir = setup_dirs(P["rodir"] / f"beam{beam['E1']:.1f}", P)
     setup_monoprec(odir, datinp, beam, P["Q0"])
     # %% run the compiled executable
-    isok = runTranscar(odir, P["errfn"], P["msgfn"])
+    isok = runTranscar(odir, P["errfn"], P["logfn"])
     # %% check output trivially
-    return isok and transcaroutcheck(odir, P["errfn"])
+    return isok and transcaroutcheck(odir, P["logfn"])
 
 
-def runTranscar(odir: Path, errfn: Path, msgfn: Path) -> bool:
+def runTranscar(odir: Path, errfn: Path, logfn: Path) -> bool:
     """Run Transcar transconvec executable in the specified output directory."""
     odir = Path(odir).expanduser().resolve()
 
     exe = transcar_paths()["transconvec"]
 
     err_file = odir / errfn
-    out_file = odir / msgfn
+    out_file = odir / logfn
 
     with err_file.open("w") as ferr, out_file.open("w") as fout:
         ret = subprocess.run(exe, cwd=odir, stdout=fout, stderr=ferr)

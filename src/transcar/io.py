@@ -4,6 +4,7 @@ import logging
 import shutil
 import pandas
 import os
+import collections
 import typing as T
 import functools
 
@@ -32,7 +33,7 @@ def transcar_paths() -> dict[str, Path]:
     return paths
 
 
-def cp_parents(files: T.Sequence[Path], target_dir: Path, origin: Path = None) -> None:
+def cp_parents(files: list[Path], target_dir: Path, origin: Path | None = None) -> None:
     """
     inputs
     ------
@@ -72,23 +73,22 @@ def cp_parents(files: T.Sequence[Path], target_dir: Path, origin: Path = None) -
         shutil.copy2(f, newpath)
 
 
-def transcaroutcheck(odir: Path, errfn: Path, ok: str = "fin normale") -> bool:
+def transcaroutcheck(odir: Path, logfile: str | Path = "transcar.log", ok: str = "fin normale") -> bool:
     """
-    checks stderr for the normal STOP message.
+    checks output for the normal completion message "fin normale"
 
-    Compilers format STOP differently and may print IEEE flag notes after it, e.g.
-    gfortran: "STOP fin normale", flang: "Fortran STOP: fin normale"
+    Compilers format the normal completion message differently and may print
+    IEEE flag notes after, e.g. "STOP fin normale" or "Fortran STOP: fin normale".
     """
     tpaths = transcar_paths()
 
     isok = False
     fok = odir / tpaths["finish_status"]
     try:
-        with (odir / errfn).open("r", errors="replace") as ferr:
-            lines = [line.rstrip("\n") for line in ferr]
-        last = lines[-1]
+        with (odir / logfile).open("r", errors="replace") as ferr:
+            last = collections.deque(ferr, 1)[0]
 
-        if any("STOP" in line and line.rstrip().endswith(ok) for line in lines):
+        if ok in last:
             isok = True
             fok.write_text("true")
             logging.info(f"{odir} completed successfully.")
@@ -99,7 +99,7 @@ def transcaroutcheck(odir: Path, errfn: Path, ok: str = "fin normale") -> bool:
         logging.error(f"problem reading transcar output.  {e}")
     except IndexError as e:  # empty file
         fok.write_text("false")
-        logging.warn(f"{odir} Transcar may not have finished the sim   {e}")
+        logging.warning(f"{odir} Transcar may not have finished the sim   {e}")
 
     return isok
 

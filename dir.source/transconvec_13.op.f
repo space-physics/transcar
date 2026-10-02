@@ -8,7 +8,7 @@
 
 !     Ce programme demarre le couple de programmes de transports.
 !     Anciennement : eiscat.f
-      character(80) split,gridfn
+      character(80) :: gridfn
 
       integer,parameter :: xcoeffno=1.,ncol0=50,intemps0=300,
      &                     nb_ion=6,
@@ -8133,7 +8133,8 @@ C]]]
         close(unfic_out_transcar)
         close(unfic_in_transcar)
 
-      stop 'fin normale'
+      print '(a)', 'fin normale'
+      stop
 
 
 C    on a debranche ici a cause d'un probleme de NaN
@@ -8242,25 +8243,13 @@ C    on a debranche ici a cause d'un probleme de NaN
       write(u,rec=1)(buffer(i),i=1,longbuf)
       close(u)
       error stop 'NaN detected'
-      end program
 
+      contains
 
-      pure real function signe(x)
-      implicit none
-      real,intent(in) :: x
-
-      if (x >= 0.) then
-        signe=1.
-      else
-        signe=-1.
-      endif
-
-      end function signe
-
-
-      ! split a string into 2 either side of a delimiter token
-      character(80) function split(instr,  delm)
+        ! split a string into 2 either side of a delimiter token
+      function split(instr,  delm)
         implicit none
+       character(:), allocatable :: split
         CHARACTER(80),intent(in) :: instr
         character,intent(in) :: delm
         INTEGER :: idx
@@ -8269,3 +8258,5 @@ C    on a debranche ici a cause d'un probleme de NaN
         split = instr(1:idx-1)
 
       END function split
+
+      end program

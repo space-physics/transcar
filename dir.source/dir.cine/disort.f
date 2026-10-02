@@ -3813,7 +3813,7 @@ C
 C
       IF ( FATAL )  THEN
          WRITE ( iounit, '(/,2A)' )  ' ******* ERROR >>>>>>  ', MESSAG
-         STOP 'arret dans DISORT'
+         error stop 'arret dans DISORT'
       END IF
 C
       NUMMSG = NUMMSG + 1

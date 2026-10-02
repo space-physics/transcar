@@ -5,6 +5,7 @@ on:
     paths:
       - "**/CMakeLists.txt"
       - "**.cmake"
+      - "**.f"
       - "**.f90"
       - "**.py"
       - ".github/workflows/ci.yml"
